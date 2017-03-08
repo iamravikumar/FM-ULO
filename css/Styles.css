@@ -1,0 +1,119 @@
+﻿.errorsum{
+	font-size: 10pt;
+	color: #ff0000;
+	font-family: Verdana, Arial, SansSerif;	
+}
+
+.brown_text
+{
+	color:brown;
+}
+
+
+.AlertWindow
+{
+	font-size: 14px;
+	border: solid 2px #003366;
+	text-align: center;
+	background-color: #f4f4f4;
+	color: black;
+	position: absolute;
+	z-index: 99;
+	width: 260px;
+	font-family: Verdana, Arial, SansSerif;
+}
+.AlertHeader
+{
+	background-color: #003366;
+    padding-bottom:2px;
+	color: #f4f4f4;
+}
+.AlertBody{	padding:10px }
+.AlertButton, .AlertButtonHover{
+	border:solid 1px #A0C0DC;
+    background-color: #8899AA;
+    height:24px;
+    font: 15px Arial,Helvetica,sans-serif;
+    margin:8px
+}
+.AlertButton{
+	color: #003366;
+    padding:0px;
+	border-right-color:#4080C0;
+	border-bottom-color:#4080C0;
+	filter:progid:DXImageTransform.Microsoft.Gradient
+		(GradientType=0,StartColorStr='#F8F8FF',EndColorStr='#8899AA')
+}
+.AlertButtonHover{
+	color: #4080C0;
+	padding: 1px 0px 0px 1px;
+	border: 1px solid #4080C0;
+	border-right-color:#A0C0DC;
+	border-bottom-color:#A0C0DC;
+	cursor:pointer;
+	filter:progid:DXImageTransform.Microsoft.Gradient
+		(GradientType=0,StartColorStr='#8899AA',EndColorStr='#F8F8FF')
+}
+
+#alertBox 
+{
+	position:absolute;
+	width:350px;
+	margin-top:50px;
+	border:2px solid #000;
+	background-color:White;
+	/*background-color:#F2F5F6;
+	background-image:url(images/error.gif);*/ 
+	background-image:url(images/info_small_20.jpg);
+	background-repeat:no-repeat;
+	background-position:10px 45px;
+	
+}
+ 
+#modalContainer > #alertBox 
+{
+	position:absolute;
+}
+ 
+#alertBox h1 
+{
+	margin:0;
+	font:bold 0.9em verdana,arial;
+	background-color: #677388;
+	color:#FFF;
+	border-bottom:1px solid #000;
+	padding:2px 0 2px 5px;
+	text-align:center;
+}
+ 
+#alertBox p 
+{
+	font:0.7em verdana,arial;
+	padding-left:5px;
+	padding-right:10px;
+	margin-left:35px;
+	text-align:justify;
+}
+ 
+#alertBox #closeBtn 
+{
+	display:block;
+	position:static;
+	height:10px;
+	/*margin:5px auto;
+	padding:3px;*/
+	border:1px solid silver;
+	font:0.7em verdana,arial;
+	/*text-transform:uppercase;*/
+	text-align:center;
+	color:#006699;
+	background-color:White;
+	text-decoration:none;
+	vertical-align:middle;
+	/*text-autospace:ideograph-space;*/
+	font-size:12px;
+	padding:2px 2px 2px 5px;
+	height:15px
+
+}
+

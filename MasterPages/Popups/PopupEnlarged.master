@@ -1,0 +1,28 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/MasterPages/Global.master" AutoEventWireup="true" CodeFile="PopupEnlarged.master.cs" Inherits="MasterPages_Popups_PopupEnlarged" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="title" runat="Server">
+    <asp:ContentPlaceHolder ID="title" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="head" runat="Server">
+    <link href="../../css/popup_enlarged.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/styles.css" type="text/css" rel="stylesheet" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="body" runat="Server">
+    <div id="popup_enlarged">
+            <div class="header"></div>
+        <div class="contentArea">
+            <form runat="server" class="FormCSS">
+                <div class="sectionTitle">
+                    <asp:ContentPlaceHolder ID="contentTitle" runat="server">
+                    </asp:ContentPlaceHolder>
+                </div>
+                <asp:ContentPlaceHolder ID="content" runat="server">
+                </asp:ContentPlaceHolder>
+            </form>
+        </div>
+    </div>
+</asp:Content>
+

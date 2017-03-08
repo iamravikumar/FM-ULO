@@ -1,0 +1,25 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/MasterPages/ULO/ULO.master" AutoEventWireup="true" CodeFile="ULONoMenu.master.cs" Inherits="MasterPages_ULNOMenu" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="title" Runat="Server">
+    <asp:ContentPlaceHolder ID="title" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="head" Runat="Server">
+     <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="mainContent" Runat="Server">
+    <div id="sideShadows">
+            <div id="mainContentArea">
+                <div class="sectionTitle">
+                    <asp:ContentPlaceHolder ID="contentTitle" runat="server">
+                    </asp:ContentPlaceHolder>
+                </div>
+                <form runat="server" class="FormCSS">
+                        <asp:ContentPlaceHolder ID="content" runat="server">
+                        </asp:ContentPlaceHolder>
+                </form>
+            </div>
+        </div>
+</asp:Content>
+

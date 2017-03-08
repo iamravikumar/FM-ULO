@@ -1,0 +1,419 @@
+﻿.NotSelGrid{background-color:#F0F0F0}
+.NotSelGridAlt{background-color:#E8E8E8}
+.NotSelGridOver,.NotSelGridAltOver{color:Navy;background-color:#E3F0DB}
+.tableCaption 
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #677388;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left:1px;
+	padding-right:1px;
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-right-color: #FFFFFF;	
+}
+
+.tableFooter 
+{
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #677388;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left:1px;
+	padding-right:1px;
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-right-color: #FFFFFF;
+}
+
+.tableBold
+{
+	font-size: 12px;
+	font-weight: bold;
+	color: #3B4963;
+	padding-left:1px;
+	padding-right:1px;
+}
+
+.lblRow
+{
+	height:24px;
+	font-size: 12px;
+}
+
+.tableRow
+{
+	font-size: 12px;
+}
+.RowTotal
+{
+	background-color: #F8F8EE;
+}
+.TotalDiff
+{
+	background-color: #EEF8EE;
+}
+.TotalDiff,.RowTotal
+{
+	font-size: 12px;
+	font-weight: bold;
+	height:24px;
+}
+.tableTotal
+{
+	background-color: #F0EFE8;
+	font-size: 12px;
+	font-weight: bold;
+	border-bottom: dimgray 1px solid;
+	border-right: dimgray 1px solid;
+	padding-left:1px;
+	padding-right:1px;
+}
+.txtEdit{border: solid 1px #8090A0}
+.txtEditFocus{border: solid 1px #1122BB}
+.eBorder,.eBorderFocus{border:solid 1px green}
+.eTbl{font-family:Arial,Helvetica,sans-serif; font-size:12px; background-color:#507950}
+.eTbl tr td{padding:1px}
+.eRow {	background-color: #FAFFF4 }
+.eRowAlt {	background-color: #F0FFF0 }
+
+.tRow,.tRowAlt{	font-size: 12px; border-right: dimgray 1px solid }
+.tRow {	background-color: #F8F8F8 }
+.tRowAlt{ background-color: #F5F5F5 }
+
+.tableLink,.tableLinkHover
+{
+	border-right: dimgray 1px solid;
+	font-size: 12px;
+}
+.tableLink
+{
+	color: #000000
+}
+
+.tableLinkHover
+{
+	cursor: pointer;
+	color: blue;
+	font-weight: bold;
+}
+
+.reportTable
+{
+	width :100%;
+	border-right: dimgray 1px solid;
+	border-top: dimgray 1px solid;
+	border-left: dimgray 1px solid;
+	border-bottom: dimgray 1px solid;
+	overflow:auto;
+}
+
+.reportHeaderBlue 
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #677388;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left:1px;
+	padding-right:1px;	
+}
+
+.reportHeaderBlueNAlign
+{
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #677388;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left:1px;
+	padding-right:1px;	
+}
+
+
+.reportHeaderGreen
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF; 
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	padding-right: 1px;
+	background-color: #507950;
+}
+
+
+.reportHeaderGreenLink, .reportHeaderGreenLinkHover
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF; 
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	padding-right: 1px;	
+}
+.reportHeaderGreenLink
+{
+	background-color: #507950;
+}
+.reportHeaderGreenLinkHover
+{
+	background-color: #abd8a3;
+	cursor: pointer;
+}
+
+.reportHeaderBlueLink,.reportHeaderBlueLinkHover
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	padding-left: 1px;
+	padding-right: 1px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+.reportHeaderBlueLink
+{
+	background-color:  #677388
+}
+.reportHeaderBlueLinkHover
+{
+	background-color: #98b1d7;
+	cursor: pointer;	
+}
+
+.reportHeaderBlueWBorder
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #677388;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left:1px;
+	padding-right:1px;	
+	/*border-left: dimgray 1px solid;*/
+}
+
+.reportHeaderYellow
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #000000; 
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	padding-right: 1px;
+	background-color: #ffff99;
+}
+
+.reportHeaderGreenWBorder
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF; 
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	padding-right: 1px;
+	background-color: #507950;
+	/*border-left: dimgray 1px solid;*/
+}
+
+.reportHeaderYellow
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: black; 
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	padding-right: 1px;
+	background-color: #ffffcc;
+}
+
+.reportCellYellow
+{
+	text-align: right;
+	color: black; 
+	background-color: #ffffcc;
+}
+
+.reportHeaderLightGreen
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	padding-right: 1px;
+	background-color: #9dbf94;
+}
+
+.reportCellLightGreen
+{
+	text-align: right;
+	color: black; 
+	background-color: #9dbf94;
+}
+
+.reportCaption
+{
+	text-align :left ;
+	background-color: #F0EFE8;
+	font-size: 12px;
+	font-weight: bold;	
+	padding-left:1px;
+	padding-right:1px;	
+	color: #3B4963;	
+}
+
+.reportCaption3
+{
+	text-align:right;
+	background-color: #F0EFE8;
+	font-size: 12px;
+	font-weight: bold;	
+	padding-left:1px;
+	padding-right:1px;	
+	color: #3B4963;	
+}
+
+.reportCaption2
+{
+	text-align: left;
+	background-color: #F0EFE8;
+	font-size: 12px;
+	font-weight: bold;
+	font-style: italic;
+	padding-left: 6px;
+	padding-right: 1px;
+	color: #3B4963;
+}
+
+.ChB
+{
+    vertical-align:middle;
+    height:10px;
+}
+.reportCaptionLink,.reportCaptionLinkHover
+{
+	text-align :left;
+	background-color: #F0EFE8;
+	font-size: 12px;
+	font-weight: bold;	
+	padding-left:1px;
+	padding-right:1px;	
+}
+.reportCaptionLink
+{
+	color: #3B4963
+}
+.reportCaptionLinkHover
+{
+	cursor: pointer;
+	color: blue;	
+}
+
+.reportRow
+{
+	font-size: 12px;
+}
+
+.reportPercent
+{
+	text-align: center;
+	background-color: #dcdcdc;
+	/*border-left: dimgray 1px solid;*/
+}
+
+.reportText
+{
+	text-align :left;
+	cursor:pointer;
+}
+
+.reportAmount
+{
+	text-align: right
+}
+
+.reportAmountLink,.reportAmountLinkHover
+{
+	text-align: right;
+}
+.reportAmountLink
+{
+	color: #000000;
+	font-weight: normal;
+}
+.reportAmountLinkHover
+{
+	cursor:pointer;
+	color: blue;
+	font-weight: bold;
+}
+
+.reportTotal
+{
+	background-color: #F0EFE8;
+	font-size: 12px;
+	font-weight: bold;	
+	padding-left:1px;
+	padding-right:1px;
+	text-align :right;
+}
+
+.reportTotalHeader
+{
+	background-color: #F0EFE8;
+	font-size: 12px;
+	font-weight: bold;	
+	padding-left:1px;
+	padding-right:1px;
+}
+
+.button2,.button2Hover
+{
+	behavior:url(../css/hover.htc);
+	padding: 2px;
+	font-size: 12px;
+	width: auto;
+	color: #677388;
+	text-align: center;
+	text-decoration: none;	
+	border-right: #677388 1px solid;
+	border-top: #677388 1px solid;
+	font-weight: bold;
+	border-left: #677388 1px solid;
+	border-bottom: #677388 1px solid;
+}
+.button2
+{
+	background-color: #e1e6e6
+}
+.button2Hover
+{
+	background-color: #d4dfe3;
+	cursor:pointer
+}

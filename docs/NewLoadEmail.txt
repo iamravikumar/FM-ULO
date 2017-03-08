@@ -1,0 +1,92 @@
+section:[SUBJECT]
+ULO: New Open Items file has been received from [p_LoadSource]
+
+section:[BODY_REVIEWER]
+<html>
+<p><font face="Verdana" color='red' size='3'>**This is an auto-generated email. Please do not reply to this email**</font></p>
+<font face="Verdana" color='#333333' size='3'>
+<p>New Open Items file has been received on [p_LoadDate] from [p_LoadSource].</p>
+</font>
+<br />
+<p><font face="Verdana" color='red' size='3'>
+Attached below are the undelivered and delivered orders that are included in the September 2008 Top Dollar ULO review.
+</font></p>
+<font face="Verdana" color='#333333' size='3'>
+<p><i>PBS is once again committed to reviewing 100% of undelivered orders with balances greater than $15 million and delivered orders with balances greater than $750,000 as of September 2008, to ensure these are stated accurately on our books.  Unliquidated Obligations (ULOs) that meet this threshold, please provide all supporting documentation.  Please note, if you have an item that was in the July sample, you will only need to provide documentation for activity that happened (both contract documentation and receiving reports) from August 1st through October 6th.</i></p>
+<br />
+<p>Remember, if you have a ULO on your list that was in the July sample (see column 'Category' on all data tab), you will only need to provide documentation that happened from August 1st through October 6th.  Also, you will not need to provide a signed validation for each item listed because of the short turnaround time of this request.</p>
+<br />
+<p><b>If your delivered order balance is due to an FY08 construction estimated accrual, we will need an email statement from the project manager saying the amount that was accrued represents, to the best of their knowledge, the percentage of work completed through 2008.</b></p>
+</font>
+<br />
+<p><font face="Verdana" color='red' size='3'><b>
+<u>Submit all supporting documentation to Gail Hairston and cc Marvin Muhammad by COB, October 10 2008.  Please remember to cite the ID number of the PDF File when you submit the documentation.</u> (Please do not wait until you have completed all of your Unliquidated Obligations to send to me.)
+</b></font></p>
+<font face="Verdana" color='#333333' size='3'>
+<p>To review Open Items assigned to you for validation please login to <a href="http://dotnetweb.pbsncr.gsa.gov/OpenItems/ReviewOpenItems.aspx" >ULO Application</a>.</p>
+<p>If there is no Open Items assigned to you in the file received on [p_LoadDate], please contact your OI Organization Administrator ([p_OrgAdminNames]).</p>
+<p>
+For more information, go to the <a href="http://dotnetweb.pbsncr.gsa.gov/OpenItems/docs/UserManual.doc">ULO (Open Items) User Manual</a>
+</p>
+<p>Thank you.</p>
+</font><html>
+
+section:[BODY_ORG_ADMIN]
+<html>
+<p><font face="Verdana" color='red' size='3'>**This is an auto-generated email. Please do not reply to this email**</font></p>
+<font face="Verdana" color='#333333' size='3'>
+<p>New Open Items file has been received on [p_LoadDate] from [p_LoadSource].</p>
+</font>
+<br />
+<p><font face="Verdana" color='red' size='3'>
+Attached below are the undelivered and delivered orders that are included in the September 2008 Top Dollar ULO review.
+</font></p>
+<font face="Verdana" color='#333333' size='3'>
+<p><i>PBS is once again committed to reviewing 100% of undelivered orders with balances greater than $15 million and delivered orders with balances greater than $750,000 as of September 2008, to ensure these are stated accurately on our books.  Unliquidated Obligations (ULOs) that meet this threshold, please provide all supporting documentation.  Please note, if you have an item that was in the July sample, you will only need to provide documentation for activity that happened (both contract documentation and receiving reports) from August 1st through October 6th.</i></p>
+<br />
+<p>Remember, if you have a ULO on your list that was in the July sample (see column 'Category' on all data tab), you will only need to provide documentation that happened from August 1st through October 6th.  Also, you will not need to provide a signed validation for each item listed because of the short turnaround time of this request.</p>
+<br />
+<p><b>If your delivered order balance is due to an FY08 construction estimated accrual, we will need an email statement from the project manager saying the amount that was accrued represents, to the best of their knowledge, the percentage of work completed through 2008.</b></p>
+</font>
+<br />
+<p><font face="Verdana" color='red' size='3'><b>
+<u>Submit all supporting documentation to Gail Hairston and cc Marvin Muhammad by COB, October 10 2008.  Please remember to cite the ID number of the PDF File when you submit the documentation.</u> (Please do not wait until you have completed all of your Unliquidated Obligations to send to me.)
+</b></font></p>
+<font face="Verdana" color='#333333' size='3'>
+<p>Please review and assign Open Items to Reviewers verification.</p>
+<p>To view details please login to <a href="http://dotnetweb.pbsncr.gsa.gov/OpenItems/ReviewOpenItems.aspx" >ULO Application</a>.</p>
+<p>
+For more information, go to the <a href="http://dotnetweb.pbsncr.gsa.gov/OpenItems/docs/UserManual.doc">ULO (Open Items) User Manual</a>
+</p>
+<p>Thank you.</p>
+</font><html>
+
+section:[BODY_BD_ADMIN]
+<html>
+<p><font face="Verdana" color='red' size='3'>**This is an auto-generated email. Please do not reply to this email**</font></p>
+<font face="Verdana" color='#333333' size='3'>
+<p>New Open Items file has been received on [p_LoadDate] from [p_LoadSource].</p>
+</font>
+<br />
+<p><font face="Verdana" color='red' size='3'>
+Attached below are the undelivered and delivered orders that are included in the September 2008 Top Dollar ULO review.
+</font></p>
+<font face="Verdana" color='#333333' size='3'>
+<p><i>PBS is once again committed to reviewing 100% of undelivered orders with balances greater than $15 million and delivered orders with balances greater than $750,000 as of September 2008, to ensure these are stated accurately on our books.  Unliquidated Obligations (ULOs) that meet this threshold, please provide all supporting documentation.  Please note, if you have an item that was in the July sample, you will only need to provide documentation for activity that happened (both contract documentation and receiving reports) from August 1st through October 6th.</i></p>
+<br />
+<p>Remember, if you have a ULO on your list that was in the July sample (see column 'Category' on all data tab), you will only need to provide documentation that happened from August 1st through October 6th.  Also, you will not need to provide a signed validation for each item listed because of the short turnaround time of this request.</p>
+<br />
+<p><b>If your delivered order balance is due to an FY08 construction estimated accrual, we will need an email statement from the project manager saying the amount that was accrued represents, to the best of their knowledge, the percentage of work completed through 2008.</b></p>
+</font>
+<br />
+<p><font face="Verdana" color='red' size='3'><b>
+<u>Submit all supporting documentation to Gail Hairston and cc Marvin Muhammad by COB, October 10 2008.  Please remember to cite the ID number of the PDF File when you submit the documentation.</u> (Please do not wait until you have completed all of your Unliquidated Obligations to send to me.)
+</b></font></p>
+<font face="Verdana" color='#333333' size='3'>
+<p>Please review and assign Open Items to Reviewers verification in your organization.</p>
+<p>To view details please login to <a href="http://dotnetweb.pbsncr.gsa.gov/OpenItems/ReviewOpenItems.aspx" >ULO Application</a>.</p>
+<p>
+For more information, go to the <a href="http://dotnetweb.pbsncr.gsa.gov/OpenItems/docs/UserManual.doc">ULO (Open Items) User Manual</a>
+</p>
+<p>Thank you.</p>
+</font><html>

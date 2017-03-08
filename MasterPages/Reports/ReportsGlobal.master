@@ -1,0 +1,17 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="ReportsGlobal.master.cs" Inherits="MasterPages_Reports_ReportsGlobal" %>
+
+<!DOCTYPE html>
+
+<html xmlns:x="urn:schemas-microsoft-com:office:excel">
+<head runat="server">
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body MS_POSITIONING="GridLayout">
+  <asp:Label ID="lblMsg" runat="server" ForeColor="Red" Font-Size="Medium"/>
+		<form id="Form2" method="post" runat="server">
+			<table id="Sheet" border="1" class="main_table" runat="server" >
+			</table>
+		</form>
+</body>
+</html>

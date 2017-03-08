@@ -1,0 +1,629 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="c:\program files (x86)\microsoft visual studio 14.0\team tools\static analysis tools\fxcop\Xml\CodeAnalysisReport.xsl"?>
+<FxCopReport Version="14.0">
+ <Targets>
+  <Target Name="C:\Users\cwatson038\AppData\Local\Temp\tmpE9ED.tmp.cadir\bin\App_Code.dll">
+   <Modules>
+    <Module Name="app_code.dll">
+     <Namespaces>
+      <Namespace Name="">
+       <Types>
+        <Type Name="zoneFinder" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="#ZoneId" Kind="Property" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Accessors>
+            <Accessor Name="#get_ZoneId()" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+             <Messages>
+              <Message TypeName="DoNotRaiseExceptionsInUnexpectedLocations" Category="Microsoft.Design" CheckId="CA1065" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="Breaking">
+               <Issue Name="PropertyGetter" Certainty="90" Level="Warning" Path="c:\Development\OpenItems\App_Code\Data" File="IZoneFinder.cs" Line="15">'zoneFinder.ZoneId.get()' creates an exception of type 'NotImplementedException', an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</Issue>
+              </Message>
+             </Messages>
+            </Accessor>
+           </Accessors>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="Data">
+       <Types>
+        <Type Name="DataLayer" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="#Data.IAdminDataLayer.ArchiveLoad(System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="64">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.ArchiveLoad(string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetAllAttachmentTypes()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="46">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetAllAttachmentTypes()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetAllULOUsers()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="127">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetAllULOUsers()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetDefaultJustificationTypes()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="51">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetDefaultJustificationTypes()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetDocNumByItemID(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="148">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetDocNumByItemID(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetJustificationTypeByID(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="56">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetJustificationTypeByID(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetLoadDetails(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="38">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetLoadDetails(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetLoadListNotArchived()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="28">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetLoadListNotArchived()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetLoadListWithActiveDueDate()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="33">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetLoadListWithActiveDueDate()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetOrgNameByOrgCode(System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="140">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetOrgNameByOrgCode(string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetPendingDeobligateByOrg(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="98">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetPendingDeobligateByOrg(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetPendingNAOItemsByOrg(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="111">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetPendingNAOItemsByOrg(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetPendingOItems(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="119">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetPendingOItems(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetPendingOItemsByOrg(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="90">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetPendingOItemsByOrg(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetPendingOItemsByUser(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="82">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetPendingOItemsByUser(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetUserEmailByUserID(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="132">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetUserEmailByUserID(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.GetUsersByRole(GSA.OpenItems.UserRoles)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="106">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.GetUsersByRole(UserRoles)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAdminDataLayer.UnarchiveLoad(System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="73">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAdminDataLayer.UnarchiveLoad(string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAssignDataLayer.CancelRerouteRequest(System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="210">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAssignDataLayer.CancelRerouteRequest(int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAssignDataLayer.GetItemAssignUsers(System.Int32,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="170">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAssignDataLayer.GetItemAssignUsers(int, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAssignDataLayer.GetReassignOrgList()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="180">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAssignDataLayer.GetReassignOrgList()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAssignDataLayer.GetReassignUsersOrgList()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="185">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAssignDataLayer.GetReassignUsersOrgList()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAssignDataLayer.GetRerouteReqList(System.Int32,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="190">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAssignDataLayer.GetRerouteReqList(int, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAssignDataLayer.GetRerouteRequestDetails(System.Int32,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="200">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAssignDataLayer.GetRerouteRequestDetails(int, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IAssignDataLayer.VerifyItemReroute(System.Int32,GSA.OpenItems.OpenItemStatus,System.Data.ParameterDirection)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="156">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IAssignDataLayer.VerifyItemReroute(int, OpenItemStatus, ParameterDirection)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.DeleteAttachment(System.String,System.Int32,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="258">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.DeleteAttachment(string, int, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.GetAttachRecommend(System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="323">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.GetAttachRecommend(string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.GetDocAttachments(System.Int32,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="229">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.GetDocAttachments(int, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.GetLoadAttachments(System.Int32,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="331">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.GetLoadAttachments(int, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.GetOrgCodesByDocNumber(System.Int32,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="218">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.GetOrgCodesByDocNumber(int, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.SaveAttachment(System.String,System.Int32,System.Int32,System.Int32[],System.String,System.String,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="239">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.SaveAttachment(string, int, int, int[], string, string, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.SelectAttForRevision(System.String,System.Int32,System.Int32,System.Boolean)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="285">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.SelectAttForRevision(string, int, int, bool)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.SelectSendAttachment(System.String,System.Int32,System.Int32,System.Boolean)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="271">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.SelectSendAttachment(string, int, int, bool)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.UpdateDocRevision(System.Int32,System.String,System.Int32,System.Int32,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="341">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.UpdateDocRevision(int, string, int, int, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.UpdateSentAttachments(System.String,System.String,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="311">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.UpdateSentAttachments(string, string, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IDocumentDataLayer.UpdateSentAttForRevision(System.String,System.String,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="299">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IDocumentDataLayer.UpdateSentAttForRevision(string, string, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IEmailDataLayer.ActivateAssignEmailRequest(System.Int32,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="382">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IEmailDataLayer.ActivateAssignEmailRequest(int, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IEmailDataLayer.GetUserByUsername(System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="357">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IEmailDataLayer.GetUserByUsername(string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IEmailDataLayer.InsertEmailRequest(System.Int32,System.Int32,System.Boolean)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="362">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IEmailDataLayer.InsertEmailRequest(int, int, bool)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundAllowanceDataLayer.GetFSReportConfig()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="400">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundAllowanceDataLayer.GetFSReportConfig()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundAllowanceDataLayer.GetFYAllowance(System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="392">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundAllowanceDataLayer.GetFYAllowance(string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundAllowanceDataLayer.GetFYAllowanceByBL(System.String,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="433">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundAllowanceDataLayer.GetFYAllowanceByBL(string, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundAllowanceDataLayer.GetFYAllowanceTotals(System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="405">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundAllowanceDataLayer.GetFYAllowanceTotals(string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundAllowanceDataLayer.GetFYAllowanceTotalsBL(System.String,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="423">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundAllowanceDataLayer.GetFYAllowanceTotalsBL(string, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundAllowanceDataLayer.GetFYAllowanceTotalsOrg(System.String,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="413">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundAllowanceDataLayer.GetFYAllowanceTotalsOrg(string, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.ClearRwaProjection(System.String,System.String,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="554">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.ClearRwaProjection(string, string, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.DeleteEntryData(System.Int32,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="571">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.DeleteEntryData(int, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetAdjDocList(System.String,System.String,System.String,System.String,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="626">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetAdjDocList(string, string, string, string, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetAwardDocList(System.String,System.String,System.String,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="643">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetAwardDocList(string, string, string, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetBALList()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="444">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetBALList()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetBusinessLineList()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="479">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetBusinessLineList()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetCostElementList()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="474">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetCostElementList()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetEmptyRWAProjection()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="549">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetEmptyRWAProjection()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetFundsAllFunctionList()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="464">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetFundsAllFunctionList()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetFundsOrganizations()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="449">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetFundsOrganizations()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetFundsSumFunctionList()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="459">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetFundsSumFunctionList()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetObjectClassCodeList()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="469">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetObjectClassCodeList()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetReportFuncGroupList()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="454">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetReportFuncGroupList()' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetSearchResults(System.Int32,System.String,System.String,System.Int32&amp;,System.Decimal&amp;,System.Object,System.Object,System.Object,System.Object,System.Object,System.Object,System.Object,System.Int32,System.Boolean)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="485">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetSearchResults(int, string, string, out int, out decimal, object, object, object, object, object, object, object, int, bool)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetTrainingDocList(System.String,System.String,System.String,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="659">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetTrainingDocList(string, string, string, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.GetTravelDocList(System.String,System.String,System.String,System.String)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="675">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.GetTravelDocList(string, string, string, string)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.InsertEntryData(System.Int32,System.String,System.String,System.String,System.Int32,System.String,System.Decimal,System.String,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="600">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.InsertEntryData(int, string, string, string, int, string, decimal, string, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.InsertRWAProjection(System.String,System.String,System.String,System.String,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="566">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.InsertRWAProjection(string, string, string, string, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#Data.IFundStatusDataLayer.UpdateEntryData(System.Int32,System.String,System.Decimal,System.String,System.Int32)" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="581">Make 'DataLayer' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of 'IFundStatusDataLayer.UpdateEntryData(int, string, decimal, string, int)' and is visible to derived classes.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#System.IDisposable.Dispose()" Kind="Method" Static="False" Accessibility="Private" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="Breaking">
+             <Issue Name="RenameDispose" Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\Data" File="DataLayer.cs" Line="736">Rename 'DataLayer.IDisposable.Dispose()' to 'Dispose' and ensure that it is declared as public and sealed.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+      <Namespace Name="GSA.OpenItems.Web">
+       <Types>
+        <Type Name="AppError" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Messages>
+          <Message TypeName="MarkISerializableTypesWithSerializable" Category="Microsoft.Usage" CheckId="CA2237" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+           <Issue Certainty="95" Level="Error">Add [Serializable] to 'AppError' as this type implements ISerializable.</Issue>
+          </Message>
+         </Messages>
+        </Type>
+        <Type Name="FundStatusBO" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="#GetSearchResults(System.Int32,System.String,System.String,System.Int32&amp;,System.Decimal&amp;,System.Object,System.Object,System.Object,System.Object,System.Object,System.Object,System.Object,System.Int32,System.Boolean)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\BusinessObjects" File="FundStatusBO.cs" Line="95">'FundStatusBO.GetSearchResults(int, string, string, out int, out decimal, object, object, object, object, object, object, object, int, bool)' rethrows a caught exception and specifies it explicitly as an argument. Use 'throw' without an argument instead, in order to preserve the stack location where the exception was initially raised.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#GetUserEntryDataList(System.Int32,System.String,System.String,System.String,System.String,System.Int32,System.Int32)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="NonBreaking">
+             <Issue Certainty="95" Level="Error" Path="c:\Development\OpenItems\App_Code\BusinessObjects" File="FundStatusBO.cs" Line="304">'FundStatusBO.GetUserEntryDataList(int, string, string, string, string, int, int)' rethrows a caught exception and specifies it explicitly as an argument. Use 'throw' without an argument instead, in order to preserve the stack location where the exception was initially raised.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+          <Member Name="#UpdateRWAProjection(System.String,System.String,System.String,System.String,System.Int32)" Kind="Method" Static="False" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="Review SQL queries for security vulnerabilities" Category="Microsoft.Security" CheckId="CA2100" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="DependsOnFix">
+             <Issue Name="WithNonLiterals" Certainty="75" Level="Warning" Path="c:\Development\OpenItems\App_Code\BusinessObjects" File="FundStatusBO.cs" Line="228">The query string passed to 'SqlCommand.SqlCommand(string, SqlConnection)' in 'FundStatusBO.UpdateRWAProjection(string, string, string, string, int)' could contain the following variables 'param.ParameterName', 'param.SourceColumn'. If any of these variables could come from user input, consider using a stored procedure or a parameterized SQL query instead of building the query with string concatenations.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+        <Type Name="UploadService" Kind="Class" Accessibility="Public" ExternallyVisible="True">
+         <Members>
+          <Member Name="#ImportFromExcel(System.String,System.String,System.String)" Kind="Method" Static="True" Accessibility="Public" ExternallyVisible="True">
+           <Messages>
+            <Message TypeName="Review SQL queries for security vulnerabilities" Category="Microsoft.Security" CheckId="CA2100" Status="Active" Created="2017-02-16 20:49:34Z" FixCategory="DependsOnFix">
+             <Issue Name="WithNonLiterals" Certainty="75" Level="Warning" Path="c:\Development\OpenItems\App_Code\BusinessObjects" File="UploadService.cs" Line="121">The query string passed to 'OleDbCommand.OleDbCommand(string, OleDbConnection)' in 'UploadService.ImportFromExcel(string, string, string)' could contain the following variables 'WorkSheetName'. If any of these variables could come from user input, consider using a stored procedure or a parameterized SQL query instead of building the query with string concatenations.</Issue>
+            </Message>
+           </Messages>
+          </Member>
+         </Members>
+        </Type>
+       </Types>
+      </Namespace>
+     </Namespaces>
+    </Module>
+   </Modules>
+  </Target>
+ </Targets>
+ <Rules>
+  <Rule TypeName="DoNotRaiseExceptionsInUnexpectedLocations" Category="Microsoft.Design" CheckId="CA1065">
+   <Name>Do not raise exceptions in unexpected locations</Name>
+   <Description>Do not explicitly raise exceptions from unexpected locations. There are some methods, such as Equals and GetHashCode, which users do not expect to raise exceptions. Therefore calls to these methods are not commonly wrapped in try catch blocks.</Description>
+   <Resolution Name="PropertyGetter">{0} creates an exception of type {1}, an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</Resolution>
+   <Owner />
+   <Url>http://msdn.microsoft.com/library/bb386039.aspx</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="90">Error, Warning</MessageLevel>
+   <File Name="designrules.dll" Version="14.0.0.0" />
+  </Rule>
+  <Rule TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063">
+   <Name>Implement IDisposable correctly</Name>
+   <Description>All IDisposable types should implement the Dispose pattern correctly.</Description>
+   <Resolution Name="RenameDispose">Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.</Resolution>
+   <Owner />
+   <Url>http://msdn.microsoft.com/library/ms244737.aspx</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">Error</MessageLevel>
+   <File Name="designrules.dll" Version="14.0.0.0" />
+  </Rule>
+  <Rule TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033">
+   <Name>Interface methods should be callable by child types</Name>
+   <Description>Explicit method implementations are defined with private accessibility. Classes that derive from classes with explicit method implementations and choose to re-declare them on the class will not be able to call into the base class implementation unless the base class has provided an alternate method with appropriate accessibility. When overriding a base class method that has been hidden by explicit interface implementation, in order to call into the base class implementation, a derived class must cast the base pointer to the relevant interface. When calling through this reference, however, the derived class implementation will actually be invoked, resulting in recursion and an eventual stack overflow.</Description>
+   <Resolution Name="Default">Make {0} sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of {1} and is visible to derived classes.</Resolution>
+   <Owner />
+   <Url>http://msdn.microsoft.com/library/ms182153.aspx</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">Error</MessageLevel>
+   <File Name="designrules.dll" Version="14.0.0.0" />
+  </Rule>
+  <Rule TypeName="MarkISerializableTypesWithSerializable" Category="Microsoft.Usage" CheckId="CA2237">
+   <Name>Mark ISerializable types with SerializableAttribute</Name>
+   <Description>The System.Runtime.Serialization.ISerializable interface allows the type to customize its serialization, while the Serializable attribute enables the runtime to recognize the type as being serializable.</Description>
+   <Resolution Name="Default">Add [Serializable] to {0} as this type implements ISerializable.</Resolution>
+   <Owner />
+   <Url>http://msdn.microsoft.com/library/ms182350.aspx</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="75">Warning</MessageLevel>
+   <File Name="usagerules.dll" Version="14.0.0.0" />
+  </Rule>
+  <Rule TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200">
+   <Name>Rethrow to preserve stack details</Name>
+   <Description>Use the IL rethrow instruction to preserve original stack details when re-raising a caught exception.</Description>
+   <Resolution Name="Default">{0} rethrows a caught exception and specifies it explicitly as an argument. Use 'throw' without an argument instead, in order to preserve the stack location where the exception was initially raised.</Resolution>
+   <Owner />
+   <Url>http://msdn.microsoft.com/library/ms182363.aspx</Url>
+   <Email>[none]</Email>
+   <MessageLevel Certainty="95">Error</MessageLevel>
+   <File Name="usagerules.dll" Version="14.0.0.0" />
+  </Rule>
+  <Rule TypeName="Review SQL queries for security vulnerabilities" Category="Microsoft.Security" CheckId="CA2100">
+   <Name>Review SQL queries for security vulnerabilities</Name>
+   <Description>A SQL command string built from user input is vulnerable to SQL injection attacks. Microsoft SQL Server and other database servers support stored procedures and parameterized SQL queries, which reduce the risk of injection attacks.</Description>
+   <Resolution Name="WithNonLiterals">The query string passed to {0} in {1} could contain the following variables {2}. If any of these variables could come from user input, consider using a stored procedure or a parameterized SQL query instead of building the query with string concatenations.</Resolution>
+   <Owner>RuleOwner</Owner>
+   <Url>http://msdn.microsoft.com/library/ms182310.aspx</Url>
+   <Email />
+   <MessageLevel Certainty="75">Warning</MessageLevel>
+   <File Name="dataflowrules.dll" Version="14.0.0.0" />
+  </Rule>
+ </Rules>
+ <Localized>
+  <String Key="Category">Category</String>
+  <String Key="Certainty">Certainty</String>
+  <String Key="CollapseAll">Collapse All</String>
+  <String Key="CheckId">Check Id</String>
+  <String Key="Error">Error</String>
+  <String Key="Errors">error(s)</String>
+  <String Key="ExpandAll">Expand All</String>
+  <String Key="Help">Help</String>
+  <String Key="Line">Line</String>
+  <String Key="Messages">message(s)</String>
+  <String Key="LocationNotStoredInPdb">[Location not stored in Pdb]</String>
+  <String Key="Project">Project</String>
+  <String Key="Resolution">Resolution</String>
+  <String Key="Rule">Rule</String>
+  <String Key="RuleFile">Rule File</String>
+  <String Key="RuleDescription">Rule Description</String>
+  <String Key="Source">Source</String>
+  <String Key="Status">Status</String>
+  <String Key="Target">Target</String>
+  <String Key="Warning">Warning</String>
+  <String Key="Warnings">warning(s)</String>
+  <String Key="ReportTitle">Code Analysis Report</String>
+ </Localized>
+</FxCopReport>
