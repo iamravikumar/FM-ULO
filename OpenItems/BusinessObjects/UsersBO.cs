@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
+using OpenItems.Data;
+
 namespace GSA.OpenItems.Web
 {
     using System;
@@ -106,9 +110,9 @@ namespace GSA.OpenItems.Web
             return Dal.GetUsersByRole(role);
         }
 
-        public DataSet GetAllULOUsers() // active and inactive
+        public List<spGetAllActiveInactiveUsers_Result> GetAllULOUsers() // active and inactive
         {
-            return Dal.GetAllActiveInactiveUsers();
+            return Dal.GetAllActiveInactiveUsers().ToList();
         }
 
         public DataSet GetAllNCRUsers()
@@ -151,10 +155,10 @@ namespace GSA.OpenItems.Web
             }
         }
 
-        public void SaveUser(int iUserID, string sEmail, string sPassword, string sRoleCode, int iActive,
-            string sFirstName, string sLastName, string sMiddleInitial, string sOrganization, string sPhone, string sDefaultApplication, out int iID)
+        public int SaveUser(int iUserID, string sEmail, string sPassword, string sRoleCode, int iActive,
+            string sFirstName, string sLastName, string sMiddleInitial, string sOrganization, string sPhone, string sDefaultApplication)
         {
-            Dal.SaveUser(iUserID, sEmail, sPassword, sRoleCode, iActive, sFirstName, sLastName, sMiddleInitial, sOrganization, sPhone, sDefaultApplication, out iID);
+            return Dal.SaveUser(iUserID, sEmail, sPassword, sRoleCode, iActive, sFirstName, sLastName, sMiddleInitial, sOrganization, sPhone, sDefaultApplication);
         }
 
     }

@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace GSA.OpenItems.Web
 {
     using System;
@@ -406,16 +408,17 @@ namespace GSA.OpenItems.Web
             ddlValid.SelectedValue = line_item.Valid.ToString();
 
             //display Justification Value:
-            var ds = Lookups.GetJustificationValues();
-            var dr = ds.Tables[0].Select("Justification = " + line_item.JustificationCode.ToString());
-            if (dr.Length > 0)
+            var justifications = Lookups.GetJustificationValues();
+            var justification = justifications.Where(j => j.Justification == line_item.JustificationCode);
+            if (justification.Any())
             {
-                if ((bool)dr[0]["InDefaultList"])
+                var firstJustification = justification.First();
+                if (firstJustification.InDefaultList)
                 {
                     rblJustification.SelectedValue = line_item.JustificationCode.ToString();
-                    if ((bool)dr[0]["DisplayAddOnField"])
+                    if (firstJustification.DisplayAddOnField)
                     {
-                        lblJustificationExplanation.Text = (string)Utility.GetNotNullValue(dr[0]["AddOnDescription"], "String");
+                        lblJustificationExplanation.Text = (string)Utility.GetNotNullValue(firstJustification.AddOnDescription, "String");
                         txtAddJustification.Text = line_item.JustificationAddOn;
                     }
                     else
@@ -432,7 +435,7 @@ namespace GSA.OpenItems.Web
                     rblJustification.SelectedValue = "6";
                     lblJustificationExplanation.AddVisibilityHidden();
                     txtAddJustification.AddVisibilityHidden();
-                    txtJustOther.Text = (string)Utility.GetNotNullValue(dr[0]["JustificationDescription"], "String");
+                    txtJustOther.Text = (string)Utility.GetNotNullValue(firstJustification.JustificationDescription, "String");
                 }
             }
             else

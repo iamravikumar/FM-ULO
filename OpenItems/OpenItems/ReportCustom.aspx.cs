@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
+using OpenItems.Data;
+
 namespace GSA.OpenItems.Web
 {
     using System;
@@ -45,41 +49,41 @@ namespace GSA.OpenItems.Web
                         {
                             case (int)OIReports.rpDaily:
 
-                                var dsTotal = Report.GetDailyReport(load_id);
-                                if (dsTotal == null)
+                                var dailyReports = Report.GetDailyReport(load_id);
+                                if (!dailyReports.Any())
                                     throw new Exception("Missing Report.");
                                 else
-                                    BuildDailyReport(dsTotal.Tables[0], null, load_id);
+                                    BuildDailyReport(dailyReports, null, load_id);
                                 break;
 
                             case (int)OIReports.rpDARA:
 
-                                var dsTotalByOrg = Report.GetTotalByOrganization(load_id);
-                                if (dsTotalByOrg == null)
+                                var orgTotals = Report.GetTotalByOrganization(load_id);
+                                if (!orgTotals.Any())
                                     throw new Exception("Missing Report.");
                                 else
-                                    BuildDARAReport(dsTotalByOrg.Tables[0], false);
+                                    BuildDARAReport(orgTotals, false);
 
                                 break;
 
                             case (int)OIReports.rpDaraByDocNum:
 
-                                var dsTotalDaraNew = Report.GetTotalDaraNew(load_id);
-                                if (dsTotalDaraNew == null)
+                                var daraNew = Report.GetTotalDaraNew(load_id);
+                                if (!daraNew.Any())
                                     throw new Exception("Missing Report.");
                                 else
-                                    BuildDARAReport(dsTotalDaraNew.Tables[0], true);
+                                    BuildDARAReport(daraNew, true);
 
                                 break;
 
                             case (int)OIReports.rpUniversityTotal:
 
-                                var dsTotalSum = Report.GetTotalSumReport(load_id);
-                                var dsTotalByValid = Report.GetTotalSumReportByValid(load_id);
-                                if (dsTotalSum == null || dsTotalByValid == null)
+                                var totalSum = Report.GetTotalSumReport(load_id);
+                                var totalByValid = Report.GetTotalSumReportByValid(load_id);
+                                if (!totalSum.Any() || !totalByValid.Any())
                                     throw new Exception("Missing Report.");
                                 else
-                                    BuildTotalUniverseReport(dsTotalSum.Tables[0], dsTotalByValid.Tables[0], null, load_id);
+                                    BuildTotalUniverseReport(totalSum, totalByValid, null, load_id);
 
                                 break;
 
@@ -300,7 +304,7 @@ namespace GSA.OpenItems.Web
         }
 
 
-        private void BuildDARAReport(DataTable dtTotal, bool DARAByDoc)
+        private void BuildDARAReport(IEnumerable<spReportTotalByOrg_Result> reportTotal, bool DARAByDoc)
         {
             string s_value;
             HtmlTableRow objRow;
@@ -401,7 +405,6 @@ namespace GSA.OpenItems.Web
                 {
                     string records_count;
                     string money_value;
-                    DataRow[] dr;
                     var org_symbol = child_node.Attributes.GetNamedItem("symbol").Value;
 
                     objRow = new HtmlTableRow();
@@ -409,12 +412,12 @@ namespace GSA.OpenItems.Web
                     objRow.Cells.AddCell(child_node.Attributes.GetNamedItem("division").Value, "textLeft");
 
                     //add invalid values:
-                    s_value = String.Format("Organization = '{0}' AND Valid = {1}", org_symbol, (int)OpenItemValidation.vlInvalid);
-                    dr = dtTotal.Select(s_value);
-                    if (dr.Length > 0)
+                    
+                    var report = reportTotal.Where(r => r.Organization == org_symbol && r.Valid == (int)OpenItemValidation.vlInvalid);
+                    if (report.Any())
                     {
-                        records_count = dr[0]["RecordsCount"].ToString();
-                        money_value = dr[0]["TotalSum"].ToString();
+                        records_count = report.First().RecordsCount.ToString();
+                        money_value = report.First().TotalSum.ToString();
                     }
                     else
                     {
@@ -426,11 +429,11 @@ namespace GSA.OpenItems.Web
 
                     //add valid values:
                     s_value = String.Format("Organization = '{0}' AND Valid = {1}", org_symbol, (int)OpenItemValidation.vlValid);
-                    dr = dtTotal.Select(s_value);
-                    if (dr.Length > 0)
+                    report = reportTotal.Where(r => r.Organization == org_symbol && r.Valid == (int)OpenItemValidation.vlValid);
+                    if (report.Any())
                     {
-                        records_count = dr[0]["RecordsCount"].ToString();
-                        money_value = dr[0]["TotalSum"].ToString();
+                        records_count = report.First().RecordsCount.ToString();
+                        money_value = report.First().TotalSum.ToString();
                     }
                     else
                     {
@@ -448,12 +451,250 @@ namespace GSA.OpenItems.Web
                     objRow.Cells.AddCell(s_value, "Money");
 
                     //add pending values:
-                    s_value = String.Format("Organization = '{0}' AND Valid = {1}", org_symbol, (int)OpenItemValidation.vlValidationNotAssigned);
-                    dr = dtTotal.Select(s_value);
-                    if (dr.Length > 0)
+                    report = reportTotal.Where(r => r.Organization == org_symbol && r.Valid == (int)OpenItemValidation.vlValidationNotAssigned);
+                    if (report.Any())
                     {
-                        records_count = dr[0]["RecordsCount"].ToString();
-                        money_value = dr[0]["TotalSum"].ToString();
+                        records_count = report.First().RecordsCount.ToString();
+                        money_value = report.First().TotalSum.ToString();
+                    }
+                    else
+                    {
+                        records_count = "0";
+                        money_value = "0";
+                    }
+                    objRow.Cells.AddCell(records_count, "WholeNumber");
+                    objRow.Cells.AddCell(money_value, "Money");
+
+                    //add total records:
+                    s_value = String.Format("=SUM(G{0},I{0})", excelRow);
+                    objRow.Cells.AddCell(s_value, "WholeNumber");
+                    //add total value:
+                    s_value = String.Format("=SUM(H{0},J{0})", excelRow);
+                    objRow.Cells.AddCell(s_value, "Money");
+
+                    Sheet.Rows.Add(objRow);
+                    excelRow++;
+                }
+
+                finish_count_row = excelRow - 1;
+
+                total_rows[i] = excelRow;
+                i++;
+
+                //add total row per responsible person:
+                objRow = new HtmlTableRow();
+                objRow.Cells.AddCell("", "");
+                objRow.Cells.AddCell("Total", "textBoldBlack");
+                if (finish_count_row >= start_count_row)
+                {
+                    objRow.Cells.AddCell(String.Format("=SUM(C{0}:C{1})", start_count_row, finish_count_row), "WholeNumberBold");
+                    objRow.Cells.AddCell(String.Format("=SUM(D{0}:D{1})", start_count_row, finish_count_row), "MoneyBold");
+                    objRow.Cells.AddCell(String.Format("=SUM(E{0}:E{1})", start_count_row, finish_count_row), "WholeNumberBold");
+                    objRow.Cells.AddCell(String.Format("=SUM(F{0}:F{1})", start_count_row, finish_count_row), "MoneyBold");
+                    objRow.Cells.AddCell(String.Format("=SUM(G{0}:G{1})", start_count_row, finish_count_row), "WholeNumberBold");
+                    objRow.Cells.AddCell(String.Format("=SUM(H{0}:H{1})", start_count_row, finish_count_row), "MoneyBold");
+                    objRow.Cells.AddCell(String.Format("=SUM(I{0}:I{1})", start_count_row, finish_count_row), "WholeNumberBold");
+                    objRow.Cells.AddCell(String.Format("=SUM(J{0}:J{1})", start_count_row, finish_count_row), "MoneyBold");
+                    objRow.Cells.AddCell(String.Format("=SUM(K{0}:K{1})", start_count_row, finish_count_row), "WholeNumberBold");
+                    objRow.Cells.AddCell(String.Format("=SUM(L{0}:L{1})", start_count_row, finish_count_row), "MoneyBold");
+                }
+                else
+                {
+                    objRow.Cells.AddCell("0", "WholeNumberBold");
+                    objRow.Cells.AddCell("0", "MoneyBold");
+                    objRow.Cells.AddCell("0", "WholeNumberBold");
+                    objRow.Cells.AddCell("0", "MoneyBold");
+                    objRow.Cells.AddCell("0", "WholeNumberBold");
+                    objRow.Cells.AddCell("0", "MoneyBold");
+                    objRow.Cells.AddCell("0", "WholeNumberBold");
+                    objRow.Cells.AddCell("0", "MoneyBold");
+                    objRow.Cells.AddCell("0", "WholeNumberBold");
+                    objRow.Cells.AddCell("0", "MoneyBold");
+                }
+                Sheet.Rows.Add(objRow);
+                excelRow++;
+                //add empty rows:
+                objRow = new HtmlTableRow();
+                CompleteExcelRow(ref objRow, max_columns);
+                Sheet.Rows.Add(objRow);
+                excelRow++;
+            }
+
+            //add empty rows:
+            objRow = new HtmlTableRow();
+            CompleteExcelRow(ref objRow, max_columns);
+            Sheet.Rows.Add(objRow);
+            excelRow++;
+
+            //add final total records value:
+            objRow = new HtmlTableRow();
+            objRow.Cells.AddCell("", "");
+            objRow.Cells.AddCell("Total Records", "titleBoldNavy");
+            objRow.Cells.AddCell(MakeSumSentence("C", total_rows), "WholeNumberBold");
+            objRow.Cells.AddCell(MakeSumSentence("D", total_rows), "MoneyBold");
+            objRow.Cells.AddCell(MakeSumSentence("E", total_rows), "WholeNumberBold");
+            objRow.Cells.AddCell(MakeSumSentence("F", total_rows), "MoneyBold");
+            objRow.Cells.AddCell(MakeSumSentence("G", total_rows), "WholeNumberBold");
+            objRow.Cells.AddCell(MakeSumSentence("H", total_rows), "MoneyBold");
+            objRow.Cells.AddCell(MakeSumSentence("I", total_rows), "WholeNumberBold");
+            objRow.Cells.AddCell(MakeSumSentence("J", total_rows), "MoneyBold");
+            objRow.Cells.AddCell(MakeSumSentence("K", total_rows), "WholeNumberBold");
+            objRow.Cells.AddCell(MakeSumSentence("L", total_rows), "MoneyBold");
+            Sheet.Rows.Add(objRow);
+        }
+
+        private void BuildDARAReport(IEnumerable<spDaraByDocNum_Result> reportTotal, bool DARAByDoc)
+        {
+            string s_value;
+            HtmlTableRow objRow;
+            var max_columns = 12;
+            var excelRow = 1;
+
+            //title row
+            objRow = new HtmlTableRow();
+            objRow.Cells.AddCell("", "");
+            if (DARAByDoc)
+            {
+                objRow.Cells.AddCell("DARA by DocNum", "label");
+            }
+            else
+            {
+                objRow.Cells.AddCell("DARA", "label");
+            }
+
+            CompleteExcelRow(ref objRow, max_columns);
+            Sheet.Rows.Add(objRow);
+            excelRow++;
+
+            //add empty rows:
+            objRow = new HtmlTableRow();
+            CompleteExcelRow(ref objRow, max_columns);
+            Sheet.Rows.Add(objRow);
+            excelRow++;
+
+            //add table titles row:
+            objRow = new HtmlTableRow();
+            objRow.Cells.AddCell("", "");
+            objRow.Cells.AddCell("", "");
+            objRow.Cells.AddCell("Invalid", "titleBoldNavy");
+            objRow.Cells.AddCell("", "");
+            objRow.Cells.AddCell("Valid", "titleBoldNavy");
+            objRow.Cells.AddCell("", "");
+            objRow.Cells.AddCell("Total Reviewed", "titleBoldNavy");
+            objRow.Cells.AddCell("", "");
+            objRow.Cells.AddCell("Pending", "titleBoldNavy");
+            objRow.Cells.AddCell("", "");
+            objRow.Cells.AddCell("Total", "titleBoldNavy");
+            CompleteExcelRow(ref objRow, max_columns);
+            Sheet.Rows.Add(objRow);
+            excelRow++;
+            objRow = new HtmlTableRow();
+            objRow.Cells.AddCell("", "");
+            objRow.Cells.AddCell("", "");
+            objRow.Cells.AddCell("Invalid # Records", "textBoldBlack");
+            objRow.Cells.AddCell("Invalid $ Value", "textBoldBlack");
+            objRow.Cells.AddCell("Valid # Records", "textBoldBlack");
+            objRow.Cells.AddCell("Valid $ Value", "textBoldBlack");
+            objRow.Cells.AddCell("Total Reviewed # Records", "titleBoldNavy");
+            objRow.Cells.AddCell("Total Reviewed $ Value", "titleBoldNavy");
+            objRow.Cells.AddCell("Pending # Records", "textBoldBlack");
+            objRow.Cells.AddCell("Pending $ Value", "textBoldBlack");
+            objRow.Cells.AddCell("Total # Records", "titleBoldNavy");
+            objRow.Cells.AddCell("Total $ Value", "titleBoldNavy");
+            Sheet.Rows.Add(objRow);
+            excelRow++;
+
+            //create table according data defined in the include/ReportDARA.xml:
+            var doc = new XmlDocument();
+            if (DARAByDoc)
+            {
+                doc.Load(Request.PhysicalApplicationPath + "OpenItems\\include\\ReportDARAbyDocNum.xml");
+            }
+            else
+            {
+                doc.Load(Request.PhysicalApplicationPath + "OpenItems\\include\\ReportDARA.xml");
+            }
+
+
+            var total_rows = new int[doc.DocumentElement.ChildNodes.Count];
+            var i = 0;
+
+            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
+            {
+                int start_count_row;
+                int finish_count_row;
+
+                //add empty rows:
+                objRow = new HtmlTableRow();
+                CompleteExcelRow(ref objRow, max_columns);
+                Sheet.Rows.Add(objRow);
+                excelRow++;
+
+                //add row for responsible person:
+                objRow = new HtmlTableRow();
+                objRow.Cells.AddCell("", "");
+                objRow.Cells.AddCell(node.Attributes.GetNamedItem("name").Value, "titleBoldNavy");
+                CompleteExcelRow(ref objRow, max_columns);
+                Sheet.Rows.Add(objRow);
+                excelRow++;
+
+                start_count_row = excelRow;
+
+                foreach (XmlNode child_node in node.ChildNodes)
+                {
+                    string records_count;
+                    string money_value;
+                    var org_symbol = child_node.Attributes.GetNamedItem("symbol").Value;
+
+                    objRow = new HtmlTableRow();
+                    objRow.Cells.AddCell(org_symbol, "textLeft");
+                    objRow.Cells.AddCell(child_node.Attributes.GetNamedItem("division").Value, "textLeft");
+
+                    //add invalid values:
+
+                    var report = reportTotal.Where(r => r.Organization == org_symbol && r.Valid == (int)OpenItemValidation.vlInvalid);
+                    if (report.Any())
+                    {
+                        records_count = report.First().RecordsCount.ToString();
+                        money_value = report.First().TotalSum.ToString();
+                    }
+                    else
+                    {
+                        records_count = "0";
+                        money_value = "0";
+                    }
+                    objRow.Cells.AddCell(records_count, "WholeNumber");
+                    objRow.Cells.AddCell(money_value, "Money");
+
+                    //add valid values:
+                    s_value = String.Format("Organization = '{0}' AND Valid = {1}", org_symbol, (int)OpenItemValidation.vlValid);
+                    report = reportTotal.Where(r => r.Organization == org_symbol && r.Valid == (int)OpenItemValidation.vlValid);
+                    if (report.Any())
+                    {
+                        records_count = report.First().RecordsCount.ToString();
+                        money_value = report.First().TotalSum.ToString();
+                    }
+                    else
+                    {
+                        records_count = "0";
+                        money_value = "0";
+                    }
+                    objRow.Cells.AddCell(records_count, "WholeNumber");
+                    objRow.Cells.AddCell(money_value, "Money");
+
+                    //add total reviewed records:
+                    s_value = String.Format("=SUM(C{0},E{0})", excelRow);
+                    objRow.Cells.AddCell(s_value, "WholeNumber");
+                    //add total reviewed value:
+                    s_value = String.Format("=SUM(D{0},F{0})", excelRow);
+                    objRow.Cells.AddCell(s_value, "Money");
+
+                    //add pending values:
+                    report = reportTotal.Where(r => r.Organization == org_symbol && r.Valid == (int)OpenItemValidation.vlValidationNotAssigned);
+                    if (report.Any())
+                    {
+                        records_count = report.First().RecordsCount.ToString();
+                        money_value = report.First().TotalSum.ToString();
                     }
                     else
                     {
@@ -550,7 +791,7 @@ namespace GSA.OpenItems.Web
             return value;
         }
 
-        private void BuildTotalUniverseReport(DataTable dtTotal, DataTable dtTotalByValid, DataTable dtDeobligated, int LoadID)
+        private void BuildTotalUniverseReport(List<spReportTotalSum_Result> reportTotal, List<spReportTotalByValid_Result> reportTotalByValid, DataTable dtDeobligated, int LoadID)
         {
             var display_deobligated = (dtDeobligated == null) ? false : true;
             var s_msg = "";
@@ -592,12 +833,12 @@ namespace GSA.OpenItems.Web
             //total records:
             objRow = new HtmlTableRow();
             objRow.Cells.AddCell("Total Records", "textBoldBlack");
-            objRow.Cells.AddCell(dtTotal.Rows[0]["TotalCount"].ToString(), "WholeNumberBold");
+            objRow.Cells.AddCell(reportTotal.First().TotalCount.ToString(), "WholeNumberBold");
             CompleteExcelRow(ref objRow, max_columns);
             Sheet.Rows.Add(objRow);
             objRow = new HtmlTableRow();
             objRow.Cells.AddCell("Total Dollar Amt $", "textBoldBlack");
-            objRow.Cells.AddCell(dtTotal.Rows[0]["TotalSum"].ToString(), "MoneyBold");
+            objRow.Cells.AddCell(reportTotal.First().TotalSum.ToString(), "MoneyBold");
             CompleteExcelRow(ref objRow, max_columns);
             Sheet.Rows.Add(objRow);
 
@@ -619,16 +860,16 @@ namespace GSA.OpenItems.Web
             Sheet.Rows.Add(objRow);
 
             //for Valid row:
-            var drt = dtTotalByValid.Select("Valid = " + ((int)OpenItemValidation.vlValid).ToString());
-            if (drt.Length == 0)
+            var reportValidRow = reportTotalByValid.Where(r => r.Valid == (int)OpenItemValidation.vlValid);
+            if (!reportValidRow.Any())
             {
                 records = "0";
                 total_value = "0";
             }
             else
             {
-                records = drt[0]["TotalCount"].ToString();
-                total_value = drt[0]["TotalSum"].ToString();
+                records = reportValidRow.First().TotalCount.ToString();
+                total_value = reportValidRow.First().TotalSum.ToString();
             }
             objRow = new HtmlTableRow();
             objRow.Cells.AddCell("Valid", "textLeft");
@@ -639,16 +880,16 @@ namespace GSA.OpenItems.Web
             Sheet.Rows.Add(objRow);
 
             //for Invalid row:
-            drt = dtTotalByValid.Select("Valid = " + ((int)OpenItemValidation.vlInvalid).ToString());
-            if (drt.Length == 0)
+            reportValidRow = reportTotalByValid.Where(r => r.Valid == (int)OpenItemValidation.vlInvalid);
+            if (!reportValidRow.Any())
             {
                 records = "0";
                 total_value = "0";
             }
             else
             {
-                records = drt[0]["TotalCount"].ToString();
-                total_value = drt[0]["TotalSum"].ToString();
+                records = reportValidRow.First().TotalCount.ToString();
+                total_value = reportValidRow.First().TotalSum.ToString();
             }
             objRow = new HtmlTableRow();
             objRow.Cells.AddCell("Invalid", "textLeft");
@@ -668,16 +909,16 @@ namespace GSA.OpenItems.Web
             Sheet.Rows.Add(objRow);
 
             //for needed review:
-            drt = dtTotalByValid.Select("Valid = " + ((int)OpenItemValidation.vlValidationNotAssigned).ToString());
-            if (drt.Length == 0)
+            reportValidRow = reportTotalByValid.Where(r => r.Valid == (int)OpenItemValidation.vlValidationNotAssigned);
+            if (!reportValidRow.Any())
             {
                 records = "0";
                 total_value = "0";
             }
             else
             {
-                records = drt[0]["TotalCount"].ToString();
-                total_value = drt[0]["TotalSum"].ToString();
+                records = reportValidRow.First().TotalCount.ToString();
+                total_value = reportValidRow.First().TotalSum.ToString();
             }
             objRow = new HtmlTableRow();
             objRow.Cells.AddCell("Needing Review", "textLeft");
@@ -849,7 +1090,7 @@ namespace GSA.OpenItems.Web
             //CompleteExcelRow(ref titleRow, 1);
             //Sheet.Rows.Add(titleRow);
         }
-        private void BuildDailyReport(DataTable dtTotal, DataTable dtDeobligated, int LoadID)
+        private void BuildDailyReport(List<spReportDaily_Result> reportDaily, DataTable dtDeobligated, int LoadID)
         {
             var display_deobligated = (dtDeobligated == null) ? false : true;
             var s_msg = "";
@@ -934,21 +1175,21 @@ namespace GSA.OpenItems.Web
 
             var table_row_start = excelRow;
 
-            for (var i = 0; i < dtTotal.Rows.Count;)
+            for (var i = 0; i < reportDaily.Count;)
             {
-                sOrg = dtTotal.Rows[i]["OrgCode"].ToString();
-                sOrgSymbol = (string)Utility.GetNotNullValue(dtTotal.Rows[i]["Organization"], "String");
-                sDivision = (string)Utility.GetNotNullValue(dtTotal.Rows[i]["Division"], "String");
+                sOrg = reportDaily[i].OrgCode;
+                sOrgSymbol = reportDaily[i].Organization;
+                sDivision = reportDaily[i].Division;
 
-                valid = (int)dtTotal.Rows[i]["Valid"];
+                valid = reportDaily[i].Valid;
                 if (valid == (int)OpenItemValidation.vlValidationNotAssigned) //0
                 {
                     //the row data exists, fill values and move to the next row
-                    count_pend = (int)dtTotal.Rows[i]["RecordsCount"];
-                    total_pend = (decimal)dtTotal.Rows[i]["TotalSum"];
+                    count_pend = reportDaily[i].RecordsCount.GetValueOrDefault();
+                    total_pend = reportDaily[i].TotalSum.GetValueOrDefault();
                     i++;
-                    if (i < dtTotal.Rows.Count && sOrg == dtTotal.Rows[i]["OrgCode"].ToString())
-                        valid = (int)dtTotal.Rows[i]["Valid"];
+                    if (i < reportDaily.Count && sOrg == reportDaily[i].OrgCode)
+                        valid = reportDaily[i].Valid;
                 }
                 else
                 {
@@ -960,11 +1201,11 @@ namespace GSA.OpenItems.Web
                 if (valid == (int)OpenItemValidation.vlInvalid) //1
                 {
                     //the row data exists, fill values and move to the next row
-                    count_invalid = (int)dtTotal.Rows[i]["RecordsCount"];
-                    total_invalid = (decimal)dtTotal.Rows[i]["TotalSum"];
+                    count_invalid = reportDaily[i].RecordsCount.GetValueOrDefault();
+                    total_invalid = reportDaily[i].TotalSum.GetValueOrDefault();
                     i++;
-                    if (i < dtTotal.Rows.Count && sOrg == dtTotal.Rows[i]["OrgCode"].ToString())
-                        valid = (int)dtTotal.Rows[i]["Valid"];
+                    if (i < reportDaily.Count && sOrg == reportDaily[i].OrgCode)
+                        valid = reportDaily[i].Valid;
                 }
                 else
                 {
@@ -976,8 +1217,8 @@ namespace GSA.OpenItems.Web
                 if (valid == (int)OpenItemValidation.vlValid)//2
                 {
                     //the row data exists, fill values and move to the next row
-                    count_valid = (int)dtTotal.Rows[i]["RecordsCount"];
-                    total_valid = (decimal)dtTotal.Rows[i]["TotalSum"];
+                    count_valid = reportDaily[i].RecordsCount.GetValueOrDefault();
+                    total_valid = reportDaily[i].TotalSum.GetValueOrDefault();
                     i++;
 
                 }

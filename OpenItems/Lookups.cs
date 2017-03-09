@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
+using OpenItems.Data;
+
 namespace GSA.OpenItems.Web
 {
     using System;
@@ -20,27 +24,27 @@ namespace GSA.OpenItems.Web
             Admin = admin;
         }
 
-        public DataView GetDataSourceTypes()
+        public List<spGetDataSourceTypes_Result> GetDataSourceTypes()
         {
             var _page = new PageBase();
             if (_page.DataSourceTypes == null)
             {
-                var ds = Dal.GetDataSourceTypes();
-                ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application configurations. Please contact your system administrator.");
-                _page.DataSourceTypes = ds.Tables[0].DefaultView;
+                var dataSourceTypes = Dal.GetDataSourceTypes().ToList();
+                ApplicationAssert.CheckCondition(dataSourceTypes.Any(), "There is the problem to load application configurations. Please contact your system administrator.");
+                _page.DataSourceTypes = dataSourceTypes;
             }
             return _page.DataSourceTypes;
 
         }
 
-        public DataTable GetOpenItemTypes()
+        public List<spGetOpenItemsTypes_Result> GetOpenItemTypes()
         {
             var _page = new PageBase();
             if (_page.OpenItemsTypes == null)
             {
-                var ds = Dal.GetOpenItemsTypes();
-                ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application configurations. Please contact your system administrator.");
-                _page.OpenItemsTypes = ds.Tables[0];
+                var openItemsTypes = Dal.GetOpenItemsTypes().ToList();
+                ApplicationAssert.CheckCondition(openItemsTypes.Any(), "There is the problem to load application configurations. Please contact your system administrator.");
+                _page.OpenItemsTypes = openItemsTypes;
             }
             return _page.OpenItemsTypes;
         }
@@ -50,7 +54,7 @@ namespace GSA.OpenItems.Web
             var _page = new PageBase();
             if (_page.BA53AccrualTypes == null)
             {
-                var ds = Dal.GetBA53AccrualTypes();
+                var ds = Dal.GetBA53AccrualTypes().ToList().ToDataSet();
                 ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application configurations. Please contact your system administrator.");
                 _page.BA53AccrualTypes = ds.Tables[0];
             }
@@ -64,7 +68,7 @@ namespace GSA.OpenItems.Web
         {
             var _page = new PageBase();
 
-            var ds = Dal.GetBA53AccrualTypeActions(iAccrualTypeCode);
+            var ds = Dal.GetBA53AccrualTypeActions(iAccrualTypeCode).ToList().ToDataSet();
             ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application configurations. Please contact your system administrator.");
             _page.BA53AccrualTypeActions = ds.Tables[0];
 
@@ -78,7 +82,7 @@ namespace GSA.OpenItems.Web
             var _page = new PageBase();
             if (_page.LoadList == null)
             {
-                var ds = Dal.GetLoadList();
+                var ds = Dal.GetLoadList().ToList().ToDataSet();
                 ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application configurations. Please contact your system administrator.");
                 _page.LoadList = ds;
             }
@@ -102,18 +106,18 @@ namespace GSA.OpenItems.Web
             var _page = new PageBase();
             if (_page.OrganizationsList == null)
             {
-                var ds = Dal.GetOrganizationsList();
+                var ds = Dal.GetOrganizationsList().ToList().ToDataSet();
                 ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application configurations. Please contact your system administrator.");
                 _page.OrganizationsList = ds;
             }
             return _page.OrganizationsList;
         }
 
-        public DataSet GetJustificationValues()
+        public List<spGetJustifications_Result> GetJustificationValues()
         {
-            var ds = Dal.GetJustifications();
-            ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application values. Please contact your system administrator.");
-            return ds;
+            var justifications = Dal.GetJustifications().ToList();
+            ApplicationAssert.CheckCondition(justifications.Any(), "There is the problem to load application values. Please contact your system administrator.");
+            return justifications;
         }
 
         public DataTable GetJustificationDefaultList()
@@ -121,7 +125,7 @@ namespace GSA.OpenItems.Web
             var _page = new PageBase();
             if (_page.DefaultJustificationValues == null)
             {
-                var ds = Dal.GetDefaultJustifications();
+                var ds = Dal.GetDefaultJustifications().ToList().ToDataSet();
                 ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application values. Please contact your system administrator.");
 
                 var dt = ds.Tables[0];
@@ -143,7 +147,7 @@ namespace GSA.OpenItems.Web
             var _page = new PageBase();
             if (_page.ActiveCodesList == null)
             {
-                var ds = Dal.GetActiveCodeList();
+                var ds = Dal.GetActiveCodeList().ToList().ToDataSet();
                 ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application values. Please contact your system administrator.");
 
                 var dt = ds.Tables[0];
@@ -165,7 +169,7 @@ namespace GSA.OpenItems.Web
             var _page = new PageBase();
             if (_page.ActiveAndExpiredCodesList == null)
             {
-                var ds = Dal.GetCodeList();
+                var ds = Dal.GetCodeList().ToList().ToDataSet();
                 ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application values. Please contact your system administrator.");
 
                 var dt = ds.Tables[0];
@@ -187,7 +191,7 @@ namespace GSA.OpenItems.Web
             var _page = new PageBase();
             if (_page.ValidationValues == null)
             {
-                var ds = Dal.GetValidationValues();
+                var ds = Dal.GetValidationValues().ToList().ToDataSet();
                 ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application values. Please contact your system administrator.");
 
                 _page.ValidationValues = ds.Tables[0].DefaultView;
@@ -200,7 +204,7 @@ namespace GSA.OpenItems.Web
             var _page = new PageBase();
             if (_page.ContactRolesList == null)
             {
-                var ds = Dal.GetContactsRoles();
+                var ds = Dal.GetContactsRoles().ToList().ToDataSet();
                 ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application values. Please contact your system administrator.");
                 var dt = ds.Tables[0];
                 var dr = dt.NewRow();
@@ -215,11 +219,9 @@ namespace GSA.OpenItems.Web
 
         public string GetOrganizationByOrgCode(string OrgCode)
         {
-            var ds = Dal.GetWholeOrgList();
-            ApplicationAssert.CheckCondition(ds != null && ds.Tables[0].Rows.Count > 0, "There is the problem to load application values. Please contact your system administrator.");
-            var dt = ds.Tables[0];
-            var dr_col = dt.Select("OrgCode = '" + OrgCode + "'");
-            return dr_col[0]["Organization"].ToString();
+            var wholeOrgs = Dal.GetWholeOrgList().ToList();
+            ApplicationAssert.CheckCondition(wholeOrgs.Any(), "There is the problem to load application values. Please contact your system administrator.");
+            return wholeOrgs.First(o => o.OrgCode == OrgCode).Organization;
         }
     }
 }

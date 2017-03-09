@@ -183,11 +183,11 @@ namespace GSA.OpenItems.Web
                     ddlUsers.DataBind();
                     break;
                 case "user_old":  // edit existing ULO User
-                    var ds2 = UsersBO.GetAllULOUsers(); //active and inactive
+                    var users = UsersBO.GetAllULOUsers(); //active and inactive
                     ddlUsers.Items.Clear();
-                    ddlUsers.DataSource = ds2;
-                    ddlUsers.DataTextField = ds2.Tables[0].Columns["FullName"].ToString();
-                    ddlUsers.DataValueField = ds2.Tables[0].Columns["Email"].ToString();
+                    ddlUsers.DataSource = users;
+                    ddlUsers.DataTextField = "FullName";
+                    ddlUsers.DataValueField = "Email";
                     ddlUsers.DataBind();
                     break;
                 case "user_new2": // add new non-NCR user manually
@@ -201,11 +201,11 @@ namespace GSA.OpenItems.Web
                     mgUserRole.MultiChoice = true;
                     break;
                 case "org":
-                    var ds3 = Org.GetAllOrganizations();
+                    var orgs = Org.GetAllOrganizations();
                     ddlOrg.Items.Clear();
-                    ddlOrg.DataSource = ds3;
-                    ddlOrg.DataTextField = ds3.Tables[0].Columns["OrgAndOrgCode"].ToString();
-                    ddlOrg.DataValueField = ds3.Tables[0].Columns["Organization"].ToString();
+                    ddlOrg.DataSource = orgs;
+                    ddlOrg.DataTextField = "OrgAndOrgCode";
+                    ddlOrg.DataValueField = "Organization";
                     ddlOrg.DataBind();
                     break;
                 default:
@@ -462,10 +462,10 @@ namespace GSA.OpenItems.Web
                 try
                 {
                 
-                    UsersBO.SaveUser(Convert.ToInt32(hUserID.Value), txtEmail.Text, sPassword, sUserRoles, Convert.ToInt32(ddlActive.SelectedItem.Value), txtFirstName.Text, txtLastName.Text, txtMI.Text, ddlOrg.SelectedItem.Value, txtPhone.Text, ddlDefAppl.SelectedItem.Value, out iID);
+                    var returnNum = UsersBO.SaveUser(Convert.ToInt32(hUserID.Value), txtEmail.Text, sPassword, sUserRoles, Convert.ToInt32(ddlActive.SelectedItem.Value), txtFirstName.Text, txtLastName.Text, txtMI.Text, ddlOrg.SelectedItem.Value, txtPhone.Text, ddlDefAppl.SelectedItem.Value);
                     //AdminBO.SendCustomEmail(txtEmail.Text, "Body", "Sbjt", out sSentTo, out iCnt);
 
-                    if (iID > 0)
+                    if (returnNum > 0)
                     {
                         lblError.Text = DisplayMessage("Record saved.", false);
                     }

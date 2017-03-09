@@ -774,25 +774,14 @@ namespace Data
             }
         }
 
-        void IItemDataLayer.UpdateFeedback(int iOItemID, string sDocNumber, int iLoadID, int iValid, string sResponse,
+        int IItemDataLayer.UpdateFeedback(int iOItemID, string sDocNumber, int iLoadID, int iValid, string sResponse,
             decimal dUDOShouldBe, decimal dDOShouldBe)
         {
-            var arrParams = new SqlParameter[7];
-            arrParams[0] = new SqlParameter("@OItemID", SqlDbType.Int);
-            arrParams[0].Value = iOItemID;
-            arrParams[1] = new SqlParameter("@DocNumber", SqlDbType.VarChar);
-            arrParams[1].Value = sDocNumber;
-            arrParams[2] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[2].Value = iLoadID;
-            arrParams[3] = new SqlParameter("@Valid", SqlDbType.Int);
-            arrParams[3].Value = iValid;
-            arrParams[4] = new SqlParameter("@Response", SqlDbType.VarChar);
-            arrParams[4].Value = sResponse;
-            arrParams[5] = new SqlParameter("@UDOShouldBe", SqlDbType.Money);
-            arrParams[5].Value = dUDOShouldBe;
-            arrParams[6] = new SqlParameter("@DOShouldBe", SqlDbType.Money);
-            arrParams[6].Value = dDOShouldBe;
-            Da.ExecuteCommand("spUpdateFeedback", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spUpdateFeedback(iOItemID, sDocNumber, iLoadID, iValid, sResponse, dUDOShouldBe,
+                    dDOShouldBe);
+            }
         }
 
         int IItemDataLayer.AddDocumentContact(string sDocNumber, int iPersonnelID, string sRoleDesc)
@@ -824,57 +813,39 @@ namespace Data
 
         int IItemDataLayer.CalculateItemStatus(int iOItemID, string sULOOrgCode, int iReviewerUserID)
         {
-            var arrParams = new SqlParameter[4];
-            arrParams[0] = new SqlParameter("@OItemID", SqlDbType.Int);
-            arrParams[0].Value = iOItemID;
-            arrParams[1] = new SqlParameter("@ULOOrgCode", SqlDbType.VarChar);
-            arrParams[1].Value = sULOOrgCode;
-            arrParams[2] = new SqlParameter("@ReviewerUserID", SqlDbType.Int);
-            arrParams[2].Value = iReviewerUserID;
-            arrParams[3] = new SqlParameter("@Status", SqlDbType.Int);
-            arrParams[3].Direction = ParameterDirection.Output;
-            Da.ExecuteCommand("spCalculateItemStatus", arrParams);
-            return (int)arrParams[3].Value;
+            using (UloContext)
+            {
+                ObjectParameter status = new ObjectParameter("Status", typeof(int));
+                UloContext.spCalculateItemStatus(iOItemID, sULOOrgCode, iReviewerUserID, status);
+                return Convert.ToInt32(status);
+            }
         }
 
-        void IItemDataLayer.UpdateItemStatus(int iOItemID, int iLoadID, string sULOOrgCode, int iReviewerUserID,
+        int IItemDataLayer.UpdateItemStatus(int iOItemID, int iLoadID, string sULOOrgCode, int iReviewerUserID,
             int iStatusCode)
         {
-            var arrParams = new SqlParameter[5];
-            arrParams[0] = new SqlParameter("@OItemID", SqlDbType.Int);
-            arrParams[0].Value = iOItemID;
-            arrParams[1] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[1].Value = iLoadID;
-            arrParams[2] = new SqlParameter("@ULOOrgCode", SqlDbType.VarChar);
-            arrParams[2].Value = sULOOrgCode;
-            arrParams[3] = new SqlParameter("@ReviewerUserID", SqlDbType.Int);
-            arrParams[3].Value = iReviewerUserID;
-            arrParams[4] = new SqlParameter("@Status", SqlDbType.Int);
-            arrParams[4].Value = iStatusCode;
-            Da.ExecuteCommand("spUpdateItemStatus", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spUpdateItemStatus(iOItemID, iLoadID, sULOOrgCode, iReviewerUserID, iStatusCode);
+            }
         }
 
-        void IItemDataLayer.UpdateItemProperties(int iOItemID, string sULOOrgCode, string sUDOShouldBe,
+        int IItemDataLayer.UpdateItemProperties(int iOItemID, string sULOOrgCode, string sUDOShouldBe,
             string sDOShouldBe,
             DateTime dtExpCompDate, string sComments)
         {
-            var arrParams = new SqlParameter[6];
-            arrParams[0] = new SqlParameter("@OItemID", SqlDbType.Int);
-            arrParams[0].Value = iOItemID;
-            arrParams[1] = new SqlParameter("@ULOOrgCode", SqlDbType.VarChar);
-            arrParams[1].Value = sULOOrgCode;
-            arrParams[2] = new SqlParameter("@UDOShouldBe", SqlDbType.Money);
-            if (sUDOShouldBe.Trim().Length > 0 && sUDOShouldBe.Trim() != "$")
-                arrParams[2].Value = Utility.GetDecimalFromDisplayedMoney(sUDOShouldBe);
-            arrParams[3] = new SqlParameter("@DOShouldBe", SqlDbType.Money);
-            if (sDOShouldBe.Trim().Length > 0 && sDOShouldBe.Trim() != "$")
-                arrParams[3].Value = Utility.GetDecimalFromDisplayedMoney(sDOShouldBe);
-            arrParams[4] = new SqlParameter("@ExpCompDate", SqlDbType.DateTime);
-            if (dtExpCompDate != DateTime.MinValue)
-                arrParams[4].Value = dtExpCompDate;
-            arrParams[5] = new SqlParameter("@Comments", SqlDbType.VarChar);
-            arrParams[5].Value = sComments;
-            Da.ExecuteCommand("spUpdateItemProperties", arrParams);
+            using (UloContext)
+            {
+                var udoShouldBe = sUDOShouldBe.Trim().Length > 0 && sUDOShouldBe.Trim() != "$"
+                    ? Utility.GetDecimalFromDisplayedMoney(sUDOShouldBe)
+                    : (decimal?)null;
+
+                var doShouldBe = sDOShouldBe.Trim().Length > 0 && sDOShouldBe.Trim() != "$"
+                    ? Utility.GetDecimalFromDisplayedMoney(sDOShouldBe)
+                    : (decimal?) null;
+                return UloContext.spUpdateItemProperties(iOItemID, sULOOrgCode, udoShouldBe, doShouldBe, dtExpCompDate,
+                    sComments);
+            }
         }
 
         DataSet IItemDataLayer.GetLinesOrgCodes(int iOItemID, string sLines)
@@ -935,27 +906,22 @@ namespace Data
             return Da.GetDataSet("spSearchItems", arrParams);
         }
 
-        DataSet IItemsDataLayer.GetItemsLinesToDeobligate(int iLoadID, string sOrganization)
+        IEnumerable<spGetOILinesForDeobligation_Result> IItemsDataLayer.GetItemsLinesToDeobligate(int iLoadID, string sOrganization)
         {
-            var arrParams = new SqlParameter[2];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            arrParams[1] = new SqlParameter("@Organization", SqlDbType.VarChar);
-            arrParams[1].Value = sOrganization;
-            return Da.GetDataSet("spGetOILinesForDeobligation", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spGetOILinesForDeobligation(iLoadID, sOrganization);
+            }
         }
 
         object ILineNumDataLayer.CertifyDeobligation(int iOItemID, int iItemLNum)
         {
-            var arrParams = new SqlParameter[3];
-            arrParams[0] = new SqlParameter("@OItemID", SqlDbType.Int);
-            arrParams[0].Value = iOItemID;
-            arrParams[1] = new SqlParameter("@ItemLNum", SqlDbType.Int);
-            arrParams[1].Value = iItemLNum;
-            arrParams[2] = new SqlParameter("@DeobligatedDate", SqlDbType.DateTime);
-            arrParams[2].Direction = ParameterDirection.Output;
-            Da.ExecuteCommand("spCertifyDeobligation", arrParams);
-            return arrParams[2].Value;
+            using (UloContext)
+            {
+                ObjectParameter deobligatedDate =  new ObjectParameter("DeobligatedDate", typeof(DateTime));
+                UloContext.spCertifyDeobligation(iOItemID, iItemLNum, deobligatedDate);
+                return deobligatedDate;
+            }
         }
 
         object ILineNumDataLayer.LineOnReassignRequest(int iOItemID, int iLineNum, string sULOOrgCode,
@@ -973,20 +939,32 @@ namespace Data
             arrParams[4] = new SqlParameter("@ReturnCode", SqlDbType.Bit);
             arrParams[4].Direction = ParameterDirection.Output;
             Da.ExecuteCommand("spCheckLineStatus", arrParams);
+
+            using (UloContext)
+            {
+                ObjectParameter returnCode = new ObjectParameter("ReturnCode", typeof(int));
+                UloContext.spCheckLineStatus(iOItemID, iLineNum, sULOOrgCode, iReviewerUserID, returnCode);
+                return returnCode;
+            }
+
             return arrParams[4].Value;
         }
 
-        DataSet IOrgDataLayer.GetOrgAndOrgCodeList()
+        IEnumerable<spGetOrgAndOrgCodeList_Result> IOrgDataLayer.GetOrgAndOrgCodeList()
         {
-            return Da.GetDataSet("spGetOrgAndOrgCodeList");
+            using (UloContext)
+            {
+                return UloContext.spGetOrgAndOrgCodeList();
+            }
         }
 
-        DataSet IReportDataLayer.GetHistoryByEmailRequest(int iEmailRequestID)
+        IEnumerable<spGetHistoryByEmailRequest_Result> IReportDataLayer.GetHistoryByEmailRequest(int iEmailRequestID)
         {
-            var arrParams = new SqlParameter[1];
-            arrParams[0] = new SqlParameter("@EmailRequestID", SqlDbType.Int);
-            arrParams[0].Value = iEmailRequestID;
-            return Da.GetDataSet("spGetHistoryByEmailRequest", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spGetHistoryByEmailRequest(iEmailRequestID);
+            }
+
         }
 
         DataSet IReportDataLayer.GetReportDocuments(int iLoadID)
@@ -1013,133 +991,109 @@ namespace Data
             return Da.GetDataSet("spReportValidationByLine", arrParams);
         }
 
-        DataSet IReportDataLayer.GetReportDaily(int iLoadID)
+        IEnumerable<spReportDaily_Result> IReportDataLayer.GetReportDaily(int iLoadID)
         {
-            var arrParams = new SqlParameter[1];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            return Da.GetDataSet("spReportDaily", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spReportDaily(iLoadID);
+            }
         }
 
-        DataSet IReportDataLayer.GetReportTotalSum(int iLoadID)
+        IEnumerable<spReportTotalSum_Result> IReportDataLayer.GetReportTotalSum(int iLoadID)
         {
-            var arrParams = new SqlParameter[1];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            return Da.GetDataSet("spReportTotalSum", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spReportTotalSum(iLoadID);
+            }
         }
 
-        DataSet IReportDataLayer.GetReportTotalByValid(int iLoadID)
+        IEnumerable<spReportTotalByValid_Result> IReportDataLayer.GetReportTotalByValid(int iLoadID)
         {
-            var arrParams = new SqlParameter[1];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            return Da.GetDataSet("spReportTotalByValid", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spReportTotalByValid(iLoadID);
+            }
         }
 
-        DataSet IReportDataLayer.GetTotalByOrganization(int iLoadID)
+        IEnumerable<spReportTotalByOrg_Result> IReportDataLayer.GetTotalByOrganization(int iLoadID)
         {
-            var arrParams = new SqlParameter[1];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            return Da.GetDataSet("spReportTotalByOrg", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spReportTotalByOrg(iLoadID);
+            }
         }
 
-        DataSet IReportDataLayer.GetDaraByDocNum(int iLoadID)
+        IEnumerable<spDaraByDocNum_Result> IReportDataLayer.GetDaraByDocNum(int iLoadID)
         {
-            var arrParams = new SqlParameter[1];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            return Da.GetDataSet("spDaraByDocNum", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spDaraByDocNum(iLoadID);
+            }
         }
 
-        object IUploadServiceDataLayer.InsertNewLoad(int iDataSource, int iOpenItemsType, DateTime dtDueDate,
+        int IUploadServiceDataLayer.InsertNewLoad(int iDataSource, int iOpenItemsType, DateTime dtDueDate,
             int iFileID, int iParentLoadID, int iReviewRound, string sLoadName)
         {
-            var arrParams = new SqlParameter[8];
-            arrParams[0] = new SqlParameter("@DataSource", SqlDbType.Int);
-            arrParams[0].Value = iDataSource;
-            arrParams[1] = new SqlParameter("@OIType", SqlDbType.Int);
-            arrParams[1].Value = iOpenItemsType;
-            arrParams[2] = new SqlParameter("@DueDate", SqlDbType.DateTime);
-            arrParams[2].Value = dtDueDate;
-            arrParams[3] = new SqlParameter("@FileID", SqlDbType.Int);
-            arrParams[3].Value = iFileID;
-            arrParams[4] = new SqlParameter("@ParentLoadID", SqlDbType.Int);
-            arrParams[4].Value = iParentLoadID;
-            arrParams[5] = new SqlParameter("@ReviewRound", SqlDbType.Int);
-            arrParams[5].Value = iReviewRound;
-            arrParams[6] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[6].Direction = ParameterDirection.Output;
-            arrParams[7] = new SqlParameter("@LoadName", SqlDbType.VarChar);
-            arrParams[7].Value = sLoadName;
-            Da.ExecuteCommand("spInsertNewLoad", arrParams);
-            return arrParams[6].Value;
+            using (UloContext)
+            {
+                ObjectParameter loadId = new ObjectParameter("LoadID", typeof(int));
+                UloContext.spInsertNewLoad(iDataSource, iOpenItemsType, dtDueDate, iFileID, iParentLoadID,
+                    iReviewRound, loadId, sLoadName);
+
+                return Convert.ToInt32(loadId);
+            }
         }
 
-        void IUploadServiceDataLayer.InsertReviewFeedback(int iLoadID, int iParentLoadID)
+        int IUploadServiceDataLayer.InsertReviewFeedback(int iLoadID, int iParentLoadID)
         {
-            var arrParams = new SqlParameter[2];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            arrParams[1] = new SqlParameter("@ParentLoadID", SqlDbType.Int);
-            arrParams[1].Value = iParentLoadID;
-            Da.ExecuteCommand("spInsertReviewFeedback", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spInsertReviewFeedback(iLoadID, iParentLoadID);
+            }
         }
 
 
-        void IUploadServiceDataLayer.InsertOIMain(int iLoadID, int iOpenItemsType)
+        int IUploadServiceDataLayer.InsertOIMain(int iLoadID, int iOpenItemsType)
         {
-            var arrParams = new SqlParameter[2];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            arrParams[1] = new SqlParameter("@OIType", SqlDbType.Int);
-            arrParams[1].Value = iOpenItemsType;
-            Da.ExecuteCommand("spInsertOIMain", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spInsertOIMain(iLoadID, iOpenItemsType);
+            }
         }
 
-        void IUploadServiceDataLayer.InsertOIDetails(int iLoadID)
+        int IUploadServiceDataLayer.InsertOIDetails(int iLoadID)
         {
-            var arrParams = new SqlParameter[1];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            Da.ExecuteCommand("spInsertOIDetails", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spInsertOIDetails(iLoadID);
+            }
         }
 
-        void IUploadServiceDataLayer.InsertOIOrganization(int iLoadID)
+        int IUploadServiceDataLayer.InsertOIOrganization(int iLoadID)
         {
-            var arrParams = new SqlParameter[1];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[0].Value = iLoadID;
-            Da.ExecuteCommand("spInsertOIOrganization", arrParams);
+            using (UloContext)
+            {
+               return UloContext.spInsertOIOrganization(iLoadID);
+            }
         }
 
-        void IUploadServiceDataLayer.InsertOILease(int iLoadID, DateTime dtReportDate)
+        int IUploadServiceDataLayer.InsertOILease(int iLoadID, DateTime dtReportDate)
         {
-            var arrParams = new SqlParameter[2];
-            arrParams[0] = new SqlParameter("@LoadID", SqlDbType.Int);
-            arrParams[1] = new SqlParameter("@ReportDate", SqlDbType.DateTime);
-            arrParams[0].Value = iLoadID;
-            arrParams[1].Value = dtReportDate;
-            Da.ExecuteCommand("spInsertOILease", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spInsertOILease(iLoadID, dtReportDate);
+            }
         }
 
-        object IUploadServiceDataLayer.InsertEmailRequest(int iCurrentUserID, int iHistoryAction, bool bSendNow)
+        int IUploadServiceDataLayer.InsertEmailRequest(int iCurrentUserID, int iHistoryAction, bool bSendNow)
         {
-            var arrParams = new SqlParameter[4];
-            arrParams[0] = new SqlParameter("@SenderUserID", SqlDbType.Int);
-            arrParams[0].Value = iCurrentUserID;
-            arrParams[1] = new SqlParameter("@HistoryAction", SqlDbType.Int);
-            arrParams[1].Value = iHistoryAction;
-            arrParams[2] = new SqlParameter("@EmailStatus", SqlDbType.Int);
-            if (bSendNow)
-                arrParams[2].Value = (int)EmailStatus.emReadyToSend;
-            else
-                arrParams[2].Value = (int)EmailStatus.emPending;
-            arrParams[3] = new SqlParameter("@EmailRequestID", SqlDbType.Int);
-            arrParams[3].Direction = ParameterDirection.Output;
-            Da.ExecuteCommand("spInsertEmailRequest", arrParams);
-            return arrParams[3].Value;
+            using (UloContext)
+            {
+                var emailStatus = bSendNow ? (int)EmailStatus.emReadyToSend : (int)EmailStatus.emPending;
+                ObjectParameter emailRequestID =  new ObjectParameter("EmailRequestID", typeof(int));
+                UloContext.spInsertEmailRequest(iCurrentUserID, iHistoryAction, emailStatus, emailRequestID);
+                return Convert.ToInt32(emailRequestID);
+            }
         }
 
         DataSet IUsersDataLayer.GetUserByUserEmail(string sEmail)
@@ -1189,9 +1143,12 @@ namespace Data
             return SpGetUsersByRole(Role);
         }
 
-        DataSet IUsersDataLayer.GetAllActiveInactiveUsers()
+        IEnumerable<spGetAllActiveInactiveUsers_Result> IUsersDataLayer.GetAllActiveInactiveUsers()
         {
-            return Da.GetDataSet("spGetAllActiveInactiveUsers");
+            using (UloContext)
+            {
+                return UloContext.spGetAllActiveInactiveUsers();
+            }
         }
 
         DataSet IUsersDataLayer.GetAllNCRUsers()
@@ -1213,105 +1170,120 @@ namespace Data
             return Da.GetDataSet("spGetUserRoleForFSOrg", arrParams);
         }
 
-        void IUsersDataLayer.SaveUser(int iUserID, string sEmail, string sPassword, string sRoleCode, int iActive, string sFirstName,
-            string sLastName, string sMiddleInitial, string sOrganization, string sPhone, string sDefaultApplication, out int iID)
+        int IUsersDataLayer.SaveUser(int iUserID, string sEmail, string sPassword, string sRoleCode, int iActive, string sFirstName,
+            string sLastName, string sMiddleInitial, string sOrganization, string sPhone, string sDefaultApplication)
         {
-            var arrParams = new SqlParameter[11]; //*** always check the correct amount of parameters!***
-
-            arrParams[0] = new SqlParameter("@UserID", SqlDbType.Int);
-            arrParams[0].Value = iUserID;
-            arrParams[1] = new SqlParameter("@Email", SqlDbType.VarChar);
-            arrParams[1].Value = sEmail;
-            arrParams[2] = new SqlParameter("@Password", SqlDbType.VarChar);
-            arrParams[2].Value = sPassword;
-            arrParams[3] = new SqlParameter("@RoleCode", SqlDbType.VarChar);
-            arrParams[3].Value = sRoleCode;
-            arrParams[4] = new SqlParameter("@Active", SqlDbType.Int);
-            arrParams[4].Value = iActive;
-            arrParams[5] = new SqlParameter("@FirstName", SqlDbType.VarChar);
-            arrParams[5].Value = sFirstName;
-            arrParams[6] = new SqlParameter("@LastName", SqlDbType.VarChar);
-            arrParams[6].Value = sLastName;
-            arrParams[7] = new SqlParameter("@MiddleInitial", SqlDbType.VarChar);
-            arrParams[7].Value = sMiddleInitial;
-            arrParams[8] = new SqlParameter("@Organization", SqlDbType.VarChar);
-            arrParams[8].Value = sOrganization;
-            arrParams[9] = new SqlParameter("@Phone", SqlDbType.VarChar);
-            arrParams[9].Value = sPhone;
-            arrParams[10] = new SqlParameter("@DefaultApplication", SqlDbType.SmallInt);
-            arrParams[10].Value = sDefaultApplication;
-
-            Da.SaveData("spSaveUser", arrParams, out iID);
+            using (UloContext)
+            {
+                return UloContext.spSaveUser(iUserID, sEmail, sPassword, sRoleCode, Convert.ToBoolean(iActive), sFirstName, sLastName,
+                    sMiddleInitial, sOrganization, sPhone, Convert.ToInt16(sDefaultApplication));
+            }
 
         }
 
 
-        DataSet ILookupDataLayer.GetOpenItemsTypes()
+        IEnumerable<spGetOpenItemsTypes_Result> ILookupDataLayer.GetOpenItemsTypes()
         {
-            return Da.GetDataSet("spGetOpenItemsTypes");
+            using (UloContext)
+            {
+                return UloContext.spGetOpenItemsTypes();
+            }
         }
 
-        DataSet ILookupDataLayer.GetDataSourceTypes()
+        IEnumerable<spGetDataSourceTypes_Result> ILookupDataLayer.GetDataSourceTypes()
         {
-            return Da.GetDataSet("spGetDataSourceTypes");
+            using (UloContext)
+            {
+                return UloContext.spGetDataSourceTypes();
+            }
         }
 
-        DataSet ILookupDataLayer.GetBA53AccrualTypes()
+        IEnumerable<spGetBA53AccrualTypes_Result> ILookupDataLayer.GetBA53AccrualTypes()
         {
-            return Da.GetDataSet("spGetBA53AccrualTypes");
+            using (UloContext)
+            {
+                return UloContext.spGetBA53AccrualTypes();
+            }
         }
 
-        DataSet ILookupDataLayer.GetBA53AccrualTypeActions(int iAccrualTypeCode)
+        IEnumerable<spGetBA53AccrualTypeActions_Result> ILookupDataLayer.GetBA53AccrualTypeActions(int iAccrualTypeCode)
         {
-            var arrParams = new SqlParameter[1];
-            arrParams[0] = new SqlParameter("@AccrualTypeCode", SqlDbType.Int);
-            arrParams[0].Value = iAccrualTypeCode;
-            return Da.GetDataSet("spGetBA53AccrualTypeActions", arrParams);
+            using (UloContext)
+            {
+                return UloContext.spGetBA53AccrualTypeActions(iAccrualTypeCode);
+            }
         }
 
-        DataSet ILookupDataLayer.GetLoadList()
+        IEnumerable<spGetLoadList_Result> ILookupDataLayer.GetLoadList()
         {
-            return Da.GetDataSet("spGetLoadList");
+            using (UloContext)
+            {
+                return UloContext.spGetLoadList();
+            }
         }
 
-        DataSet ILookupDataLayer.GetOrganizationsList()
+        IEnumerable<string> ILookupDataLayer.GetOrganizationsList()
         {
-            return Da.GetDataSet("spGetOrganizationsList");
+            using (UloContext)
+            {
+                return UloContext.spGetOrganizationsList();
+            }
         }
 
-        DataSet ILookupDataLayer.GetJustifications()
+        IEnumerable<spGetJustifications_Result> ILookupDataLayer.GetJustifications()
         {
-            return Da.GetDataSet("spGetJustifications");
+            using (UloContext)
+            {
+                return UloContext.spGetJustifications();
+            }
         }
 
-        DataSet ILookupDataLayer.GetDefaultJustifications()
+        IEnumerable<spGetDefaultJustifications_Result> ILookupDataLayer.GetDefaultJustifications()
         {
-            return Da.GetDataSet("spGetDefaultJustifications");
+            using (UloContext)
+            {
+                return UloContext.spGetDefaultJustifications();
+            }
         }
 
-        DataSet ILookupDataLayer.GetActiveCodeList()
+        IEnumerable<spGetActiveCodeList_Result> ILookupDataLayer.GetActiveCodeList()
         {
-            return Da.GetDataSet("spGetActiveCodeList");
+            using (UloContext)
+            {
+                return UloContext.spGetActiveCodeList();
+            }
         }
 
-        DataSet ILookupDataLayer.GetCodeList()
+        IEnumerable<spGetCodeList_Result> ILookupDataLayer.GetCodeList()
         {
-            return Da.GetDataSet("spGetCodeList");
+            using (UloContext)
+            {
+                return UloContext.spGetCodeList();
+            }
         }
 
-        DataSet ILookupDataLayer.GetValidationValues()
+        IEnumerable<spGetValidationValues_Result> ILookupDataLayer.GetValidationValues()
         {
-            return Da.GetDataSet("spGetValidationValues");
+            using (UloContext)
+            {
+                return UloContext.spGetValidationValues();
+            }
         }
 
-        DataSet ILookupDataLayer.GetContactsRoles()
+        IEnumerable<spGetContactsRoles_Result> ILookupDataLayer.GetContactsRoles()
         {
-            return Da.GetDataSet("spGetContactsRoles");
+            using (UloContext)
+            {
+                return UloContext.spGetContactsRoles();
+            }
         }
 
-        DataSet ILookupDataLayer.GetWholeOrgList()
+        IEnumerable<spGetWholeOrgList_Result> ILookupDataLayer.GetWholeOrgList()
         {
-            return Da.GetDataSet("spGetWholeOrgList");
+            using (UloContext)
+            {
+                return UloContext.spGetWholeOrgList();
+            }
         }
 
         private DataSet SpGetUsersByRole(UserRoles Role)

@@ -110,7 +110,6 @@ C:\Development\Repos\ULO\OpenItems\bin\Microsoft.AI.Web.xml
 C:\Development\Repos\ULO\OpenItems\bin\Microsoft.AI.WindowsServer.xml
 C:\Development\Repos\ULO\OpenItems\bin\Microsoft.ApplicationInsights.xml
 C:\Development\Repos\ULO\OpenItems\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Development\Repos\ULO\OpenItems\obj\Debug\OpenItems.csprojResolveAssemblyReference.cache
 C:\Development\Repos\ULO\OpenItems\obj\Debug\Controls.DropDownGrid.resources
 C:\Development\Repos\ULO\OpenItems\obj\Debug\Controls.GetDate.resources
 C:\Development\Repos\ULO\OpenItems\obj\Debug\Controls.MultiGrid.resources

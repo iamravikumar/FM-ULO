@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
+using OpenItems.Data;
+
 namespace GSA.OpenItems.Web
 {
     using System.Data;
@@ -11,9 +15,9 @@ namespace GSA.OpenItems.Web
         {
             Dal = dal;
         }
-        public DataSet GetAllOrganizations()
+        public List<spGetOrgAndOrgCodeList_Result> GetAllOrganizations()
         {
-            return Dal.GetOrgAndOrgCodeList();
+            return Dal.GetOrgAndOrgCodeList().ToList();
         }
 
     }

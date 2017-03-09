@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using GSA.OpenItems;
+using OpenItems.Data;
 
 /// <summary>
 /// Summary description for IDataLayer
@@ -13,6 +14,6 @@ namespace Data
 {
     public interface IOrgDataLayer
     {
-        DataSet GetOrgAndOrgCodeList();
+        IEnumerable<spGetOrgAndOrgCodeList_Result> GetOrgAndOrgCodeList();
     }
 }

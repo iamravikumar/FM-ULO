@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using OpenItems.Data;
 
 namespace GSA.OpenItems.Web
@@ -164,12 +165,12 @@ namespace GSA.OpenItems.Web
         //***   Application Storage   ************
         //****************************************      
 
-        public DataView DataSourceTypes
+        public List<spGetDataSourceTypes_Result> DataSourceTypes
         {
             get
             {
                 if (HttpContext.Current.Application[KEY_APP_DATA_SOURCE_TYPES] != null)
-                    return (DataView)HttpContext.Current.Application[KEY_APP_DATA_SOURCE_TYPES];
+                    return (List<spGetDataSourceTypes_Result>)HttpContext.Current.Application[KEY_APP_DATA_SOURCE_TYPES];
                 else
                     return null;
             }
@@ -239,12 +240,12 @@ namespace GSA.OpenItems.Web
             }
         }
 
-        public DataTable OpenItemsTypes
+        public List<spGetOpenItemsTypes_Result> OpenItemsTypes
         {
             get
             {
                 if (HttpContext.Current.Application[KEY_APP_OPEN_ITEMS_TYPES] != null)
-                    return (DataTable)HttpContext.Current.Application[KEY_APP_OPEN_ITEMS_TYPES];
+                    return (List<spGetOpenItemsTypes_Result>)HttpContext.Current.Application[KEY_APP_OPEN_ITEMS_TYPES];
                 else
                     return null;
             }

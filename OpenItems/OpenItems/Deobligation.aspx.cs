@@ -110,7 +110,7 @@ namespace GSA.OpenItems.Web
         {
             if (ItemsDataView == null)
             {
-                var ds = Items.GetItemsLinesToDeobligate(ctrlCriteria.LoadID, ctrlCriteria.Organization);
+                var ds = Items.GetItemsLinesToDeobligate(ctrlCriteria.LoadID, ctrlCriteria.Organization).ToDataSet();
                 if (ds == null || ds.Tables[0].Rows.Count == 0)
                 {
                     lblMessages.Text = "No records found.";

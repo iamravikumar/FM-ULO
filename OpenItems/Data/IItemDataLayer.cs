@@ -23,12 +23,12 @@ namespace Data
         int DeleteDocumentContact(string sDocNumber, string sRoleDesc, string sFirstName, string sLastName);
         int CalculateItemStatus(int iOItemID, string sULOOrgCode, int iReviewerUserID);
 
-        void UpdateFeedback(int iOItemID, string sDocNumber, int iLoadID, int iValid, string sResponse,
+        int UpdateFeedback(int iOItemID, string sDocNumber, int iLoadID, int iValid, string sResponse,
             decimal dUDOShouldBe, decimal dDOShouldBe);
 
-        void UpdateItemStatus(int iOItemID, int iLoadID, string sULOOrgCode, int iReviewerUserID, int iStatusCode);
+        int UpdateItemStatus(int iOItemID, int iLoadID, string sULOOrgCode, int iReviewerUserID, int iStatusCode);
 
-        void UpdateItemProperties(int iOItemID, string sULOOrgCode, string sUDOShouldBe, string sDOShouldBe,
+        int UpdateItemProperties(int iOItemID, string sULOOrgCode, string sUDOShouldBe, string sDOShouldBe,
             DateTime dtExpCompDate, string sComments);
     }
 }

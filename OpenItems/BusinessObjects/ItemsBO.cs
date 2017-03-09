@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
+using OpenItems.Data;
+
 namespace GSA.OpenItems.Web
 {
     using System.Data;
@@ -31,9 +35,9 @@ namespace GSA.OpenItems.Web
             return Dal.SearchItems(iLoadID, sOrganization, sDocNumber, sProjNumber, sBA, sAwardNumber);
         }
 
-        public DataSet GetItemsLinesToDeobligate(int iLoadID, string sOrganization)
+        public List<spGetOILinesForDeobligation_Result> GetItemsLinesToDeobligate(int iLoadID, string sOrganization)
         {
-            return Dal.GetItemsLinesToDeobligate(iLoadID, sOrganization);
+            return Dal.GetItemsLinesToDeobligate(iLoadID, sOrganization).ToList();
         }
 
     }

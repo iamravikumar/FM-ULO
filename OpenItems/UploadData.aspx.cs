@@ -21,14 +21,14 @@ namespace GSA.OpenItems.Web
             {
                 tr_date_of_report.AddDisplayNone();
 
-                var dv = LookupsBO.GetDataSourceTypes();
-                ddlDataSource.DataSource = dv;
+                var dataSourceTypes = LookupsBO.GetDataSourceTypes();
+                ddlDataSource.DataSource = dataSourceTypes;
                 ddlDataSource.DataValueField = "DataSource";
                 ddlDataSource.DataTextField = "DataSourceDescription";
                 ddlDataSource.DataBind();
 
-                var dt = LookupsBO.GetOpenItemTypes();
-                ddlItemType.DataSource = dt;
+                var openItemTypes = LookupsBO.GetOpenItemTypes();
+                ddlItemType.DataSource = openItemTypes;
                 ddlItemType.DataValueField = "OIType";
                 ddlItemType.DataTextField = "OITypeDescription";
                 ddlItemType.DataBind();

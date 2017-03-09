@@ -1,3 +1,4 @@
+using System.Linq;
 using Data;
 using OpenItems.Properties;
 
@@ -71,12 +72,13 @@ namespace GSA.OpenItems.Web
         private void BuildFundsSearchTable(int EmailRequestID)
         {
             //get Query parameters from tblHistory by EmailRequestID:
-            var dsHistory = Report.GetHistoryRecordByEmailRequest(EmailRequestID);
-            if (dsHistory == null || dsHistory.Tables[0] == null || dsHistory.Tables[0].Rows.Count == 0)
+            var history = Report.GetHistoryRecordByEmailRequest(EmailRequestID);
+            if (!history.Any())
                 throw new Exception("There is no enough data to complete search. Please try again to request another report. Thank you.");
 
-            var criteria_fields = (string)Utility.GetNotNullValue(dsHistory.Tables[0].Rows[0]["CustomField01"], "String");
-            var criteria_values = (string)Utility.GetNotNullValue(dsHistory.Tables[0].Rows[0]["CustomField02"], "String");
+            //var criteria_fields = (string)Utility.GetNotNullValue(history.Tables[0].Rows[0]["CustomField01"], "String");
+            var criteria_fields = history.First().CustomField01;
+            var criteria_values = history.First().CustomField02;
 
             var business_line = "";
             var organization = "";

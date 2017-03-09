@@ -13,15 +13,15 @@ namespace Data
 {
     public interface IUploadServiceDataLayer
     {
-        object InsertNewLoad(int iDataSource, int iOpenItemsType, DateTime dtDueDate, int iFileID, int iParentLoadID,
+        int InsertNewLoad(int iDataSource, int iOpenItemsType, DateTime dtDueDate, int iFileID, int iParentLoadID,
             int iReviewRound, string sLoadName);
 
-        object InsertEmailRequest(int iCurrentUserID, int iHistoryAction, bool bSendNow);
+        int InsertEmailRequest(int iCurrentUserID, int iHistoryAction, bool bSendNow);
 
-        void InsertReviewFeedback(int iLoadID, int iParentLoadID);
-        void InsertOIMain(int iLoadID, int iOpenItemsType);
-        void InsertOIDetails(int iLoadID);
-        void InsertOIOrganization(int iLoadID);
-        void InsertOILease(int iLoadID, DateTime dtReportDate);
+        int InsertReviewFeedback(int iLoadID, int iParentLoadID);
+        int InsertOIMain(int iLoadID, int iOpenItemsType);
+        int InsertOIDetails(int iLoadID);
+        int InsertOIOrganization(int iLoadID);
+        int InsertOILease(int iLoadID, DateTime dtReportDate);
     }
 }

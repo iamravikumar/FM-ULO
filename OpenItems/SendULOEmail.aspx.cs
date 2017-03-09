@@ -123,11 +123,11 @@ namespace GSA.OpenItems.Web
                     }
                     break;
                 case "users":
-                    var ds2 = Users.GetAllULOUsers();
+                    var users = Users.GetAllULOUsers();
                     ddlULOUsers.Items.Clear();
-                    ddlULOUsers.DataSource = ds2;
-                    ddlULOUsers.DataTextField = ds2.Tables[0].Columns["FullName"].ToString();
-                    ddlULOUsers.DataValueField = ds2.Tables[0].Columns["Email"].ToString();
+                    ddlULOUsers.DataSource = users;
+                    ddlULOUsers.DataTextField = "FullName";
+                    ddlULOUsers.DataValueField = "Email";
                     ddlULOUsers.DataBind();
                     ddlULOUsers.Items.Insert(0, "- select -");
                     break;

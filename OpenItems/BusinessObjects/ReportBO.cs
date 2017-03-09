@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using Data;
+using OpenItems.Data;
 
 namespace GSA.OpenItems.Web
 {
@@ -39,9 +42,9 @@ namespace GSA.OpenItems.Web
         }
 
 
-        public DataSet GetHistoryRecordByEmailRequest(int iEmailRequestID)
+        public List<spGetHistoryByEmailRequest_Result> GetHistoryRecordByEmailRequest(int iEmailRequestID)
         {
-            return Dal.GetHistoryByEmailRequest(iEmailRequestID);
+            return Dal.GetHistoryByEmailRequest(iEmailRequestID).ToList();
         }
 
         public void InsertFSRequestResultsByEmail(Hashtable htCriteriaValues, int CurrentUserID)
@@ -76,29 +79,29 @@ namespace GSA.OpenItems.Web
             return Dal.GetReportValidationByLine(iLoadID);
         }
 
-        public DataSet GetDailyReport(int iLoadID)
+        public List<spReportDaily_Result> GetDailyReport(int iLoadID)
         {
-            return Dal.GetReportDaily(iLoadID);
+            return Dal.GetReportDaily(iLoadID).ToList();
         }
 
-        public DataSet GetTotalSumReport(int iLoadID)
+        public List<spReportTotalSum_Result> GetTotalSumReport(int iLoadID)
         {
-            return Dal.GetReportTotalSum(iLoadID);
+            return Dal.GetReportTotalSum(iLoadID).ToList();
         }
 
-        public DataSet GetTotalSumReportByValid(int iLoadID)
+        public List<spReportTotalByValid_Result> GetTotalSumReportByValid(int iLoadID)
         {
-            return Dal.GetReportTotalByValid(iLoadID);
+            return Dal.GetReportTotalByValid(iLoadID).ToList();
         }
 
-        public DataSet GetTotalByOrganization(int iLoadID)
+        public List<spReportTotalByOrg_Result> GetTotalByOrganization(int iLoadID)
         {
-            return Dal.GetTotalByOrganization(iLoadID);
+            return Dal.GetTotalByOrganization(iLoadID).ToList();
         }
 
-        public DataSet GetTotalDaraNew(int iLoadID)
+        public List<spDaraByDocNum_Result> GetTotalDaraNew(int iLoadID)
         {
-            return Dal.GetDaraByDocNum(iLoadID);
+            return Dal.GetDaraByDocNum(iLoadID).ToList();
 
         }
     }
