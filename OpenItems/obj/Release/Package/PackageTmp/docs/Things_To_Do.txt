@@ -1,0 +1,38 @@
+03/17/2011
+
+Changes need to be done on the BA53 templates.
+
+Header
+
+•	‘Reviewer’ field should be populated from the database according to the BA53 item assignment/re- assignment.
+•	‘Sort Code’, ‘Lease Number ‘, ‘OC ‘and ‘CE’ values come from the Excel file.
+•	PENDPYMT field should be read-only. (Done)
+•	‘Total DO’ value comes from the Excel file and should be read-only. (Done)
+•	‘Total DO Should Be’ field should be editable.  - add field tp thr DB and CP and to the save event
+•	‘Team Code’ field will be moved from the Header to the bottom of the template. This field should be editable.
+•	‘Report Date’ value will be received with the BA53 load request email.
+
+
+Calculation Methodology Section
+
+'Lease Number' textbox stays as is.
+
+Remarks 
+
+The ‘Remarks’ field should be a mandatory entry.
+
+Signature fields at the bottom of the each form.
+
+•	1st line: REA Budget Analyst - add field tp thr DB and CP and to the save event
+•	2nd  line: CFO Budget Analyst- add field tp thr DB and CP and to the save event
+Both fields are editable.
+
+RET Template
+
+•	The jurisdiction combo, containing ‘MD’, ‘DC’ and ’VA’ values will be added to the template. We need 2 new templates to do the corresponding changes.
+•	Label  ‘# of mos reimb’ will be replace with ‘‘# of days reimb’.
+
+BID Template
+
+•	The jurisdiction combo, containing  ‘DC’ and ’VA’ values will be added to the template. We need 2 new templates to do the corresponding changes.
+•	Label  ‘# of mos reimb’ will be replace with ‘‘# of days reimb’.

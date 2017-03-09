@@ -1,0 +1,14 @@
+﻿<PUBLIC:COMPONENT>
+<PUBLIC:ATTACH EVENT="onmouseover" ONEVENT="m_over()"/>
+<PUBLIC:ATTACH EVENT="onmouseout" ONEVENT="m_out()"/>
+<SCRIPT LANGUAGE="JScript">
+var c_CSS;
+function m_over()
+{	c_CSS=className;
+	className+="Hover";
+}
+function m_out()
+{	className=c_CSS;
+}
+</SCRIPT>
+</PUBLIC:COMPONENT>

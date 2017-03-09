@@ -1,0 +1,5 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/MasterPages/Reports/ReportsGlobal.master" AutoEventWireup="true" Inherits="MasterPages_Reports_ReportsFundStatus" Codebehind="ReportsFundStatus.master.cs" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+</asp:Content>
+

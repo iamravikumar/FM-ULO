@@ -1,0 +1,1560 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{47BD0696-7ACB-46AB-A576-966F9006B785}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenItems</RootNamespace>
+    <AssemblyName>OpenItems</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DocServicesLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\DocServicesLib.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FundStatusServicesLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\FundStatusServicesLib.dll</HintPath>
+    </Reference>
+    <Reference Include="GeneralUtility, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\GeneralUtility.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.6\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.2.0\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.2.0\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.2.0\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.2.0\lib\net45\Microsoft.AI.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.2.2.0\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.2.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="OpenItemServicesLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\OpenItemServicesLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Activities" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Controls\vssver.scc" />
+    <Content Include="css\vssver.scc" />
+    <Content Include="css\web.config" />
+    <Content Include="docs\Acceptable Documentation for High Risk ULO Review.xlsx" />
+    <Content Include="docs\UserManual.doc" />
+    <Content Include="docs\UserManual.pdf" />
+    <Content Include="docs\vssver.scc" />
+    <Content Include="FundStatus\include\Function Code Summary.xls" />
+    <Content Include="FundStatus\include\Instructions for new Fiscal year.doc" />
+    <Content Include="FundStatus\include\Paid Days.xls" />
+    <Content Include="FundStatus\include\vssver.scc" />
+    <Content Include="FundStatus\vssver.scc" />
+    <Content Include="images\BG_header.jpg.mno" />
+    <Content Include="images\BG_main_bg.jpg.mno" />
+    <Content Include="images\BG_navigation.jpg.mno" />
+    <Content Include="images\BG_pageBottom.jpg.mno" />
+    <Content Include="images\BG_popup_header.jpg.mno" />
+    <Content Include="images\BG_section-bg.jpg.mno" />
+    <Content Include="images\BG_side_shadows.jpg.mno" />
+    <Content Include="images\resteprentfunctionalitytr3089.zip" />
+    <Content Include="images\Thumbs.db" />
+    <Content Include="images\vssver.scc" />
+    <Content Include="include\ErrorLabel.inc" />
+    <Content Include="include\GridLines.inc" />
+    <Content Include="include\vssver.scc" />
+    <Content Include="include\web.config" />
+    <Content Include="BusinessObjects\vssver.scc" />
+    <Content Include="MasterPages\Global.master" />
+    <Content Include="MasterPages\Popups\Popup.master" />
+    <Content Include="MasterPages\Popups\PopupEnlarged.master" />
+    <Content Include="MasterPages\Reports\ReportsFundStatus.master" />
+    <Content Include="MasterPages\Reports\ReportsGlobal.master" />
+    <Content Include="MasterPages\ULO\ULO.master" />
+    <Content Include="MasterPages\ULO\ULOMenu.master" />
+    <Content Include="MasterPages\ULO\ULONoMenu.master" />
+    <Content Include="OpenItems\include\vssver.scc" />
+    <Content Include="OpenItems\vssver.scc" />
+    <Content Include="OpenItems\{29941DD9-5BF7-41D5-934E-CC53F5C6F2F1}\WebProject.lastcodeanalysissucceeded" />
+    <Content Include="UIObjects\vssver.scc" />
+    <Content Include="Data\ULOModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ULOModel.edmx</DependentUpon>
+      <LastGenOutput>ULOModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Data\ULOModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ULOModel.edmx</DependentUpon>
+      <LastGenOutput>ULOModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="UploadedFiles\1st Semi Annual Review Region 11 Master.xls" />
+    <Content Include="UploadedFiles\2_columns_file_20_rec.xls" />
+    <Content Include="UploadedFiles\4th Qtr FY11 Residual Balance Review.xls" />
+    <Content Include="UploadedFiles\New Team Names-Codes.xls" />
+    <Content Include="UploadedFiles\R11_Dec 2013 HR ULO Review Working File_ follow up questions.xls" />
+    <Content Include="UploadedFiles\Region 11_Dec 2011 HR ULO Review_PFF Followup_5 2 12.xls" />
+    <Content Include="UploadedFiles\sm_Load.xls" />
+    <Content Include="UploadedFiles\vssver.scc" />
+    <Content Include="Code_comments.doc" />
+    <Content Include="Data.zip" />
+    <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\jonathanchen - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\jonathanchen - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\ULO - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\ULO - Web Deploy.pubxml" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings2.Designer.cs</LastGenOutput>
+    </None>
+    <EntityDeploy Include="Data\ULOModel.edmx" />
+    <Content Include="Data\ULOModel.edmx.diagram">
+      <DependentUpon>ULOModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="README.md" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AdminPage.aspx" />
+    <Content Include="app_offline2.htm" />
+    <Content Include="ArchiveLoad.aspx" />
+    <Content Include="AttachmentType.aspx" />
+    <Content Include="Controls\Attachments.ascx" />
+    <Content Include="Controls\btnExpCal.gif" />
+    <Content Include="Controls\btnExpCal_Blue.gif" />
+    <Content Include="Controls\btnExpDDG.bmp" />
+    <Content Include="Controls\Contacts.ascx" />
+    <Content Include="Controls\CriteriaFields.ascx" />
+    <Content Include="Controls\c_asc.cur" />
+    <Content Include="Controls\c_desc.cur" />
+    <Content Include="Controls\DataGrid - backup021816.js" />
+    <Content Include="Controls\DataGrid.js" />
+    <Content Include="Controls\dropdowngrid.ascx" />
+    <Content Include="Controls\FundsCriteria.ascx" />
+    <Content Include="Controls\getdate.ascx" />
+    <Content Include="Controls\GetDate.htc" />
+    <Content Include="Controls\hover.htc" />
+    <Content Include="Controls\httpreq.ascx" />
+    <Content Include="Controls\HttpReq.js" />
+    <Content Include="Controls\Menu.ascx" />
+    <Content Include="Controls\multigrid.ascx" />
+    <Content Include="Controls\OrgUsers.ascx" />
+    <Content Include="Controls\SearchCriteria.ascx" />
+    <Content Include="Controls\sessionvar.aspx" />
+    <Content Include="Controls\sessionvarreq.ascx" />
+    <Content Include="Controls\SessionVarReq.js" />
+    <Content Include="Controls\wait.gif" />
+    <Content Include="css\Controls.css" />
+    <Content Include="css\funds_data_excel.css" />
+    <Content Include="css\fund_status.css" />
+    <Content Include="css\Grids.css" />
+    <Content Include="css\hover.htc" />
+    <Content Include="css\hover_ass.htc" />
+    <Content Include="css\hover_att.htc" />
+    <Content Include="css\hover_del.htc" />
+    <Content Include="css\hover_det.htc" />
+    <Content Include="css\hover_view.htc" />
+    <Content Include="css\oir_css.css" />
+    <Content Include="css\oir_css_new.css" />
+    <Content Include="css\popup_css.css" />
+    <Content Include="css\popup_enlarged.css" />
+    <Content Include="css\report_excel.css" />
+    <Content Include="css\Styles.css" />
+    <Content Include="Default.aspx" />
+    <Content Include="docs\DueDateEmail.txt" />
+    <Content Include="docs\ForgotPswdEmail.txt" />
+    <Content Include="docs\NewLoadEmail.txt" />
+    <Content Include="docs\Things_To_Do.txt" />
+    <Content Include="EmailForm.aspx" />
+    <Content Include="FundStatus\Allowance.aspx" />
+    <Content Include="FundStatus\AllowanceDistribution.aspx" />
+    <Content Include="FundStatus\AttReportExcel.aspx" />
+    <Content Include="FundStatus\FSReferDocs.aspx" />
+    <Content Include="FundStatus\FundReportExcel.aspx" />
+    <Content Include="FundStatus\FundSearch.aspx" />
+    <Content Include="FundStatus\FundsEntryData.aspx" />
+    <Content Include="FundStatus\FundsReport.aspx" />
+    <Content Include="FundStatus\FundsReview.aspx" />
+    <Content Include="FundStatus\HTTPFunds.aspx" />
+    <Content Include="FundStatus\include\Allowance.js" />
+    <Content Include="FundStatus\include\AllowanceDistribution.js" />
+    <Content Include="FundStatus\include\FS_SupportedFiscalYears.xml" />
+    <Content Include="FundStatus\include\FundSearch.js" />
+    <Content Include="FundStatus\include\FundsEntryData.js" />
+    <Content Include="FundStatus\include\FundsLaborVariance.js" />
+    <Content Include="FundStatus\include\FundsReport.js" />
+    <Content Include="FundStatus\include\GetNumbers.js" />
+    <Content Include="FundStatus\include\OrgAllowance.js" />
+    <Content Include="FundStatus\include\RWAProjection.js" />
+    <Content Include="FundStatus\OrgAllowance.aspx" />
+    <Content Include="FundStatus\RWAProjection.aspx" />
+    <Content Include="FundStatus\SummaryReport.aspx" />
+    <Content Include="Global.asax" />
+    <Content Include="HTTPLogon.aspx" />
+    <Content Include="HTTPServer.aspx" />
+    <Content Include="images\AttachedMail.gif" />
+    <Content Include="images\back.gif" />
+    <Content Include="images\BG_header.jpg" />
+    <Content Include="images\BG_main_bg.jpg" />
+    <Content Include="images\BG_navigation.jpg" />
+    <Content Include="images\BG_nav_center.jpg" />
+    <Content Include="images\BG_nav_left.jpg" />
+    <Content Include="images\BG_nav_right.jpg" />
+    <Content Include="images\BG_pageBottom.jpg" />
+    <Content Include="images\BG_popup_header.jpg" />
+    <Content Include="images\BG_popup_image.jpg" />
+    <Content Include="images\BG_section-bg.jpg" />
+    <Content Include="images\BG_section-bg2.jpg" />
+    <Content Include="images\BG_side_shadows.jpg" />
+    <Content Include="images\btn_acceptable_documentation.gif" />
+    <Content Include="images\btn_acceptable_documentation_3.gif" />
+    <Content Include="images\btn_add_contact.gif" />
+    <Content Include="images\btn_add_manage_attachments.gif" />
+    <Content Include="images\btn_contact_delete.gif" />
+    <Content Include="images\btn_edit.gif" />
+    <Content Include="images\btn_email_user_1.gif" />
+    <Content Include="images\btn_email_user_2.gif" />
+    <Content Include="images\btn_view_file.gif" />
+    <Content Include="images\btn_view_file_spaced.gif" />
+    <Content Include="images\Checked.gif" />
+    <Content Include="images\clear3.gif" />
+    <Content Include="images\clear_large.gif" />
+    <Content Include="images\ClosedMail.gif" />
+    <Content Include="images\email_1.jpg" />
+    <Content Include="images\email_2.jpg" />
+    <Content Include="images\Excel-Icon.jpg" />
+    <Content Include="images\Folder.gif" />
+    <Content Include="images\Folders.gif" />
+    <Content Include="images\green.gif" />
+    <Content Include="images\Icons.Member.gif.exclude.gif" />
+    <Content Include="images\ICON_del.GIF" />
+    <Content Include="images\ICON_del_over.GIF" />
+    <Content Include="images\ICON_details.gif" />
+    <Content Include="images\ICON_details_over.gif" />
+    <Content Include="images\ICON_reassign.gif" />
+    <Content Include="images\ICON_reassign1.GIF" />
+    <Content Include="images\ICON_reassign_over.gif" />
+    <Content Include="images\ICON_view.gif" />
+    <Content Include="images\ICON_view_over.gif" />
+    <Content Include="images\info_small_20.jpg" />
+    <Content Include="images\note.gif" />
+    <Content Include="images\note_dis.GIF" />
+    <Content Include="images\OLD_BG_header.jpg" />
+    <Content Include="images\OLD_BG_navigation.jpg" />
+    <Content Include="images\paper_clip.gif" />
+    <Content Include="images\Plus0.gif" />
+    <Content Include="images\Plus1.gif" />
+    <Content Include="images\popup_bg.jpg" />
+    <Content Include="images\question_mark.gif" />
+    <Content Include="images\question_mark2.gif" />
+    <Content Include="images\Reassign.gif" />
+    <Content Include="images\save.gif" />
+    <Content Include="images\ShowLines.gif" />
+    <Content Include="images\UC1.JPG" />
+    <Content Include="images\UC2.jpg" />
+    <Content Include="images\view_orange.gif" />
+    <Content Include="include\alert2.js" />
+    <Content Include="include\GetNumbers.js" />
+    <Content Include="include\HTTPService.js" />
+    <Content Include="include\JS_Function_Alert.js" />
+    <Content Include="include\Logon.js" />
+    <Content Include="include\Misc.js" />
+    <Content Include="include\ReportExcel.xml" />
+    <Content Include="include\tooltip.js" />
+    <Content Include="Justification.aspx" />
+    <Content Include="Logoff.aspx" />
+    <Content Include="Logon.aspx" />
+    <Content Include="NewLoadEmail.htm" />
+    <Content Include="OpenItems\Assignments.aspx" />
+    <Content Include="OpenItems\Attachments.aspx" />
+    <Content Include="OpenItems\Deobligation.aspx" />
+    <Content Include="OpenItems\DocAdministration.aspx" />
+    <Content Include="OpenItems\include\Assignments.js" />
+    <Content Include="OpenItems\include\Attachments.js" />
+    <Content Include="OpenItems\include\Deobligation.js" />
+    <Content Include="OpenItems\include\LineNum.js" />
+    <Content Include="OpenItems\include\OpenItem.js" />
+    <Content Include="OpenItems\include\Reassign.js" />
+    <Content Include="OpenItems\include\ReassignRequest.js" />
+    <Content Include="OpenItems\include\ReportDARA.xml" />
+    <Content Include="OpenItems\include\ReportDARAbyDocNum.xml" />
+    <Content Include="OpenItems\include\Reroute.js" />
+    <Content Include="OpenItems\include\ReviewItems.js" />
+    <Content Include="OpenItems\include\Search.js" />
+    <Content Include="OpenItems\LineNumDetails.aspx" />
+    <Content Include="OpenItems\OIBA53Review.aspx" />
+    <Content Include="OpenItems\OpenItemDetails.aspx" />
+    <Content Include="OpenItems\OpenItemHistory.aspx" />
+    <Content Include="OpenItems\Reassign.aspx" />
+    <Content Include="OpenItems\ReassignRequest.aspx" />
+    <Content Include="OpenItems\ReportCustom.aspx" />
+    <Content Include="OpenItems\Reports.aspx" />
+    <Content Include="OpenItems\Reroute.aspx" />
+    <Content Include="OpenItems\ReviewOpenItems.aspx" />
+    <Content Include="OpenItems\Search.aspx" />
+    <Content Include="OpenItems\{29941DD9-5BF7-41D5-934E-CC53F5C6F2F1}\CodeAnalysisLog.xml" />
+    <Content Include="Organizations.aspx" />
+    <Content Include="ReviewOpenItems.aspx" />
+    <Content Include="SearchPerson.aspx" />
+    <Content Include="SendDateDueReminder.aspx" />
+    <Content Include="SendULOEmail.aspx" />
+    <Content Include="ServerNotAvailableErr.htm" />
+    <Content Include="ULO_FS_ApplicationLog.txt" />
+    <Content Include="UpgradeLog.htm" />
+    <Content Include="UpgradeLog2.htm" />
+    <Content Include="UploadData.aspx" />
+    <Content Include="Users.aspx" />
+    <Content Include="Viewer.aspx" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AdminPage.aspx.cs">
+      <DependentUpon>AdminPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminPage.aspx.designer.cs">
+      <DependentUpon>AdminPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ApplicationAssert.cs" />
+    <Compile Include="ApplicationError.cs" />
+    <Compile Include="ArchiveLoad.aspx.cs">
+      <DependentUpon>ArchiveLoad.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ArchiveLoad.aspx.designer.cs">
+      <DependentUpon>ArchiveLoad.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AttachmentType.aspx.cs">
+      <DependentUpon>AttachmentType.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AttachmentType.aspx.designer.cs">
+      <DependentUpon>AttachmentType.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BusinessObjects\AdminBO.cs" />
+    <Compile Include="BusinessObjects\AssignBO.cs" />
+    <Compile Include="BusinessObjects\DocumentBO.cs" />
+    <Compile Include="BusinessObjects\EmailsBO.cs" />
+    <Compile Include="BusinessObjects\FilesBO.cs" />
+    <Compile Include="BusinessObjects\FundAllowanceBO.cs" />
+    <Compile Include="BusinessObjects\FundStatusBO.cs" />
+    <Compile Include="BusinessObjects\ItemBO.cs" />
+    <Compile Include="BusinessObjects\ItemsBO.cs" />
+    <Compile Include="BusinessObjects\LineNumBO.cs" />
+    <Compile Include="BusinessObjects\OrgBO.cs" />
+    <Compile Include="BusinessObjects\ReportBO.cs" />
+    <Compile Include="BusinessObjects\UploadService.cs" />
+    <Compile Include="BusinessObjects\UsersBO.cs" />
+    <Compile Include="Data\ChangeLog.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ColumnProperty.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Attachments.ascx.cs">
+      <DependentUpon>Attachments.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Attachments.ascx.designer.cs">
+      <DependentUpon>Attachments.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Contacts.ascx.cs">
+      <DependentUpon>Contacts.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Contacts.ascx.designer.cs">
+      <DependentUpon>Contacts.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CriteriaFields.ascx.cs">
+      <DependentUpon>CriteriaFields.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CriteriaFields.ascx.designer.cs">
+      <DependentUpon>CriteriaFields.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DropDownGrid.ascx.cs">
+      <DependentUpon>dropdowngrid.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\DropDownGrid.ascx.designer.cs">
+      <DependentUpon>dropdowngrid.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ExtensionMethods.cs" />
+    <Compile Include="Controls\FundsCriteria.ascx.cs">
+      <DependentUpon>FundsCriteria.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\FundsCriteria.ascx.designer.cs">
+      <DependentUpon>FundsCriteria.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GetDate.ascx.cs">
+      <DependentUpon>getdate.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GetDate.ascx.designer.cs">
+      <DependentUpon>getdate.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Grid.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\HttpReq.ascx.cs">
+      <DependentUpon>httpreq.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\HttpReq.ascx.designer.cs">
+      <DependentUpon>httpreq.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Menu.ascx.cs">
+      <DependentUpon>Menu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Menu.ascx.designer.cs">
+      <DependentUpon>Menu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MultiGrid.ascx.cs">
+      <DependentUpon>multigrid.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MultiGrid.ascx.designer.cs">
+      <DependentUpon>multigrid.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OrgUsers.ascx.cs">
+      <DependentUpon>OrgUsers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OrgUsers.ascx.designer.cs">
+      <DependentUpon>OrgUsers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RegScript.cs" />
+    <Compile Include="Controls\SearchCriteria.ascx.cs">
+      <DependentUpon>SearchCriteria.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SearchCriteria.ascx.designer.cs">
+      <DependentUpon>SearchCriteria.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SessionVar.aspx.cs">
+      <DependentUpon>sessionvar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SessionVar.aspx.designer.cs">
+      <DependentUpon>sessionvar.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SessionVarReq.ascx.cs">
+      <DependentUpon>sessionvarreq.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SessionVarReq.ascx.designer.cs">
+      <DependentUpon>sessionvarreq.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\database_firewall_rules.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\DataLayer.cs" />
+    <Compile Include="Data\IAdminDataLayer.cs" />
+    <Compile Include="Data\IAssignDataLayer.cs" />
+    <Compile Include="Data\IDataLayer.cs" />
+    <Compile Include="Data\IDocumentDataLayer.cs" />
+    <Compile Include="Data\IEmailDataLayer.cs" />
+    <Compile Include="Data\IFundAllownceDataLayer.cs" />
+    <Compile Include="Data\IFundStatusDataLayer.cs" />
+    <Compile Include="Data\IItemDataLayer.cs" />
+    <Compile Include="Data\IItemsDataLayer.cs" />
+    <Compile Include="Data\ILineNumDataLayer.cs" />
+    <Compile Include="Data\ILookupDataLayer.cs" />
+    <Compile Include="Data\IOrgDataLayer.cs" />
+    <Compile Include="Data\IReportDataLayer.cs" />
+    <Compile Include="Data\IUploadServiceDataLayer.cs" />
+    <Compile Include="Data\IUsersDataLayer.cs" />
+    <Compile Include="Data\IZoneFinder.cs" />
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EmailForm.aspx.cs">
+      <DependentUpon>EmailForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EmailForm.aspx.designer.cs">
+      <DependentUpon>EmailForm.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\fnSplitString_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\Allowance.aspx.cs">
+      <DependentUpon>Allowance.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\Allowance.aspx.designer.cs">
+      <DependentUpon>Allowance.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\AllowanceDistribution.aspx.cs">
+      <DependentUpon>AllowanceDistribution.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\AllowanceDistribution.aspx.designer.cs">
+      <DependentUpon>AllowanceDistribution.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\AttReportExcel.aspx.cs">
+      <DependentUpon>AttReportExcel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\AttReportExcel.aspx.designer.cs">
+      <DependentUpon>AttReportExcel.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\FSReferDocs.aspx.cs">
+      <DependentUpon>FSReferDocs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\FSReferDocs.aspx.designer.cs">
+      <DependentUpon>FSReferDocs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\FundReportExcel.aspx.cs">
+      <DependentUpon>FundReportExcel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\FundReportExcel.aspx.designer.cs">
+      <DependentUpon>FundReportExcel.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\FundSearch.aspx.cs">
+      <DependentUpon>FundSearch.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\FundSearch.aspx.designer.cs">
+      <DependentUpon>FundSearch.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\FundsEntryData.aspx.cs">
+      <DependentUpon>FundsEntryData.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\FundsEntryData.aspx.designer.cs">
+      <DependentUpon>FundsEntryData.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\FundsReport.aspx.cs">
+      <DependentUpon>FundsReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\FundsReport.aspx.designer.cs">
+      <DependentUpon>FundsReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\FundsReview.aspx.cs">
+      <DependentUpon>FundsReview.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\FundsReview.aspx.designer.cs">
+      <DependentUpon>FundsReview.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\HTTPFunds.aspx.cs">
+      <DependentUpon>HTTPFunds.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\HTTPFunds.aspx.designer.cs">
+      <DependentUpon>HTTPFunds.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\OrgAllowance.aspx.cs">
+      <DependentUpon>OrgAllowance.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\OrgAllowance.aspx.designer.cs">
+      <DependentUpon>OrgAllowance.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\RWAProjection.aspx.cs">
+      <DependentUpon>RWAProjection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\RWAProjection.aspx.designer.cs">
+      <DependentUpon>RWAProjection.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FundStatus\SummaryReport.aspx.cs">
+      <DependentUpon>SummaryReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FundStatus\SummaryReport.aspx.designer.cs">
+      <DependentUpon>SummaryReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="HTTPLogon.aspx.cs">
+      <DependentUpon>HTTPLogon.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HTTPLogon.aspx.designer.cs">
+      <DependentUpon>HTTPLogon.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="HTTPServer.aspx.cs">
+      <DependentUpon>HTTPServer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HTTPServer.aspx.designer.cs">
+      <DependentUpon>HTTPServer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\imp_March_2014_Accruals.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Justification.aspx.cs">
+      <DependentUpon>Justification.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Justification.aspx.designer.cs">
+      <DependentUpon>Justification.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LdapAuthentication.cs" />
+    <Compile Include="Logoff.aspx.cs">
+      <DependentUpon>Logoff.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Logoff.aspx.designer.cs">
+      <DependentUpon>Logoff.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Logon.aspx.cs">
+      <DependentUpon>Logon.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Logon.aspx.designer.cs">
+      <DependentUpon>Logon.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Lookups.cs" />
+    <Compile Include="MasterPages\Global.master.cs">
+      <DependentUpon>Global.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\Global.master.designer.cs">
+      <DependentUpon>Global.master</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPages\Popups\Popup.master.cs">
+      <DependentUpon>Popup.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\Popups\Popup.master.designer.cs">
+      <DependentUpon>Popup.master</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPages\Popups\PopupEnlarged.master.cs">
+      <DependentUpon>PopupEnlarged.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\Popups\PopupEnlarged.master.designer.cs">
+      <DependentUpon>PopupEnlarged.master</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPages\Reports\ReportsFundStatus.master.cs">
+      <DependentUpon>ReportsFundStatus.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\Reports\ReportsFundStatus.master.designer.cs">
+      <DependentUpon>ReportsFundStatus.master</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPages\Reports\ReportsGlobal.master.cs">
+      <DependentUpon>ReportsGlobal.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\Reports\ReportsGlobal.master.designer.cs">
+      <DependentUpon>ReportsGlobal.master</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPages\ULO\ULO.master.cs">
+      <DependentUpon>ULO.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\ULO\ULO.master.designer.cs">
+      <DependentUpon>ULO.master</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPages\ULO\ULOMenu.master.cs">
+      <DependentUpon>ULOMenu.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\ULO\ULOMenu.master.designer.cs">
+      <DependentUpon>ULOMenu.master</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPages\ULO\ULONoMenu.master.cs">
+      <DependentUpon>ULONoMenu.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPages\ULO\ULONoMenu.master.designer.cs">
+      <DependentUpon>ULONoMenu.master</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\Assignments.aspx.cs">
+      <DependentUpon>Assignments.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\Assignments.aspx.designer.cs">
+      <DependentUpon>Assignments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\Attachments.aspx.cs">
+      <DependentUpon>Attachments.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\Attachments.aspx.designer.cs">
+      <DependentUpon>Attachments.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\Deobligation.aspx.cs">
+      <DependentUpon>Deobligation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\Deobligation.aspx.designer.cs">
+      <DependentUpon>Deobligation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\DocAdministration.aspx.cs">
+      <DependentUpon>DocAdministration.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\DocAdministration.aspx.designer.cs">
+      <DependentUpon>DocAdministration.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\LineNumDetails.aspx.cs">
+      <DependentUpon>LineNumDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\LineNumDetails.aspx.designer.cs">
+      <DependentUpon>LineNumDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\OIBA53Review.aspx.cs">
+      <DependentUpon>OIBA53Review.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\OIBA53Review.aspx.designer.cs">
+      <DependentUpon>OIBA53Review.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\OpenItemDetails.aspx.cs">
+      <DependentUpon>OpenItemDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\OpenItemDetails.aspx.designer.cs">
+      <DependentUpon>OpenItemDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\OpenItemHistory.aspx.cs">
+      <DependentUpon>OpenItemHistory.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\OpenItemHistory.aspx.designer.cs">
+      <DependentUpon>OpenItemHistory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\Reassign.aspx.cs">
+      <DependentUpon>Reassign.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\Reassign.aspx.designer.cs">
+      <DependentUpon>Reassign.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\ReassignRequest.aspx.cs">
+      <DependentUpon>ReassignRequest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\ReassignRequest.aspx.designer.cs">
+      <DependentUpon>ReassignRequest.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\ReportCustom.aspx.cs">
+      <DependentUpon>ReportCustom.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\ReportCustom.aspx.designer.cs">
+      <DependentUpon>ReportCustom.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\Reports.aspx.cs">
+      <DependentUpon>Reports.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\Reports.aspx.designer.cs">
+      <DependentUpon>Reports.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\Reroute.aspx.cs">
+      <DependentUpon>Reroute.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\Reroute.aspx.designer.cs">
+      <DependentUpon>Reroute.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\ReviewOpenItems.aspx.cs">
+      <DependentUpon>ReviewOpenItems.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\ReviewOpenItems.aspx.designer.cs">
+      <DependentUpon>ReviewOpenItems.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenItems\Search.aspx.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenItems\Search.aspx.designer.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Organizations.aspx.cs">
+      <DependentUpon>Organizations.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Organizations.aspx.designer.cs">
+      <DependentUpon>Organizations.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PageBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Data\ProcResultsetColumn.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings2.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ReviewOpenItems.aspx.cs">
+      <DependentUpon>ReviewOpenItems.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReviewOpenItems.aspx.designer.cs">
+      <DependentUpon>ReviewOpenItems.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SearchPerson.aspx.cs">
+      <DependentUpon>SearchPerson.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchPerson.aspx.designer.cs">
+      <DependentUpon>SearchPerson.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SendDateDueReminder.aspx.cs">
+      <DependentUpon>SendDateDueReminder.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SendDateDueReminder.aspx.designer.cs">
+      <DependentUpon>SendDateDueReminder.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SendULOEmail.aspx.cs">
+      <DependentUpon>SendULOEmail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SendULOEmail.aspx.designer.cs">
+      <DependentUpon>SendULOEmail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\SimilarTable.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spDaraByDocNum_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetActiveCodeList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetActiveLoadList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAdjustmentByOrg09_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAdjustmentByOrg10_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAdjustmentTotalsByOrg09_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAdjustmentTotalsByOrg10_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAdjustment_Search09_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAdjustment_Search10_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAllActiveInactiveUsers_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAllULOActiveUsers_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAllULOUsers_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAllUserRolesByApp_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAllUserRoles_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetAttachRecommend_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetBA53AccrualTypeActions_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetBA53AccrualTypes_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetBusinessLineList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetCodeList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetContactsRoles_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetCostElementList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetDataSourceTypes_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetDefaultJustifications_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetDocHistory_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetDocLines_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetEmailRequests_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetEmptyLaborVariance_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetEmptySumReportState_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFSListByReportStatus_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFSReportConfig_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFSReportStatus_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFundsLaborVariance_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFundsOrganizations_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFundStatusUploadHistory_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFutureDueDateLoads_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFYAllowanceByFunc2_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFYAllowanceByFunc3_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFYAllowanceByOrg2_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFYAllowanceByOrg3_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFYAllowanceTotals2_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetFYAllowance_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetHistoryByEmailRequest_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetIncomeByOrg09_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetIncomeByOrg10_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetIncomeTotalsByOrg09_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetIncomeTotalsByOrg10_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetIncome_Search09_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetIncome_Search10_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetInvalidReviewerReasonCodes_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetJustifications_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetJustificationTypeByID_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetLoadDetails_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetLoadHistory_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetLoadInfo_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetLoadListNotArchived_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetLoadListWithActiveDueDate_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetLoadList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetMonthAllowanceDistrb_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetMonthReportState_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetNullReviewerUserIDForCompletedItems_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetObjectClassCodeList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetObligationsByOrg09_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetObligationsByOrg10_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetObligationTotalsByOrg09_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetObligationTotalsByOrg10_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetObligation_Search09_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetObligation_Search10_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetOIFeedbackDetails_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetOILinesForDeobligation_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetOItemDetails_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetOpenItemsTypes_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetOrgAndOrgCodeList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetOrganizationsForUpload_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetOrgItemPerLoadID_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetPaidDays_FSReport_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetReasonForDelay_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetReassignOrgList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetReviewerReasonCodes_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetRRequestDetails_History_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetStates_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetSummaryReportState_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetTeamCodes_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetValidationValues_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spGetWholeOrgList_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\SplitString_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spNullOrgRecordsInDetailsTable_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spNullOrgRecordsInOrgTable_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spPendingDeobligateByOrg_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spPendingNAOItemsByOrg_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spPendingOItemsByOrg_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spReportDailyDeobligated_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spReportDaily_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spReportDeobligatedByOrg_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spReportSentDocNumByOrg_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spReportTotalByOrg_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spReportTotalByValid_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spReportTotalDeobligated_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spReportTotalDocNumByOrg_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\spReportTotalSum_Result.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\SprocParameterProperty.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\SprocProperty.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\TableProperty.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblAssignmentRule.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblAttachmentRequirement.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblBookMonthOrder.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblCodeDefinition.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblDataSource.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblDetailsForExcelImport.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblDetailsForExcelImport0325.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblDetailsForExcelImport0505.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblDetailsForExcelImport_0722.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblDetailsForExcelImport_backup_062015.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblDetailsForExcelImport_bkup.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblDocRWA.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblEmailRequest.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblEmailStatu.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFiles_toDelete.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_BudgetActivity.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_BusinessLine.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_CostElementTypes.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_DocActionTypes.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_ObjectClassCodes.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_PaidDaysRef.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_PGVXX_Formula.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_ReportConfig.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_SumReportState.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_SumReportStatus.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_UserEntryData.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFS_UserEntryDataTypes.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFundAllowance.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFundAllowanceByFunc.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblFundAllowanceByOrg.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblHistory.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblHistoryAction.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblJustificationValue.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblLoad.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblMainForExcelImport.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblMainForExcelImport0325.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblMainForExcelImportBkp.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblMainForExcelImport_0722.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblMainForExcelImport_backup_062015.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblMainForExcelImport_bkup.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblMainForExcelImport_New.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblMasterOrgCode.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIAccrualType.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIAccrualTypeAction.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIAccrualTypeDocType.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIContact.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIDetail.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIDetails_0722.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIDetails_2.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIDocAttachment.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOILease.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIMain.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIMain_0722.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIOrganization.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIOrganization_0722.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIOrganization_BK.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIOrganization_double.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIRevisedDoc.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOISendAttachment.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOIType.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOrganization.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblOrganizations_backup.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblReasonForDelay.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblReassignRequest.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblReviewerReasonCode.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblReviewFeedback.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblRole.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblSentEmail.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblState.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblStatusValue.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblTeamCode.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblTempUser.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblUser.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\tblValidationValue.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UIObjects\FSReportUI.cs" />
+    <Compile Include="UIObjects\FSReviewUI.cs" />
+    <Compile Include="UIObjects\FSSummaryUI.cs" />
+    <Compile Include="UIObjects\RWAProjectionUI.cs" />
+    <Compile Include="Data\ULOModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ULOModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ULOModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UploadData.aspx.cs">
+      <DependentUpon>UploadData.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UploadData.aspx.designer.cs">
+      <DependentUpon>UploadData.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users.aspx.cs">
+      <DependentUpon>Users.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users.aspx.designer.cs">
+      <DependentUpon>Users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ViewColumnProperty.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Viewer.aspx.cs">
+      <DependentUpon>Viewer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Viewer.aspx.designer.cs">
+      <DependentUpon>Viewer.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ViewProperty.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\vwDocAttachment.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\vwItemsSummary.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\vwItemsValidation.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\vwUserIDRef.cs">
+      <DependentUpon>ULOModel.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\DropDownGrid.ascx.resx">
+      <DependentUpon>DropDownGrid.ascx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\GetDate.ascx.resx">
+      <DependentUpon>GetDate.ascx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MultiGrid.ascx.resx">
+      <DependentUpon>MultiGrid.ascx.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>64427</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:64427/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

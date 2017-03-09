@@ -1,0 +1,18 @@
+<meta name="ProgId" content="Excel.Sheet">
+<!--[if gte mso 9]><xml>
+<x:ExcelWorkbook>
+<x:ExcelWorksheets>
+<x:ExcelWorksheet>
+	<x:Name>Report Data</x:Name>
+	<x:WorksheetOptions>
+	<x:FreezePanes/>
+	<x:FrozenNoSplit/>
+	<x:SplitHorizontal><%=p_iHeaderLines%></x:SplitHorizontal>
+	<x:TopRowBottomPane><%=p_iHeaderLines%></x:TopRowBottomPane>
+	<x:ActivePane>2</x:ActivePane>
+	</x:WorksheetOptions>
+</x:ExcelWorksheet>
+</x:ExcelWorksheets>
+</x:ExcelWorkbook>
+</xml><![endif]-->
+	

@@ -1,1 +1,0 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="HTTPFunds.aspx.cs" Inherits="GSA.OpenItems.Web.HTTPFunds" %>

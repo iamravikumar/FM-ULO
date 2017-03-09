@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/OpenItems/Web.Release.config
+/OpenItems/Web.Debug.config
+/OpenItems/Web.config

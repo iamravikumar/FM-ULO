@@ -1,0 +1,179 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OpenItems.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="OpenItemsDefaultPage" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">~/OpenItems/ReviewOpenItems.aspx</Value>
+    </Setting>
+    <Setting Name="ApplicationDisabled" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DisabledMessage" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">The ULO application is under the maintenance. You will receive an email notification when the application access is restored.</Value>
+    </Setting>
+    <Setting Name="AdminPageRightsForBDAdmin" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AdminPageRightsForOrgAdmin" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SysAdminRoleCode" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="PasswordMenuIsVisible" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="lblEnvironmentIsActive" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DatabaseServer1" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">P11H4M-SQLP01\P11SQP02</Value>
+    </Setting>
+    <Setting Name="DatabaseServer2" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">P11H4M-SQLP01\P11SQP02</Value>
+    </Setting>
+    <Setting Name="DatabaseServerUAT" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">P11H4M-SQLD02\P11SQT02</Value>
+    </Setting>
+    <Setting Name="ProdWebServerName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">p1130s-dotnet01</Value>
+    </Setting>
+    <Setting Name="ProdWebServerAlias" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ncrulo.gsa.gov</Value>
+    </Setting>
+    <Setting Name="LogFileName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ULO_FS_ApplicationLog.txt</Value>
+    </Setting>
+    <Setting Name="WriteExtendedLog" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ExcelWorkSheetName_MainList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">[summary$]</Value>
+    </Setting>
+    <Setting Name="ExcelWorkSheetName_DetailsList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">[detail$]</Value>
+    </Setting>
+    <Setting Name="ExcelWorkSheetName_FeedbackList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">[Detail$]</Value>
+    </Setting>
+    <Setting Name="SQLTableNameForImport_MainList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">tblMainForExcelImport</Value>
+    </Setting>
+    <Setting Name="SQLTableNameForImport_DetailsList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">tblDetailsForExcelImport</Value>
+    </Setting>
+    <Setting Name="SQLTableNameForImport_FeedbackList" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">tblFeedbackForExcelImport</Value>
+    </Setting>
+    <Setting Name="FeedbackLoad_DO_UDO_Display" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="FeedbackLoad_DO_UDO_Required" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DisplayArchiveOption" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="InsertHistory_OnSelectAttachmentToCO" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="InsertHistory_OnSelectAttachmentToSME" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="RebuildReportIntervalInMinutes" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="QueryResultMaxRecords" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">800</Value>
+    </Setting>
+    <Setting Name="ProjectionCalc_PaidDaysReference" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">113</Value>
+    </Setting>
+    <Setting Name="Default_BUDGET_ACTIVITY" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PG61</Value>
+    </Setting>
+    <Setting Name="SendEmail" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SendEmailToSysAdmin" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MailSenderAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ULO System Administrator&amp;lt;rw.webteam@gsa.gov&amp;gt;</Value>
+    </Setting>
+    <Setting Name="SMTPServer" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">smtp.gsa.gov</Value>
+    </Setting>
+    <Setting Name="SysAdminEmail" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">jacob.moser@gsa.gov</Value>
+    </Setting>
+    <Setting Name="SendEmailOnRerouteRequest" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SendEmailOnRerouteAssign" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SendEmailOnAssignVerification" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SendEmailOnReviewerAssignment" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SendEmailOnReviewerReassign" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SendEmailOnGroupAssign" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SendEmailOnAllTypeOfAssignments" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SendEmailOnNewLoad" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SendPasswordReminder" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ForgotPswdFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">\docs\ForgotPswdEmail.txt</Value>
+    </Setting>
+    <Setting Name="DueDateReminderFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">DueDateEmail.txt</Value>
+    </Setting>
+    <Setting Name="Email_ToReviewerTextFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">\docs\SampleLoadEmailToReviewer.txt</Value>
+    </Setting>
+    <Setting Name="Email_COSubject" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Region 11 - NCR Submission. Sample file from [p_LoadDate]. Supporting documentaion for DocNumber [p_DocNumber].</Value>
+    </Setting>
+    <Setting Name="Email_COEmailAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">jacob.moser@gsa.gov</Value>
+    </Setting>
+    <Setting Name="Email_SMESubject" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Sample file from [p_LoadDate]. Please review supporting documentaion for DocNumber [p_DocNumber].</Value>
+    </Setting>
+    <Setting Name="adPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">LDAP://ent.ds.gsa.gov/DC=ent,DC=ds,DC=gsa,DC=gov</Value>
+    </Setting>
+    <Setting Name="DomainValue" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ENT</Value>
+    </Setting>
+    <Setting Name="DefaultConn" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;server=eaterofjellybeans.database.windows.net; database=OpenItems; User ID=cwatson; Password=examplePass ; Integrated Security=false&lt;/ConnectionString&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">server=eaterofjellybeans.database.windows.net; database=OpenItems; User ID=cwatson; Password=examplePass ; Integrated Security=false</Value>
+    </Setting>
+    <Setting Name="FundStatusDefaultPage" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">~/FundStatus/FundSearch.aspx</Value>
+    </Setting>
+    <Setting Name="DocsConn" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;server=P11H4M-SQLD02\P11SQD02; database=DocStorage; User ID=examplePass ; Password=examplePass ; Integrated Security=false&lt;/ConnectionString&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">server=P11H4M-SQLD02\P11SQD02; database=DocStorage; User ID=examplePass ; Password=examplePass ; Integrated Security=false</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

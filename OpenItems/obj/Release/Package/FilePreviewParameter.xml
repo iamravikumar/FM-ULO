@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="jonathanchen" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\Development\\OpenItems\\OpenItems\\obj\\Release\\Package\\PackageTmp$" />
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^C:\\Development\\OpenItems\\OpenItems\\obj\\Release\\Package\\PackageTmp$" />
+  </parameter>
+  <parameter name="OpenItems.Properties.Settings.DefaultConn-Web.config Connection String" description="" value="server=eaterofjellybeans.database.windows.net; database=OpenItems; User ID=cwatson; Password=examplePass ; Integrated Security=false" tags="">
+    <parameterEntry kind="XmlFile" scope="C:\\Development\\OpenItems\\OpenItems\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='OpenItems.Properties.Settings.DefaultConn']/@connectionString" />
+  </parameter>
+  <parameter name="OpenItems.Properties.Settings.DocsConn-Web.config Connection String" description="" value="server=P11H4M-SQLD02\P11SQD02; database=DocStorage; User ID=examplePass ; Password=examplePass ; Integrated Security=false" tags="">
+    <parameterEntry kind="XmlFile" scope="C:\\Development\\OpenItems\\OpenItems\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='OpenItems.Properties.Settings.DocsConn']/@connectionString" />
+  </parameter>
+</parameters>

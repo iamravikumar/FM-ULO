@@ -1,0 +1,251 @@
+﻿TABLE { mso-displayed-decimal-separator: "."; mso-displayed-thousand-separator: "," }
+TR { mso-height-source: userset }
+COL { mso-width-source: userset }
+BR { mso-data-placement: same-cell }
+.header { mso-number-format:"\@"; FONT-WEIGHT: bold;  font-size:14px; COLOR:Navy ; TEXT-ALIGN: center; vertical-align:middle }
+.Number { mso-number-format: "#,##0.00"; TEXT-ALIGN:right; font-size: 12px; }
+.NumberBold { mso-number-format: "#,##0.00"; TEXT-ALIGN: right; font-size: 12px; FONT-WEIGHT: bold;}
+.WholeNumber,.ExtNumber,.IntNumber { mso-number-format: "#,##0"; TEXT-ALIGN:right; font-size: 12px; }
+.WholeNumberBold { mso-number-format: "#,##0"; TEXT-ALIGN: right; font-size: 12px; FONT-WEIGHT: bold;}
+.Money { mso-number-format: "[$$-409]#,##0.00"; TEXT-ALIGN: right;	font-size: 12px; }
+.MoneyBold { mso-number-format: "[$$-409]#,##0.00"; TEXT-ALIGN: right;	font-size: 12px; FONT-WEIGHT: bold;}
+.Percent { mso-number-format: "Percent"; TEXT-ALIGN: right;	font-size: 12px; }
+.PercentBold { mso-number-format: "Percent"; TEXT-ALIGN: right;	font-size: 12px; FONT-WEIGHT: bold;}
+.DateDigits { mso-number-format: "mm\/dd\/yyyy"; TEXT-ALIGN: left; font-size: 12px; }
+.DateMonth { mso-number-format: "dd\-mmm\-yyyy"; TEXT-ALIGN: left; font-size: 12px; }
+.textCenter { mso-number-format: "\@"; TEXT-ALIGN:center; vertical-align:middle; font-size: 12px; }
+.textLeft { mso-number-format: "\@"; TEXT-ALIGN:left; vertical-align:middle; font-size: 12px; }
+.textBoldBlack { mso-number-format:"\@"; FONT-WEIGHT: bold;  font-size:12px; COLOR:Black; TEXT-ALIGN: left; vertical-align:middle }
+.titleBoldNavy { mso-number-format:"\@"; FONT-WEIGHT: bold;  font-size:12px; COLOR:Navy ; TEXT-ALIGN: center; vertical-align:middle }
+
+.title
+{
+	font-family: Takoma,Verdana, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #006400;
+	vertical-align: middle;
+}
+
+.title2 {
+	font-family: Takoma,Verdana, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight:bold;	
+	color:Navy;
+}
+.title3 {
+	font-family: Takoma,Verdana, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight:bold;	
+	text-align: left;
+	color:Navy;
+}
+
+.reportTable
+{
+	width :100%;
+	border-right: dimgray 1px solid;
+	border-top: dimgray 1px solid;
+	border-left: dimgray 1px solid;
+	border-bottom: dimgray 1px solid;
+}
+
+.reportHeaderBlue
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #677388;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left:1px;
+	padding-right:1px;
+}
+
+.reportHeaderBlueNAlign
+{
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #677388;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left:1px;
+	padding-right:1px;	
+}
+
+.reportHeaderGreen
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF; 
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	padding-right: 1px;
+	background-color: #507950;
+}
+
+.reportHeaderYellow
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: black; 
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	padding-right: 1px;
+	background-color: #ffffcc;
+}
+
+.reportCellYellow
+{
+	text-align: right;
+	color: black; 
+	background-color: #ffffcc;
+}
+
+.reportHeaderLightGreen
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 1px;
+	padding-right: 1px;
+	background-color: yellow;
+}
+
+.reportCellLightGreen
+{
+	text-align: right;
+	color: black; 
+	background-color: yellow;
+}
+
+.reportTotal
+{
+	background-color: #C0C0C0;
+	font-size: 12px;
+	font-weight: bold;	
+	padding-left:1px;
+	padding-right:1px;
+	text-align :right ;
+}
+.reportTotalHeader
+{
+	background-color: #C0C0C0;
+	font-size: 12px;
+	font-weight: bold;	
+	padding-left:1px;
+	padding-right:1px;
+}
+
+.intRow,.IntNumber
+{
+    background-color:#CCFFCC;
+	font-size: 12px;
+}
+.extRow,.ExtNumber
+{
+    background-color:#CCFFFF;
+	font-size: 12px;
+}
+
+.reportRow
+{
+	font-size: 12px;
+}
+
+.reportText
+{
+	text-align :left ;
+}
+
+.reportAmount
+{
+	text-align: right;
+}
+
+.reportAmountLink
+{
+	text-align: right;
+}
+.reportCaption,.reportCaption2,.reportCaption3
+{
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+	padding-right: 1px;
+}
+.reportCaption
+{
+	text-align: left;
+	padding-left: 1px;
+}
+
+.reportCaption2
+{
+	text-align: left;
+	font-style: italic;
+	padding-left: 6px;
+}
+.reportCaption3
+{
+	text-align:right;
+	font-style: italic;
+	padding-left: 6px;
+}
+
+.tableCaption 
+{
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #677388;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left:1px;
+	padding-right:1px;
+}
+
+.tableTotal
+{
+	background-color: #dcdcdc;
+	font-size: 12px;
+	font-weight: bold;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+.tableRow
+{
+	font-size: 12px;
+}
+
+.tableBold
+{
+	font-size: 12px;
+	font-weight: bold;
+	color: #3B4963;
+	padding-left:1px;
+	padding-right:1px;
+}
+
+.tableFooter 
+{
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #677388;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left:1px;
+	padding-right:1px;
+}

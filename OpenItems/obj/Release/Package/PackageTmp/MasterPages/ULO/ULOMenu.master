@@ -1,0 +1,29 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/MasterPages/ULO/ULO.master" AutoEventWireup="true" Inherits="MasterPages_ULOMenu" Codebehind="ULOMenu.master.cs" %>
+<%@ Register TagPrefix="uc" TagName="Menu" Src="~/Controls/Menu.ascx" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="title" Runat="Server">
+    <asp:ContentPlaceHolder ID="title" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="head" Runat="Server">
+     <link href="../../css/Grids.css" type="text/css" rel="stylesheet" />
+    <link href="../../css/Controls.css" type="text/css" rel="stylesheet" />
+     <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="mainContent" Runat="Server">
+     <uc:Menu ID="ctrlMenu" runat="server" />
+    <div id="sideShadows">
+            <div id="mainContentArea">
+                <div class="sectionTitle">
+                    <asp:ContentPlaceHolder ID="contentTitle" runat="server">
+                    </asp:ContentPlaceHolder>
+                </div>
+                <form runat="server" class="FormCSS">
+                        <asp:ContentPlaceHolder ID="content" runat="server">
+                        </asp:ContentPlaceHolder>
+                </form>
+            </div>
+        </div>
+</asp:Content>
+

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<report>
+	<section name ="" >
+		<org symbol="WP" division="Regional Commissioner" />
+	</section>
+	<section name ="" >
+		<org symbol="WPINT" division="American Recovery and Reinvestment Act" />
+	</section>
+	<section name="Tim Turano">
+		<org symbol="WPSD" division="DC Services" />
+		<org symbol="WPSM" division="Metropolitan" />
+		<org symbol="WPSP" division="Potomac" />
+		<org symbol="WPST" division="Triangle" />
+		<org symbol="WPSW" division="White House" />
+	</section>
+	<section name="Nancy Czapek">
+		<org symbol="WPH" division="Special Services Division" />
+		<org symbol="WPA" division="Client Solutions Division" />
+		<org symbol="WPG" division="Organizational Resources Division" />
+		<org symbol="WPO" division="HOTD" />
+		<org symbol="WPP" division="Acquisition Management Division" />
+		<org symbol="WPM" division="Facilities Mgt. &amp; Services Program Division" />
+		<org symbol="WCS" division="Security Management Division" />
+	</section>
+	<section name="Victoria Hartke">
+		<org symbol="WPQ" division="Lease Program Division" />		
+	</section>
+	<section name="Thomas James">
+		<org symbol="WPTP" division="Portfolio Management" />
+		<org symbol="WPTO" division="Pricing Execution &amp; Tools Division" />
+		<org symbol="WPC" division="Design &amp; Construction Division" />
+	</section>
+	<section name="Georgia Davis Leggett">    
+		<org symbol="WPFF" division="Financial Management" />
+		<org symbol="WPFB" division="Budget (BA 53, 61 &amp; Capital)" />
+	</section>
+</report>
