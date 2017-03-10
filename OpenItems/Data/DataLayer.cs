@@ -32,27 +32,17 @@ namespace Data
 
         IEnumerable<spGetLoadListNotArchived_Result> IAdminDataLayer.GetLoadListNotArchived()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetLoadListNotArchived();
-            }
-
+            return UloContext.spGetLoadListNotArchived();
         }
 
         IEnumerable<spGetLoadListWithActiveDueDate_Result> IAdminDataLayer.GetLoadListWithActiveDueDate()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetLoadListWithActiveDueDate();
-            }
+            return UloContext.spGetLoadListWithActiveDueDate();
         }
 
         IEnumerable<spGetLoadDetails_Result> IAdminDataLayer.GetLoadDetails(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetLoadDetails(iLoadID);
-            }
+            return UloContext.spGetLoadDetails(iLoadID);
         }
 
         DataSet IAdminDataLayer.GetAllAttachmentTypes()
@@ -62,34 +52,22 @@ namespace Data
 
         IEnumerable<spGetDefaultJustifications_Result> IAdminDataLayer.GetDefaultJustificationTypes()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetDefaultJustifications();
-            }
+            return UloContext.spGetDefaultJustifications();
         }
 
         IEnumerable<spGetJustificationTypeByID_Result> IAdminDataLayer.GetJustificationTypeByID(int iID)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetJustificationTypeByID(iID);
-            }
+            return UloContext.spGetJustificationTypeByID(iID);
         }
 
         int IAdminDataLayer.ArchiveLoad(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spArchiveLoad(iLoadID);
-            }
+            return UloContext.spArchiveLoad(iLoadID);
         }
 
         int IAdminDataLayer.UnarchiveLoad(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spUnarchiveLoad(iLoadID);
-            }
+            return UloContext.spUnarchiveLoad(iLoadID);
         }
 
         DataSet IAdminDataLayer.GetPendingOItemsByUser(int iLoadID)
@@ -102,26 +80,17 @@ namespace Data
 
         IEnumerable<spPendingOItemsByOrg_Result> IAdminDataLayer.GetPendingOItemsByOrg(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spPendingOItemsByOrg(iLoadID);
-            }
+            return UloContext.spPendingOItemsByOrg(iLoadID);
         }
 
         IEnumerable<spPendingDeobligateByOrg_Result> IAdminDataLayer.GetPendingDeobligateByOrg(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spPendingDeobligateByOrg(iLoadID);
-            }
+            return UloContext.spPendingDeobligateByOrg(iLoadID);
         }
 
         DataSet IAdminDataLayer.GetUsersByRole(UserRoles role)
         {
-            using (UloContext)
-            {
-                return SpGetUsersByRole(role);
-            }
+            return SpGetUsersByRole(role);
         }
 
         DataSet IAdminDataLayer.GetPendingNAOItemsByOrg(int iLoadID)
@@ -155,38 +124,25 @@ namespace Data
 
         IEnumerable<string> IAdminDataLayer.GetOrgNameByOrgCode(string sOrgCode)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetOrgNameByOrgCode(sOrgCode);
-            }
+            return UloContext.spGetOrgNameByOrgCode(sOrgCode);
         }
 
         IEnumerable<string> IAdminDataLayer.GetDocNumByItemID(int iItemID)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetDocNumByItemID(iItemID);
-            }
+            return UloContext.spGetDocNumByItemID(iItemID);
         }
 
         int IAdminDataLayer.SaveJustification(string sJustificationDescription, int iJustification, bool bDisplayAddOnField, string sAddOnDescription)
         {
-            using (UloContext)
-            {
-                return UloContext.spSaveJustification(sJustificationDescription, iJustification, bDisplayAddOnField,
-                    sAddOnDescription);
-            }
+            return UloContext.spSaveJustification(sJustificationDescription, iJustification, bDisplayAddOnField,
+                sAddOnDescription);
         }
 
         int IAssignDataLayer.VerifyItemReroute(int iRequestID, OpenItemStatus Status)
         {
-            using (UloContext)
-            {
-                //spVerifyItemReroute(Nullable<int> requestID, Nullable<int> status, ObjectParameter returnCode)
-                ObjectParameter returnCode = new ObjectParameter("ReturnCode", typeof(int));
-                UloContext.spVerifyItemReroute(iRequestID, Convert.ToInt32(Status), returnCode);
-                return Convert.ToInt32(returnCode.Value);
-            }
+            ObjectParameter returnCode = new ObjectParameter("ReturnCode", typeof(int));
+            UloContext.spVerifyItemReroute(iRequestID, Convert.ToInt32(Status), returnCode);
+            return Convert.ToInt32(returnCode.Value);
         }
 
         DataSet IAssignDataLayer.GetItemAssignUsers(int iOItemID, string sOrgCode)
@@ -201,10 +157,7 @@ namespace Data
 
         IEnumerable<spGetReassignOrgList_Result> IAssignDataLayer.GetReassignOrgList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetReassignOrgList();
-            }
+            return UloContext.spGetReassignOrgList();
         }
 
         DataSet IAssignDataLayer.GetReassignUsersOrgList()
@@ -234,51 +187,35 @@ namespace Data
 
         int IAssignDataLayer.CancelRerouteRequest(int iRequestID)
         {
-            using (UloContext)
-            {
-                return UloContext.spCancelRerouteRequest(iRequestID);
-            }
-
+            return UloContext.spCancelRerouteRequest(iRequestID);
         }
 
         int IAssignDataLayer.RequestRerouteItem(int iOItemID, string sOrgCode, int iLineNum, int iReviewerUserID,
             string sResponsibleOrg, string sNewOrganization, string sNewOrgCode, int iNewReviewerUserID,
             string sComments, OpenItemStatus status)
         {
-          
-            using (UloContext)
-            {
-                ObjectParameter requestID = new ObjectParameter("RequestID", typeof(int));
-                UloContext.spRequestRerouteItem(iOItemID, sOrgCode, iLineNum, iReviewerUserID, sResponsibleOrg,
-                    sNewOrganization, sNewOrgCode, iNewReviewerUserID, sComments, (int)status, requestID);
-                return Convert.ToInt32(requestID.Value);
-            }
-            
-
+            ObjectParameter requestID = new ObjectParameter("RequestID", typeof(int));
+            UloContext.spRequestRerouteItem(iOItemID, sOrgCode, iLineNum, iReviewerUserID, sResponsibleOrg,
+                sNewOrganization, sNewOrgCode, iNewReviewerUserID, sComments, (int)status, requestID);
+            return Convert.ToInt32(requestID.Value);
         }
 
         int IAssignDataLayer.RerouteItem(int iOItemID, int iLineNum, int iReviewerUserID, string sOrgCode,
             string sNewRespOrg, string sNewOrgCode, int iNewReviewerID, string sComments)
         {
-            using (UloContext)
-            {
-                ObjectParameter returnCode = new ObjectParameter("ReturnCode", typeof(int));
-                UloContext.spRerouteItem(iOItemID, iLineNum, iReviewerUserID, sOrgCode, sNewRespOrg, sNewOrgCode,
-                    iNewReviewerID, sComments, null, returnCode);
-                return Convert.ToInt32(returnCode.Value);
-            }
+            ObjectParameter returnCode = new ObjectParameter("ReturnCode", typeof(int));
+            UloContext.spRerouteItem(iOItemID, iLineNum, iReviewerUserID, sOrgCode, sNewRespOrg, sNewOrgCode,
+                iNewReviewerID, sComments, null, returnCode);
+            return Convert.ToInt32(returnCode.Value);
         }
 
         int IAssignDataLayer.RerouteItemByRequest(int iRequestID, string sNewRespOrg, string sNewOrgCode,
             int iNewReviewerID, string sComments)
         {
-            using (UloContext)
-            {
-                ObjectParameter returnCode = new ObjectParameter("ReturnCode", typeof(int));
-                UloContext.spRerouteItemByRequest(iRequestID, sNewRespOrg, sNewOrgCode, iNewReviewerID, sComments,
-                    returnCode);
-                return Convert.ToInt32(returnCode.Value);
-            }
+            ObjectParameter returnCode = new ObjectParameter("ReturnCode", typeof(int));
+            UloContext.spRerouteItemByRequest(iRequestID, sNewRespOrg, sNewOrgCode, iNewReviewerID, sComments,
+                returnCode);
+            return Convert.ToInt32(returnCode.Value);
         }
 
         DataSet IDocumentDataLayer.GetOrgCodesByDocNumber(int iLoadID, string sDocNumber)
@@ -304,10 +241,7 @@ namespace Data
 
         int IDocumentDataLayer.SaveAttachment(string sDocNumber, int iDocID, int iLoadID, int[] aDocTypeCode, string sLineNums, string sComments, int iUpdateUserID)
         {
-            using (UloContext)
-            {
-                return UloContext.spSaveAttachment(sDocNumber, iDocID, sLineNums, sComments, iLoadID, iUpdateUserID);
-            }
+            return UloContext.spSaveAttachment(sDocNumber, iDocID, sLineNums, sComments, iLoadID, iUpdateUserID);
         }
 
         void IDocumentDataLayer.SaveAttachmentType(string sDocTypeName, int iDocTypeCode, out int iID)
@@ -322,50 +256,32 @@ namespace Data
 
         int IDocumentDataLayer.DeleteAttachment(string sDocNumber, int iDocID, int iUpdateUserID)
         {
-            using (UloContext)
-            {
-                return UloContext.spDeleteAttachment(sDocNumber, iDocID, iUpdateUserID);
-            }
+            return UloContext.spDeleteAttachment(sDocNumber, iDocID, iUpdateUserID);
         }
 
         int IDocumentDataLayer.SelectSendAttachment(string sDocNumber, int iDocID, int iLoadID, bool bSelectedValue)
         {
-            using (UloContext)
-            {
-                return UloContext.spSelectSendAttachment(sDocNumber, iDocID, iLoadID, bSelectedValue);
-            }
+            return UloContext.spSelectSendAttachment(sDocNumber, iDocID, iLoadID, bSelectedValue);
         }
 
         int IDocumentDataLayer.SelectAttForRevision(string sDocNumber, int iDocID, int iLoadID, bool bSelectedValue)
         {
-            using (UloContext)
-            {
-                return UloContext.spSelectAttForRevision(sDocNumber, iDocID, iLoadID, bSelectedValue);
-            }
+            return UloContext.spSelectAttForRevision(sDocNumber, iDocID, iLoadID, bSelectedValue);
         }
 
         int IDocumentDataLayer.UpdateSentAttForRevision(string sDocNumber, string sDocsArray, int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spUpdateSendAttForRevision(sDocNumber, sDocsArray, iLoadID);
-            }
+            return UloContext.spUpdateSendAttForRevision(sDocNumber, sDocsArray, iLoadID);
         }
 
         int IDocumentDataLayer.UpdateSendAttachments(string sDocNumber, string sDocsArray, int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spUpdateSendAttachment(sDocNumber, sDocsArray, iLoadID);
-            }
+            return UloContext.spUpdateSendAttachment(sDocNumber, sDocsArray, iLoadID);
         }
 
         IEnumerable<spGetAttachRecommend_Result> IDocumentDataLayer.GetAttachRecommend(string sPegasysDocType)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetAttachRecommend(sPegasysDocType);
-            }
+            return UloContext.spGetAttachRecommend(sPegasysDocType);
         }
 
         DataSet IDocumentDataLayer.GetLoadAttachments(int iLoadID, string sOrganization)
@@ -380,10 +296,7 @@ namespace Data
 
         int IDocumentDataLayer.UpdateDocRevision(int iLoadID, string sDocNumber, int iDocID, int iDocTypeCode, Int16 iStatus)
         {
-            using (UloContext)
-            {
-                return UloContext.spUpdateDocRevision(sDocNumber, iDocID, iDocTypeCode, iLoadID, iStatus);
-            }
+            return UloContext.spUpdateDocRevision(sDocNumber, iDocID, iDocTypeCode, iLoadID, iStatus);
         }
 
         DataSet IEmailDataLayer.GetUserByUsername(string sUsername)
@@ -397,46 +310,22 @@ namespace Data
         int IEmailDataLayer.InsertEmailRequest(int iCurrentUserID, int iHistoryAction, bool bSendNow)
         {
 
-            var arrParams = new SqlParameter[4];
-            arrParams[0] = new SqlParameter("@SenderUserID", SqlDbType.Int);
-            arrParams[0].Value = iCurrentUserID;
-            arrParams[1] = new SqlParameter("@HistoryAction", SqlDbType.Int);
-            arrParams[1].Value = iHistoryAction;
-            arrParams[2] = new SqlParameter("@EmailStatus", SqlDbType.Int);
-            if (bSendNow)
-                arrParams[2].Value = (int)EmailStatus.emReadyToSend;
-            else
-                arrParams[2].Value = (int)EmailStatus.emPending;
-            arrParams[3] = new SqlParameter("@EmailRequestID", SqlDbType.Int);
-            arrParams[3].Direction = ParameterDirection.Output;
-            Da.ExecuteCommand("spInsertEmailRequest", arrParams);
-
             ObjectParameter emailrequestID = new ObjectParameter("EmailrequestID", typeof(int));
 
-            using (UloContext)
-            {
-                UloContext.spInsertEmailRequest(iCurrentUserID, iHistoryAction,
-                    Convert.ToInt32(EmailStatus.emReadyToSend), emailrequestID);
-                return Convert.ToInt32(emailrequestID.Value);
-            }
+            UloContext.spInsertEmailRequest(iCurrentUserID, iHistoryAction,
+                Convert.ToInt32(EmailStatus.emReadyToSend), emailrequestID);
+            return Convert.ToInt32(emailrequestID.Value);
 
-            return (int)arrParams[3].Value;
         }
 
         int IEmailDataLayer.ActivateAssignEmailRequest(int iCurrentUserID, int iSelectedLoad)
         {
-            using (UloContext)
-            {
-                return UloContext.spActivateAssignEmailRequest(iCurrentUserID, iSelectedLoad);
-            }
+            return UloContext.spActivateAssignEmailRequest(iCurrentUserID, iSelectedLoad);
         }
 
         IEnumerable<spGetFYAllowance_Result> IFundAllowanceDataLayer.GetFYAllowance(string sFiscalYear)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetFYAllowance(sFiscalYear);
-            }
+            return UloContext.spGetFYAllowance(sFiscalYear);
         }
 
         SqlDataReader IFundAllowanceDataLayer.GetFSReportConfig()
@@ -475,11 +364,8 @@ namespace Data
         int IFundAllowanceDataLayer.SaveFYAllowance(int iAllowRecordID, string sFiscalYear, decimal dAmount, string sMonthList, int iMonthCount,
             int iUpdateUserID)
         {
-            using (UloContext)
-            {
-                return UloContext.spSaveFYAllowance(iAllowRecordID, sFiscalYear, dAmount, sMonthList, iMonthCount,
-                    iUpdateUserID);
-            }
+            return UloContext.spSaveFYAllowance(iAllowRecordID, sFiscalYear, dAmount, sMonthList, iMonthCount,
+                iUpdateUserID);
         }
 
         DataSet IFundAllowanceDataLayer.GetAllowanceHistory(string sFiscalYear, HistoryActions code1, HistoryActions code2)
@@ -511,18 +397,13 @@ namespace Data
         }
         IEnumerable<string> IFundStatusDataLayer.GetBALList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetBAList();
-            }
+            return UloContext.spGetBAList();
         }
 
         IEnumerable<spGetFundsOrganizations_Result> IFundStatusDataLayer.GetFundsOrganizations()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetFundsOrganizations();
-            }
+
+            return UloContext.spGetFundsOrganizations();
         }
 
         DataSet IFundStatusDataLayer.GetReportFuncGroupList()
@@ -532,42 +413,27 @@ namespace Data
 
         IEnumerable<string> IFundStatusDataLayer.GetFundsSumFunctionList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetFundsSumFunctionList();
-            }
+            return UloContext.spGetFundsSumFunctionList();
         }
 
         IEnumerable<string> IFundStatusDataLayer.GetFundsAllFunctionList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetFundsAllFunctionList();
-            }
+            return UloContext.spGetFundsAllFunctionList();
         }
 
         IEnumerable<spGetObjectClassCodeList_Result> IFundStatusDataLayer.GetObjectClassCodeList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetObjectClassCodeList();
-            }
+            return UloContext.spGetObjectClassCodeList();
         }
 
         IEnumerable<spGetCostElementList_Result> IFundStatusDataLayer.GetCostElementList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetCostElementList();
-            }
+            return UloContext.spGetCostElementList();
         }
 
         IEnumerable<spGetBusinessLineList_Result> IFundStatusDataLayer.GetBusinessLineList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetBusinessLineList();
-            }
+            return UloContext.spGetBusinessLineList();
         }
 
 
@@ -661,28 +527,19 @@ namespace Data
 
         int IFundStatusDataLayer.DeleteEntryData(int iEntryID, int iUpdateUserID)
         {
-            using (UloContext)
-            {
-                return UloContext.spDeleteEntryData_FSReport(iEntryID, iUpdateUserID);
-            }
+            return UloContext.spDeleteEntryData_FSReport(iEntryID, iUpdateUserID);
         }
 
         int IFundStatusDataLayer.UpdateEntryData(int iEntryID, string sDocNumber, decimal dAmount, string sExplanation, int iUpdateUserID)
         {
-            using (UloContext)
-            {
-                return UloContext.spUpdateEntryData_FSReport(iEntryID, sDocNumber, dAmount, sExplanation, iUpdateUserID);
-            }
+            return UloContext.spUpdateEntryData_FSReport(iEntryID, sDocNumber, dAmount, sExplanation, iUpdateUserID);
         }
 
         int IFundStatusDataLayer.InsertEntryData(int iUserEntryType, string sFiscalYear, string sBookMonth,
             string sOrganization, int iReportGroupCode, string sDocNumber, decimal dAmount, string sExplanation,
             int iUpdateUserID)
         {
-            using (UloContext)
-            {
-                return UloContext.spInsertEntryData_FSReport(iUserEntryType, sFiscalYear, sBookMonth, sOrganization, "", iReportGroupCode.ToString(), sDocNumber, dAmount, sExplanation, iUpdateUserID);
-            }
+            return UloContext.spInsertEntryData_FSReport(iUserEntryType, sFiscalYear, sBookMonth, sOrganization, "", iReportGroupCode.ToString(), sDocNumber, dAmount, sExplanation, iUpdateUserID);
         }
 
         DataSet IFundStatusDataLayer.GetAdjDocList(string sFiscalYear, string sOrganization, string sBookMonth,
@@ -760,28 +617,19 @@ namespace Data
 
         IEnumerable<string> IItemDataLayer.GetDocNumByItemID(int iOItemID)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetDocNumByItemID(iOItemID);
-            }
+            return UloContext.spGetDocNumByItemID(iOItemID);
         }
 
         IEnumerable<spGetOIFeedbackDetails_Result> IItemDataLayer.GetOIFeedbackDetails(int iOItemID)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetOIFeedbackDetails(iOItemID);
-            }
+            return UloContext.spGetOIFeedbackDetails(iOItemID);
         }
 
         int IItemDataLayer.UpdateFeedback(int iOItemID, string sDocNumber, int iLoadID, int iValid, string sResponse,
             decimal dUDOShouldBe, decimal dDOShouldBe)
         {
-            using (UloContext)
-            {
-                return UloContext.spUpdateFeedback(iOItemID, sDocNumber, iLoadID, iValid, sResponse, dUDOShouldBe,
-                    dDOShouldBe);
-            }
+            return UloContext.spUpdateFeedback(iOItemID, sDocNumber, iLoadID, iValid, sResponse, dUDOShouldBe,
+                dDOShouldBe);
         }
 
         int IItemDataLayer.AddDocumentContact(string sDocNumber, int iPersonnelID, string sRoleDesc)
@@ -803,49 +651,37 @@ namespace Data
         int IItemDataLayer.DeleteDocumentContact(string sDocNumber, string sRoleDesc, string sFirstName,
             string sLastName)
         {
-            using (UloContext)
-            {
-                ObjectParameter contactUserID = new ObjectParameter("ContactUserID", typeof(int));
-                UloContext.spDeleteDocumentContact(sDocNumber, sRoleDesc, sFirstName, sLastName, contactUserID);
-                return Convert.ToInt32(contactUserID.Value);
-            }
+            ObjectParameter contactUserID = new ObjectParameter("ContactUserID", typeof(int));
+            UloContext.spDeleteDocumentContact(sDocNumber, sRoleDesc, sFirstName, sLastName, contactUserID);
+            return Convert.ToInt32(contactUserID.Value);
         }
 
         int IItemDataLayer.CalculateItemStatus(int iOItemID, string sULOOrgCode, int iReviewerUserID)
         {
-            using (UloContext)
-            {
-                ObjectParameter status = new ObjectParameter("Status", typeof(int));
-                UloContext.spCalculateItemStatus(iOItemID, sULOOrgCode, iReviewerUserID, status);
-                return Convert.ToInt32(status);
-            }
+            ObjectParameter status = new ObjectParameter("Status", typeof(int));
+            UloContext.spCalculateItemStatus(iOItemID, sULOOrgCode, iReviewerUserID, status);
+            return Convert.ToInt32(status);
         }
 
         int IItemDataLayer.UpdateItemStatus(int iOItemID, int iLoadID, string sULOOrgCode, int iReviewerUserID,
             int iStatusCode)
         {
-            using (UloContext)
-            {
-                return UloContext.spUpdateItemStatus(iOItemID, iLoadID, sULOOrgCode, iReviewerUserID, iStatusCode);
-            }
+            return UloContext.spUpdateItemStatus(iOItemID, iLoadID, sULOOrgCode, iReviewerUserID, iStatusCode);
         }
 
         int IItemDataLayer.UpdateItemProperties(int iOItemID, string sULOOrgCode, string sUDOShouldBe,
             string sDOShouldBe,
             DateTime dtExpCompDate, string sComments)
         {
-            using (UloContext)
-            {
-                var udoShouldBe = sUDOShouldBe.Trim().Length > 0 && sUDOShouldBe.Trim() != "$"
-                    ? Utility.GetDecimalFromDisplayedMoney(sUDOShouldBe)
-                    : (decimal?)null;
+            var udoShouldBe = sUDOShouldBe.Trim().Length > 0 && sUDOShouldBe.Trim() != "$"
+                ? Utility.GetDecimalFromDisplayedMoney(sUDOShouldBe)
+                : (decimal?)null;
 
-                var doShouldBe = sDOShouldBe.Trim().Length > 0 && sDOShouldBe.Trim() != "$"
-                    ? Utility.GetDecimalFromDisplayedMoney(sDOShouldBe)
-                    : (decimal?) null;
-                return UloContext.spUpdateItemProperties(iOItemID, sULOOrgCode, udoShouldBe, doShouldBe, dtExpCompDate,
-                    sComments);
-            }
+            var doShouldBe = sDOShouldBe.Trim().Length > 0 && sDOShouldBe.Trim() != "$"
+                ? Utility.GetDecimalFromDisplayedMoney(sDOShouldBe)
+                : (decimal?)null;
+            return UloContext.spUpdateItemProperties(iOItemID, sULOOrgCode, udoShouldBe, doShouldBe, dtExpCompDate,
+                sComments);
         }
 
         DataSet IItemDataLayer.GetLinesOrgCodes(int iOItemID, string sLines)
@@ -908,63 +744,32 @@ namespace Data
 
         IEnumerable<spGetOILinesForDeobligation_Result> IItemsDataLayer.GetItemsLinesToDeobligate(int iLoadID, string sOrganization)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetOILinesForDeobligation(iLoadID, sOrganization);
-            }
+            return UloContext.spGetOILinesForDeobligation(iLoadID, sOrganization);
         }
 
         object ILineNumDataLayer.CertifyDeobligation(int iOItemID, int iItemLNum)
         {
-            using (UloContext)
-            {
-                ObjectParameter deobligatedDate =  new ObjectParameter("DeobligatedDate", typeof(DateTime));
-                UloContext.spCertifyDeobligation(iOItemID, iItemLNum, deobligatedDate);
-                return deobligatedDate;
-            }
+            ObjectParameter deobligatedDate = new ObjectParameter("DeobligatedDate", typeof(DateTime));
+            UloContext.spCertifyDeobligation(iOItemID, iItemLNum, deobligatedDate);
+            return deobligatedDate;
         }
 
         object ILineNumDataLayer.LineOnReassignRequest(int iOItemID, int iLineNum, string sULOOrgCode,
             int iReviewerUserID)
         {
-            var arrParams = new SqlParameter[5];
-            arrParams[0] = new SqlParameter("@OItemID", SqlDbType.Int);
-            arrParams[0].Value = iOItemID;
-            arrParams[1] = new SqlParameter("@ItemLNum", SqlDbType.Int);
-            arrParams[1].Value = iLineNum;
-            arrParams[2] = new SqlParameter("@ULOOrgCode", SqlDbType.VarChar);
-            arrParams[2].Value = sULOOrgCode;
-            arrParams[3] = new SqlParameter("@ReviewerUserID", SqlDbType.Int);
-            arrParams[3].Value = iReviewerUserID;
-            arrParams[4] = new SqlParameter("@ReturnCode", SqlDbType.Bit);
-            arrParams[4].Direction = ParameterDirection.Output;
-            Da.ExecuteCommand("spCheckLineStatus", arrParams);
-
-            using (UloContext)
-            {
-                ObjectParameter returnCode = new ObjectParameter("ReturnCode", typeof(int));
-                UloContext.spCheckLineStatus(iOItemID, iLineNum, sULOOrgCode, iReviewerUserID, returnCode);
-                return returnCode;
-            }
-
-            return arrParams[4].Value;
+            ObjectParameter returnCode = new ObjectParameter("ReturnCode", typeof(int));
+            UloContext.spCheckLineStatus(iOItemID, iLineNum, sULOOrgCode, iReviewerUserID, returnCode);
+            return returnCode;
         }
 
         IEnumerable<spGetOrgAndOrgCodeList_Result> IOrgDataLayer.GetOrgAndOrgCodeList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetOrgAndOrgCodeList();
-            }
+            return UloContext.spGetOrgAndOrgCodeList();
         }
 
         IEnumerable<spGetHistoryByEmailRequest_Result> IReportDataLayer.GetHistoryByEmailRequest(int iEmailRequestID)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetHistoryByEmailRequest(iEmailRequestID);
-            }
-
+            return UloContext.spGetHistoryByEmailRequest(iEmailRequestID);
         }
 
         DataSet IReportDataLayer.GetReportDocuments(int iLoadID)
@@ -993,107 +798,71 @@ namespace Data
 
         IEnumerable<spReportDaily_Result> IReportDataLayer.GetReportDaily(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spReportDaily(iLoadID);
-            }
+            return UloContext.spReportDaily(iLoadID);
         }
 
         IEnumerable<spReportTotalSum_Result> IReportDataLayer.GetReportTotalSum(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spReportTotalSum(iLoadID);
-            }
+            return UloContext.spReportTotalSum(iLoadID);
         }
 
         IEnumerable<spReportTotalByValid_Result> IReportDataLayer.GetReportTotalByValid(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spReportTotalByValid(iLoadID);
-            }
+            return UloContext.spReportTotalByValid(iLoadID);
         }
 
         IEnumerable<spReportTotalByOrg_Result> IReportDataLayer.GetTotalByOrganization(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spReportTotalByOrg(iLoadID);
-            }
+            return UloContext.spReportTotalByOrg(iLoadID);
         }
 
         IEnumerable<spDaraByDocNum_Result> IReportDataLayer.GetDaraByDocNum(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spDaraByDocNum(iLoadID);
-            }
+            return UloContext.spDaraByDocNum(iLoadID);
         }
 
         int IUploadServiceDataLayer.InsertNewLoad(int iDataSource, int iOpenItemsType, DateTime dtDueDate,
             int iFileID, int iParentLoadID, int iReviewRound, string sLoadName)
         {
-            using (UloContext)
-            {
-                ObjectParameter loadId = new ObjectParameter("LoadID", typeof(int));
-                UloContext.spInsertNewLoad(iDataSource, iOpenItemsType, dtDueDate, iFileID, iParentLoadID,
-                    iReviewRound, loadId, sLoadName);
+            ObjectParameter loadId = new ObjectParameter("LoadID", typeof(int));
+            UloContext.spInsertNewLoad(iDataSource, iOpenItemsType, dtDueDate, iFileID, iParentLoadID,
+                iReviewRound, loadId, sLoadName);
 
-                return Convert.ToInt32(loadId);
-            }
+            return Convert.ToInt32(loadId);
         }
 
         int IUploadServiceDataLayer.InsertReviewFeedback(int iLoadID, int iParentLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spInsertReviewFeedback(iLoadID, iParentLoadID);
-            }
+            return UloContext.spInsertReviewFeedback(iLoadID, iParentLoadID);
         }
 
 
         int IUploadServiceDataLayer.InsertOIMain(int iLoadID, int iOpenItemsType)
         {
-            using (UloContext)
-            {
-                return UloContext.spInsertOIMain(iLoadID, iOpenItemsType);
-            }
+            return UloContext.spInsertOIMain(iLoadID, iOpenItemsType);
         }
 
         int IUploadServiceDataLayer.InsertOIDetails(int iLoadID)
         {
-            using (UloContext)
-            {
-                return UloContext.spInsertOIDetails(iLoadID);
-            }
+            return UloContext.spInsertOIDetails(iLoadID);
         }
 
         int IUploadServiceDataLayer.InsertOIOrganization(int iLoadID)
         {
-            using (UloContext)
-            {
-               return UloContext.spInsertOIOrganization(iLoadID);
-            }
+            return UloContext.spInsertOIOrganization(iLoadID);
         }
 
         int IUploadServiceDataLayer.InsertOILease(int iLoadID, DateTime dtReportDate)
         {
-            using (UloContext)
-            {
-                return UloContext.spInsertOILease(iLoadID, dtReportDate);
-            }
+            return UloContext.spInsertOILease(iLoadID, dtReportDate);
         }
 
         int IUploadServiceDataLayer.InsertEmailRequest(int iCurrentUserID, int iHistoryAction, bool bSendNow)
         {
-            using (UloContext)
-            {
-                var emailStatus = bSendNow ? (int)EmailStatus.emReadyToSend : (int)EmailStatus.emPending;
-                ObjectParameter emailRequestID =  new ObjectParameter("EmailRequestID", typeof(int));
-                UloContext.spInsertEmailRequest(iCurrentUserID, iHistoryAction, emailStatus, emailRequestID);
-                return Convert.ToInt32(emailRequestID);
-            }
+            var emailStatus = bSendNow ? (int)EmailStatus.emReadyToSend : (int)EmailStatus.emPending;
+            ObjectParameter emailRequestID = new ObjectParameter("EmailRequestID", typeof(int));
+            UloContext.spInsertEmailRequest(iCurrentUserID, iHistoryAction, emailStatus, emailRequestID);
+            return Convert.ToInt32(emailRequestID);
         }
 
         DataSet IUsersDataLayer.GetUserByUserEmail(string sEmail)
@@ -1145,10 +914,7 @@ namespace Data
 
         IEnumerable<spGetAllActiveInactiveUsers_Result> IUsersDataLayer.GetAllActiveInactiveUsers()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetAllActiveInactiveUsers();
-            }
+            return UloContext.spGetAllActiveInactiveUsers();
         }
 
         DataSet IUsersDataLayer.GetAllNCRUsers()
@@ -1173,117 +939,75 @@ namespace Data
         int IUsersDataLayer.SaveUser(int iUserID, string sEmail, string sPassword, string sRoleCode, int iActive, string sFirstName,
             string sLastName, string sMiddleInitial, string sOrganization, string sPhone, string sDefaultApplication)
         {
-            using (UloContext)
-            {
-                return UloContext.spSaveUser(iUserID, sEmail, sPassword, sRoleCode, Convert.ToBoolean(iActive), sFirstName, sLastName,
-                    sMiddleInitial, sOrganization, sPhone, Convert.ToInt16(sDefaultApplication));
-            }
+            return UloContext.spSaveUser(iUserID, sEmail, sPassword, sRoleCode, Convert.ToBoolean(iActive), sFirstName, sLastName,
+                sMiddleInitial, sOrganization, sPhone, Convert.ToInt16(sDefaultApplication));
 
         }
 
 
         IEnumerable<spGetOpenItemsTypes_Result> ILookupDataLayer.GetOpenItemsTypes()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetOpenItemsTypes();
-            }
+            return UloContext.spGetOpenItemsTypes();
         }
 
         IEnumerable<spGetDataSourceTypes_Result> ILookupDataLayer.GetDataSourceTypes()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetDataSourceTypes();
-            }
+            return UloContext.spGetDataSourceTypes();
         }
 
         IEnumerable<spGetBA53AccrualTypes_Result> ILookupDataLayer.GetBA53AccrualTypes()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetBA53AccrualTypes();
-            }
+            return UloContext.spGetBA53AccrualTypes();
         }
 
         IEnumerable<spGetBA53AccrualTypeActions_Result> ILookupDataLayer.GetBA53AccrualTypeActions(int iAccrualTypeCode)
         {
-            using (UloContext)
-            {
-                return UloContext.spGetBA53AccrualTypeActions(iAccrualTypeCode);
-            }
+            return UloContext.spGetBA53AccrualTypeActions(iAccrualTypeCode);
         }
 
         IEnumerable<spGetLoadList_Result> ILookupDataLayer.GetLoadList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetLoadList();
-            }
+            return UloContext.spGetLoadList();
         }
 
         IEnumerable<string> ILookupDataLayer.GetOrganizationsList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetOrganizationsList();
-            }
+            return UloContext.spGetOrganizationsList();
         }
 
         IEnumerable<spGetJustifications_Result> ILookupDataLayer.GetJustifications()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetJustifications();
-            }
+            return UloContext.spGetJustifications();
         }
 
         IEnumerable<spGetDefaultJustifications_Result> ILookupDataLayer.GetDefaultJustifications()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetDefaultJustifications();
-            }
+            return UloContext.spGetDefaultJustifications();
         }
 
         IEnumerable<spGetActiveCodeList_Result> ILookupDataLayer.GetActiveCodeList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetActiveCodeList();
-            }
+            return UloContext.spGetActiveCodeList();
         }
 
         IEnumerable<spGetCodeList_Result> ILookupDataLayer.GetCodeList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetCodeList();
-            }
+            return UloContext.spGetCodeList();
         }
 
         IEnumerable<spGetValidationValues_Result> ILookupDataLayer.GetValidationValues()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetValidationValues();
-            }
+            return UloContext.spGetValidationValues();
         }
 
         IEnumerable<spGetContactsRoles_Result> ILookupDataLayer.GetContactsRoles()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetContactsRoles();
-            }
+            return UloContext.spGetContactsRoles();
         }
 
         IEnumerable<spGetWholeOrgList_Result> ILookupDataLayer.GetWholeOrgList()
         {
-            using (UloContext)
-            {
-                return UloContext.spGetWholeOrgList();
-            }
+            return UloContext.spGetWholeOrgList();
         }
 
         private DataSet SpGetUsersByRole(UserRoles Role)
@@ -1295,7 +1019,7 @@ namespace Data
         }
 
 
-
+        //TODO: Once we fully implement Entity, we can get rid of this since DBContext implements IDisposable
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 

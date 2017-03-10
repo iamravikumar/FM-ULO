@@ -116,3 +116,4 @@ C:\Development\Repos\ULO\OpenItems\obj\Debug\Controls.MultiGrid.resources
 C:\Development\Repos\ULO\OpenItems\obj\Debug\OpenItems.csproj.GenerateResource.Cache
 C:\Development\Repos\ULO\OpenItems\obj\Debug\OpenItems.dll
 C:\Development\Repos\ULO\OpenItems\obj\Debug\OpenItems.pdb
+C:\Development\Repos\ULO\OpenItems\obj\Debug\OpenItems.csprojResolveAssemblyReference.cache
