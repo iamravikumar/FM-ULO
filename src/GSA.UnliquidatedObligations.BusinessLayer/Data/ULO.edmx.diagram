@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="856c970654fb4a698a752c9a7125a636" Name="Diagram1">
+        <EntityTypeShape EntityType="ULODBModel.AspNetRoleClaim" Width="1.5" PointX="3" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.AspNetRole" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.AspNetUser" Width="1.5" PointX="3" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.AspNetUserToken" Width="1.5" PointX="0.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.Attachment" Width="1.5" PointX="14.5" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.Document" Width="1.5" PointX="12.25" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.DocumentType" Width="1.5" PointX="10" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.ULO" Width="1.5" PointX="10" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.User" Width="1.5" PointX="7.75" PointY="3" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.UserUser" Width="1.5" PointX="5.25" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.Region" Width="1.5" PointX="10" PointY="9.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ULODBModel.Zone" Width="1.5" PointX="7.75" PointY="10.125" IsExpanded="true" />
+        <AssociationConnector Association="ULODBModel.FK_AspNetRoleClaims_AspNetRoles_RoleId" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK_AspNetUserClaims_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK_AspNetUserLogins_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK__UserUsers__Child__04E4BC85" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK__UserUsers__Paren__03F0984C" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK_Attachments_ToDocument" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK_Document_ToDocumentType" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK_Document_ToULO" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK_Document_ToUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK_ULO_To_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.FK__Regions__ZoneId__6E01572D" ManuallyRouted="false" />
+        <AssociationConnector Association="ULODBModel.AspNetUserRoles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
