@@ -278,8 +278,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\GSA.UnliquidatedObligations.BusinessLayer\GSA.UnliquidatedObligations.BusinessLayer.csproj">
-      <Project>{f896cffa-862c-4f1a-9c02-b751478d7eeb}</Project>
+    <ProjectReference Include="..\GSA.UnliquidatedObligations.BusinessLayer\GSA.UnliquidatedObligations.BusinessLayer.csproj">
+      <Project>{dec1ac2c-ed6f-494c-996d-9f58e0ad5112}</Project>
       <Name>GSA.UnliquidatedObligations.BusinessLayer</Name>
     </ProjectReference>
   </ItemGroup>
