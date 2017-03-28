@@ -124,6 +124,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DatabaseScripts\0001.ChangeLog.sql" />
+    <Content Include="DatabaseScripts\0003.Asserts.sql" />
+    <Content Include="DatabaseScripts\0004.Types.sql" />
+    <Content Include="DatabaseScripts\0005.WhoIsActive.sql" />
+    <Content Include="DatabaseScripts\0006.StringSplit.cs.sql" />
+    <Content Include="DatabaseScripts\0100.Aspnet.sql" />
+    <Content Include="DatabaseScripts\0200.gsa.sql" />
+    <Content Include="DatabaseScripts\0300.ulo.structure.sql" />
     <Content Include="Data\ULO.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ULO.edmx</DependentUpon>
