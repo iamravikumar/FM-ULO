@@ -2,6 +2,8 @@
 GO
 create type AspNetId from nvarchar(450) null
 GO
+create type JsonObject from nvarchar(max) null
+GO
 /*
 create type EmailAddress from varchar(254) null
 GO
@@ -12,8 +14,6 @@ GO
 create type Title from nvarchar(255) null
 GO
 create type RowStatus from char(1) not null
-GO
-create type JsonObject from nvarchar(max) null
 GO
 create type ForeignIdType from nvarchar(50) null
 GO

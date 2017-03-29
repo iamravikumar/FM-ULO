@@ -1,48 +1,53 @@
-﻿create schema gsa
+﻿ALTER TABLE aspnetusers ADD UserType dbo.DeveloperName NOT NULL DEFAULT 'Person'
 
 GO
 
-create table gsa.Zones
+CREATE TABLE UserUsers
 (
-	ZoneId int not null primary key,
-	ZoneName varchar(100) not null unique
+	UserUserId INT NOT NULL IDENTITY PRIMARY KEY,
+	ParentUserId AspNetId NOT NULL REFERENCES AspnetUsers(Id),
+	ChildUserId AspNetId NOT NULL REFERENCES AspnetUsers(Id),
+	RegionId int NULL REFERENCES gsa.Regions(RegionId),
 )
 
 GO
 
-insert into gsa.Zones
-(ZoneId, ZoneName)
-values
-(1, 'Zone 1'),
-(2, 'Zone 2'),
-(3, 'Zone 3'),
-(4, 'Zone 4');
-
-GO
-
-create table gsa.Regions
+CREATE TABLE UnliquidatedObligations
 (
-	RegionId int not null primary key,
-	ZoneId int not null references gsa.Zones(ZoneId),
-	RegionNumber varchar(10) not null unique,
-	RegionName varchar(100) not null unique
+	UloId INT NOT NULL IDENTITY PRIMARY KEY,
+	CreatedAtUtc DATETIME NOT NULL DEFAULT (GETUTCDATE()),
+	RegionId INT NOT NULL REFERENCES gsa.Regions(RegionId),
+	FieldS0 nvarchar(100),
+	FieldS1 nvarchar(100),
+	FieldS2 nvarchar(100)
 )
 
 GO
 
-insert into gsa.Regions
-(RegionId, ZoneId, RegionNumber, RegionName)
-values
-(1 , 1, '1' , 'New England'),
-(2 , 1, '2' , 'Northeast & Caribbean'),
-(3 , 1, '3' , 'Mid-Atlantic'),
-(4 , 2, '4' , 'Southeast Sunbelt'),
-(5 , 1, '5' , 'Great Lakes'),
-(6 , 2, '6' , 'Heartland'),
-(7 , 2, '7' , 'Greater Southwest'),
-(8 , 3, '8' , 'Rocky Mountain'),
-(9 , 3, '9' , 'Pacific Rim'),
-(10, 3, '10', 'Northwest / Arctic'),
-(11, 4, '11', 'National Capital Region');
+CREATE TABLE Workflows
+(
+	WorkflowId INT NOT NULL IDENTITY PRIMARY KEY,
+	WorkflowKey DeveloperName NOT NULL,
+	[Version] int NOT NULL,
+	CurrentWorkflowActivityKey DeveloperName NOT NULL,
+	OwnerUserId AspNetId NOT NULL REFERENCES AspnetUsers(Id),
+	CreatedAtUtc DATETIME NOT NULL DEFAULT (GETUTCDATE()),
+	CurrentActivityEnteredAtUtc DATETIME NOT NULL,
+	TargetUloId INT NULL REFERENCES UnliquidatedObligations(UloId)
+)
+
 GO
 
+CREATE TABLE WorkflowDefinitions
+(
+	WorkflowDefinitionId INT NOT NULL IDENTITY PRIMARY KEY,
+	WorkflowKey DeveloperName NOT NULL,
+	[Version] int NOT NULL DEFAULT(1),
+	DescriptionJson JsonObject
+)
+
+GO
+
+CREATE UNIQUE INDEX UX_WorkflowDefinitions ON dbo.WorkflowDefinitions(WorkflowKey, [Version])
+
+GO

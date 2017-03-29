@@ -43,6 +43,7 @@ values
 (8 , 3, '8' , 'Rocky Mountain'),
 (9 , 3, '9' , 'Pacific Rim'),
 (10, 3, '10', 'Northwest / Arctic'),
-(11, 4, '11', 'National Capital Region');
+(11, 4, '11', 'National Capital Region');
+
 GO
 
