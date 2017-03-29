@@ -86,6 +86,11 @@ namespace GSA.UnliquidatedObligations.Web
             }
             return manager;
         }
+
+        public override Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
+        {
+            return Task.FromResult(true);
+        }
     }
 
     // Configure the application sign-in manager which is used in this application.
