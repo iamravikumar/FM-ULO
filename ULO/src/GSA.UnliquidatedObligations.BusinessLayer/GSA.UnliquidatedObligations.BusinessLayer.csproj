@@ -67,9 +67,6 @@
     <Compile Include="Data\AspNetRole.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
-    <Compile Include="Data\AspNetRoleClaim.cs">
-      <DependentUpon>ULO.tt</DependentUpon>
-    </Compile>
     <Compile Include="Data\AspNetUser.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -77,9 +74,6 @@
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\AspNetUserLogin.cs">
-      <DependentUpon>ULO.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Data\AspNetUserToken.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\Attachment.cs">
@@ -92,6 +86,9 @@
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\Region.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\sysdiagram.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\ULO.Context.cs">
@@ -112,6 +109,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\UnliquidatedObligation.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\User.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -119,7 +119,12 @@
     <Compile Include="Data\UserUser.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
-    <Compile Include="Data\WF_TEMP.cs" />
+    <Compile Include="Data\Workflow.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\WorkflowDefinition.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\Zone.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -135,13 +140,11 @@
     <Compile Include="Workflow\WorkflowDescription.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.Config" />
     <EntityDeploy Include="Data\ULO.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ULO.Designer.cs</LastGenOutput>
     </EntityDeploy>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.Config" />
     <None Include="Data\ULO.edmx.diagram">
       <DependentUpon>ULO.edmx</DependentUpon>
     </None>

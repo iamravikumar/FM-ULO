@@ -12,18 +12,23 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class AspNetRole
+    public partial class UnliquidatedObligation
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public AspNetRole()
+        public UnliquidatedObligation()
         {
-            this.AspNetUsers = new HashSet<AspNetUser>();
+            this.Workflows = new HashSet<Workflow>();
         }
     
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public int UloId { get; set; }
+        public System.DateTime CreatedAtUtc { get; set; }
+        public int RegionId { get; set; }
+        public string FieldS0 { get; set; }
+        public string FieldS1 { get; set; }
+        public string FieldS2 { get; set; }
     
+        public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AspNetUser> AspNetUsers { get; set; }
+        public virtual ICollection<Workflow> Workflows { get; set; }
     }
 }

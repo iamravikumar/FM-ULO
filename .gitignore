@@ -9,3 +9,5 @@
 **/obj/
 .suo
 *.cache
+/ULO/src/GSA.UnliquidatedObligations.BusinessLayer/App.Config
+/ULO/.vs/config/applicationhost.config

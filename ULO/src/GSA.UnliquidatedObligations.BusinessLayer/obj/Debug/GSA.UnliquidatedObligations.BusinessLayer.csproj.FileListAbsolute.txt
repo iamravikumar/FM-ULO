@@ -7,3 +7,9 @@ C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\bi
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\bin\Debug\EntityFramework.SqlServer.xml
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\obj\Debug\GSA.UnliquidatedObligations.BusinessLayer.dll
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\obj\Debug\GSA.UnliquidatedObligations.BusinessLayer.pdb
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\bin\Debug\DynamicExpresso.Core.dll
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\bin\Debug\Newtonsoft.Json.dll
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\bin\Debug\DynamicExpresso.Core.pdb
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\bin\Debug\DynamicExpresso.Core.xml
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\bin\Debug\Newtonsoft.Json.xml
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.BusinessLayer\obj\Debug\GSA.UnliquidatedObligations.BusinessLayer.csprojResolveAssemblyReference.cache

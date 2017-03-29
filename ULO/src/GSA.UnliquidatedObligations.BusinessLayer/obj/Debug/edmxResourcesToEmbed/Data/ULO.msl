@@ -1,23 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="ULODBModelStoreContainer" CdmEntityContainer="ULODBEntities">
-    <EntitySetMapping Name="AspNetRoleClaims">
-      <EntityTypeMapping TypeName="ULODBModel.AspNetRoleClaim">
-        <MappingFragment StoreEntitySet="AspNetRoleClaims">
-          <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
-          <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
-          <ScalarProperty Name="RoleId" ColumnName="RoleId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="AspNetRoles">
       <EntityTypeMapping TypeName="ULODBModel.AspNetRole">
         <MappingFragment StoreEntitySet="AspNetRoles">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="ConcurrencyStamp" ColumnName="ConcurrencyStamp" />
           <ScalarProperty Name="Name" ColumnName="Name" />
-          <ScalarProperty Name="NormalizedName" ColumnName="NormalizedName" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -25,9 +13,9 @@
       <EntityTypeMapping TypeName="ULODBModel.AspNetUserClaim">
         <MappingFragment StoreEntitySet="AspNetUserClaims">
           <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
           <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
-          <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -36,7 +24,6 @@
         <MappingFragment StoreEntitySet="AspNetUserLogins">
           <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
           <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
-          <ScalarProperty Name="ProviderDisplayName" ColumnName="ProviderDisplayName" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -45,31 +32,18 @@
       <EntityTypeMapping TypeName="ULODBModel.AspNetUser">
         <MappingFragment StoreEntitySet="AspNetUsers">
           <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
-          <ScalarProperty Name="ConcurrencyStamp" ColumnName="ConcurrencyStamp" />
           <ScalarProperty Name="Email" ColumnName="Email" />
           <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
-          <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
-          <ScalarProperty Name="LockoutEnd" ColumnName="LockoutEnd" />
-          <ScalarProperty Name="NormalizedEmail" ColumnName="NormalizedEmail" />
-          <ScalarProperty Name="NormalizedUserName" ColumnName="NormalizedUserName" />
           <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+          <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
           <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
           <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
-          <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
           <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+          <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+          <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+          <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
           <ScalarProperty Name="UserName" ColumnName="UserName" />
           <ScalarProperty Name="UserType" ColumnName="UserType" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="AspNetUserTokens">
-      <EntityTypeMapping TypeName="ULODBModel.AspNetUserToken">
-        <MappingFragment StoreEntitySet="AspNetUserTokens">
-          <ScalarProperty Name="UserId" ColumnName="UserId" />
-          <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
-          <ScalarProperty Name="Name" ColumnName="Name" />
-          <ScalarProperty Name="Value" ColumnName="Value" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -101,6 +75,17 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="sysdiagrams">
+      <EntityTypeMapping TypeName="ULODBModel.sysdiagram">
+        <MappingFragment StoreEntitySet="sysdiagrams">
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+          <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+          <ScalarProperty Name="version" ColumnName="version" />
+          <ScalarProperty Name="definition" ColumnName="definition" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="ULOes">
       <EntityTypeMapping TypeName="ULODBModel.ULO">
         <MappingFragment StoreEntitySet="ULO">
@@ -109,6 +94,18 @@
           <ScalarProperty Name="OwnerUserID" ColumnName="OwnerUserID" />
           <ScalarProperty Name="TotalLine" ColumnName="TotalLine" />
           <ScalarProperty Name="ValidStatus" ColumnName="ValidStatus" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UnliquidatedObligations">
+      <EntityTypeMapping TypeName="ULODBModel.UnliquidatedObligation">
+        <MappingFragment StoreEntitySet="UnliquidatedObligations">
+          <ScalarProperty Name="UloId" ColumnName="UloId" />
+          <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+          <ScalarProperty Name="RegionId" ColumnName="RegionId" />
+          <ScalarProperty Name="FieldS0" ColumnName="FieldS0" />
+          <ScalarProperty Name="FieldS1" ColumnName="FieldS1" />
+          <ScalarProperty Name="FieldS2" ColumnName="FieldS2" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -127,6 +124,31 @@
           <ScalarProperty Name="UserUserId" ColumnName="UserUserId" />
           <ScalarProperty Name="ParentUserId" ColumnName="ParentUserId" />
           <ScalarProperty Name="ChildUserId" ColumnName="ChildUserId" />
+          <ScalarProperty Name="RegionId" ColumnName="RegionId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkflowDefinitions">
+      <EntityTypeMapping TypeName="ULODBModel.WorkflowDefinition">
+        <MappingFragment StoreEntitySet="WorkflowDefinitions">
+          <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />
+          <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
+          <ScalarProperty Name="Version" ColumnName="Version" />
+          <ScalarProperty Name="DescriptionJson" ColumnName="DescriptionJson" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Workflows">
+      <EntityTypeMapping TypeName="ULODBModel.Workflow">
+        <MappingFragment StoreEntitySet="Workflows">
+          <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+          <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
+          <ScalarProperty Name="Version" ColumnName="Version" />
+          <ScalarProperty Name="CurrentWorkflowActivityKey" ColumnName="CurrentWorkflowActivityKey" />
+          <ScalarProperty Name="OwnerUserId" ColumnName="OwnerUserId" />
+          <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+          <ScalarProperty Name="CurrentActivityEnteredAtUtc" ColumnName="CurrentActivityEnteredAtUtc" />
+          <ScalarProperty Name="TargetUloId" ColumnName="TargetUloId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

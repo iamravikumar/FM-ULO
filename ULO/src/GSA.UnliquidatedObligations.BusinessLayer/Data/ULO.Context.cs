@@ -25,18 +25,20 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
-        public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
         public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<Document> Documents { get; set; }
         public virtual DbSet<DocumentType> DocumentTypes { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<ULO> ULOes { get; set; }
+        public virtual DbSet<UnliquidatedObligation> UnliquidatedObligations { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserUser> UserUsers { get; set; }
+        public virtual DbSet<WorkflowDefinition> WorkflowDefinitions { get; set; }
+        public virtual DbSet<Workflow> Workflows { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Zone> Zones { get; set; }
     }

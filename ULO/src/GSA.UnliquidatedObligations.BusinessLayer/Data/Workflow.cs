@@ -12,13 +12,18 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class AspNetUserClaim
+    public partial class Workflow
     {
-        public int Id { get; set; }
-        public string UserId { get; set; }
-        public string ClaimType { get; set; }
-        public string ClaimValue { get; set; }
+        public int WorkflowId { get; set; }
+        public string WorkflowKey { get; set; }
+        public int Version { get; set; }
+        public string CurrentWorkflowActivityKey { get; set; }
+        public string OwnerUserId { get; set; }
+        public System.DateTime CreatedAtUtc { get; set; }
+        public System.DateTime CurrentActivityEnteredAtUtc { get; set; }
+        public Nullable<int> TargetUloId { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
+        public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }
     }
 }
