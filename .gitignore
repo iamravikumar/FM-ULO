@@ -5,3 +5,7 @@
 /OpenItems/Web.Release.config
 /OpenItems/Web.Debug.config
 /OpenItems/Web.config
+**/bin/
+**/obj/
+.suo
+*.cache

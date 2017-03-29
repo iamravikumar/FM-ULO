@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DynamicExpresso.Core, Version=1.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DynamicExpresso.Core.1.3.3.5\lib\net40\DynamicExpresso.Core.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -37,6 +40,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -51,6 +57,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authorization\ApplicationPermissionClaimValue.cs" />
+    <Compile Include="Authorization\ApplicationPermissionNames.cs" />
+    <Compile Include="Authorization\ClaimHelpercs.cs" />
+    <Compile Include="Authorization\RegionNumbers.cs" />
+    <Compile Include="Authorization\RegionalClaimValue.cs" />
+    <Compile Include="Authorization\SubjectCatagoryClaimValue.cs" />
+    <Compile Include="Authorization\SubjectCatagoryNames.cs" />
     <Compile Include="Data\AspNetRole.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -102,13 +115,24 @@
     <Compile Include="Data\User.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\UserTypes.cs" />
     <Compile Include="Data\UserUser.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\WF_TEMP.cs" />
     <Compile Include="Data\Zone.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UloHelpers.cs" />
+    <Compile Include="Workflow\DatabaseWorkflowDescriptionFinder.cs" />
+    <Compile Include="Workflow\FieldComparisonActivityChooser.cs" />
+    <Compile Include="Workflow\IActivityChooser.cs" />
+    <Compile Include="Workflow\IWorkflowDescription.cs" />
+    <Compile Include="Workflow\IWorkflowDescriptionFinder.cs" />
+    <Compile Include="Workflow\WebActionWorkflowActivity.cs" />
+    <Compile Include="Workflow\WorkflowActivity.cs" />
+    <Compile Include="Workflow\WorkflowDescription.cs" />
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="Data\ULO.edmx">
@@ -124,6 +148,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DatabaseScripts\0001.ChangeLog.sql" />
+    <Content Include="DatabaseScripts\0003.Asserts.sql" />
+    <Content Include="DatabaseScripts\0004.Types.sql" />
+    <Content Include="DatabaseScripts\0005.WhoIsActive.sql" />
+    <Content Include="DatabaseScripts\0006.StringSplit.cs.sql" />
+    <Content Include="DatabaseScripts\0100.Aspnet.sql" />
+    <Content Include="DatabaseScripts\0200.gsa.sql" />
+    <Content Include="DatabaseScripts\0300.ulo.structure.sql" />
     <Content Include="Data\ULO.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ULO.edmx</DependentUpon>
@@ -138,6 +170,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
