@@ -31,8 +31,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
             var s = JsonConvert.DeserializeObject<MySettings>(settings);
             var parameters = new[] {
                 new DynamicExpresso.Parameter(CommonParameterNames.Workflow, wf),
-                //TODO: Ask Jason about
-                new DynamicExpresso.Parameter(CommonParameterNames.Ulo, wf.TargetUloId)
+                //TODO: Workflow object should contain TargetULo
+                //new DynamicExpresso.Parameter(CommonParameterNames.Ulo, wf.TargetUlo)
             };
             foreach (var e in s.Expressions)
             {

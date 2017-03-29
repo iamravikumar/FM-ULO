@@ -78,10 +78,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
             }
             foreach (var r in user.AspNetRoles)
             {
-                foreach (var c in r.AspNetRoleClaims)
-                {
-                    claims.Add(new Claim(c.ClaimType, c.ClaimValue, c.ClaimType));
-                }
+                //TODO: Ask Jason about
+                //foreach (var c in r.AspNetRoleClaims)
+                //{
+                //    claims.Add(new Claim(c.ClaimType, c.ClaimValue, c.ClaimType));
+                //}
             }
             return claims;
         }
