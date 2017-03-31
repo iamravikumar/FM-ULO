@@ -22,7 +22,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         public class MySettings
         {
-            [JsonProperty("fieldVals")]
+            [JsonProperty("expressions")]
             public IList<Expression> Expressions { get; set; }
         }
 
@@ -34,9 +34,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
                 //TODO: Workflow object should contain TargetULo
                 //new DynamicExpresso.Parameter(CommonParameterNames.Ulo, wf.TargetUlo)
             };
+            var i = new DynamicExpresso.Interpreter();
             foreach (var e in s.Expressions)
             {
-                var i = new DynamicExpresso.Interpreter();
                 bool res = i.Eval<bool>(e.Code, parameters);
                 if (res)
                 {

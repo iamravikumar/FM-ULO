@@ -16,13 +16,11 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         private readonly IServiceProvider ServiceProvider;
         private readonly IWorkflowDescriptionFinder Finder;
-        private readonly IRedirectToAction RedirectToAction;
 
-        public WorkflowManager(IServiceProvider serviceProvider, IWorkflowDescriptionFinder finder, IRedirectToAction redirectToAction)
+        public WorkflowManager(IServiceProvider serviceProvider, IWorkflowDescriptionFinder finder)
         {
             ServiceProvider = serviceProvider;
             Finder = finder;
-            RedirectToAction = redirectToAction;
         }
 
         private class RedirectingController : Controller
@@ -39,10 +37,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
             var currentActivity = desc.Activities.FirstOrDefault(z => z.WorkflowActivityKey == wf.WorkflowKey);
             var chooser = (IActivityChooser)ServiceProvider.GetService(currentActivity.NextActivityChooserType);
             var nextActivityKey = chooser.GetNextActivityKey(wf, currentActivity.NextActivityChooserConfig);
+
+            //TODO: Handle null case which says stay where you are.
             var nextActivity = desc.Activities.First(z => z.WorkflowActivityKey == nextActivityKey) ?? currentActivity;
             wf.CurrentWorkflowActivityKey = nextActivity.WorkflowActivityKey;
+
+            //TODO: Updata other info like the owner, date.
             if (nextActivity is WebActionWorkflowActivity)
             {
+                //TODO: if owner changes, look at other ways of redirecting.
                 var next = (WebActionWorkflowActivity)nextActivity;
                 var c = new RedirectingController();
                 var routeValues = new RouteValueDictionary(next.RouteValueByName);
@@ -51,6 +54,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             else
             {
+                //TODO: handle background hangfire.
                 throw new NotImplementedException();
             }
         }

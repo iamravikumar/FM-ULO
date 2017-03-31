@@ -1,0 +1,70 @@
+﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>View</h2>
+
+@*<p>
+    @Html.ActionLink("Create New", "Create")
+</p>*@
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.WorkflowKey)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Version)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CurrentWorkflowActivityKey)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedAtUtc)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CurrentActivityEnteredAtUtc)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AspNetUser.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UnliquidatedObligation.FieldS0)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.WorkflowKey)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Version)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CurrentWorkflowActivityKey)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedAtUtc)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CurrentActivityEnteredAtUtc)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AspNetUser.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UnliquidatedObligation.FieldS0)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.WorkflowId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.WorkflowId })
+        </td>
+    </tr>
+}
+
+</table>
