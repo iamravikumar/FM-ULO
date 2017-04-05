@@ -1,12 +1,11 @@
 ﻿using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Autofac;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
@@ -14,12 +13,20 @@ namespace GSA.UnliquidatedObligations.Web.Services
     {
         public const string WorkflowIdRouteValueName = "workflowId";
 
-        private readonly IServiceProvider ServiceProvider;
+        //private readonly IServiceProvider ServiceProvider;
+        private readonly IComponentContext ComponentContext;
         private readonly IWorkflowDescriptionFinder Finder;
 
-        public WorkflowManager(IServiceProvider serviceProvider, IWorkflowDescriptionFinder finder)
+        //public WorkflowManager(IServiceProvider serviceProvider, IWorkflowDescriptionFinder finder)
+        //{
+        //    ServiceProvider = serviceProvider;
+        //    Finder = finder;
+        //}
+
+        //TODO: Make sure to run by Jason.  No longer using ServiceProvider
+        public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder)
         {
-            ServiceProvider = serviceProvider;
+            ComponentContext = componentContext;
             Finder = finder;
         }
 
@@ -35,7 +42,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             var desc = await Finder.FindAsync(wf.WorkflowKey, wf.Version);
             var currentActivity = desc.Activities.FirstOrDefault(z => z.WorkflowActivityKey == wf.WorkflowKey);
-            var chooser = (IActivityChooser)ServiceProvider.GetService(currentActivity.NextActivityChooserType);
+            //TODO: Service Provider question
+            //TODO: May possibly need to see how to register Icompone
+            //var chooser = (IActivityChooser)ServiceProvider.GetService(currentActivity.NextActivityChooserType);
+            var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
             var nextActivityKey = chooser.GetNextActivityKey(wf, currentActivity.NextActivityChooserConfig);
 
             //TODO: Handle null case which says stay where you are.

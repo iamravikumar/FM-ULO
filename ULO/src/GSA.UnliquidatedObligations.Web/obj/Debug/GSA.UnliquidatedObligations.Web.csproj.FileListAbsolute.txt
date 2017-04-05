@@ -85,8 +85,6 @@ C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\GSA.Unli
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\DynamicExpresso.Core.dll
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\DynamicExpresso.Core.pdb
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\DynamicExpresso.Core.xml
-C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Microsoft.Extensions.DependencyInjection.dll
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Microsoft.Win32.Primitives.dll
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.AppContext.dll
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.Console.dll
@@ -103,6 +101,13 @@ C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.S
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.Security.Cryptography.Encoding.dll
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.Security.Cryptography.Primitives.dll
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.Security.Cryptography.X509Certificates.dll
-C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Microsoft.Extensions.DependencyInjection.xml
-C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Microsoft.Extensions.DependencyInjection.Abstractions.xml
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.Diagnostics.DiagnosticSource.xml
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.Web.Http.dll
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.Net.Http.Formatting.dll
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.Web.Http.xml
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\System.Net.Http.Formatting.xml
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Microsoft.Practices.ServiceLocation.dll
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Autofac.dll
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Autofac.Integration.Mvc.dll
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Autofac.xml
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Autofac.Integration.Mvc.xml

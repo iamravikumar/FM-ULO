@@ -77,44 +77,68 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Name" Type="varchar" MaxLength="50" />
   </EntityType>
-  <EntityType Name="sysdiagrams">
-    <Key>
-      <PropertyRef Name="diagram_id" />
-    </Key>
-    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-    <Property Name="principal_id" Type="int" Nullable="false" />
-    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="version" Type="int" />
-    <Property Name="definition" Type="varbinary(max)" />
-  </EntityType>
-  <EntityType Name="ULO">
-    <Key>
-      <PropertyRef Name="RecordID" />
-    </Key>
-    <Property Name="RecordID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="RegionNumber" Type="int" />
-    <Property Name="OwnerUserID" Type="int" Nullable="false" />
-    <Property Name="TotalLine" Type="money" />
-    <Property Name="ValidStatus" Type="bit" />
-  </EntityType>
   <EntityType Name="UnliquidatedObligations">
     <Key>
       <PropertyRef Name="UloId" />
     </Key>
     <Property Name="UloId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
-    <Property Name="RegionId" Type="int" Nullable="false" />
-    <Property Name="FieldS0" Type="nvarchar" MaxLength="100" />
-    <Property Name="FieldS1" Type="nvarchar" MaxLength="100" />
-    <Property Name="FieldS2" Type="nvarchar" MaxLength="100" />
-  </EntityType>
-  <EntityType Name="Users">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Username" Type="varchar" MaxLength="50" />
-    <Property Name="Password" Type="varchar" MaxLength="50" />
+    <Property Name="RegionId" Type="int" />
+    <Property Name="DocType" Type="varchar" MaxLength="50" />
+    <Property Name="PegasusDocumentNumber" Type="varchar" MaxLength="50" />
+    <Property Name="PegasysTitleNumber" Type="varchar" MaxLength="50" />
+    <Property Name="Fund" Type="varchar" MaxLength="50" />
+    <Property Name="Organization" Type="varchar" MaxLength="50" />
+    <Property Name="Prog" Type="varchar" MaxLength="50" />
+    <Property Name="Agreement" Type="varchar" MaxLength="50" />
+    <Property Name="RWACompletionDate" Type="varchar" MaxLength="50" />
+    <Property Name="DateOfLastActivity" Type="varchar" MaxLength="50" />
+    <Property Name="ActgPd" Type="varchar" MaxLength="50" />
+    <Property Name="TotalLine" Type="varchar" MaxLength="50" />
+    <Property Name="Commitments" Type="varchar" MaxLength="50" />
+    <Property Name="Prepayments" Type="varchar" MaxLength="50" />
+    <Property Name="UndelOrders" Type="varchar" MaxLength="50" />
+    <Property Name="Rcpt" Type="varchar" MaxLength="50" />
+    <Property Name="Accrual" Type="varchar" MaxLength="50" />
+    <Property Name="TotalDO" Type="varchar" MaxLength="50" />
+    <Property Name="TotalUDOAndDO" Type="varchar" MaxLength="50" />
+    <Property Name="PendPayments" Type="varchar" MaxLength="50" />
+    <Property Name="PymtsInTransit" Type="varchar" MaxLength="50" />
+    <Property Name="PymtsConfirmed" Type="varchar" MaxLength="50" />
+    <Property Name="Holdbacks" Type="varchar" MaxLength="50" />
+    <Property Name="PegasysContractNumber" Type="varchar" MaxLength="50" />
+    <Property Name="PegasysVendorName" Type="varchar" MaxLength="50" />
+    <Property Name="ContractingOfficersName" Type="varchar" MaxLength="50" />
+    <Property Name="AwardNbr" Type="varchar" MaxLength="50" />
+    <Property Name="BaseContractNbr" Type="varchar" MaxLength="50" />
+    <Property Name="GSAFSSOtherNumber" Type="varchar" MaxLength="50" />
+    <Property Name="AwdExpirationDate" Type="varchar" MaxLength="50" />
+    <Property Name="ReasonIncludedInReview" Type="varchar" MaxLength="3000" />
+    <Property Name="Valid" Type="varchar" MaxLength="50" />
+    <Property Name="ReviewedBy" Type="varchar" MaxLength="50" />
+    <Property Name="ExpectedDateForCompletionResolution" Type="varchar" MaxLength="50" />
+    <Property Name="RegionalSupportOrJustification" Type="varchar" MaxLength="3000" />
+    <Property Name="BGPCommentsAfterReview" Type="varchar" MaxLength="50" />
+    <Property Name="RegionalResponse" Type="varchar" MaxLength="50" />
+    <Property Name="BGPFinalDetermination" Type="varchar" MaxLength="50" />
+    <Property Name="1stReview" Type="varchar" MaxLength="50" />
+    <Property Name="2ndReview" Type="varchar" MaxLength="50" />
+    <Property Name="DateSentToFinCntrForDeobligation" Type="varchar" MaxLength="50" />
+    <Property Name="ULOCategoryForTracker" Type="varchar" MaxLength="50" />
+    <Property Name="When should BGP review again?" Type="varchar" MaxLength="50" />
+    <Property Name="DateBalanceRestored" Type="varchar" MaxLength="50" />
+    <Property Name="AmtToBeRecovered" Type="varchar" MaxLength="50" />
+    <Property Name="1stFollowupDate" Type="varchar" MaxLength="50" />
+    <Property Name="2ndFollowupDate" Type="varchar" MaxLength="50" />
+    <Property Name="NoResponse(w initial submittal)" Type="varchar" MaxLength="50" />
+    <Property Name="NoResponse" Type="varchar" MaxLength="50" />
+    <Property Name="BGPMadeCallValid" Type="varchar" MaxLength="50" />
+    <Property Name="BGPMadeCallInvalid" Type="varchar" MaxLength="50" />
+    <Property Name="BGPFinalDetVariesFromRegionCO" Type="varchar" MaxLength="50" />
+    <Property Name="Column 52" Type="varchar" MaxLength="50" />
+    <Property Name="Column 53" Type="varchar" MaxLength="50" />
+    <Property Name="Status" Type="varchar" MaxLength="50" />
+    <Property Name="Column 55" Type="varchar" MaxLength="50" />
+    <Property Name="CreatedAtUTC" Type="datetime" Nullable="false" />
   </EntityType>
   <EntityType Name="UserUsers">
     <Key>
@@ -145,7 +169,7 @@
     <Property Name="OwnerUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
     <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
     <Property Name="CurrentActivityEnteredAtUtc" Type="datetime" Nullable="false" />
-    <Property Name="TargetUloId" Type="int" />
+    <Property Name="TargetUloId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Regions">
     <Key>
@@ -172,18 +196,6 @@
       </Principal>
       <Dependent Role="Regions">
         <PropertyRef Name="ZoneId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK__Unliquida__Regio__3D2915A8">
-    <End Role="Regions" Type="Self.Regions" Multiplicity="1" />
-    <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Regions">
-        <PropertyRef Name="RegionId" />
-      </Principal>
-      <Dependent Role="UnliquidatedObligations">
-        <PropertyRef Name="RegionId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -232,18 +244,6 @@
       </Principal>
       <Dependent Role="Workflows">
         <PropertyRef Name="OwnerUserId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK__Workflows__Targe__41EDCAC5">
-    <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="0..1" />
-    <End Role="Workflows" Type="Self.Workflows" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="UnliquidatedObligations">
-        <PropertyRef Name="UloId" />
-      </Principal>
-      <Dependent Role="Workflows">
-        <PropertyRef Name="TargetUloId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -327,39 +327,27 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Document_ToULO">
-    <End Role="ULO" Type="Self.ULO" Multiplicity="1" />
-    <End Role="Document" Type="Self.Document" Multiplicity="*" />
+  <Association Name="FK_UnliquidatedObligations_ToRegions">
+    <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
+    <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="ULO">
-        <PropertyRef Name="RecordID" />
+      <Principal Role="Regions">
+        <PropertyRef Name="RegionId" />
       </Principal>
-      <Dependent Role="Document">
-        <PropertyRef Name="ULOID" />
+      <Dependent Role="UnliquidatedObligations">
+        <PropertyRef Name="RegionId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_Document_ToUsers">
-    <End Role="Users" Type="Self.Users" Multiplicity="1" />
-    <End Role="Document" Type="Self.Document" Multiplicity="*" />
+  <Association Name="FK_Workflows_ToUnliquidatedObligations">
+    <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="1" />
+    <End Role="Workflows" Type="Self.Workflows" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Users">
-        <PropertyRef Name="Id" />
+      <Principal Role="UnliquidatedObligations">
+        <PropertyRef Name="UloId" />
       </Principal>
-      <Dependent Role="Document">
-        <PropertyRef Name="UploadedBy" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_ULO_To_Users">
-    <End Role="Users" Type="Self.Users" Multiplicity="1" />
-    <End Role="ULO" Type="Self.ULO" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Users">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="ULO">
-        <PropertyRef Name="OwnerUserID" />
+      <Dependent Role="Workflows">
+        <PropertyRef Name="TargetUloId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -372,10 +360,7 @@
     <EntitySet Name="Attachments" EntityType="Self.Attachments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="DocumentType" EntityType="Self.DocumentType" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="ULO" EntityType="Self.ULO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UnliquidatedObligations" EntityType="Self.UnliquidatedObligations" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UserUsers" EntityType="Self.UserUsers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WorkflowDefinitions" EntityType="Self.WorkflowDefinitions" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Workflows" EntityType="Self.Workflows" Schema="dbo" store:Type="Tables" />
@@ -384,10 +369,6 @@
     <AssociationSet Name="FK__Regions__ZoneId__30C33EC3" Association="Self.FK__Regions__ZoneId__30C33EC3">
       <End Role="Zones" EntitySet="Zones" />
       <End Role="Regions" EntitySet="Regions" />
-    </AssociationSet>
-    <AssociationSet Name="FK__Unliquida__Regio__3D2915A8" Association="Self.FK__Unliquida__Regio__3D2915A8">
-      <End Role="Regions" EntitySet="Regions" />
-      <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
     </AssociationSet>
     <AssociationSet Name="FK__UserUsers__Child__3864608B" Association="Self.FK__UserUsers__Child__3864608B">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -403,10 +384,6 @@
     </AssociationSet>
     <AssociationSet Name="FK__Workflows__Owner__40058253" Association="Self.FK__Workflows__Owner__40058253">
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-      <End Role="Workflows" EntitySet="Workflows" />
-    </AssociationSet>
-    <AssociationSet Name="FK__Workflows__Targe__41EDCAC5" Association="Self.FK__Workflows__Targe__41EDCAC5">
-      <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
       <End Role="Workflows" EntitySet="Workflows" />
     </AssociationSet>
     <AssociationSet Name="FK_Attachments_ToDocument" Association="Self.FK_Attachments_ToDocument">
@@ -433,17 +410,13 @@
       <End Role="DocumentType" EntitySet="DocumentType" />
       <End Role="Document" EntitySet="Document" />
     </AssociationSet>
-    <AssociationSet Name="FK_Document_ToULO" Association="Self.FK_Document_ToULO">
-      <End Role="ULO" EntitySet="ULO" />
-      <End Role="Document" EntitySet="Document" />
+    <AssociationSet Name="FK_UnliquidatedObligations_ToRegions" Association="Self.FK_UnliquidatedObligations_ToRegions">
+      <End Role="Regions" EntitySet="Regions" />
+      <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
     </AssociationSet>
-    <AssociationSet Name="FK_Document_ToUsers" Association="Self.FK_Document_ToUsers">
-      <End Role="Users" EntitySet="Users" />
-      <End Role="Document" EntitySet="Document" />
-    </AssociationSet>
-    <AssociationSet Name="FK_ULO_To_Users" Association="Self.FK_ULO_To_Users">
-      <End Role="Users" EntitySet="Users" />
-      <End Role="ULO" EntitySet="ULO" />
+    <AssociationSet Name="FK_Workflows_ToUnliquidatedObligations" Association="Self.FK_Workflows_ToUnliquidatedObligations">
+      <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
+      <End Role="Workflows" EntitySet="Workflows" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

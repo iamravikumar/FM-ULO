@@ -1,9 +1,5 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -15,44 +11,22 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        private ApplicationSignInManager SignInManager;
+        private ApplicationUserManager UserManager;
+        private readonly IAuthenticationManager AuthenticationManager;
 
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            AuthenticationManager = authenticationManager;
         }
 
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set 
-            { 
-                _signInManager = value; 
-            }
-        }
-
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
-
-        //
+        ////
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
@@ -280,7 +254,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }), null, AuthenticationManager);
         }
 
         //
@@ -408,16 +382,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (disposing)
             {
-                if (_userManager != null)
+                if (UserManager != null)
                 {
-                    _userManager.Dispose();
-                    _userManager = null;
+                    UserManager.Dispose();
+                    UserManager = null;
                 }
 
-                if (_signInManager != null)
+                if (SignInManager != null)
                 {
-                    _signInManager.Dispose();
-                    _signInManager = null;
+                    SignInManager.Dispose();
+                    SignInManager = null;
                 }
             }
 
@@ -427,14 +401,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
-
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
 
         private void AddErrors(IdentityResult result)
         {
@@ -455,21 +421,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         internal class ChallengeResult : HttpUnauthorizedResult
         {
-            public ChallengeResult(string provider, string redirectUri)
-                : this(provider, redirectUri, null)
-            {
-            }
+            private readonly IAuthenticationManager AuthenticationManager;
 
-            public ChallengeResult(string provider, string redirectUri, string userId)
+            public ChallengeResult(string provider, string redirectUri, string userId, IAuthenticationManager authenticationManager)
             {
                 LoginProvider = provider;
                 RedirectUri = redirectUri;
                 UserId = userId;
+                AuthenticationManager = authenticationManager;
             }
 
             public string LoginProvider { get; set; }
             public string RedirectUri { get; set; }
             public string UserId { get; set; }
+
 
             public override void ExecuteResult(ControllerContext context)
             {
@@ -478,7 +443,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     properties.Dictionary[XsrfKey] = UserId;
                 }
-                context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
+                AuthenticationManager.Challenge(properties, LoginProvider);
             }
         }
         #endregion

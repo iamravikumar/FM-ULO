@@ -1,45 +1,24 @@
-﻿//TODO: Ask Jason about
-
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using GSA.UnliquidatedObligations.Web.Models;
+﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Services;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
-    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
+    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class UloController : Controller
     {
         protected readonly IWorkflowManager Manager;
         protected readonly ULODBEntities DB;
-        private ApplicationUserManager _userManager;
+        private readonly ApplicationUserManager UserManager;
 
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
-
-        public UloController(IWorkflowManager manager, ULODBEntities db)
+        public UloController(IWorkflowManager manager, ULODBEntities db, ApplicationUserManager userManager)
         {
             Manager = manager;
             DB = db;
+            UserManager = userManager;
         }
 
         // GET: Ulo

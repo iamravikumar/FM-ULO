@@ -75,46 +75,67 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="sysdiagrams">
-      <EntityTypeMapping TypeName="ULODBModel.sysdiagram">
-        <MappingFragment StoreEntitySet="sysdiagrams">
-          <ScalarProperty Name="name" ColumnName="name" />
-          <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-          <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-          <ScalarProperty Name="version" ColumnName="version" />
-          <ScalarProperty Name="definition" ColumnName="definition" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="ULOes">
-      <EntityTypeMapping TypeName="ULODBModel.ULO">
-        <MappingFragment StoreEntitySet="ULO">
-          <ScalarProperty Name="RecordID" ColumnName="RecordID" />
-          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
-          <ScalarProperty Name="OwnerUserID" ColumnName="OwnerUserID" />
-          <ScalarProperty Name="TotalLine" ColumnName="TotalLine" />
-          <ScalarProperty Name="ValidStatus" ColumnName="ValidStatus" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="UnliquidatedObligations">
       <EntityTypeMapping TypeName="ULODBModel.UnliquidatedObligation">
         <MappingFragment StoreEntitySet="UnliquidatedObligations">
           <ScalarProperty Name="UloId" ColumnName="UloId" />
-          <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
           <ScalarProperty Name="RegionId" ColumnName="RegionId" />
-          <ScalarProperty Name="FieldS0" ColumnName="FieldS0" />
-          <ScalarProperty Name="FieldS1" ColumnName="FieldS1" />
-          <ScalarProperty Name="FieldS2" ColumnName="FieldS2" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Users">
-      <EntityTypeMapping TypeName="ULODBModel.User">
-        <MappingFragment StoreEntitySet="Users">
-          <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="Username" ColumnName="Username" />
-          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="DocType" ColumnName="DocType" />
+          <ScalarProperty Name="PegasusDocumentNumber" ColumnName="PegasusDocumentNumber" />
+          <ScalarProperty Name="PegasysTitleNumber" ColumnName="PegasysTitleNumber" />
+          <ScalarProperty Name="Fund" ColumnName="Fund" />
+          <ScalarProperty Name="Organization" ColumnName="Organization" />
+          <ScalarProperty Name="Prog" ColumnName="Prog" />
+          <ScalarProperty Name="Agreement" ColumnName="Agreement" />
+          <ScalarProperty Name="RWACompletionDate" ColumnName="RWACompletionDate" />
+          <ScalarProperty Name="DateOfLastActivity" ColumnName="DateOfLastActivity" />
+          <ScalarProperty Name="ActgPd" ColumnName="ActgPd" />
+          <ScalarProperty Name="TotalLine" ColumnName="TotalLine" />
+          <ScalarProperty Name="Commitments" ColumnName="Commitments" />
+          <ScalarProperty Name="Prepayments" ColumnName="Prepayments" />
+          <ScalarProperty Name="UndelOrders" ColumnName="UndelOrders" />
+          <ScalarProperty Name="Rcpt" ColumnName="Rcpt" />
+          <ScalarProperty Name="Accrual" ColumnName="Accrual" />
+          <ScalarProperty Name="TotalDO" ColumnName="TotalDO" />
+          <ScalarProperty Name="TotalUDOAndDO" ColumnName="TotalUDOAndDO" />
+          <ScalarProperty Name="PendPayments" ColumnName="PendPayments" />
+          <ScalarProperty Name="PymtsInTransit" ColumnName="PymtsInTransit" />
+          <ScalarProperty Name="PymtsConfirmed" ColumnName="PymtsConfirmed" />
+          <ScalarProperty Name="Holdbacks" ColumnName="Holdbacks" />
+          <ScalarProperty Name="PegasysContractNumber" ColumnName="PegasysContractNumber" />
+          <ScalarProperty Name="PegasysVendorName" ColumnName="PegasysVendorName" />
+          <ScalarProperty Name="ContractingOfficersName" ColumnName="ContractingOfficersName" />
+          <ScalarProperty Name="AwardNbr" ColumnName="AwardNbr" />
+          <ScalarProperty Name="BaseContractNbr" ColumnName="BaseContractNbr" />
+          <ScalarProperty Name="GSAFSSOtherNumber" ColumnName="GSAFSSOtherNumber" />
+          <ScalarProperty Name="AwdExpirationDate" ColumnName="AwdExpirationDate" />
+          <ScalarProperty Name="ReasonIncludedInReview" ColumnName="ReasonIncludedInReview" />
+          <ScalarProperty Name="Valid" ColumnName="Valid" />
+          <ScalarProperty Name="ReviewedBy" ColumnName="ReviewedBy" />
+          <ScalarProperty Name="ExpectedDateForCompletionResolution" ColumnName="ExpectedDateForCompletionResolution" />
+          <ScalarProperty Name="RegionalSupportOrJustification" ColumnName="RegionalSupportOrJustification" />
+          <ScalarProperty Name="BGPCommentsAfterReview" ColumnName="BGPCommentsAfterReview" />
+          <ScalarProperty Name="RegionalResponse" ColumnName="RegionalResponse" />
+          <ScalarProperty Name="BGPFinalDetermination" ColumnName="BGPFinalDetermination" />
+          <ScalarProperty Name="C1stReview" ColumnName="1stReview" />
+          <ScalarProperty Name="C2ndReview" ColumnName="2ndReview" />
+          <ScalarProperty Name="DateSentToFinCntrForDeobligation" ColumnName="DateSentToFinCntrForDeobligation" />
+          <ScalarProperty Name="ULOCategoryForTracker" ColumnName="ULOCategoryForTracker" />
+          <ScalarProperty Name="When_should_BGP_review_again_" ColumnName="When should BGP review again?" />
+          <ScalarProperty Name="DateBalanceRestored" ColumnName="DateBalanceRestored" />
+          <ScalarProperty Name="AmtToBeRecovered" ColumnName="AmtToBeRecovered" />
+          <ScalarProperty Name="C1stFollowupDate" ColumnName="1stFollowupDate" />
+          <ScalarProperty Name="C2ndFollowupDate" ColumnName="2ndFollowupDate" />
+          <ScalarProperty Name="NoResponse_w_initial_submittal_" ColumnName="NoResponse(w initial submittal)" />
+          <ScalarProperty Name="NoResponse" ColumnName="NoResponse" />
+          <ScalarProperty Name="BGPMadeCallValid" ColumnName="BGPMadeCallValid" />
+          <ScalarProperty Name="BGPMadeCallInvalid" ColumnName="BGPMadeCallInvalid" />
+          <ScalarProperty Name="BGPFinalDetVariesFromRegionCO" ColumnName="BGPFinalDetVariesFromRegionCO" />
+          <ScalarProperty Name="Column_52" ColumnName="Column 52" />
+          <ScalarProperty Name="Column_53" ColumnName="Column 53" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Column_55" ColumnName="Column 55" />
+          <ScalarProperty Name="CreatedAtUTC" ColumnName="CreatedAtUTC" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

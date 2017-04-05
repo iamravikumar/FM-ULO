@@ -21,7 +21,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string OwnerUserId { get; set; }
         public System.DateTime CreatedAtUtc { get; set; }
         public System.DateTime CurrentActivityEnteredAtUtc { get; set; }
-        public Nullable<int> TargetUloId { get; set; }
+        public int TargetUloId { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }

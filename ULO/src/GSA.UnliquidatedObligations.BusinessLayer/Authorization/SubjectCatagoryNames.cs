@@ -4,5 +4,18 @@
     {
         UE,
         LR,
+        CL,
+        EN,
+        EP,
+        EQ,
+        GP,
+        IX,
+        LY,
+        PJ,
+        PN,
+        PX,
+        QP,
+        RB,
+        RO,
     }
 }

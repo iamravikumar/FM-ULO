@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
+﻿using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
@@ -14,8 +9,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
     public class UsersController : Controller
     {
-        //TODO: Dependency Injection
-        private ULODBEntities DB;
+        private readonly ULODBEntities DB;
 
         public UsersController(ULODBEntities db)
         {

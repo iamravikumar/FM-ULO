@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GSA.UnliquidatedObligations.BusinessLayer
+﻿namespace GSA.UnliquidatedObligations.BusinessLayer
 {
     public static class UloHelpers
     {

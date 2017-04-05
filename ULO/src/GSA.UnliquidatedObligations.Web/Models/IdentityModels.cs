@@ -1,9 +1,7 @@
-﻿using System.Data.Entity;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
 
 namespace GSA.UnliquidatedObligations.Web.Models
@@ -20,6 +18,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         }
     }
 
+    //TODO: Would rather not use this, but needs "DefaultConnection" as connectionstring
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
@@ -31,5 +30,5 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
             return new ApplicationDbContext();
         }
+      }
     }
-}

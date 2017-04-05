@@ -88,15 +88,14 @@
     <Compile Include="Data\Region.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
-    <Compile Include="Data\sysdiagram.cs">
-      <DependentUpon>ULO.tt</DependentUpon>
-    </Compile>
     <Compile Include="Data\ULO.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ULO.Context.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\ULO.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\ULO.Designer.cs">
@@ -104,15 +103,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ULO.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Data\ULO1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ULO.tt</DependentUpon>
-    </Compile>
     <Compile Include="Data\UnliquidatedObligation.cs">
-      <DependentUpon>ULO.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Data\User.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\UserTypes.cs" />
@@ -167,7 +158,7 @@
     <Content Include="Data\ULO.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ULO.edmx</DependentUpon>
-      <LastGenOutput>ULO1.cs</LastGenOutput>
+      <LastGenOutput>ULO.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
