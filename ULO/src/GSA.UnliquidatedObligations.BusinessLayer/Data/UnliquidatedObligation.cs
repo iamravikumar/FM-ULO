@@ -52,7 +52,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string GSAFSSOtherNumber { get; set; }
         public string AwdExpirationDate { get; set; }
         public string ReasonIncludedInReview { get; set; }
-        public string Valid { get; set; }
+        public bool Valid { get; set; }
         public string ReviewedBy { get; set; }
         public string ExpectedDateForCompletionResolution { get; set; }
         public string RegionalSupportOrJustification { get; set; }

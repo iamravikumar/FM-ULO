@@ -49,7 +49,6 @@ namespace GSA.UnliquidatedObligations.Web
                 .InstancePerRequest();
 
             //Authentication
-            //TODO: Is there a way to use ULODBEntities as my IdentityDBContext
             builder.RegisterType<ApplicationDbContext>().AsSelf().InstancePerRequest();
             builder.Register(c => new UserStore<ApplicationUser>(c.Resolve<ApplicationDbContext>())).AsImplementedInterfaces().InstancePerRequest();
             builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).As<IAuthenticationManager>();

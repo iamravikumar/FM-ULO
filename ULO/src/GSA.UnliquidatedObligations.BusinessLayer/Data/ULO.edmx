@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ULODBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ULODBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -118,7 +118,7 @@
           <Property Name="GSAFSSOtherNumber" Type="varchar" MaxLength="50" />
           <Property Name="AwdExpirationDate" Type="varchar" MaxLength="50" />
           <Property Name="ReasonIncludedInReview" Type="varchar" MaxLength="3000" />
-          <Property Name="Valid" Type="varchar" MaxLength="50" />
+          <Property Name="Valid" Type="bit" Nullable="false" />
           <Property Name="ReviewedBy" Type="varchar" MaxLength="50" />
           <Property Name="ExpectedDateForCompletionResolution" Type="varchar" MaxLength="50" />
           <Property Name="RegionalSupportOrJustification" Type="varchar" MaxLength="3000" />
@@ -424,8 +424,7 @@
             <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ULODBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -547,7 +546,7 @@
           <Property Name="GSAFSSOtherNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="AwdExpirationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ReasonIncludedInReview" Type="String" MaxLength="3000" FixedLength="false" Unicode="false" />
-          <Property Name="Valid" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Valid" Type="Boolean" Nullable="false" />
           <Property Name="ReviewedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ExpectedDateForCompletionResolution" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="RegionalSupportOrJustification" Type="String" MaxLength="3000" FixedLength="false" Unicode="false" />

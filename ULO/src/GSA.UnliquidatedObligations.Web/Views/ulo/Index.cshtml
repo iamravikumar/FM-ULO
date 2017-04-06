@@ -1,70 +1,84 @@
 ﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
 
 @{
-    ViewBag.Title = "View";
+    ViewBag.Title = "My Active Workflows";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var todaysDate = DateTime.Today;
 }
 
-<h2>View</h2>
+<h2>My Active Workflows</h2>
 
 @*<p>
-    @Html.ActionLink("Create New", "Create")
-</p>*@
-<table class="table">
+        @Html.ActionLink("Create New", "Create")
+    </p>*@
+<table class="table active-workflows">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.WorkflowKey)
+            PDN
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Version)
+            BA Code (Check)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CurrentWorkflowActivityKey)
+            Org Code
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CreatedAtUtc)
+            Review Status
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CurrentActivityEnteredAtUtc)
+            Amount (Check)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.AspNetUser.Email)
+            Valid?
         </th>
         <th>
-            @*@Html.DisplayNameFor(model => model.UnliquidatedObligation.FieldS0)*@
+            Due Date(Check)
         </th>
-        <th></th>
+        <th>Days left</th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.WorkflowKey)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Version)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CurrentWorkflowActivityKey)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedAtUtc)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CurrentActivityEnteredAtUtc)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AspNetUser.Email)
-        </td>
-        <td>
-            @*@Html.DisplayFor(modelItem => item.UnliquidatedObligation.FieldS0)*@
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.WorkflowId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.WorkflowId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr class="active-workflows-record">
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasusDocumentNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.TotalLine)
+            </td>
+            <td>
+                @{
+                    var isValid = item.UnliquidatedObligation.Valid ? "Yes" : "No";
+                    @Html.Encode(isValid)
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ExpectedDateForCompletionResolution)
+            </td>
+            <td>
+                @{
+                    var dueDate = Convert.ToDateTime(item.UnliquidatedObligation.ExpectedDateForCompletionResolution);
+                    var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
+                    @Html.Encode(daysLeft);
+                }
+            </td>
+            @*<td>
+                    @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |
+                    @Html.ActionLink("Details", "Details", new { id=item.WorkflowId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.WorkflowId })
+                </td>*@
+        </tr>
+    }
 
 </table>
+
+

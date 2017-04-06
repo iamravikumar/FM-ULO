@@ -113,7 +113,7 @@
     <Property Name="GSAFSSOtherNumber" Type="varchar" MaxLength="50" />
     <Property Name="AwdExpirationDate" Type="varchar" MaxLength="50" />
     <Property Name="ReasonIncludedInReview" Type="varchar" MaxLength="3000" />
-    <Property Name="Valid" Type="varchar" MaxLength="50" />
+    <Property Name="Valid" Type="bit" Nullable="false" />
     <Property Name="ReviewedBy" Type="varchar" MaxLength="50" />
     <Property Name="ExpectedDateForCompletionResolution" Type="varchar" MaxLength="50" />
     <Property Name="RegionalSupportOrJustification" Type="varchar" MaxLength="3000" />

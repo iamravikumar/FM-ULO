@@ -367,7 +367,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Ulo");
         }
 
         //
@@ -416,7 +416,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Ulo");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult

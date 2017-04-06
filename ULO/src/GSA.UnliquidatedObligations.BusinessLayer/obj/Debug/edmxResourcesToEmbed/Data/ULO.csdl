@@ -118,7 +118,7 @@
     <Property Name="GSAFSSOtherNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="AwdExpirationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="ReasonIncludedInReview" Type="String" MaxLength="3000" FixedLength="false" Unicode="false" />
-    <Property Name="Valid" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Valid" Type="Boolean" Nullable="false" />
     <Property Name="ReviewedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="ExpectedDateForCompletionResolution" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="RegionalSupportOrJustification" Type="String" MaxLength="3000" FixedLength="false" Unicode="false" />
