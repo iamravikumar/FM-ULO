@@ -1,0 +1,12 @@
+﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+@Html.Partial("Details/_Ulo", Model)
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

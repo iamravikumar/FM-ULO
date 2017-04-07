@@ -1,7 +1,14 @@
+using System.Collections.Generic;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
+
+    public class UloViewModel
+    {
+        public UnliquidatedObligation CurretUnliquidatedObligation;
+        public IEnumerable<Region> Regions;
+    }
 
     public class FormAModel
     {

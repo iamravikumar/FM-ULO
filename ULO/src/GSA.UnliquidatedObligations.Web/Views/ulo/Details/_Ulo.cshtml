@@ -1,0 +1,615 @@
+﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation
+
+<div class="ulo-details">
+    <h4>UnliquidatedObligation</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">
+            <dl class="dl-horizontal">
+                <dt>Reviewer:</dt>
+                <dd>@Html.DisplayFor(model => model.ReviewedBy)</dd>
+            </dl>
+
+        </div>
+        <div class="col-md-3">
+            <dl class="dl-horizontal">
+                <dt>Region:</dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Region.RegionNumber)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>
+                    Zone:
+                </dt>
+                <dd>
+                    not present in data
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <dl class="dl-horizontal">
+                <dt>
+                    Reason in Review:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ReasonIncludedInReview)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Pegasys Document Number:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PegasusDocumentNumber)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Pegasys Title Number:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PegasysTitleNumber)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Pegasys Contract Number:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PegasysContractNumber)
+                </dd>
+            </dl>
+        </div>
+    </div>
+<div class="row">
+    <div class="col-md-4">
+        <dl class="dl-horizontal">
+            <dt>
+                Fund:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Fund)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-4">
+        <dl class="dl-horizontal">
+            <dt>
+                Organization:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Organization)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-4">
+        <dl class="dl-horizontal">
+            <dt>
+                Prog:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Prog)
+            </dd>
+        </dl>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Agreement:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Agreement)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-3">
+            <dl class="dl-horizontal">
+                <dt>
+                    RWA Completion Date:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.RWACompletionDate)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-3">
+            <dl class="dl-horizontal">
+                <dt>
+                    Date of Last Activity:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.DateOfLastActivity)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-2">
+            <dl class="dl-horizontal">
+                <dt>
+                    Actg Pd:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.ActgPd)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    @*<dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.DocType)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DocType)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PegasusDocumentNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PegasusDocumentNumber)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PegasysTitleNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PegasysTitleNumber)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Fund)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Fund)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Organization)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Organization)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Prog)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Prog)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Agreement)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Agreement)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.RWACompletionDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.RWACompletionDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.DateOfLastActivity)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DateOfLastActivity)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ActgPd)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ActgPd)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TotalLine)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TotalLine)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Commitments)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Commitments)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Prepayments)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Prepayments)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.UndelOrders)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.UndelOrders)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Rcpt)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Rcpt)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Accrual)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Accrual)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TotalDO)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TotalDO)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TotalUDOAndDO)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TotalUDOAndDO)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PendPayments)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PendPayments)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PymtsInTransit)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PymtsInTransit)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PymtsConfirmed)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PymtsConfirmed)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Holdbacks)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Holdbacks)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PegasysContractNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PegasysContractNumber)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PegasysVendorName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PegasysVendorName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ContractingOfficersName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ContractingOfficersName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.AwardNbr)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.AwardNbr)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BaseContractNbr)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BaseContractNbr)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.GSAFSSOtherNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.GSAFSSOtherNumber)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.AwdExpirationDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.AwdExpirationDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ReasonIncludedInReview)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReasonIncludedInReview)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Valid)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Valid)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewedBy)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReviewedBy)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ExpectedDateForCompletionResolution)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ExpectedDateForCompletionResolution)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.RegionalSupportOrJustification)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.RegionalSupportOrJustification)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BGPCommentsAfterReview)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BGPCommentsAfterReview)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.RegionalResponse)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.RegionalResponse)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BGPFinalDetermination)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BGPFinalDetermination)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.C1stReview)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.C1stReview)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.C2ndReview)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.C2ndReview)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.DateSentToFinCntrForDeobligation)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DateSentToFinCntrForDeobligation)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ULOCategoryForTracker)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ULOCategoryForTracker)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.When_should_BGP_review_again_)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.When_should_BGP_review_again_)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.DateBalanceRestored)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DateBalanceRestored)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.AmtToBeRecovered)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.AmtToBeRecovered)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.C1stFollowupDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.C1stFollowupDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.C2ndFollowupDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.C2ndFollowupDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.NoResponse_w_initial_submittal_)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.NoResponse_w_initial_submittal_)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.NoResponse)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.NoResponse)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BGPMadeCallValid)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BGPMadeCallValid)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BGPMadeCallInvalid)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BGPMadeCallInvalid)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BGPFinalDetVariesFromRegionCO)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BGPFinalDetVariesFromRegionCO)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Column_52)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Column_52)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Column_53)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Column_53)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Status)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Status)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Column_55)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Column_55)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedAtUTC)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreatedAtUTC)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Region.RegionNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Region.RegionNumber)
+            </dd>
+
+        </dl>*@
+</div>
+@*<p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.UloId }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>*@

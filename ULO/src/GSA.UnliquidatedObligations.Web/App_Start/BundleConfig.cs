@@ -22,10 +22,14 @@ namespace GSA.UnliquidatedObligations.Web
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/ULO").IncludeDirectory("~/Scripts/ULO", "*.js", true));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
                       "~/Content/workflows.css"));
+
+            bundles.Add(new StyleBundle("~/ULO/css").IncludeDirectory("~/Content/ULO", "*.css", true));
 
         }
     }

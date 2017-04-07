@@ -294,7 +294,6 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\workflows.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -318,7 +317,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\ULO\recordsListing.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Content\ULO\Workflows\workflows.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -359,6 +360,9 @@
     <Content Include="Views\Users\Edit.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Ulo\Index.cshtml" />
+    <Content Include="Views\Ulo\_RecordsListing.cshtml" />
+    <Content Include="Views\Ulo\Details\Index.cshtml" />
+    <Content Include="Views\Ulo\Details\_Ulo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,19 @@
+﻿.active-workflows .active-workflows-record:hover {
+    background-color: lightgrey;
+    cursor: pointer;
+}
+
+.ulo-details .row .dl-horizontaldl {
+    margin-bottom: 5px;
+}
+
+.ulo-details .row .dl-horizontal dt {
+    width: auto;
+    display: inline-block;
+}
+
+.ulo-details .row .dl-horizontal dd {
+    display: inline-block;
+    margin-left: 3px;
+}
+ 

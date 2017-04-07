@@ -3,82 +3,8 @@
 @{
     ViewBag.Title = "My Active Workflows";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var todaysDate = DateTime.Today;
 }
 
-<h2>My Active Workflows</h2>
-
-@*<p>
-        @Html.ActionLink("Create New", "Create")
-    </p>*@
-<table class="table active-workflows">
-    <tr>
-        <th>
-            PDN
-        </th>
-        <th>
-            BA Code (Check)
-        </th>
-        <th>
-            Org Code
-        </th>
-        <th>
-            Review Status
-        </th>
-        <th>
-            Amount (Check)
-        </th>
-        <th>
-            Valid?
-        </th>
-        <th>
-            Due Date(Check)
-        </th>
-        <th>Days left</th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr class="active-workflows-record">
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasusDocumentNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.TotalLine)
-            </td>
-            <td>
-                @{
-                    var isValid = item.UnliquidatedObligation.Valid ? "Yes" : "No";
-                    @Html.Encode(isValid)
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ExpectedDateForCompletionResolution)
-            </td>
-            <td>
-                @{
-                    var dueDate = Convert.ToDateTime(item.UnliquidatedObligation.ExpectedDateForCompletionResolution);
-                    var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
-                    @Html.Encode(daysLeft);
-                }
-            </td>
-            @*<td>
-                    @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |
-                    @Html.ActionLink("Details", "Details", new { id=item.WorkflowId }) |
-                    @Html.ActionLink("Delete", "Delete", new { id=item.WorkflowId })
-                </td>*@
-        </tr>
-    }
-
-</table>
+@Html.Partial("~/Views/Ulo/_RecordsListing.cshtml", Model)
 
 

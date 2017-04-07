@@ -31,6 +31,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(workflows);
         }
 
+        [Route("Ulo/{id}")]
+        public async Task<ActionResult> Details(int id)
+        {
+            var ulo = await DB.UnliquidatedObligations.Include(u => u.Workflows).FirstOrDefaultAsync(u => u.UloId == id);
+            //var regions = await DB.Regions.AllAsync();
+            return View("Details/Index", ulo);
+        }
+
 
 
         private async Task<Workflow> FindWorkflowAsync(int workflowId)
