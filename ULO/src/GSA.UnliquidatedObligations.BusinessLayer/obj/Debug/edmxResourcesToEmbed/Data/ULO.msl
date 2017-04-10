@@ -63,7 +63,7 @@
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
           <ScalarProperty Name="UploadedBy" ColumnName="UploadedBy" />
-          <ScalarProperty Name="ULOID" ColumnName="ULOID" />
+          <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -72,6 +72,30 @@
         <MappingFragment StoreEntitySet="DocumentType">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Notes">
+      <EntityTypeMapping TypeName="ULODBModel.Note">
+        <MappingFragment StoreEntitySet="Notes">
+          <ScalarProperty Name="NoteId" ColumnName="NoteId" />
+          <ScalarProperty Name="ParentNoteId" ColumnName="ParentNoteId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="NoteContents" ColumnName="NoteContents" />
+          <ScalarProperty Name="UloId" ColumnName="UloId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UnliqudatedObjectsWorkflowQuestions">
+      <EntityTypeMapping TypeName="ULODBModel.UnliqudatedObjectsWorkflowQuestion">
+        <MappingFragment StoreEntitySet="UnliqudatedObjectsWorkflowQuestions">
+          <ScalarProperty Name="UnliqudatedWorkflowQuestionsId" ColumnName="UnliqudatedWorkflowQuestionsId" />
+          <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Valid" ColumnName="Valid" />
+          <ScalarProperty Name="Justification" ColumnName="Justification" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

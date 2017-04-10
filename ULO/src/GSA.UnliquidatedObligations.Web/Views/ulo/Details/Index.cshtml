@@ -1,12 +1,19 @@
-﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation
+﻿@model GSA.UnliquidatedObligations.Web.Models.UloViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = Model.CurretUnliquidatedObligation.PegasusDocumentNumber;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Details</h2>
-@Html.Partial("Details/_Ulo", Model)
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.Partial("Details/_Ulo", Model)
+    @Html.Partial("Details/_Workflow", Model.CurretUnliquidatedObligation.Workflows.First())
+
+}
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>

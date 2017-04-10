@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Dynamic;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
 namespace GSA.UnliquidatedObligations.Web.Models
@@ -7,7 +8,14 @@ namespace GSA.UnliquidatedObligations.Web.Models
     public class UloViewModel
     {
         public UnliquidatedObligation CurretUnliquidatedObligation;
-        public IEnumerable<Region> Regions;
+        public string UDOShouldBe { get; set; }
+        public string DOShouldBe {get; set; }
+
+        public UloViewModel()
+        { }
+
+        public UloViewModel(Workflow wf)
+        { }
     }
 
     public class FormAModel

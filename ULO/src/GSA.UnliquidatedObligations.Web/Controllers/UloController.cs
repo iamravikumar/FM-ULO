@@ -34,9 +34,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("Ulo/{id}")]
         public async Task<ActionResult> Details(int id)
         {
-            var ulo = await DB.UnliquidatedObligations.Include(u => u.Workflows).FirstOrDefaultAsync(u => u.UloId == id);
-            //var regions = await DB.Regions.AllAsync();
-            return View("Details/Index", ulo);
+            var ulo = await DB.UnliquidatedObligations.Include(u => u.Workflows).Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == id);
+            var uloVM = new UloViewModel {CurretUnliquidatedObligation = ulo};
+            return View("Details/Index", uloVM);
         }
 
 

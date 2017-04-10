@@ -42,8 +42,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             var desc = await Finder.FindAsync(wf.WorkflowKey, wf.Version);
             var currentActivity = desc.Activities.FirstOrDefault(z => z.WorkflowActivityKey == wf.WorkflowKey);
-            //TODO: Service Provider question
-            //TODO: May possibly need to see how to register Icompone
             //var chooser = (IActivityChooser)ServiceProvider.GetService(currentActivity.NextActivityChooserType);
             var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
             var nextActivityKey = chooser.GetNextActivityKey(wf, currentActivity.NextActivityChooserConfig);

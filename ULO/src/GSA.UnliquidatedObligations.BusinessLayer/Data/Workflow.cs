@@ -14,6 +14,13 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
     public partial class Workflow
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Workflow()
+        {
+            this.Documents = new HashSet<Document>();
+            this.UnliqudatedObjectsWorkflowQuestions = new HashSet<UnliqudatedObjectsWorkflowQuestion>();
+        }
+    
         public int WorkflowId { get; set; }
         public string WorkflowKey { get; set; }
         public int Version { get; set; }
@@ -24,6 +31,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int TargetUloId { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Document> Documents { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
         public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }
     }
 }

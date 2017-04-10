@@ -1,0 +1,70 @@
+﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow
+
+<div>
+    <h4>Workflow</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.WorkflowKey)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.WorkflowKey)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Version)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Version)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentWorkflowActivityKey)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentWorkflowActivityKey)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedAtUtc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedAtUtc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentActivityEnteredAtUtc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentActivityEnteredAtUtc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AspNetUser.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AspNetUser.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UnliquidatedObligation.DocType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UnliquidatedObligation.DocType)
+        </dd>
+
+    </dl>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Advance Workflow" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+

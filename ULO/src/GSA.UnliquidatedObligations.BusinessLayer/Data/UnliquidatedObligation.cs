@@ -17,6 +17,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public UnliquidatedObligation()
         {
+            this.Notes = new HashSet<Note>();
             this.Workflows = new HashSet<Workflow>();
         }
     
@@ -79,6 +80,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string Column_55 { get; set; }
         public System.DateTime CreatedAtUTC { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Note> Notes { get; set; }
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Workflow> Workflows { get; set; }

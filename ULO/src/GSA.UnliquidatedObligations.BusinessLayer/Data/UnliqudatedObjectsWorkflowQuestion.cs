@@ -12,22 +12,16 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class Document
+    public partial class UnliqudatedObjectsWorkflowQuestion
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Document()
-        {
-            this.Attachments = new HashSet<Attachment>();
-        }
-    
-        public int Id { get; set; }
-        public int DocumentType { get; set; }
-        public int UploadedBy { get; set; }
+        public int UnliqudatedWorkflowQuestionsId { get; set; }
         public int WorkflowId { get; set; }
+        public Nullable<System.DateTime> Date { get; set; }
+        public string UserId { get; set; }
+        public Nullable<bool> Valid { get; set; }
+        public string Justification { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Attachment> Attachments { get; set; }
-        public virtual DocumentType DocumentType1 { get; set; }
+        public virtual AspNetUser AspNetUser { get; set; }
         public virtual Workflow Workflow { get; set; }
     }
 }

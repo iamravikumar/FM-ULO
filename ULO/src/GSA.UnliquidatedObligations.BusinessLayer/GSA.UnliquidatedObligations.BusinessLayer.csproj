@@ -85,6 +85,9 @@
     <Compile Include="Data\DocumentType.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\Note.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\Region.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -102,6 +105,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ULO.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Data\UnliqudatedObjectsWorkflowQuestion.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\UnliquidatedObligation.cs">
       <DependentUpon>ULO.tt</DependentUpon>

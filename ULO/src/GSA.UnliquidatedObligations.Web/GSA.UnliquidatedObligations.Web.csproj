@@ -363,6 +363,8 @@
     <Content Include="Views\Ulo\_RecordsListing.cshtml" />
     <Content Include="Views\Ulo\Details\Index.cshtml" />
     <Content Include="Views\Ulo\Details\_Ulo.cshtml" />
+    <Content Include="Views\Ulo\Details\_Workflow.cshtml" />
+    <Content Include="Views\Ulo\Details\View.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

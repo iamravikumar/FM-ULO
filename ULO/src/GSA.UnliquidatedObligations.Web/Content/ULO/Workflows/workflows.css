@@ -16,4 +16,15 @@
     display: inline-block;
     margin-left: 3px;
 }
+
+.ulo-details .row:first-of-type {
+    margin-bottom: 15px;
+}
  
+.ulo-details .row:nth-child(even) {
+    background-color: lightgrey;
+}
+
+.ulo-details .ulo-notes .row.header {
+    
+}

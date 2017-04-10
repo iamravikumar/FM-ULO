@@ -68,7 +68,7 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="DocumentType" Type="int" Nullable="false" />
     <Property Name="UploadedBy" Type="int" Nullable="false" />
-    <Property Name="ULOID" Type="int" Nullable="false" />
+    <Property Name="WorkflowId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="DocumentType">
     <Key>
@@ -76,6 +76,28 @@
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Name" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Notes">
+    <Key>
+      <PropertyRef Name="NoteId" />
+    </Key>
+    <Property Name="NoteId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ParentNoteId" Type="int" />
+    <Property Name="UserId" Type="nvarchar" MaxLength="128" />
+    <Property Name="Date" Type="datetime" />
+    <Property Name="NoteContents" Type="varchar" MaxLength="1000" />
+    <Property Name="UloId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="UnliqudatedObjectsWorkflowQuestions">
+    <Key>
+      <PropertyRef Name="UnliqudatedWorkflowQuestionsId" />
+    </Key>
+    <Property Name="UnliqudatedWorkflowQuestionsId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkflowId" Type="int" Nullable="false" />
+    <Property Name="Date" Type="datetime" />
+    <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="Valid" Type="bit" />
+    <Property Name="Justification" Type="varchar" MaxLength="300" />
   </EntityType>
   <EntityType Name="UnliquidatedObligations">
     <Key>
@@ -187,6 +209,42 @@
     <Property Name="ZoneId" Type="int" Nullable="false" />
     <Property Name="ZoneName" Type="varchar" MaxLength="100" Nullable="false" />
   </EntityType>
+  <Association Name="FK__Notes__ParentNot__214BF109">
+    <End Role="Notes" Type="Self.Notes" Multiplicity="0..1" />
+    <End Role="Notes1" Type="Self.Notes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Notes">
+        <PropertyRef Name="NoteId" />
+      </Principal>
+      <Dependent Role="Notes1">
+        <PropertyRef Name="ParentNoteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Notes__UloId__2334397B">
+    <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="1" />
+    <End Role="Notes" Type="Self.Notes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UnliquidatedObligations">
+        <PropertyRef Name="UloId" />
+      </Principal>
+      <Dependent Role="Notes">
+        <PropertyRef Name="UloId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Notes__UserId__22401542">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+    <End Role="Notes" Type="Self.Notes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Notes">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK__Regions__ZoneId__30C33EC3">
     <End Role="Zones" Type="Self.Zones" Multiplicity="1" />
     <End Role="Regions" Type="Self.Regions" Multiplicity="*" />
@@ -327,6 +385,42 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Document_ToWorkflow">
+    <End Role="Workflows" Type="Self.Workflows" Multiplicity="1" />
+    <End Role="Document" Type="Self.Document" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Workflows">
+        <PropertyRef Name="WorkflowId" />
+      </Principal>
+      <Dependent Role="Document">
+        <PropertyRef Name="WorkflowId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers">
+    <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+    <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="AspNetUsers">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UnliqudatedObjectsWorkflowQuestions">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows">
+    <End Role="Workflows" Type="Self.Workflows" Multiplicity="1" />
+    <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestions" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Workflows">
+        <PropertyRef Name="WorkflowId" />
+      </Principal>
+      <Dependent Role="UnliqudatedObjectsWorkflowQuestions">
+        <PropertyRef Name="WorkflowId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_UnliquidatedObligations_ToRegions">
     <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
     <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
@@ -360,12 +454,26 @@
     <EntitySet Name="Attachments" EntityType="Self.Attachments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="DocumentType" EntityType="Self.DocumentType" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Notes" EntityType="Self.Notes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="UnliqudatedObjectsWorkflowQuestions" EntityType="Self.UnliqudatedObjectsWorkflowQuestions" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UnliquidatedObligations" EntityType="Self.UnliquidatedObligations" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UserUsers" EntityType="Self.UserUsers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WorkflowDefinitions" EntityType="Self.WorkflowDefinitions" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Workflows" EntityType="Self.Workflows" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Regions" EntityType="Self.Regions" Schema="gsa" store:Type="Tables" />
     <EntitySet Name="Zones" EntityType="Self.Zones" Schema="gsa" store:Type="Tables" />
+    <AssociationSet Name="FK__Notes__ParentNot__214BF109" Association="Self.FK__Notes__ParentNot__214BF109">
+      <End Role="Notes" EntitySet="Notes" />
+      <End Role="Notes1" EntitySet="Notes" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Notes__UloId__2334397B" Association="Self.FK__Notes__UloId__2334397B">
+      <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
+      <End Role="Notes" EntitySet="Notes" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Notes__UserId__22401542" Association="Self.FK__Notes__UserId__22401542">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="Notes" EntitySet="Notes" />
+    </AssociationSet>
     <AssociationSet Name="FK__Regions__ZoneId__30C33EC3" Association="Self.FK__Regions__ZoneId__30C33EC3">
       <End Role="Zones" EntitySet="Zones" />
       <End Role="Regions" EntitySet="Regions" />
@@ -409,6 +517,18 @@
     <AssociationSet Name="FK_Document_ToDocumentType" Association="Self.FK_Document_ToDocumentType">
       <End Role="DocumentType" EntitySet="DocumentType" />
       <End Role="Document" EntitySet="Document" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Document_ToWorkflow" Association="Self.FK_Document_ToWorkflow">
+      <End Role="Workflows" EntitySet="Workflows" />
+      <End Role="Document" EntitySet="Document" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" Association="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers">
+      <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+      <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" Association="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows">
+      <End Role="Workflows" EntitySet="Workflows" />
+      <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
     </AssociationSet>
     <AssociationSet Name="FK_UnliquidatedObligations_ToRegions" Association="Self.FK_UnliquidatedObligations_ToRegions">
       <End Role="Regions" EntitySet="Regions" />

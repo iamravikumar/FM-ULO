@@ -12,22 +12,25 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class Document
+    public partial class Note
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Document()
+        public Note()
         {
-            this.Attachments = new HashSet<Attachment>();
+            this.Notes1 = new HashSet<Note>();
         }
     
-        public int Id { get; set; }
-        public int DocumentType { get; set; }
-        public int UploadedBy { get; set; }
-        public int WorkflowId { get; set; }
+        public int NoteId { get; set; }
+        public Nullable<int> ParentNoteId { get; set; }
+        public string UserId { get; set; }
+        public Nullable<System.DateTime> Date { get; set; }
+        public string NoteContents { get; set; }
+        public int UloId { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Attachment> Attachments { get; set; }
-        public virtual DocumentType DocumentType1 { get; set; }
-        public virtual Workflow Workflow { get; set; }
+        public virtual ICollection<Note> Notes1 { get; set; }
+        public virtual Note Note1 { get; set; }
+        public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }
     }
 }
