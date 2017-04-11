@@ -269,125 +269,107 @@
             </dl>
         </div>
     </div>
-<div class="row">
-    <div class="col-md-12">
-        <dl class="dl-horizontal">
-            <dt>
-                Pending Payment:
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.CurretUnliquidatedObligation.PendPayments)
-            </dd>
-        </dl>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <dl class="dl-horizontal">
-            <dt>
-                Pymts(In Transit):
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.CurretUnliquidatedObligation.PymtsInTransit)
-            </dd>
-        </dl>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <dl class="dl-horizontal">
-            <dt>
-                Holdbacks:
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Holdbacks)
-            </dd>
-        </dl>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <dl class="dl-horizontal">
-            <dt>
-                Total DO:
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.CurretUnliquidatedObligation.TotalDO)
-            </dd>
-        </dl>
-    </div>
-    <div class="col-md-4">
-        <dl class="dl-horizontal">
-            <dt>
-                Total UDO:
-            </dt>
-            <dd>
-                *Total UDO not present in data
-                @*@Html.DisplayFor(model => model.CurretUnliquidatedObligation.Total)*@
-            </dd>
-        </dl>
-    </div>
-    <div class="col-md-4">
-        <dl class="dl-horizontal">
-            <dt>
-                Total DO and UDO:
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.CurretUnliquidatedObligation.TotalUDOAndDO)
-            </dd>
-        </dl>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <dl class="dl-horizontal">
-            <dt>
-                DO Should be:
-            </dt>
-            <dd>
-                @Html.TextBoxFor(model => model.DOShouldBe)
-            </dd>
-        </dl>
-    </div>
-    <div class="col-md-8">
-        <dl class="dl-horizontal">
-            <dt>
-                UDO Should be:
-            </dt>
-            <dd>
-                @Html.TextBoxFor(model => model.UDOShouldBe)
-            </dd>
-        </dl>
-    </div>
-    <div class="col-md-4">
-        <dl class="dl-horizontal">
-            <dt>
-                Total DO and UDO:
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.CurretUnliquidatedObligation.TotalUDOAndDO)
-            </dd>
-        </dl>
-    </div>
-</div>
-    
-<div class="row">
-    attachments going here
-</div>
-  
-<div class="row col-md-8">
-    <div class="row header">
-        <div class="col-md-4">Date</div>
-        <div class="col-md-4">Person</div>
-        <div class="col-md-4">Comment</div>
-    </div>
-    @foreach (var note in Model.CurretUnliquidatedObligation.Notes)
-    {
-        <div class="row header">
-            <div class="col-md-4">@note.Date</div>
-            <div class="col-md-4">@note.AspNetUser.UserName</div>
-            <div class="col-md-4">@note.NoteContents</div>
+    <div class="row">
+        <div class="col-md-12">
+            <dl class="dl-horizontal">
+                <dt>
+                    Pending Payment:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.PendPayments)
+                </dd>
+            </dl>
         </div>
-    }
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <dl class="dl-horizontal">
+                <dt>
+                    Pymts(In Transit):
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.PymtsInTransit)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Holdbacks:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Holdbacks)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Total DO:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.TotalDO)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Total UDO:
+                </dt>
+                <dd>
+                    *Total UDO not present in data
+                    @*@Html.DisplayFor(model => model.CurretUnliquidatedObligation.Total)*@
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Total DO and UDO:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.TotalUDOAndDO)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    DO Should be:
+                </dt>
+                <dd>
+                    @Html.TextBoxFor(model => model.DOShouldBe)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-8">
+            <dl class="dl-horizontal">
+                <dt>
+                    UDO Should be:
+                </dt>
+                <dd>
+                    @Html.TextBoxFor(model => model.UDOShouldBe)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Total DO and UDO:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.TotalUDOAndDO)
+                </dd>
+            </dl>
+        </div>
+    </div>
 </div>
-</div>
+
+

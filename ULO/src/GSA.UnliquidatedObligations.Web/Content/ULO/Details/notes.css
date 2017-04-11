@@ -1,0 +1,9 @@
+﻿.ulo-notes {
+    margin: 15px 0;
+}
+
+
+.ulo-notes .row.col-md-8,
+.ulo-notes .row.header.col-md-8 {
+    padding: 0
+}

@@ -1,4 +1,5 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.UloViewModel
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Data
+@model GSA.UnliquidatedObligations.Web.Models.UloViewModel
 
 @{
     ViewBag.Title = Model.CurretUnliquidatedObligation.PegasusDocumentNumber;
@@ -7,13 +8,14 @@
 
 <h2>Details</h2>
 
-@using (Html.BeginForm())
-{
+
     @Html.AntiForgeryToken()
     @Html.Partial("Details/_Ulo", Model)
-    @Html.Partial("Details/_Workflow", Model.CurretUnliquidatedObligation.Workflows.First())
+    @Html.Partial("Details/_Attachments", new Document())
+    @Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)
 
-}
-<div>
+   @Html.Partial("Details/Workflow/_Index", Model.WorkflowVMsList)
+
+<div class="clearfix">
     @Html.ActionLink("Back to List", "Index")
 </div>

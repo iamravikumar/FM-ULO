@@ -35,8 +35,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Details(int id)
         {
             var ulo = await DB.UnliquidatedObligations.Include(u => u.Workflows).Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == id);
-            var uloVM = new UloViewModel {CurretUnliquidatedObligation = ulo};
-            return View("Details/Index", uloVM);
+            return View("Details/Index", new UloViewModel(ulo));
         }
 
 
@@ -70,21 +69,22 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [HttpPost]
-        [ActionName("FormA")]
-        [Route("FormA/{workflowId}")]
+        [ActionName("Ulo")]
+        [Route("Ulo/{workflowId}")]
         public async Task<ActionResult> FormA(
             int workflowId,
-            [Bind(Include = nameof(FormAModel.Field0Value))]
-            FormAModel model)
+            [Bind(Include = nameof(ULOWfQuestionsViewModel.Justification))]
+            UloViewModel model)
         {
             var wf = await FindWorkflowAsync(workflowId);
-            if (wf == null) return HttpNotFound();
-            if (ModelState.IsValid)
-            {
-                //wf.TargetUlo.FieldS0 = model.Field0Value;
-                return await AdvanceAsync(wf);
-            }
-            return View(model);
+            return new EmptyResult();
+            //if (wf == null) return HttpNotFound();
+            //if (ModelState.IsValid)
+            //{
+            //    //wf.TargetUlo.FieldS0 = model.Field0Value;
+            //    return await AdvanceAsync(wf);
+            //}
+            //return View(model);
         }
 
         private async Task<ActionResult> AdvanceAsync(Workflow wf)

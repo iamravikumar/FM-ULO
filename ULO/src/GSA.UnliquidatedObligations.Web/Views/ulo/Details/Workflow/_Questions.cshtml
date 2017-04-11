@@ -1,0 +1,24 @@
+﻿@model IEnumerable<GSA.UnliquidatedObligations.Web.Models.ULOWfQuestionsViewModel>
+<div class="row workflow-questions">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Workflow Questions</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row header col-md-8">
+                <div class="col-md-3">Person</div>
+                <div class="col-md-3">Valid</div>
+                <div class="col-md-6">Justification</div>
+            </div>
+            @foreach (var question in Model)
+            {
+                <div class="row  col-md-8">
+                    <div class="col-md-3">@question.Person</div>
+                    <div class="col-md-3">@question.Valid</div>
+                    <div class="col-md-6">@question.Justification</div>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
