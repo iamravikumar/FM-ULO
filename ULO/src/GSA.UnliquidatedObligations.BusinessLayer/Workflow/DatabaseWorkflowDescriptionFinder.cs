@@ -58,7 +58,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
                         NextActivityChooserConfig = nextActivityConfig,
                         NextActivityChooserTypeName = "FieldComparisonActivityChooser",
                         WorkflowActivityKey = "4a41abad-bac3-47fb-a8cf-5d667439d7c3",     
-                        OwnerUserId = "f2860baf-a555-4834-baf3-62b929d1b6b1"
+                        OwnerUserId = "f2860baf-a555-4834-baf3-62b929d1b6b1",
+                        EmailTemplateId = 1
                     },
                     new WebActionWorkflowActivity
                     {
@@ -68,8 +69,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
                         NextActivityChooserTypeName = "FieldComparisonActivityChooser",
                         WorkflowActivityKey = "A2",
                         OwnerUserId = "8a59d021-b45f-4c2e-bc0f-3b59938e47b0",
-                        RouteValueByName = new Dictionary<string, object>()
-                        
+                        RouteValueByName = new Dictionary<string, object>(),
+                        EmailTemplateId = 1
                     },
                      new WebActionWorkflowActivity
                     {
@@ -79,8 +80,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
                         NextActivityChooserTypeName = "FieldComparisonActivityChooser",
                         WorkflowActivityKey = "A3",
                         OwnerUserId = "00fcab74-9b2a-43f7-b77d-686fc3064dd0",
-                        RouteValueByName = new Dictionary<string, object>()
-
+                        RouteValueByName = new Dictionary<string, object>(),
+                        EmailTemplateId = 1
                     }
                 };
                 var d = new WorkflowDescription

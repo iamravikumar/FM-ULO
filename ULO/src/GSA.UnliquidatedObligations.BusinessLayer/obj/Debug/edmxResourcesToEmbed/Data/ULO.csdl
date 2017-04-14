@@ -539,5 +539,13 @@
       <End Role="AspNetRoles" EntitySet="AspNetRoles" />
       <End Role="AspNetUsers" EntitySet="AspNetUsers" />
     </AssociationSet>
+    <EntitySet Name="EmailTemplates" EntityType="ULODBModel.EmailTemplate" />
   </EntityContainer>
+  <EntityType Name="EmailTemplate">
+    <Key>
+      <PropertyRef Name="EmailTemplateId" />
+    </Key>
+    <Property Name="EmailTemplateId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EmailBody" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+  </EntityType>
 </Schema>

@@ -15,18 +15,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
     {
         public const string WorkflowIdRouteValueName = "workflowId";
 
-        //private readonly IServiceProvider ServiceProvider;
         private readonly IComponentContext ComponentContext;
         private readonly IWorkflowDescriptionFinder Finder;
         private readonly IBackgroundJobClient BackgroundJobClient;
 
-        //public WorkflowManager(IServiceProvider serviceProvider, IWorkflowDescriptionFinder finder)
-        //{
-        //    ServiceProvider = serviceProvider;
-        //    Finder = finder;
-        //}
-
-        //TODO: Make sure to run by Jason.  No longer using ServiceProvider
         public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient)
         {
             ComponentContext = componentContext;
@@ -60,7 +52,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 if (wf.OwnerUserId != nextActivity.OwnerUserId)
                 {
                     wf.OwnerUserId = nextActivity.OwnerUserId;
-                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", wf.OwnerUserId, "recipient"));
+                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", wf.OwnerUserId, "recipient@test.com"));
                 }
                 
                 wf.UnliqudatedObjectsWorkflowQuestions.Add(question);

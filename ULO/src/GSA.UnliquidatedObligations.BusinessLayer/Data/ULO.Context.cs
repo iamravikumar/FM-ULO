@@ -40,5 +40,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<Workflow> Workflows { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Zone> Zones { get; set; }
+        public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
     }
 }

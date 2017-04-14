@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Net.Mail;
+using System.Web;
 using System.Web.Mvc;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
@@ -50,6 +51,7 @@ namespace GSA.UnliquidatedObligations.Web
             builder.RegisterType<BackgroundTasks>().As<IBackgroundTasks>().InstancePerBackgroundJob();
             builder.RegisterType<BackgroundJobClient>().As<IBackgroundJobClient>().InstancePerRequest();
 
+            builder.Register(ctx => new EmailServer(new SmtpClient())).As<IEmailServer>();
 
             //May need to add more if we add more choosers.
             //If it gets to where there are A LOT, we could look more into http://docs.autofac.org/en/latest/register/scanning.html

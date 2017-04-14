@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
-    interface IBackgroundTasks
+    public interface IBackgroundTasks
     {
         void Email(string subject, string body, string recipient);
     }

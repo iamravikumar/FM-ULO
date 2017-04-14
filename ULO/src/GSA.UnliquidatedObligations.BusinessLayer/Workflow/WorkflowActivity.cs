@@ -21,5 +21,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [JsonProperty("nextActivityChooserConfig")]
         public string NextActivityChooserConfig { get; set; }
+
+        [JsonProperty("emailTemplateId")]
+        public int EmailTemplateId { get; set; }
+
+        
     }
 }

@@ -38,6 +38,7 @@
         <AssociationConnector Association="ULODBModel.FK__UserUsers__Regio__395884C4" ManuallyRouted="false" />
         <AssociationConnector Association="ULODBModel.FK__Regions__ZoneId__30C33EC3" ManuallyRouted="false" />
         <AssociationConnector Association="ULODBModel.AspNetUserRoles" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ULODBModel.EmailTemplate" Width="1.5" PointX="3.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
