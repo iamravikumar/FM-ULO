@@ -9,21 +9,35 @@ using Newtonsoft.Json;
 namespace GSA.UnliquidatedObligations.Web.Models
 {
     //TODO. May need to break these up a bit.
-    public class ULOWfQuestionsViewModel
+    public class UloWfQuestionsViewModel
     {
-        public string Person { get; set; }
+        public List<UnliqudatedObjectsWorkflowQuestion> Questions { get; set; }
+
+        public UloWfQuestionsViewModel(List<UnliqudatedObjectsWorkflowQuestion> questions)
+        {
+            Questions = questions;
+        }
+    }
+
+    public class AdvanceViewModel
+    {
+
         public bool? Valid { get; set; }
 
         public string Justification { get; set; }
 
         public int WorkflowId { get; set; }
 
-        public ULOWfQuestionsViewModel(UnliqudatedObjectsWorkflowQuestion question)
+        public AdvanceViewModel()
         {
-            Person = question.AspNetUser.UserName;
-            Valid = question.Valid;
-            Justification = question.Justification;
-            WorkflowId = question.WorkflowId;
+            
+        }
+
+        public AdvanceViewModel(Workflow workflow)
+        {
+            Valid = null;
+            Justification = "";
+            WorkflowId = workflow.WorkflowId;
         }
     }
 
@@ -31,42 +45,40 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         //TODO: set properties explicitly for Workflow
         public Workflow Workflow { get; set; }
-        public List<ULOWfQuestionsViewModel> QuestionsVmList;
-
+        public UloWfQuestionsViewModel QuestionsViewModel { get; set; }
+        public AdvanceViewModel AdvanceViewModel { get; set; }
+        public WorkflowViewModel()
+        {
+           
+        }
         public WorkflowViewModel(Workflow workflow)
         {
             Workflow = workflow;
-            QuestionsVmList =  new List<ULOWfQuestionsViewModel>();
-            foreach (var question in workflow.UnliqudatedObjectsWorkflowQuestions)
-            {
-                QuestionsVmList.Add(new ULOWfQuestionsViewModel(question));
-            }
-           
+            QuestionsViewModel =  new UloWfQuestionsViewModel(workflow.UnliqudatedObjectsWorkflowQuestions.ToList());
+            AdvanceViewModel = new AdvanceViewModel(workflow);
+
         }
     }
 
     public class UloViewModel
     {
         //TODO: set properties explicitly for UnliquidatedObligation
-        public UnliquidatedObligation CurretUnliquidatedObligation;
-        public List<WorkflowViewModel> WorkflowVMsList;
+        public UnliquidatedObligation CurretUnliquidatedObligation { get; set; }
+        public WorkflowViewModel WorkflowViewModel { get; set; }
 
-        
-        public string UDOShouldBe { get; set; }
-        public string DOShouldBe {get; set; }
+        public decimal? UDOShouldBe { get; set; }
+        public decimal? DOShouldBe {get; set; }
 
         public UloViewModel()
         { }
 
 
-        public UloViewModel(UnliquidatedObligation ulo)
-        {
+        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow) { 
+            UDOShouldBe = ulo.UDOShouldBe;
+            DOShouldBe = ulo.DOShouldBe;
             CurretUnliquidatedObligation = ulo;
-            WorkflowVMsList = new List<WorkflowViewModel>();
-            foreach (var workflow in ulo.Workflows)
-            {
-                WorkflowVMsList.Add(new WorkflowViewModel(workflow));
-            }
+            WorkflowViewModel = new WorkflowViewModel(workflow);
+            
         }
     }
 

@@ -10,6 +10,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         {
             public const string Ulo = "ulo";
             public const string Workflow = "wf";
+            public const string wfQuestion = "wfQuestion";
         }
 
         public class Expression
@@ -27,13 +28,14 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
             public IList<Expression> Expressions { get; set; }
         }
 
-        string IActivityChooser.GetNextActivityKey(Data.Workflow wf, string settings)
+        string IActivityChooser.GetNextActivityKey(Data.Workflow wf, Data.UnliqudatedObjectsWorkflowQuestion question, string settings)
         {
             var s = JsonConvert.DeserializeObject<MySettings>(settings);
+            //TODO: pass in questions object
             var parameters = new[] {
                 new DynamicExpresso.Parameter(CommonParameterNames.Workflow, wf),
-                //TODO: Workflow object should contain TargetULo
-                //new DynamicExpresso.Parameter(CommonParameterNames.Ulo, wf.TargetUlo)
+                new DynamicExpresso.Parameter(CommonParameterNames.Ulo, wf.UnliquidatedObligation),
+                new DynamicExpresso.Parameter(CommonParameterNames.wfQuestion, question), 
             };
             var i = new DynamicExpresso.Interpreter();
             foreach (var e in s.Expressions)

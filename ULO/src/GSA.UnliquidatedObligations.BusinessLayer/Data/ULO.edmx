@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ULODBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ULODBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -166,6 +166,8 @@
           <Property Name="Status" Type="varchar" MaxLength="50" />
           <Property Name="Column 55" Type="varchar" MaxLength="50" />
           <Property Name="CreatedAtUTC" Type="datetime" Nullable="false" />
+          <Property Name="DOShouldBe" Type="money" />
+          <Property Name="UDOShouldBe" Type="money" />
         </EntityType>
         <EntityType Name="UserUsers">
           <Key>
@@ -544,8 +546,7 @@
             <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ULODBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -727,6 +728,8 @@
           <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__2334397B" FromRole="UnliquidatedObligations" ToRole="Notes" />
           <NavigationProperty Name="Region" Relationship="Self.FK_UnliquidatedObligations_ToRegions" FromRole="UnliquidatedObligations" ToRole="Regions" />
           <NavigationProperty Name="Workflows" Relationship="Self.FK_Workflows_ToUnliquidatedObligations" FromRole="UnliquidatedObligations" ToRole="Workflows" />
+          <Property Name="DOShouldBe" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="UDOShouldBe" Type="Decimal" Precision="19" Scale="4" />
         </EntityType>
         <EntityType Name="UserUser">
           <Key>
@@ -1194,6 +1197,8 @@
           <EntitySetMapping Name="UnliquidatedObligations">
             <EntityTypeMapping TypeName="ULODBModel.UnliquidatedObligation">
               <MappingFragment StoreEntitySet="UnliquidatedObligations">
+                <ScalarProperty Name="UDOShouldBe" ColumnName="UDOShouldBe" />
+                <ScalarProperty Name="DOShouldBe" ColumnName="DOShouldBe" />
                 <ScalarProperty Name="UloId" ColumnName="UloId" />
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
                 <ScalarProperty Name="DocType" ColumnName="DocType" />

@@ -178,6 +178,8 @@
     <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__2334397B" FromRole="UnliquidatedObligations" ToRole="Notes" />
     <NavigationProperty Name="Region" Relationship="Self.FK_UnliquidatedObligations_ToRegions" FromRole="UnliquidatedObligations" ToRole="Regions" />
     <NavigationProperty Name="Workflows" Relationship="Self.FK_Workflows_ToUnliquidatedObligations" FromRole="UnliquidatedObligations" ToRole="Workflows" />
+    <Property Name="DOShouldBe" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="UDOShouldBe" Type="Decimal" Precision="19" Scale="4" />
   </EntityType>
   <EntityType Name="UserUser">
     <Key>

@@ -79,6 +79,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string Status { get; set; }
         public string Column_55 { get; set; }
         public System.DateTime CreatedAtUTC { get; set; }
+        public Nullable<decimal> DOShouldBe { get; set; }
+        public Nullable<decimal> UDOShouldBe { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }

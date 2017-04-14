@@ -5,6 +5,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
 {
     public interface IWorkflowManager
     {
-        Task<ActionResult> AdvanceAsync(BusinessLayer.Data.Workflow wf);
+        Task<ActionResult> AdvanceAsync(BusinessLayer.Data.Workflow wf, BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion question);
     }
 }

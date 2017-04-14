@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GSA.UnliquidatedObligations.Web.Models.ULOWfQuestionsViewModel>
+﻿@model GSA.UnliquidatedObligations.Web.Models.UloWfQuestionsViewModel
 <div class="row workflow-questions">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -10,10 +10,10 @@
                 <div class="col-md-3">Valid</div>
                 <div class="col-md-6">Justification</div>
             </div>
-            @foreach (var question in Model)
+            @foreach (var question in Model.Questions)
             {
                 <div class="row  col-md-8">
-                    <div class="col-md-3">@question.Person</div>
+                    <div class="col-md-3">@question.AspNetUser.UserName</div>
                     <div class="col-md-3">@question.Valid</div>
                     <div class="col-md-6">@question.Justification</div>
                 </div>

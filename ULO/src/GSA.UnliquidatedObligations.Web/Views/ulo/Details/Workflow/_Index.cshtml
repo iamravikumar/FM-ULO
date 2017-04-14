@@ -1,11 +1,8 @@
-﻿@model IEnumerable<GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel>
+﻿@model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
 
 
 
 @* Will need to style a bit for multiple workflows. *@
-@foreach (var workflowVM in Model)
-{
-    @Html.Partial("Details/Workflow/_Questions", workflowVM.QuestionsVmList)
-    @Html.Partial("Details/Workflow/_Advance", new ViewDataDictionary { { "workflowId", workflowVM.Workflow.WorkflowId } })
-}
+@Html.Partial("Details/Workflow/_Questions", Model.QuestionsViewModel)
+@Html.Partial("Details/Workflow/_Advance", Model.AdvanceViewModel)
 

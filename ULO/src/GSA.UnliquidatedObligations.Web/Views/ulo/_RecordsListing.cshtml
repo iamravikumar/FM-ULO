@@ -28,6 +28,7 @@
             Due Date(Check)
         </th>
         <th>Days left</th>
+        <th></th>
     </tr>
 
     @foreach (var item in Model)
@@ -63,6 +64,9 @@
                     var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
                     @Html.Encode(daysLeft);
                 }
+            </td>
+            <td>
+                @Html.ActionLink("View Ulo", "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             @*<td>
                     @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |

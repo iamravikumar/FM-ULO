@@ -10,4 +10,4 @@ The original ULO application was a Region 11 inherited application that was buil
 
 
 Technology Stack: .NET 4.6.1, Entity Framework 6<br />
-Third Party Frameworks:  Autofac 4.4, DynamicExpresso 1.3.3.5
+Third Party Frameworks:  Autofac 4.4, DynamicExpresso 1.3.3.5, Hangfire 1.6.12

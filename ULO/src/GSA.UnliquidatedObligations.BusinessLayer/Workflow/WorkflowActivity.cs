@@ -7,6 +7,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
     {
         [JsonProperty("key")]
         public string WorkflowActivityKey { get; set; }
+        [JsonProperty("OwnerUserId")]
+        public string OwnerUserId { get; set; }
 
         [JsonIgnore]
         public Type NextActivityChooserType

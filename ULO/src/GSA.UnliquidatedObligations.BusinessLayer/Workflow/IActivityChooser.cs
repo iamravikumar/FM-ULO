@@ -1,7 +1,9 @@
-﻿namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
+﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
+
+namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
     public interface IActivityChooser
     {
-        string GetNextActivityKey(Data.Workflow wf, string settings);
+        string GetNextActivityKey(Data.Workflow wf, UnliqudatedObjectsWorkflowQuestion querstion, string settings);
     }
 }

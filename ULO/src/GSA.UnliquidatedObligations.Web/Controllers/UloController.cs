@@ -1,10 +1,13 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Services;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using GSA.UnliquidatedObligations.Web.Models;
+using Hangfire;
+using Microsoft.AspNet.Identity;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -18,12 +21,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public UloController(IWorkflowManager manager, ULODBEntities db, ApplicationUserManager userManager)
         {
-            Manager = manager;
+           Manager = manager;
             DB = db;
             UserManager = userManager;
+            
         }
 
         // GET: Ulo
+
         public async Task<ActionResult> Index()
         {
             var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
@@ -32,10 +37,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [Route("Ulo/{id}")]
-        public async Task<ActionResult> Details(int id)
+        public async Task<ActionResult> Details(int uloId, int workflowId)
         {
-            var ulo = await DB.UnliquidatedObligations.Include(u => u.Workflows).Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == id);
-            return View("Details/Index", new UloViewModel(ulo));
+            var ulo = await DB.UnliquidatedObligations.Include(u => u.Workflows).Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
+            var workflow = await FindWorkflowAsync(workflowId);
+            return View("Details/Index", new UloViewModel(ulo, workflow));
         }
 
 
@@ -59,39 +65,59 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         //Referred to by WebActionWorkflowActivity
-        [ActionName("FormA")]
-        [Route("FormA/{workflowId}")]
-        public async Task<ActionResult> FormA(int workflowId)
+        //TODO: Attributes will probably change
+        [ActionName("Advance")]
+        [Route("Advance/{workflowId}")]
+        public async Task<ActionResult> Advance(int workflowId)
         {
             var wf = await FindWorkflowAsync(workflowId);
             if (wf == null) return HttpNotFound();
             return View(new FormAModel(wf));
         }
 
+        //TODO: be able to open either ULO or workflow
+        //TODO: Attributes will probably change
         [HttpPost]
-        [ActionName("Ulo")]
-        [Route("Ulo/{workflowId}")]
-        public async Task<ActionResult> FormA(
+        [ActionName("Advance")]
+        [Route("Advance/{workflowId}")]
+        public async Task<ActionResult> Advance(
             int workflowId,
-            [Bind(Include = nameof(ULOWfQuestionsViewModel.Justification))]
-            UloViewModel model)
+            int uloId,
+            [Bind(Include = "DOShouldBe,UDOShouldBe")]
+            UloViewModel uloModel,
+            [Bind(Include = "Justification,Valid")]
+            AdvanceViewModel advanceModel)
         {
             var wf = await FindWorkflowAsync(workflowId);
-            return new EmptyResult();
-            //if (wf == null) return HttpNotFound();
-            //if (ModelState.IsValid)
-            //{
-            //    //wf.TargetUlo.FieldS0 = model.Field0Value;
-            //    return await AdvanceAsync(wf);
-            //}
-            //return View(model);
+            if (wf == null) return HttpNotFound();
+            if (ModelState.IsValid)
+            {
+                //
+               
+                wf.UnliquidatedObligation.DOShouldBe = uloModel.DOShouldBe;
+                wf.UnliquidatedObligation.UDOShouldBe = uloModel.UDOShouldBe;
+                var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                var question = new UnliqudatedObjectsWorkflowQuestion
+                {
+                    Date = DateTime.Now,
+                    Justification = advanceModel.Justification,
+                    UserId = user.Id,
+                    Valid = advanceModel.Valid,
+                    WorkflowId = workflowId,
+
+                };
+                return await AdvanceAsync(wf, question);
+            }
+            return await Details(uloId, workflowId);
         }
 
-        private async Task<ActionResult> AdvanceAsync(Workflow wf)
+        private async Task<ActionResult> AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
         {
-            var ret = await Manager.AdvanceAsync(wf);
+            var ret = await Manager.AdvanceAsync(wf, question);
             await DB.SaveChangesAsync();
             return ret;
         }
     }
+
+    
 }

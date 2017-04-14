@@ -102,6 +102,8 @@
     <EntitySetMapping Name="UnliquidatedObligations">
       <EntityTypeMapping TypeName="ULODBModel.UnliquidatedObligation">
         <MappingFragment StoreEntitySet="UnliquidatedObligations">
+          <ScalarProperty Name="UDOShouldBe" ColumnName="UDOShouldBe" />
+          <ScalarProperty Name="DOShouldBe" ColumnName="DOShouldBe" />
           <ScalarProperty Name="UloId" ColumnName="UloId" />
           <ScalarProperty Name="RegionId" ColumnName="RegionId" />
           <ScalarProperty Name="DocType" ColumnName="DocType" />

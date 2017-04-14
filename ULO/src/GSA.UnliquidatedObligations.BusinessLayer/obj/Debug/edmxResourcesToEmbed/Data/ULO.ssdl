@@ -161,6 +161,8 @@
     <Property Name="Status" Type="varchar" MaxLength="50" />
     <Property Name="Column 55" Type="varchar" MaxLength="50" />
     <Property Name="CreatedAtUTC" Type="datetime" Nullable="false" />
+    <Property Name="DOShouldBe" Type="money" />
+    <Property Name="UDOShouldBe" Type="money" />
   </EntityType>
   <EntityType Name="UserUsers">
     <Key>

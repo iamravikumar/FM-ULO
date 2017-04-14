@@ -7,10 +7,12 @@ using Microsoft.Owin;
 using Owin;
 using Autofac;
 using Autofac.Integration.Mvc;
+using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Hangfire;
 
 [assembly: OwinStartupAttribute(typeof(GSA.UnliquidatedObligations.Web.Startup))]
 namespace GSA.UnliquidatedObligations.Web
@@ -20,6 +22,11 @@ namespace GSA.UnliquidatedObligations.Web
         public void Configuration(IAppBuilder app)
         {
             var container = ConfigureBuilder().Build();
+            GlobalConfiguration.Configuration.UseAutofacActivator(container).UseSqlServerStorage("DefaultConnection");
+
+            app.UseHangfireDashboard();
+
+            app.UseHangfireServer();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
             ConfigureAuth(app);
 
@@ -40,13 +47,18 @@ namespace GSA.UnliquidatedObligations.Web
                 .As<IWorkflowDescriptionFinder>()
                 .InstancePerRequest();
 
+            builder.RegisterType<BackgroundTasks>().As<IBackgroundTasks>().InstancePerBackgroundJob();
+            builder.RegisterType<BackgroundJobClient>().As<IBackgroundJobClient>().InstancePerRequest();
+
 
             //May need to add more if we add more choosers.
             //If it gets to where there are A LOT, we could look more into http://docs.autofac.org/en/latest/register/scanning.html
             //to register all types implementing a certain interface.
             builder.RegisterType<FieldComparisonActivityChooser>()
-                .As<IActivityChooser>()
+                .Keyed<IActivityChooser>("FieldComparisonActivityChooser")
                 .InstancePerRequest();
+
+
 
             //Authentication
             builder.RegisterType<ApplicationDbContext>().AsSelf().InstancePerRequest();
