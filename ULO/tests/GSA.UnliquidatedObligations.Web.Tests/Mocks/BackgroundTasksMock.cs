@@ -9,9 +9,11 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
 {
     class BackgroundTasksMock : IBackgroundTasks
     {
-        public void Email(string subject, string body, string recipient)
+
+
+        public void Email(string subject, string recipient, int templateId, object model)
         {
-           
+            throw new NotImplementedException();
         }
     }
 }

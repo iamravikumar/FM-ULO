@@ -1,24 +1,24 @@
 ﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using System;
-using System.Collections.Generic;
+using RazorEngine;
+using RazorEngine.Templating;
 using System.Linq;
-using System.Web;
-
 namespace GSA.UnliquidatedObligations.Web.Services
 {
     public class BackgroundTasks : IBackgroundTasks
     {
         private readonly IEmailServer EmailServer;
         private ULODBEntities DB;
-        public BackgroundTasks(IEmailServer emailServer)
+        public BackgroundTasks(IEmailServer emailServer, ULODBEntities db)
         {
             EmailServer = emailServer;
+            DB = db;
         }
 
-        public void Email(string subject, string body, string recipient)
+        public void Email(string subject, string recipient, string template, object model)
         {
-
-            EmailServer.SendEmail(subject, body, recipient);
+            
+            var compiledEmailBody = Engine.Razor.RunCompile(template, "email", null, model);
+            EmailServer.SendEmail(subject, compiledEmailBody, recipient);
         }
     }
 }

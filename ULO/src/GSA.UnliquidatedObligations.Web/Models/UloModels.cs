@@ -82,6 +82,17 @@ namespace GSA.UnliquidatedObligations.Web.Models
         }
     }
 
+    public class EmailViewModel
+    {
+        public string UserName { get; set; }
+
+        public string PDN { get; set; }
+        public EmailViewModel()
+        {
+            
+        }
+    }
+
     public class FormAModel
     {
         public string Field0Value { get; set; }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
+using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
 using Microsoft.AspNet.Identity;
 
@@ -18,12 +19,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IComponentContext ComponentContext;
         private readonly IWorkflowDescriptionFinder Finder;
         private readonly IBackgroundJobClient BackgroundJobClient;
+        protected readonly ULODBEntities DB;
 
-        public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient)
+        public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, ULODBEntities db)
         {
             ComponentContext = componentContext;
             Finder = finder;
             BackgroundJobClient = backgroundJobClient;
+            DB = db;
+
         }
 
         private class RedirectingController : Controller
@@ -52,7 +56,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 if (wf.OwnerUserId != nextActivity.OwnerUserId)
                 {
                     wf.OwnerUserId = nextActivity.OwnerUserId;
-                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", wf.OwnerUserId, "recipient@test.com"));
+                    var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId);
+                    var emailTemplate = await DB.EmailTemplates.FindAsync(nextActivity.EmailTemplateId);
+                    var emailModel = new EmailViewModel
+                    {
+                        UserName = nextUser.UserName,
+                        PDN = wf.UnliquidatedObligation.PegasusDocumentNumber
+                    };
+                    //TODO: Ask Jason about if this is the correct place to do this
+                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
                 }
                 
                 wf.UnliqudatedObjectsWorkflowQuestions.Add(question);

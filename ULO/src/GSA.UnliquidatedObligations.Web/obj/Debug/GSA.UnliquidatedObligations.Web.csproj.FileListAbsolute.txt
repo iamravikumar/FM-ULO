@@ -119,3 +119,5 @@ C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Hangfire
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\Hangfire.SqlServer.xml
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\es\Hangfire.Core.resources.dll
 C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\zh\Hangfire.Core.resources.dll
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\RazorEngine.dll
+C:\Development\Repos\FM-ULO\ULO\src\GSA.UnliquidatedObligations.Web\bin\RazorEngine.xml
