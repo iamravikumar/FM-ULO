@@ -11,3 +11,4 @@
 /ULO/.vs/config/application/host.config
 **/PublishProfiles/
 /ULO/src/GSA.UnliquidatedObligations.Web/Web.config
+/ULO/src/GSA.UnliquidatedObligations.Web/Properties/PublishProfiles/
