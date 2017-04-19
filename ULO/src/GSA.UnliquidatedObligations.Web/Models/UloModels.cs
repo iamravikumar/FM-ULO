@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.EnterpriseServices;
 using System.Linq;
@@ -66,7 +67,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public UnliquidatedObligation CurretUnliquidatedObligation { get; set; }
         public WorkflowViewModel WorkflowViewModel { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:n2}", ApplyFormatInEditMode = true)]
         public decimal? UDOShouldBe { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n2}", ApplyFormatInEditMode = true)]
         public decimal? DOShouldBe {get; set; }
 
         public UloViewModel()

@@ -2,49 +2,54 @@
     @{
         var todaysDate = DateTime.Today;
     }
-<h2>My Active Workflows Listing</h2>
+<h2>My Outstanding Review Items</h2>
 
 <table class="table active-workflows">
     <tr>
+        <th></th>
         <th>
             PDN
         </th>
         <th>
-            BA Code (Check)
-        </th>
-        <th>
-            Org Code
+            BA Code
         </th>
         <th>
             Review Status
         </th>
         <th>
-            Amount (Check)
+            Org Code
         </th>
         <th>
-            Valid?
+            Amount
         </th>
         <th>
-            Due Date(Check)
+            Valid
+        </th>
+        <th>
+            Due Date
         </th>
         <th>Days left</th>
-        <th></th>
+
     </tr>
 
     @foreach (var item in Model)
     {
         <tr class="active-workflows-record" data-id="@item.WorkflowId">
             <td>
+                @Html.ActionLink("View Ulo", "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasusDocumentNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewedBy)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
+            </td>
+          
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.TotalLine)
@@ -62,11 +67,9 @@
                 @{
                     var dueDate = Convert.ToDateTime(item.UnliquidatedObligation.ExpectedDateForCompletionResolution);
                     var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
-                    @Html.Encode(daysLeft);
+                    @Html.Encode(daysLeft)
+                    ;
                 }
-            </td>
-            <td>
-                @Html.ActionLink("View Ulo", "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             @*<td>
                     @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |

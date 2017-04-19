@@ -1,17 +1,19 @@
 ﻿@model GSA.UnliquidatedObligations.Web.Models.UloViewModel
 
 <div class="ulo-details">
-    <h4>UnliquidatedObligation</h4>
     <hr />
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <dl class="dl-horizontal">
-                <dt>Reviewer:</dt>
-                <dd>@Html.DisplayFor(model => model.CurretUnliquidatedObligation.ReviewedBy)</dd>
+                <dt>
+                    Zone:
+                </dt>
+                <dd>
+                    1
+                </dd>
             </dl>
-
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>Region:</dt>
                 <dd>
@@ -19,25 +21,35 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-md-6">
-            <dl class="dl-horizontal">
-                <dt>
-                    Zone:
-                </dt>
-                <dd>
-                    not present in data
-                </dd>
-            </dl>
-        </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
+    <div class="row row-space-bottom">
+        <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>
                     Reason in Review:
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ReasonIncludedInReview)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Date of Last Activity:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.DateOfLastActivity)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Actg Pd:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ActgPd)
                 </dd>
             </dl>
         </div>
@@ -78,6 +90,16 @@
         <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>
+                    Budget Activity:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Prog)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
                     Fund:
                 </dt>
                 <dd>
@@ -95,16 +117,7 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-md-4">
-            <dl class="dl-horizontal">
-                <dt>
-                    Prog:
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Prog)
-                </dd>
-            </dl>
-        </div>
+
     </div>
 
     <div class="row">
@@ -118,7 +131,7 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>
                     RWA Completion Date:
@@ -128,26 +141,7 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-md-3">
-            <dl class="dl-horizontal">
-                <dt>
-                    Date of Last Activity:
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.DateOfLastActivity)
-                </dd>
-            </dl>
-        </div>
-        <div class="col-md-2">
-            <dl class="dl-horizontal">
-                <dt>
-                    Actg Pd:
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ActgPd)
-                </dd>
-            </dl>
-        </div>
+
     </div>
     <div class="row">
         <div class="col-md-4">
@@ -160,7 +154,7 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-8">
             <dl class="dl-horizontal">
                 <dt>
                     Contracting Officers Name:
@@ -170,7 +164,9 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-md-3">
+    </div>
+    <div class="row">
+        <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>
                     Award Nbr:
@@ -180,7 +176,17 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    Award Expiration Date:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.AwdExpirationDate)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>
                     GSA FSS/Other #:
@@ -191,20 +197,8 @@
             </dl>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-offset-7 col-md-5">
-            <dl class="dl-horizontal">
-                <dt>
-                    Awd Expiration Date:
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.AwdExpirationDate)
-                </dd>
-            </dl>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
+    <div class="row row-space-top">
+        <div class="col-md-12">
             <dl class="dl-horizontal">
                 <dt>
                     Total Line:
@@ -214,45 +208,15 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-md-4">
-            <dl class="dl-horizontal">
-                <dt>
-                    Commitments:
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Commitments)
-                </dd>
-            </dl>
-        </div>
-        <div class="col-md-4">
-            <dl class="dl-horizontal">
-                <dt>
-                    Prepayments:
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Prepayments)
-                </dd>
-            </dl>
-        </div>
     </div>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-12">
             <dl class="dl-horizontal">
                 <dt>
                     Rcpt:
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Rcpt)
-                </dd>
-            </dl>
-        </div>
-        <div class="col-md-8">
-            <dl class="dl-horizontal">
-                <dt>
-                    Undel Orders:
-                </dt>
-                <dd>
-                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.UndelOrders)
                 </dd>
             </dl>
         </div>
@@ -322,8 +286,8 @@
                     Total UDO:
                 </dt>
                 <dd>
-                    *Total UDO not present in data
-                    @*@Html.DisplayFor(model => model.CurretUnliquidatedObligation.Total)*@
+                   
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.UndelOrders)
                 </dd>
             </dl>
         </div>
@@ -345,27 +309,17 @@
                     DO Should be:
                 </dt>
                 <dd>
-                    @Html.TextBoxFor(model => model.DOShouldBe)
-                </dd>
-            </dl>
-        </div>
-        <div class="col-md-8">
-            <dl class="dl-horizontal">
-                <dt>
-                    UDO Should be:
-                </dt>
-                <dd>
-                    @Html.TextBoxFor(model => model.UDOShouldBe)
+                    @Html.EditorFor(model =>  model.DOShouldBe)
                 </dd>
             </dl>
         </div>
         <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>
-                    Total DO and UDO:
+                    UDO Should be:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.TotalUDOAndDO)
+                    @Html.EditorFor(model => model.UDOShouldBe)
                 </dd>
             </dl>
         </div>

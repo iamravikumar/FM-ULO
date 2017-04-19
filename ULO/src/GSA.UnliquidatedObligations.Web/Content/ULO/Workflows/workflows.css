@@ -1,4 +1,7 @@
-﻿/*.active-workflows .active-workflows-record:hover {
-    background-color: #f5f5f5;
-    cursor: pointer;
-}*/
+﻿.row-space-bottom {
+    margin-bottom: 50px;
+}
+
+.row-space-top {
+    margin-top: 50px;
+}

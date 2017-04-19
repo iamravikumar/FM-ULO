@@ -12,9 +12,9 @@
             </div>
             @foreach (var question in Model.Questions)
             {
-                <div class="row  col-md-8">
+                <div class="row col-md-8">
                     <div class="col-md-3">@question.AspNetUser.UserName</div>
-                    <div class="col-md-3">@question.Valid</div>
+                    <div class="col-md-3">@(question.Valid == true ? "Yes":"No")</div>
                     <div class="col-md-6">@question.Justification</div>
                 </div>
             }

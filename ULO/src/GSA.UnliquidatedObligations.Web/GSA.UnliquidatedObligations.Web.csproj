@@ -318,6 +318,7 @@
     <Content Include="Content\ULO\Details\attachments.css" />
     <Content Include="Content\ULO\Details\notes.css" />
     <Content Include="Content\ULO\Details\ulo.css" />
+    <Content Include="Content\ULO\Workflows\advance.css" />
     <Content Include="Content\ULO\Workflows\workflowQuestions.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
