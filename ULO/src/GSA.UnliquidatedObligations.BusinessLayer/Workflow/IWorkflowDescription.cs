@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
@@ -6,5 +7,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
     {
         IEnumerable<WorkflowActivity> Activities { get; }
         ICollection<WebActionWorkflowActivity> WebActionWorkflowActivities { get; set; }
+
+        Task<WebActionWorkflowActivity> GetWebActivityById(string workflowActivityKey);
     }
 }

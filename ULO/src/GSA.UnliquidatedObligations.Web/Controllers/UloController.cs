@@ -21,10 +21,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public UloController(IWorkflowManager manager, ULODBEntities db, ApplicationUserManager userManager)
         {
-           Manager = manager;
+            Manager = manager;
             DB = db;
             UserManager = userManager;
-            
         }
 
         // GET: Ulo
@@ -39,10 +38,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("Ulo/{id}")]
         public async Task<ActionResult> Details(int uloId, int workflowId)
         {
-            var ulo = await DB.UnliquidatedObligations.Include(u => u.Workflows).Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
+            var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
             var workflow = await FindWorkflowAsync(workflowId);
             return View("Details/Index", new UloViewModel(ulo, workflow));
         }
+
 
 
 

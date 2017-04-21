@@ -83,5 +83,12 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 throw new NotImplementedException();
             }
         }
+
+        async Task<WebActionWorkflowActivity> IWorkflowManager.GetCurrentWebActivity(Workflow wf)
+        {
+            return
+                await Finder.FindAsync(wf.WorkflowKey, wf.Version)
+                    .Result.GetWebActivityById(wf.CurrentWorkflowActivityKey);
+        }
     }
 }

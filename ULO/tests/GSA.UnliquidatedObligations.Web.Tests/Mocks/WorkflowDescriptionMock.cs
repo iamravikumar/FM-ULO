@@ -9,6 +9,8 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
 {
     class WorkflowDescriptionMock : IWorkflowDescription
     {
-        public ICollection<WorkflowActivity> Activities { get; set; }
+        public IEnumerable<WorkflowActivity> Activities { get; set; }
+
+        public ICollection<WebActionWorkflowActivity> WebActionWorkflowActivities { get; set; }
     }
 }
