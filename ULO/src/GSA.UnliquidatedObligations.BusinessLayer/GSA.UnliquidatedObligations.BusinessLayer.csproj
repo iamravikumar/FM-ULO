@@ -156,9 +156,12 @@
     <Compile Include="Workflow\IActivityChooser.cs" />
     <Compile Include="Workflow\IWorkflowDescription.cs" />
     <Compile Include="Workflow\IWorkflowDescriptionFinder.cs" />
+    <Compile Include="Workflow\WorkflowQuestionChoices.cs" />
     <Compile Include="Workflow\WebActionWorkflowActivity.cs" />
     <Compile Include="Workflow\WorkflowActivity.cs" />
+    <Compile Include="Workflow\WorkflowActivityType.cs" />
     <Compile Include="Workflow\WorkflowDescription.cs" />
+    <Compile Include="Workflow\WorkflowDescriptionConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />

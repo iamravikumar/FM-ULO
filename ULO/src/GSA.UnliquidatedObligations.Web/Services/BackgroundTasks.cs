@@ -7,11 +7,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
     public class BackgroundTasks : IBackgroundTasks
     {
         private readonly IEmailServer EmailServer;
-        private ULODBEntities DB;
-        public BackgroundTasks(IEmailServer emailServer, ULODBEntities db)
+        public BackgroundTasks(IEmailServer emailServer)
         {
             EmailServer = emailServer;
-            DB = db;
         }
 
         public void Email(string subject, string recipient, string template, object model)

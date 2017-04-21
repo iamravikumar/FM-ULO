@@ -13,5 +13,13 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [JsonProperty("routeValueByName")]
         public IDictionary<string, object> RouteValueByName { get; set; }
+        //TODO Add question choices
+        [JsonProperty("questionChoices")]
+        public WorkflowQuestionChoices QuestionChoices { get; set; }
+        
+        //Just examples:
+        //Concur goes forward
+        //Nonconcur goes back
+        
     }
 }

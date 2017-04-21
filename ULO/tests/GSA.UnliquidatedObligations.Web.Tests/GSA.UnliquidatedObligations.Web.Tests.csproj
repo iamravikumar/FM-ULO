@@ -110,6 +110,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Controllers\HomeControllerTest.cs" />
+    <Compile Include="Controllers\UloControllerTests.cs" />
     <Compile Include="Mocks\BackgroundTasksMock.cs" />
     <Compile Include="Mocks\DatabaseWorkflowDescriptionFinderMock.cs" />
     <Compile Include="Mocks\WorkflowDescriptionMock.cs" />

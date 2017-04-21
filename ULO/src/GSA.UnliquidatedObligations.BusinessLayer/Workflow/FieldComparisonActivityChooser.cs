@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
-    //TODO: Show Jason made public to add to container
     public class FieldComparisonActivityChooser : IActivityChooser
     {
         public static class CommonParameterNames

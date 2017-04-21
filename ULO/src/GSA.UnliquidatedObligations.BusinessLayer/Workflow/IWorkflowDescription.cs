@@ -4,6 +4,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
     public interface IWorkflowDescription
     {
-        ICollection<WorkflowActivity> Activities { get; set; }
+        IEnumerable<WorkflowActivity> Activities { get; }
+        ICollection<WebActionWorkflowActivity> WebActionWorkflowActivities { get; set; }
     }
 }

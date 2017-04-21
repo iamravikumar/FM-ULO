@@ -18,32 +18,8 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Services
         public void Initialize()
         {
            
-            var emailTemplateData = new List<EmailTemplate>
-            {
-                new EmailTemplate
-                {
-                    EmailTemplateId = 1,
-                    EmailBody =
-                        "Dear @Model.AspNetUser.UserName, Ulo for for PDN: @Model.UnliquidatedObligation.PegasusDocumentNumber is now assigned to you"
-                },
-                new EmailTemplate {EmailTemplateId = 2, EmailBody = "aaaaaaaaa"},
-                new EmailTemplate {EmailTemplateId = 3, EmailBody = "bbbbbbbb"}
-            }.AsQueryable();
-
-            var mockSet = new Mock<DbSet<EmailTemplate>>();
-            mockSet.As<IQueryable<EmailTemplate>>().Setup(m => m.Provider).Returns(emailTemplateData.Provider);
-            mockSet.As<IQueryable<EmailTemplate>>().Setup(m => m.Expression).Returns(emailTemplateData.Expression);
-            mockSet.As<IQueryable<EmailTemplate>>().Setup(m => m.ElementType).Returns(emailTemplateData.ElementType);
-            mockSet.As<IQueryable<EmailTemplate>>().Setup(m => m.GetEnumerator()).Returns(emailTemplateData.GetEnumerator());
-
-            var mockULOContext =  new Mock<ULODBEntities>();
-            mockULOContext.Setup(m => m.EmailTemplates).Returns(mockSet.Object);
-
             EmailServerMock = new Mock<IEmailServer>();
-            BackgroundTasks = new BackgroundTasks(EmailServerMock.Object, mockULOContext.Object);
-
-
-
+            BackgroundTasks = new BackgroundTasks(EmailServerMock.Object);
         }
         [TestMethod]
         public void It_exists()

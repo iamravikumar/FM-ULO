@@ -111,7 +111,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return await Details(uloId, workflowId);
         }
 
-        //TODO: Ask Jason. Should we handle emails here?
         private async Task<ActionResult> AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
         {
             var ret = await Manager.AdvanceAsync(wf, question);

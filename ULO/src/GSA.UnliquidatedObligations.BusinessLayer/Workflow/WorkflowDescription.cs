@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
+
     internal class WorkflowDescription : IWorkflowDescription
     {
         public string ToJson()
@@ -15,7 +17,19 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
             return JsonConvert.DeserializeObject<WorkflowDescription>(json);
         }
 
-        [JsonProperty("activities")]
-        public ICollection<WorkflowActivity> Activities { get; set; }
+        [JsonIgnore]
+        public IEnumerable<WorkflowActivity> Activities
+        {
+            get
+            {
+                foreach (var wf in WebActionWorkflowActivities)
+                {
+                    yield return wf;
+                }
+            }
+        }
+
+        [JsonProperty("webActionActivities")]
+        public ICollection<WebActionWorkflowActivity> WebActionWorkflowActivities { get; set; }
     }
 }

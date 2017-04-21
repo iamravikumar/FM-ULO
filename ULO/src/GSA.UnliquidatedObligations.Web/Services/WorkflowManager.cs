@@ -41,7 +41,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
         {
             var desc = await Finder.FindAsync(wf.WorkflowKey, wf.Version);
-            var currentActivity = desc.Activities.FirstOrDefault(z => z.WorkflowActivityKey == wf.WorkflowKey);
+            var currentActivity = desc.WebActionWorkflowActivities.FirstOrDefault(z => z.WorkflowActivityKey == wf.CurrentWorkflowActivityKey);
             var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
             var nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig);
 
@@ -50,7 +50,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
             wf.CurrentWorkflowActivityKey = nextActivity.WorkflowActivityKey;
            
 
-            //TODO: Updata other info like the owner, date.
+            //TODO: Updata other info like the owner, date
+            //TODO: Add logic for handling groups of users.
             if (nextActivity is WebActionWorkflowActivity)
             {
                 if (wf.OwnerUserId != nextActivity.OwnerUserId)
@@ -63,7 +64,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                         UserName = nextUser.UserName,
                         PDN = wf.UnliquidatedObligation.PegasusDocumentNumber
                     };
-                    //TODO: Ask Jason about if this is the correct place to do this
+                    //TODO: What happens if it crashes?
                     BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
                 }
                 
