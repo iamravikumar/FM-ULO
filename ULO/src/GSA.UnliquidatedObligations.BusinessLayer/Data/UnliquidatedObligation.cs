@@ -19,6 +19,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         {
             this.Notes = new HashSet<Note>();
             this.Workflows = new HashSet<Workflow>();
+            this.WorkflowHistories = new HashSet<WorkflowHistory>();
         }
     
         public int UloId { get; set; }
@@ -87,5 +88,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Workflow> Workflows { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
     }
 }

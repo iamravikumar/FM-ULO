@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using FizzWare.NBuilder;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
-namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
+namespace GSA.UnliquidatedObligations.Web.Tests.TestData
 {
-    [TestClass]
-    public class WorkflowDesctiptionTest
+    public static class WorkflowDescriptionData
     {
-
-
-        [TestMethod]
-        public void Deserialize_returns_correct_results()
+        public static string GenerateData(string currenWorkflowActivityKey)
         {
 
             var nextActivityConfig = JsonConvert.SerializeObject(new FieldComparisonActivityChooser.MySettings
@@ -60,7 +58,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     ControllerName = "Ulo",
                     NextActivityChooserConfig = "",
                     NextActivityChooserTypeName = "FieldComparisonActivityChooser",
-                    WorkflowActivityKey = "A2",
+                    WorkflowActivityKey = currenWorkflowActivityKey,
                     OwnerUserId = "8a59d021-b45f-4c2e-bc0f-3b59938e47b0",
                     RouteValueByName = new Dictionary<string, object>(),
                     EmailTemplateId = 1,
@@ -69,8 +67,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                         QuestionLabel = "Concur",
                         Choices = new Dictionary<string, string>
                         {
-                            { "Concur", "Yes"},
-                            { "Don't Concur", "No" }
+                            { "Concur", "Concur"},
+                            { "Don't Concur", "Don't Concur" }
                         }
                     }
                 },
@@ -90,7 +88,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                         Choices = new Dictionary<string, string>
                         {
                             { "Approve", "Yes"},
-                            { "Disapprove", "No" } 
+                            { "Disapprove", "No" }
                         }
                     }
                 },
@@ -111,9 +109,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                 WebActionWorkflowActivities = wfDActivities
             };
 
-            var serialized = JsonConvert.SerializeObject(d);
-            var deserialized = WorkflowDescription.Deserialize(serialized);
-            Assert.IsInstanceOfType(deserialized, typeof(WorkflowDescription));
+            return JsonConvert.SerializeObject(d);
+
 
         }
     }

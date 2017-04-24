@@ -7,7 +7,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
     {
         IEnumerable<WorkflowActivity> Activities { get; }
         ICollection<WebActionWorkflowActivity> WebActionWorkflowActivities { get; set; }
-
-        Task<WebActionWorkflowActivity> GetWebActivityById(string workflowActivityKey);
+  
     }
 }

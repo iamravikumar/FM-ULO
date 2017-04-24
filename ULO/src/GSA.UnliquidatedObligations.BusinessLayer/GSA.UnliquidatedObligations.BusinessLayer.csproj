@@ -146,6 +146,9 @@
     <Compile Include="Data\WorkflowDefinition.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\WorkflowHistory.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\Zone.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>

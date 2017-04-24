@@ -12,6 +12,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class ULODBEntities : DbContext
     {
@@ -32,6 +34,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<Document> Documents { get; set; }
         public virtual DbSet<DocumentType> DocumentTypes { get; set; }
+        public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
         public virtual DbSet<Note> Notes { get; set; }
         public virtual DbSet<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
         public virtual DbSet<UnliquidatedObligation> UnliquidatedObligations { get; set; }
@@ -40,6 +43,23 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<Workflow> Workflows { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Zone> Zones { get; set; }
-        public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
+        public virtual DbSet<WorkflowHistory> WorkflowHistories { get; set; }
+    
+        public virtual int GetNextLevelOwnerId(string proposedOwnerId, Nullable<int> workflowId, string nextActivityKey, ObjectParameter nextOwnerId)
+        {
+            var proposedOwnerIdParameter = proposedOwnerId != null ?
+                new ObjectParameter("proposedOwnerId", proposedOwnerId) :
+                new ObjectParameter("proposedOwnerId", typeof(string));
+    
+            var workflowIdParameter = workflowId.HasValue ?
+                new ObjectParameter("workflowId", workflowId) :
+                new ObjectParameter("workflowId", typeof(int));
+    
+            var nextActivityKeyParameter = nextActivityKey != null ?
+                new ObjectParameter("nextActivityKey", nextActivityKey) :
+                new ObjectParameter("nextActivityKey", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNextLevelOwnerId", proposedOwnerIdParameter, workflowIdParameter, nextActivityKeyParameter, nextOwnerId);
+        }
     }
 }

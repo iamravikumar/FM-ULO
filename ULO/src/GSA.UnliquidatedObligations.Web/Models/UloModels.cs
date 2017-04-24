@@ -24,22 +24,33 @@ namespace GSA.UnliquidatedObligations.Web.Models
     public class AdvanceViewModel
     {
 
-        public bool? Valid { get; set; }
+        public WorkflowQuestionChoices WorkflowQuestionChoices { get; set; }
+
+        public string Answer { get; set; }
+
+        //TODO, will eventually be from database
+        public Dictionary<String, String> JustificationChoices { get; }
 
         public string Justification { get; set; }
+        public string JustificationOther { get; set; }
 
-        public int WorkflowId { get; set; }
+        public int WorkflowId { get; }
 
         public AdvanceViewModel()
         {
             
         }
 
-        public AdvanceViewModel(Workflow workflow)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, int workflowId)
         {
-            Valid = null;
-            Justification = "";
-            WorkflowId = workflow.WorkflowId;
+            WorkflowQuestionChoices = workflowQuestionChoices;
+            JustificationChoices = new Dictionary<string, string>()
+            {
+                {"aaa", "aaa"},
+                {"bbb", "bbb"},
+                {"Other", "Other" }
+            };
+            WorkflowId = workflowId;
         }
     }
 
@@ -49,16 +60,36 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public Workflow Workflow { get; set; }
         public UloWfQuestionsViewModel QuestionsViewModel { get; set; }
         public AdvanceViewModel AdvanceViewModel { get; set; }
+        public WorkflowDescriptionViewModel WorkflowDescriptionViewModel { get; set; }
+
         public WorkflowViewModel()
         {
            
         }
-        public WorkflowViewModel(Workflow workflow)
+        public WorkflowViewModel(Workflow workflow, IWorkflowDescription workflowDecription)
         {
             Workflow = workflow;
             QuestionsViewModel =  new UloWfQuestionsViewModel(workflow.UnliqudatedObjectsWorkflowQuestions.ToList());
-            AdvanceViewModel = new AdvanceViewModel(workflow);
+            WorkflowDescriptionViewModel = new WorkflowDescriptionViewModel(workflowDecription.WebActionWorkflowActivities.ToList(), workflow.CurrentWorkflowActivityKey);
+            AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, workflow.WorkflowId);
+        }
+    }
 
+    public class WorkflowDescriptionViewModel
+    {
+        public List<WebActionWorkflowActivity> Activites { get; set; }
+
+        public WebActionWorkflowActivity CurrentActivity { get; set; }
+
+        public WorkflowDescriptionViewModel()
+        {
+            
+        }
+
+        public WorkflowDescriptionViewModel(List<WebActionWorkflowActivity> activities , string currentActivityKey)
+        {
+            Activites = activities;
+            CurrentActivity = activities.FirstOrDefault(a => a.WorkflowActivityKey == currentActivityKey);
         }
     }
 
@@ -67,6 +98,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         //TODO: set properties explicitly for UnliquidatedObligation
         public UnliquidatedObligation CurretUnliquidatedObligation { get; set; }
         public WorkflowViewModel WorkflowViewModel { get; set; }
+
 
         [DisplayFormat(DataFormatString = "{0:n2}", ApplyFormatInEditMode = true)]
         public decimal? UDOShouldBe { get; set; }
@@ -77,11 +109,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
         { }
 
 
-        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow) { 
+        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDecription) { 
             UDOShouldBe = ulo.UDOShouldBe;
             DOShouldBe = ulo.DOShouldBe;
             CurretUnliquidatedObligation = ulo;
-            WorkflowViewModel = new WorkflowViewModel(workflow);
+            WorkflowViewModel = new WorkflowViewModel(workflow, workflowDecription);
             
         }
     }

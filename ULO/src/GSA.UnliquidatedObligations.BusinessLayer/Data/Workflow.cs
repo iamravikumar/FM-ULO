@@ -19,6 +19,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         {
             this.Documents = new HashSet<Document>();
             this.UnliqudatedObjectsWorkflowQuestions = new HashSet<UnliqudatedObjectsWorkflowQuestion>();
+            this.WorkflowHistories = new HashSet<WorkflowHistory>();
         }
     
         public int WorkflowId { get; set; }
@@ -36,5 +37,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
         public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
     }
 }

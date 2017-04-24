@@ -40,7 +40,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
         {
-            var desc = await Finder.FindAsync(wf.WorkflowKey, wf.Version);
+            var desc = await (this as IWorkflowManager).GetWorkflowDescription(wf);
             var currentActivity = desc.WebActionWorkflowActivities.FirstOrDefault(z => z.WorkflowActivityKey == wf.CurrentWorkflowActivityKey);
             var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
             var nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig);
@@ -48,7 +48,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             //TODO: Handle null case which says stay where you are.
             var nextActivity = desc.Activities.First(z => z.WorkflowActivityKey == nextActivityKey) ?? currentActivity;
             wf.CurrentWorkflowActivityKey = nextActivity.WorkflowActivityKey;
-           
+
 
             //TODO: Updata other info like the owner, date
             //TODO: Add logic for handling groups of users.
@@ -56,7 +56,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             {
                 if (wf.OwnerUserId != nextActivity.OwnerUserId)
                 {
-                    wf.OwnerUserId = nextActivity.OwnerUserId;
+                    wf.OwnerUserId = await GetNextOwnerAsync(nextActivity.OwnerUserId, wf, nextActivity.WorkflowActivityKey);
                     var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId);
                     var emailTemplate = await DB.EmailTemplates.FindAsync(nextActivity.EmailTemplateId);
                     var emailModel = new EmailViewModel
@@ -84,11 +84,17 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        async Task<WebActionWorkflowActivity> IWorkflowManager.GetCurrentWebActivity(Workflow wf)
+        private async Task<string> GetNextOwnerAsync(string proposedOwnerId, Workflow wf, string nextActivityKey)
         {
-            return
-                await Finder.FindAsync(wf.WorkflowKey, wf.Version)
-                    .Result.GetWebActivityById(wf.CurrentWorkflowActivityKey);
+            //TODO: check if null, return proposedOwnserId
+            return await Task.FromResult(proposedOwnerId);
+        }
+
+
+
+        async Task<IWorkflowDescription> IWorkflowManager.GetWorkflowDescription(Workflow wf)
+        {
+            return await Finder.FindAsync(wf.WorkflowKey, wf.Version);
         }
     }
 }

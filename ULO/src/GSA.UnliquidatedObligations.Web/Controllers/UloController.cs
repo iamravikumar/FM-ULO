@@ -5,6 +5,7 @@ using GSA.UnliquidatedObligations.Web.Services;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
 using Microsoft.AspNet.Identity;
@@ -40,10 +41,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
             var workflow = await FindWorkflowAsync(workflowId);
-            return View("Details/Index", new UloViewModel(ulo, workflow));
+            var workflowDesc = await FindWorkflowDescAsync(workflow);
+            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc));
         }
 
 
+        private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
+        {
+            return await Manager.GetWorkflowDescription(wf);
+        }
 
 
         private async Task<Workflow> FindWorkflowAsync(int workflowId)
@@ -85,7 +91,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             int uloId,
             [Bind(Include = "DOShouldBe,UDOShouldBe")]
             UloViewModel uloModel,
-            [Bind(Include = "Justification,Valid")]
+            [Bind(Include = "Justification,Answer")]
             AdvanceViewModel advanceModel)
         {
             var wf = await FindWorkflowAsync(workflowId);
@@ -102,7 +108,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     Date = DateTime.Now,
                     Justification = advanceModel.Justification,
                     UserId = user.Id,
-                    Valid = advanceModel.Valid,
+                    Answer = advanceModel.Answer,
                     WorkflowId = workflowId,
 
                 };

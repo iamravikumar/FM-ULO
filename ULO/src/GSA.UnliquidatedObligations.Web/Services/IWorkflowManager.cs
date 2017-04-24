@@ -8,6 +8,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
     {
         Task<ActionResult> AdvanceAsync(BusinessLayer.Data.Workflow wf, BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion question);
 
-        Task<WebActionWorkflowActivity> GetCurrentWebActivity(BusinessLayer.Data.Workflow wf);
+        Task<IWorkflowDescription> GetWorkflowDescription(BusinessLayer.Data.Workflow wf);
     }
 }

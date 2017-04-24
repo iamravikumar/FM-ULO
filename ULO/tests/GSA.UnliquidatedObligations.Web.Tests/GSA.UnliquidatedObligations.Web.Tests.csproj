@@ -153,6 +153,8 @@
     <Compile Include="Services\WorkflowManagerTest.cs" />
     <Compile Include="TestData\NotesData.cs" />
     <Compile Include="TestData\TestDBAsyncQueryProvider.cs" />
+    <Compile Include="TestData\WorkflowDefinitionData.cs" />
+    <Compile Include="TestData\WorkflowDescriptionData.cs" />
     <Compile Include="TestData\UsersData.cs" />
     <Compile Include="TestData\UloData.cs" />
     <Compile Include="TestData\WorkflowData.cs" />

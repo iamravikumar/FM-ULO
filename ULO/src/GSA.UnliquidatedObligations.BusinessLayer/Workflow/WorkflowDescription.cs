@@ -20,12 +20,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
             return JsonConvert.DeserializeObject<WorkflowDescription>(json);
         }
 
-        public async Task<WebActionWorkflowActivity> GetWebActivityById(string workflowActivityKey)
-        {
-            return await WebActionWorkflowActivities
-                    .FirstOrDefaultAsync(waf => waf.WorkflowActivityKey == workflowActivityKey);
-        }
-
         [JsonIgnore]
         public IEnumerable<WorkflowActivity> Activities
         {
@@ -40,5 +34,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [JsonProperty("webActionActivities")]
         public ICollection<WebActionWorkflowActivity> WebActionWorkflowActivities { get; set; }
+
+
     }
 }

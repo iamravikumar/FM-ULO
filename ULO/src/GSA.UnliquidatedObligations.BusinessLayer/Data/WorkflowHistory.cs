@@ -12,16 +12,20 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class UnliqudatedObjectsWorkflowQuestion
+    public partial class WorkflowHistory
     {
-        public int UnliqudatedWorkflowQuestionsId { get; set; }
+        public int WorkflowHistoryId { get; set; }
         public int WorkflowId { get; set; }
-        public Nullable<System.DateTime> Date { get; set; }
-        public string UserId { get; set; }
-        public string Answer { get; set; }
-        public string Justification { get; set; }
+        public string WorkflowKey { get; set; }
+        public int Version { get; set; }
+        public string CurrentWorkflowActivityKey { get; set; }
+        public string OwnerUserId { get; set; }
+        public System.DateTime CreatedAtUtc { get; set; }
+        public System.DateTime CurrentActivityEnteredAtUtc { get; set; }
+        public int TargetUloId { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
+        public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }
         public virtual Workflow Workflow { get; set; }
     }
 }
