@@ -20,6 +20,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string UserId { get; set; }
         public string Answer { get; set; }
         public string Justification { get; set; }
+        public string Comments { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual Workflow Workflow { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using Newtonsoft.Json.Serialization;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
@@ -7,6 +8,12 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
     {
         [JsonProperty("key")]
         public string WorkflowActivityKey { get; set; }
+
+        [JsonProperty("name")]
+        public string ActivityName { get; set; }
+
+        [JsonProperty("sequenceNumber")]
+        public int SequenceNumber { get; set; }
 
         [JsonProperty("OwnerUserId")]
         public string OwnerUserId { get; set; }

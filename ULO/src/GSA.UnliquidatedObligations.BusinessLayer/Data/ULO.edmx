@@ -110,6 +110,7 @@
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Answer" Type="varchar" MaxLength="100" />
           <Property Name="Justification" Type="varchar" MaxLength="300" />
+          <Property Name="Comments" Type="varchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="UnliquidatedObligations">
           <Key>
@@ -747,6 +748,7 @@
           <Property Name="Justification" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="AspNetUsers" />
           <NavigationProperty Name="Workflow" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="Workflows" />
+          <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="UnliquidatedObligation">
           <Key>
@@ -1353,6 +1355,7 @@
           <EntitySetMapping Name="UnliqudatedObjectsWorkflowQuestions">
             <EntityTypeMapping TypeName="ULODBModel.UnliqudatedObjectsWorkflowQuestion">
               <MappingFragment StoreEntitySet="UnliqudatedObjectsWorkflowQuestions">
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
                 <ScalarProperty Name="UnliqudatedWorkflowQuestionsId" ColumnName="UnliqudatedWorkflowQuestionsId" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
                 <ScalarProperty Name="Date" ColumnName="Date" />

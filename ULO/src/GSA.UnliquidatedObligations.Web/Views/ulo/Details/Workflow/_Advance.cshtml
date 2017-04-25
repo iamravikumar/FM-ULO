@@ -3,7 +3,7 @@
 <div class="row advance">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Advannce Workflow</h3>
+            <h3 class="panel-title">Advance Workflow</h3>
         </div>
         <div class="panel-body">
             <div class="form-horizontal">
@@ -14,19 +14,20 @@
                         @Html.DropDownListFor(model => model.Answer, new SelectList(Model.WorkflowQuestionChoices.Choices, "Key", "Value"), "Select...")
                         @Html.ValidationMessageFor(model => model.Answer, "", new { @class = "text-danger" })
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-9">
                         @Html.LabelFor(model => model.Justification, "Justification:", htmlAttributes: new { @class = "control-label" })
                         @Html.DropDownListFor(model => model.Justification, new SelectList(Model.JustificationChoices, "Key", "Value"), "Select....")
                         @Html.ValidationMessageFor(model => model.Justification, "", new { @class = "text-danger" })
                     </div>
-                    <div class="col-md-4">
-                        @Html.LabelFor(model => model.JustificationOther, "Comments:", new {@class = "control-label"})
-                        @Html.EditorFor(model => model.JustificationOther)
-                    </div>
+                   
 
                 </div>
-                <div class="row">
-                    <div class="col-md-10 submit-col">
+                <div class="row other-comments row-space-top">
+                        @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-1" })
+                        @Html.TextBoxFor(model => model.Comments, new { @class = "col-md-11", @maxlength = "500" })
+                </div>
+                <div class="row row-space-top">
+                    <div class="col-md-10">
                         <input type="submit" value="Submit" class="btn btn-default" />
                     </div>
                 </div>

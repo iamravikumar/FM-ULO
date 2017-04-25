@@ -113,13 +113,19 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     {
                         new FieldComparisonActivityChooser.Expression
                         {
-                            Code = "wfQuestion.Answer == 'Concur'",
+                            Code = "wf.CurrentWorkflowActivityKey == \"B2\" && wfQuestion.Answer == \"NotConcur\"",
                             WorkflowActivityKey = "B1"
                         },
                         new FieldComparisonActivityChooser.Expression
                         {
-                            Code = "wfQuestion.Answer == 'NotConcur'",
+                            Code = "wf.CurrentWorkflowActivityKey == \"B1\" && wfQuestion.Answer == \"Approve\"",
                             WorkflowActivityKey = "B2"
+                        },
+
+                        new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B2\" && wfQuestion.Answer == \"Concur\"",
+                            WorkflowActivityKey = "B3"
                         }
                     }
 
@@ -130,13 +136,68 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                 new WebActionWorkflowActivity
                 {
                     ActionName = "Index",
+                    ActivityName = "Region Review",
+                    SequenceNumber = 1,
                     ControllerName = "Ulo",
-                    NextActivityChooserConfig = "",
+                    NextActivityChooserConfig = nextActivityConfig,
                     NextActivityChooserTypeName = "FieldComparisonActivityChooser",
                     WorkflowActivityKey = "B1",
+                    OwnerUserId = "00188258-4467-484f-8c59-8e0da3e991f1",
+                    RouteValueByName = new Dictionary<string, object>(),
+                    EmailTemplateId = 1,
+                    QuestionChoices = new WorkflowQuestionChoices
+                    {
+                        QuestionLabel = "Do you Approve",
+                        Choices = new Dictionary<string, string>
+                        {
+                            { "Approve", "Yes"},
+                            { "Disapprove", "No" }
+                        }
+                    }
+                },
+                 new WebActionWorkflowActivity
+                {
+                    ActionName = "Index",
+                    ActivityName = "Region Approval",
+                    SequenceNumber = 2,
+                    ControllerName = "Ulo",
+                    NextActivityChooserConfig = nextActivityConfig,
+                    NextActivityChooserTypeName = "FieldComparisonActivityChooser",
+                    WorkflowActivityKey = "B2",
                     OwnerUserId = "9a9c50c5-ae82-40be-89dc-e9676cf731fb",
                     RouteValueByName = new Dictionary<string, object>(),
-                    EmailTemplateId = 1
+                    EmailTemplateId = 1,
+                     QuestionChoices = new WorkflowQuestionChoices
+                    {
+                        QuestionLabel = "Do you Concur",
+                        Choices = new Dictionary<string, string>
+                        {
+                            { "Concur", "Concur"},
+                            { "NotConcur", "Do Not Concur" }
+                        }
+                    }
+                },
+                    new WebActionWorkflowActivity
+                {
+                    ActionName = "Index",
+                    ActivityName = "CO Review",
+                    SequenceNumber = 3,
+                    ControllerName = "Ulo",
+                    NextActivityChooserConfig = nextActivityConfig,
+                    NextActivityChooserTypeName = "FieldComparisonActivityChooser",
+                    WorkflowActivityKey = "B3",
+                    OwnerUserId = "f2860baf-a555-4834-baf3-62b929d1b6b1",
+                    RouteValueByName = new Dictionary<string, object>(),
+                    EmailTemplateId = 1,
+                     QuestionChoices = new WorkflowQuestionChoices
+                    {
+                        QuestionLabel = "Do you Concur",
+                        Choices = new Dictionary<string, string>
+                        {
+                            { "Concur", "Concur"},
+                            { "NotConcur", "Do Not Concur" }
+                        }
+                    }
                 }
             };
             var d = new WorkflowDescription

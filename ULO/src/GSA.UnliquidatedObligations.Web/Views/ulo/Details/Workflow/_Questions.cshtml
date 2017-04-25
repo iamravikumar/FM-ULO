@@ -1,21 +1,24 @@
 ﻿@model GSA.UnliquidatedObligations.Web.Models.UloWfQuestionsViewModel
+@* TODO: Need to add more styling for responsiveness  *@
 <div class="row workflow-questions">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Workflow Questions</h3>
         </div>
-        <div class="panel-body">
-            <div class="row header col-md-8">
-                <div class="col-md-3">Person</div>
-                <div class="col-md-3">Valid</div>
-                <div class="col-md-6">Justification</div>
+        <div class="panel-body table-responsive">
+            <div class="row header">
+                <div class="col-md-2">Person</div>
+                <div class="col-md-2">Answer</div>
+                <div class="col-md-4">Justification</div>
+                <div class="col-md-4">Comments</div>
             </div>
             @foreach (var question in Model.Questions)
             {
-                <div class="row col-md-8">
-                    <div class="col-md-3">@question.AspNetUser.UserName</div>
-                    <div class="col-md-3">(question.Answer</div>
-                    <div class="col-md-6">@question.Justification</div>
+                <div class="row">
+                    <div class="col-md-2">@question.AspNetUser.UserName</div>
+                    <div class="col-md-2">@question.Answer</div>
+                    <div class="col-md-4">@question.Justification</div>
+                    <div class="col-md-4">@question.Comments</div>
                 </div>
             }
         </div>

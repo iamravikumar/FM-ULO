@@ -91,7 +91,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             int uloId,
             [Bind(Include = "DOShouldBe,UDOShouldBe")]
             UloViewModel uloModel,
-            [Bind(Include = "Justification,Answer")]
+            [Bind(Include = "Justification,Answer,Comments")]
             AdvanceViewModel advanceModel)
         {
             var wf = await FindWorkflowAsync(workflowId);
@@ -110,7 +110,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     UserId = user.Id,
                     Answer = advanceModel.Answer,
                     WorkflowId = workflowId,
-
+                    Comments = advanceModel.Justification == "Other" ? advanceModel.Comments : ""
                 };
                 return await AdvanceAsync(wf, question);
             }

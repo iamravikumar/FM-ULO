@@ -2,6 +2,27 @@
     margin: 7px 0 0 7px;
 }
 
-.row.advance .submit-col {
+.justification-other {
+    margin-top: 3px;
+}
+
+.other-comments {
+    display: none;
+}
+
+.row.advance .row {
+    padding: 0 20px;
+}
+
+.row.advance .form-horizontal .control-label {
+    text-align: left;
+}
+
+.row.advance .form-horizontal .row-space-top {
     margin-top: 36px;
+}
+
+.row.advance input[type="text"] {
+    max-width: 100%;
+    margin-top: 3px;
 }
