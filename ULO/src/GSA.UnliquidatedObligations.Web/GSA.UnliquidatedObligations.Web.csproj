@@ -292,6 +292,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\DocumentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\UloController.cs" />
@@ -315,7 +316,7 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\ULO\Details\attachments.css" />
+    <Content Include="Content\ULO\Workflows\documents.css" />
     <Content Include="Content\ULO\Details\notes.css" />
     <Content Include="Content\ULO\Details\ulo.css" />
     <Content Include="Content\ULO\Workflows\advance.css" />
@@ -345,6 +346,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\ULO\advance.js" />
+    <Content Include="Scripts\ULO\polyfills.js" />
     <Content Include="Scripts\ULO\recordsListing.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Content\ULO\Workflows\workflows.css" />
@@ -394,11 +396,16 @@
     <Content Include="Views\Ulo\Details\Index.cshtml" />
     <Content Include="Views\Ulo\Details\_Ulo.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\_Questions.cshtml" />
-    <Content Include="Views\Ulo\Details\_Attachments.cshtml" />
+    <Content Include="Views\Ulo\Details\Documents\_Index.cshtml" />
     <Content Include="Views\Ulo\Details\_Notes.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\_Index.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\_Advance.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\_WorkflowDescription.cshtml" />
+    <Content Include="Views\Documents\Create.cshtml" />
+    <Content Include="Views\Documents\Delete.cshtml" />
+    <Content Include="Views\Documents\Details.cshtml" />
+    <Content Include="Views\Documents\Edit.cshtml" />
+    <Content Include="Views\Documents\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

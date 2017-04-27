@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -107,6 +108,25 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
             //    }
             //};
 
+            var yesJustificationEnums = new List<JustificationEnum>()
+            {
+                JustificationEnum.ContractNotComplete,
+                JustificationEnum.ServicePeriodNotExpired,
+                JustificationEnum.ContractorFiledClaim,
+                JustificationEnum.WatingOnRelease,
+                JustificationEnum.NoRecentActivity,
+                JustificationEnum.ValidRecurringContract,
+                JustificationEnum.Other
+            };
+
+            var noJustificationEnums = new List<JustificationEnum>()
+            {
+                JustificationEnum.ItemInvalid,
+                JustificationEnum.InvalidRecurringContract,
+                JustificationEnum.Other
+            };
+
+
             var nextActivityConfig = JsonConvert.SerializeObject(new FieldComparisonActivityChooser.MySettings
             {
                 Expressions = new List<FieldComparisonActivityChooser.Expression>
@@ -148,10 +168,20 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                         QuestionLabel = "Do you Approve",
-                        Choices = new Dictionary<string, string>
+                        Choices = new List<QuestionChoice>()
                         {
-                            { "Approve", "Yes"},
-                            { "Disapprove", "No" }
+                            new QuestionChoice()
+                            {
+                                Text = "Yes",
+                                Value = "Approve",
+                                JustificationsEnums = yesJustificationEnums
+                            },
+                            new QuestionChoice()
+                            {
+                                Text = "No",
+                                Value = "Disapprove",
+                                JustificationsEnums = noJustificationEnums
+                            }
                         }
                     }
                 },
@@ -169,11 +199,21 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     EmailTemplateId = 1,
                      QuestionChoices = new WorkflowQuestionChoices
                     {
-                        QuestionLabel = "Do you Concur",
-                        Choices = new Dictionary<string, string>
+                       QuestionLabel = "Do you Concur",
+                       Choices = new List<QuestionChoice>()
                         {
-                            { "Concur", "Concur"},
-                            { "NotConcur", "Do Not Concur" }
+                            new QuestionChoice()
+                            {
+                                Text = "Yes",
+                                Value = "Concur",
+                                JustificationsEnums = yesJustificationEnums
+                            },
+                            new QuestionChoice()
+                            {
+                                Text = "No",
+                                Value = "Don'Concur",
+                                JustificationsEnums = noJustificationEnums
+                            }
                         }
                     }
                 },
@@ -192,10 +232,20 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                      QuestionChoices = new WorkflowQuestionChoices
                     {
                         QuestionLabel = "Do you Concur",
-                        Choices = new Dictionary<string, string>
+                       Choices = new List<QuestionChoice>()
                         {
-                            { "Concur", "Concur"},
-                            { "NotConcur", "Do Not Concur" }
+                            new QuestionChoice()
+                            {
+                                Text = "Yes",
+                                Value = "Concur",
+                                JustificationsEnums = yesJustificationEnums
+                            },
+                            new QuestionChoice()
+                            {
+                                Text = "No",
+                                Value = "Don'Concur",
+                                JustificationsEnums = noJustificationEnums
+                            }
                         }
                     }
                 }

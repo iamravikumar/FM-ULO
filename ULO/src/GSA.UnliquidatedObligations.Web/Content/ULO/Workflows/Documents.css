@@ -1,0 +1,16 @@
+﻿.row.documents {
+    margin: 15px -15px;
+}
+
+.row.documents table
+.row.documents table tr,
+.row.documents table tr th,
+.row.documents table tr td {
+    border: none;
+}
+
+.row.documents .table td,
+.row.documents .table th
+{
+    padding: 0 8px;
+}

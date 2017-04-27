@@ -1,4 +1,6 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.AdvanceViewModel
+﻿@using Hangfire.Annotations
+@model GSA.UnliquidatedObligations.Web.Models.AdvanceViewModel
+
 
 <div class="row advance">
     <div class="panel panel-default">
@@ -10,14 +12,14 @@
                 <div class="row">
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     <div class="col-md-3">
-                        @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.WorkflowQuestionChoices.QuestionLabel), htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.Answer, new SelectList(Model.WorkflowQuestionChoices.Choices, "Key", "Value"), "Select...")
+                        @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Answer, new SelectList(Model.QuestionChoices, "Value", "Text"), "Select...", htmlAttributes: new { @onchange="ChoiceChange(this.value,"+ @Html.Raw(Json.Encode(Model)) + ")"})
                         @Html.ValidationMessageFor(model => model.Answer, "", new { @class = "text-danger" })
                     </div>
                     <div class="col-md-9">
-                        @Html.LabelFor(model => model.Justification, "Justification:", htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.Justification, new SelectList(Model.JustificationChoices, "Key", "Value"), "Select....")
-                        @Html.ValidationMessageFor(model => model.Justification, "", new { @class = "text-danger" })
+                        @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.JustificationId, Enumerable.Empty<SelectListItem>(), "Select....", htmlAttributes: new {id = "justifications"})
+                        @Html.ValidationMessageFor(model => model.JustificationId, "", new { @class = "text-danger" })
                     </div>
                    
 

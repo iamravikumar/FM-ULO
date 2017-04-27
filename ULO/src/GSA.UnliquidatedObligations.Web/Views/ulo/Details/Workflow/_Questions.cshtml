@@ -15,7 +15,7 @@
             @foreach (var question in Model.Questions)
             {
                 <div class="row">
-                    <div class="col-md-2">@question.AspNetUser.UserName</div>
+                    <div class="col-md-2">@question.Username</div>
                     <div class="col-md-2">@question.Answer</div>
                     <div class="col-md-4">@question.Justification</div>
                     <div class="col-md-4">@question.Comments</div>

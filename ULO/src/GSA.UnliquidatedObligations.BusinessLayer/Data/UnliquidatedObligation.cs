@@ -18,8 +18,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public UnliquidatedObligation()
         {
             this.Notes = new HashSet<Note>();
-            this.Workflows = new HashSet<Workflow>();
             this.WorkflowHistories = new HashSet<WorkflowHistory>();
+            this.Workflows = new HashSet<Workflow>();
         }
     
         public int UloId { get; set; }
@@ -85,10 +85,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Workflow> Workflows { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
     }
 }

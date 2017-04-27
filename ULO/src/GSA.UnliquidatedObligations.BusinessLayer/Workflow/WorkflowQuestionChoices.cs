@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -9,6 +10,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         [JsonProperty("label")]
         public string QuestionLabel { get; set; }
         [JsonProperty("choices")]
-        public Dictionary<string, string> Choices { get; set; }
+        public List<QuestionChoice> Choices { get; set; }
     }
 }

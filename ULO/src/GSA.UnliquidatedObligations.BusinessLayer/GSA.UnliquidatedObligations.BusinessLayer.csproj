@@ -109,6 +109,9 @@
     <Compile Include="Data\EmailTemplate.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\JustificationChoices.cs" />
+    <Compile Include="Data\JustificationEnum.cs" />
+    <Compile Include="Data\Justification.cs" />
     <Compile Include="Data\Note.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -159,6 +162,7 @@
     <Compile Include="Workflow\IActivityChooser.cs" />
     <Compile Include="Workflow\IWorkflowDescription.cs" />
     <Compile Include="Workflow\IWorkflowDescriptionFinder.cs" />
+    <Compile Include="Workflow\QuestionChoice.cs" />
     <Compile Include="Workflow\WorkflowQuestionChoices.cs" />
     <Compile Include="Workflow\WebActionWorkflowActivity.cs" />
     <Compile Include="Workflow\WorkflowActivity.cs" />

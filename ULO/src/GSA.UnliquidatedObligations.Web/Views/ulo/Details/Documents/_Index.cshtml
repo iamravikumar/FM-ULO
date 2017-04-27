@@ -1,0 +1,53 @@
+﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.Document
+<div class="row documents">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Documents</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table">
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.UploadedBy)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DocumentType1.Name)
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                user4
+                            </td>
+                            <td>
+                                Contract Award
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = 1 }) |
+                                @Html.ActionLink("Details", "Details", new { id = 1}) |
+                                @Html.ActionLink("Delete", "Delete", new { id = 1 })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                user4
+                            </td>
+                            <td>
+                                Justification
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = 2}) |
+                                @Html.ActionLink("Details", "Details", new { id = 2 }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = 2 })
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</div>

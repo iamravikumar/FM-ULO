@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="ULODBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="ULODBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -109,7 +109,7 @@
           <Property Name="Date" Type="datetime" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Answer" Type="varchar" MaxLength="100" />
-          <Property Name="Justification" Type="varchar" MaxLength="300" />
+          <Property Name="JustificationId" Type="int" />
           <Property Name="Comments" Type="varchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="UnliquidatedObligations">
@@ -624,7 +624,8 @@
             <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ULODBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -679,10 +680,10 @@
           <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UserId__22401542" FromRole="AspNetUsers" ToRole="Notes" />
           <NavigationProperty Name="UserUsers" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="AspNetUsers" ToRole="UserUsers" />
           <NavigationProperty Name="UserUsers1" Relationship="Self.FK__UserUsers__Paren__37703C52" FromRole="AspNetUsers" ToRole="UserUsers" />
+          <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Owner__4865BE2A" FromRole="AspNetUsers" ToRole="WorkflowHistory" />
           <NavigationProperty Name="Workflows" Relationship="Self.FK__Workflows__Owner__40058253" FromRole="AspNetUsers" ToRole="Workflows" />
           <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="AspNetUsers" ToRole="UnliqudatedObjectsWorkflowQuestions" />
           <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
-          <NavigationProperty Name="WorkflowHistories" Relationship="ULODBModel.FK__WorkflowH__Owner__4865BE2A" FromRole="AspNetUser" ToRole="WorkflowHistory" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -745,10 +746,10 @@
           <Property Name="Date" Type="DateTime" Precision="3" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Answer" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Justification" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="JustificationId" Type="Int32" />
+          <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="AspNetUsers" />
           <NavigationProperty Name="Workflow" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="Workflows" />
-          <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="UnliquidatedObligation">
           <Key>
@@ -815,9 +816,9 @@
           <Property Name="DOShouldBe" Type="Decimal" Precision="19" Scale="4" />
           <Property Name="UDOShouldBe" Type="Decimal" Precision="19" Scale="4" />
           <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__2334397B" FromRole="UnliquidatedObligations" ToRole="Notes" />
+          <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Targe__4959E263" FromRole="UnliquidatedObligations" ToRole="WorkflowHistory" />
           <NavigationProperty Name="Region" Relationship="Self.FK_UnliquidatedObligations_ToRegions" FromRole="UnliquidatedObligations" ToRole="Regions" />
           <NavigationProperty Name="Workflows" Relationship="Self.FK_Workflows_ToUnliquidatedObligations" FromRole="UnliquidatedObligations" ToRole="Workflows" />
-          <NavigationProperty Name="WorkflowHistories" Relationship="ULODBModel.FK__WorkflowH__Targe__4959E263" FromRole="UnliquidatedObligation" ToRole="WorkflowHistory" />
         </EntityType>
         <EntityType Name="UserUser">
           <Key>
@@ -840,6 +841,23 @@
           <Property Name="Version" Type="Int32" Nullable="false" />
           <Property Name="DescriptionJson" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="WorkflowHistory">
+          <Key>
+            <PropertyRef Name="WorkflowHistoryId" />
+          </Key>
+          <Property Name="WorkflowHistoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WorkflowId" Type="Int32" Nullable="false" />
+          <Property Name="WorkflowKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Version" Type="Int32" Nullable="false" />
+          <Property Name="CurrentWorkflowActivityKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="OwnerUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CurrentActivityEnteredAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TargetUloId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__WorkflowH__Owner__4865BE2A" FromRole="WorkflowHistory" ToRole="AspNetUsers" />
+          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__WorkflowH__Targe__4959E263" FromRole="WorkflowHistory" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="Workflow" Relationship="Self.FK__WorkflowH__Workf__477199F1" FromRole="WorkflowHistory" ToRole="Workflows" />
+        </EntityType>
         <EntityType Name="Workflow">
           <Key>
             <PropertyRef Name="WorkflowId" />
@@ -856,7 +874,7 @@
           <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToWorkflow" FromRole="Workflows" ToRole="Document" />
           <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="Workflows" ToRole="UnliqudatedObjectsWorkflowQuestions" />
           <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK_Workflows_ToUnliquidatedObligations" FromRole="Workflows" ToRole="UnliquidatedObligations" />
-          <NavigationProperty Name="WorkflowHistories" Relationship="ULODBModel.FK__WorkflowH__Workf__477199F1" FromRole="Workflow" ToRole="WorkflowHistory" />
+          <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Workf__477199F1" FromRole="Workflows" ToRole="WorkflowHistory" />
         </EntityType>
         <EntityType Name="Region">
           <Key>
@@ -939,6 +957,18 @@
             </Principal>
             <Dependent Role="UserUsers">
               <PropertyRef Name="ParentUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkflowH__Owner__4865BE2A">
+          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
+          <End Role="WorkflowHistory" Type="Self.WorkflowHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="WorkflowHistory">
+              <PropertyRef Name="OwnerUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1038,6 +1068,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__WorkflowH__Targe__4959E263">
+          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="1" />
+          <End Role="WorkflowHistory" Type="Self.WorkflowHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnliquidatedObligations">
+              <PropertyRef Name="UloId" />
+            </Principal>
+            <Dependent Role="WorkflowHistory">
+              <PropertyRef Name="TargetUloId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UnliquidatedObligations_ToRegions">
           <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
@@ -1074,6 +1116,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__WorkflowH__Workf__477199F1">
+          <End Role="Workflows" Type="Self.Workflow" Multiplicity="1" />
+          <End Role="WorkflowHistory" Type="Self.WorkflowHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Workflows">
+              <PropertyRef Name="WorkflowId" />
+            </Principal>
+            <Dependent Role="WorkflowHistory">
+              <PropertyRef Name="WorkflowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Regions__ZoneId__30C33EC3">
           <End Role="Zones" Type="Self.Zone" Multiplicity="1" />
           <End Role="Regions" Type="Self.Region" Multiplicity="*" />
@@ -1104,6 +1158,7 @@
           <EntitySet Name="UnliquidatedObligations" EntityType="Self.UnliquidatedObligation" />
           <EntitySet Name="UserUsers" EntityType="Self.UserUser" />
           <EntitySet Name="WorkflowDefinitions" EntityType="Self.WorkflowDefinition" />
+          <EntitySet Name="WorkflowHistories" EntityType="Self.WorkflowHistory" />
           <EntitySet Name="Workflows" EntityType="Self.Workflow" />
           <EntitySet Name="Regions" EntityType="Self.Region" />
           <EntitySet Name="Zones" EntityType="Self.Zone" />
@@ -1126,6 +1181,10 @@
           <AssociationSet Name="FK__UserUsers__Paren__37703C52" Association="Self.FK__UserUsers__Paren__37703C52">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="UserUsers" EntitySet="UserUsers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkflowH__Owner__4865BE2A" Association="Self.FK__WorkflowH__Owner__4865BE2A">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
           </AssociationSet>
           <AssociationSet Name="FK__Workflows__Owner__40058253" Association="Self.FK__Workflows__Owner__40058253">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -1159,6 +1218,10 @@
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
           </AssociationSet>
+          <AssociationSet Name="FK__WorkflowH__Targe__4959E263" Association="Self.FK__WorkflowH__Targe__4959E263">
+            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
+            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
+          </AssociationSet>
           <AssociationSet Name="FK_UnliquidatedObligations_ToRegions" Association="Self.FK_UnliquidatedObligations_ToRegions">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
@@ -1171,6 +1234,10 @@
             <End Role="Regions" EntitySet="Regions" />
             <End Role="UserUsers" EntitySet="UserUsers" />
           </AssociationSet>
+          <AssociationSet Name="FK__WorkflowH__Workf__477199F1" Association="Self.FK__WorkflowH__Workf__477199F1">
+            <End Role="Workflows" EntitySet="Workflows" />
+            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
+          </AssociationSet>
           <AssociationSet Name="FK__Regions__ZoneId__30C33EC3" Association="Self.FK__Regions__ZoneId__30C33EC3">
             <End Role="Zones" EntitySet="Zones" />
             <End Role="Regions" EntitySet="Regions" />
@@ -1179,19 +1246,6 @@
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
-          <EntitySet Name="WorkflowHistories" EntityType="ULODBModel.WorkflowHistory" />
-          <AssociationSet Name="FK__WorkflowH__Owner__4865BE2A" Association="ULODBModel.FK__WorkflowH__Owner__4865BE2A">
-            <End Role="AspNetUser" EntitySet="AspNetUsers" />
-            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
-          </AssociationSet>
-          <AssociationSet Name="FK__WorkflowH__Targe__4959E263" Association="ULODBModel.FK__WorkflowH__Targe__4959E263">
-            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
-            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
-          </AssociationSet>
-          <AssociationSet Name="FK__WorkflowH__Workf__477199F1" Association="ULODBModel.FK__WorkflowH__Workf__477199F1">
-            <End Role="Workflow" EntitySet="Workflows" />
-            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
-          </AssociationSet>
           <FunctionImport Name="GetNextLevelOwnerId">
             <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
             <Parameter Name="workflowId" Mode="In" Type="Int32" />
@@ -1199,59 +1253,6 @@
             <Parameter Name="nextOwnerId" Mode="InOut" Type="String" />
           </FunctionImport>
         </EntityContainer>
-        <EntityType Name="WorkflowHistory">
-          <Key>
-            <PropertyRef Name="WorkflowHistoryId" />
-          </Key>
-          <Property Name="WorkflowHistoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="WorkflowId" Type="Int32" Nullable="false" />
-          <Property Name="WorkflowKey" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="false" />
-          <Property Name="Version" Type="Int32" Nullable="false" />
-          <Property Name="CurrentWorkflowActivityKey" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="false" />
-          <Property Name="OwnerUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CurrentActivityEnteredAtUtc" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="TargetUloId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="ULODBModel.FK__WorkflowH__Owner__4865BE2A" FromRole="WorkflowHistory" ToRole="AspNetUser" />
-          <NavigationProperty Name="UnliquidatedObligation" Relationship="ULODBModel.FK__WorkflowH__Targe__4959E263" FromRole="WorkflowHistory" ToRole="UnliquidatedObligation" />
-          <NavigationProperty Name="Workflow" Relationship="ULODBModel.FK__WorkflowH__Workf__477199F1" FromRole="WorkflowHistory" ToRole="Workflow" />
-        </EntityType>
-        <Association Name="FK__WorkflowH__Owner__4865BE2A">
-          <End Type="ULODBModel.AspNetUser" Role="AspNetUser" Multiplicity="1" />
-          <End Type="ULODBModel.WorkflowHistory" Role="WorkflowHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AspNetUser">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="WorkflowHistory">
-              <PropertyRef Name="OwnerUserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__WorkflowH__Targe__4959E263">
-          <End Type="ULODBModel.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
-          <End Type="ULODBModel.WorkflowHistory" Role="WorkflowHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UnliquidatedObligation">
-              <PropertyRef Name="UloId" />
-            </Principal>
-            <Dependent Role="WorkflowHistory">
-              <PropertyRef Name="TargetUloId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__WorkflowH__Workf__477199F1">
-          <End Type="ULODBModel.Workflow" Role="Workflow" Multiplicity="1" />
-          <End Type="ULODBModel.WorkflowHistory" Role="WorkflowHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Workflow">
-              <PropertyRef Name="WorkflowId" />
-            </Principal>
-            <Dependent Role="WorkflowHistory">
-              <PropertyRef Name="WorkflowId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1355,13 +1356,13 @@
           <EntitySetMapping Name="UnliqudatedObjectsWorkflowQuestions">
             <EntityTypeMapping TypeName="ULODBModel.UnliqudatedObjectsWorkflowQuestion">
               <MappingFragment StoreEntitySet="UnliqudatedObjectsWorkflowQuestions">
-                <ScalarProperty Name="Comments" ColumnName="Comments" />
                 <ScalarProperty Name="UnliqudatedWorkflowQuestionsId" ColumnName="UnliqudatedWorkflowQuestionsId" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Answer" ColumnName="Answer" />
-                <ScalarProperty Name="Justification" ColumnName="Justification" />
+                <ScalarProperty Name="JustificationId" ColumnName="JustificationId" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1451,6 +1452,21 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="WorkflowHistories">
+            <EntityTypeMapping TypeName="ULODBModel.WorkflowHistory">
+              <MappingFragment StoreEntitySet="WorkflowHistory">
+                <ScalarProperty Name="WorkflowHistoryId" ColumnName="WorkflowHistoryId" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="CurrentWorkflowActivityKey" ColumnName="CurrentWorkflowActivityKey" />
+                <ScalarProperty Name="OwnerUserId" ColumnName="OwnerUserId" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="CurrentActivityEnteredAtUtc" ColumnName="CurrentActivityEnteredAtUtc" />
+                <ScalarProperty Name="TargetUloId" ColumnName="TargetUloId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Workflows">
             <EntityTypeMapping TypeName="ULODBModel.Workflow">
               <MappingFragment StoreEntitySet="Workflows">
@@ -1491,21 +1507,6 @@
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
           </AssociationSetMapping>
-          <EntitySetMapping Name="WorkflowHistories">
-            <EntityTypeMapping TypeName="ULODBModel.WorkflowHistory">
-              <MappingFragment StoreEntitySet="WorkflowHistory">
-                <ScalarProperty Name="TargetUloId" ColumnName="TargetUloId" />
-                <ScalarProperty Name="CurrentActivityEnteredAtUtc" ColumnName="CurrentActivityEnteredAtUtc" />
-                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
-                <ScalarProperty Name="OwnerUserId" ColumnName="OwnerUserId" />
-                <ScalarProperty Name="CurrentWorkflowActivityKey" ColumnName="CurrentWorkflowActivityKey" />
-                <ScalarProperty Name="Version" ColumnName="Version" />
-                <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
-                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
-                <ScalarProperty Name="WorkflowHistoryId" ColumnName="WorkflowHistoryId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="GetNextLevelOwnerId" FunctionName="ULODBModel.Store.GetNextLevelOwnerId" />
         </EntityContainerMapping>
       </Mapping>

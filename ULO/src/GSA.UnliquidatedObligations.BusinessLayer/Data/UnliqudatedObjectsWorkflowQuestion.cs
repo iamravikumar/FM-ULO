@@ -19,7 +19,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public Nullable<System.DateTime> Date { get; set; }
         public string UserId { get; set; }
         public string Answer { get; set; }
-        public string Justification { get; set; }
+        public Nullable<int> JustificationId { get; set; }
         public string Comments { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }

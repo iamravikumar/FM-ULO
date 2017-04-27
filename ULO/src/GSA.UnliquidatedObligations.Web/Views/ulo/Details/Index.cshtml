@@ -16,7 +16,7 @@
 {
     @Html.AntiForgeryToken()
     @Html.Partial("Details/_Ulo", Model)
-    @Html.Partial("Details/_Attachments", new Document())
+    @Html.Partial("Details/Documents/_Index", new Document())
     @Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)
 
     @Html.Partial("Details/Workflow/_Index", Model.WorkflowViewModel)

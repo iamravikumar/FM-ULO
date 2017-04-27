@@ -24,8 +24,6 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Services
                 var DatabaseWorkflowDescriptionFinderMock = new DatabaseWorkflowDescriptionFinderMock();
                 var BackgroundTasksMock = new BackgroundTasksMock();
 
-                var FieldComparisonActivityChooser = new FieldComparisonActivityChooser();
-
                 mock.Provide<IWorkflowDescriptionFinder>(DatabaseWorkflowDescriptionFinderMock);
                 mock.Provide<IBackgroundTasks>(BackgroundTasksMock);
 

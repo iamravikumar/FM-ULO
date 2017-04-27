@@ -40,10 +40,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<UnliquidatedObligation> UnliquidatedObligations { get; set; }
         public virtual DbSet<UserUser> UserUsers { get; set; }
         public virtual DbSet<WorkflowDefinition> WorkflowDefinitions { get; set; }
+        public virtual DbSet<WorkflowHistory> WorkflowHistories { get; set; }
         public virtual DbSet<Workflow> Workflows { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Zone> Zones { get; set; }
-        public virtual DbSet<WorkflowHistory> WorkflowHistories { get; set; }
     
         public virtual int GetNextLevelOwnerId(string proposedOwnerId, Nullable<int> workflowId, string nextActivityKey, ObjectParameter nextOwnerId)
         {

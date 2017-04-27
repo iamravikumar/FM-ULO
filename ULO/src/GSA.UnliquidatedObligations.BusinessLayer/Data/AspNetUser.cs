@@ -22,10 +22,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.Notes = new HashSet<Note>();
             this.UserUsers = new HashSet<UserUser>();
             this.UserUsers1 = new HashSet<UserUser>();
+            this.WorkflowHistories = new HashSet<WorkflowHistory>();
             this.Workflows = new HashSet<Workflow>();
             this.UnliqudatedObjectsWorkflowQuestions = new HashSet<UnliqudatedObjectsWorkflowQuestion>();
             this.AspNetRoles = new HashSet<AspNetRole>();
-            this.WorkflowHistories = new HashSet<WorkflowHistory>();
         }
     
         public string Id { get; set; }
@@ -53,12 +53,12 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserUser> UserUsers1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Workflow> Workflows { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AspNetRole> AspNetRoles { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
     }
 }

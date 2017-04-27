@@ -62,6 +62,14 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         }
 
         [TestMethod]
+        public async Task Details_returns_view_with_correct_Ulo_information()
+        {
+            var view = await UloController.Details(ULOID, WORKFLOWID) as ViewResult;
+            var returnedModel = (UloViewModel)view.Model;
+            Assert.AreEqual(returnedModel.CurretUnliquidatedObligation.UloId, ULOID);
+        }
+
+        [TestMethod]
         public async Task Details_returns_view_with_correct_workflow_information()
         {
             var view = await UloController.Details(ULOID, WORKFLOWID) as ViewResult;
@@ -69,19 +77,57 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             Assert.AreEqual(returnedModel.CurretUnliquidatedObligation.UloId, ULOID);
             Assert.AreEqual(returnedModel.WorkflowViewModel.Workflow.WorkflowId, WORKFLOWID);
             Assert.AreEqual(returnedModel.WorkflowViewModel.WorkflowDescriptionViewModel.CurrentActivity.WorkflowActivityKey, CURRENTWORKFLOWACTIVITYKEY);
-            Assert.AreEqual(returnedModel.WorkflowViewModel.WorkflowDescriptionViewModel.Activites.Count, 4);
+            Assert.AreEqual(returnedModel.WorkflowViewModel.WorkflowDescriptionViewModel.Activites.Count, 3);
 
             var currentViewModelActivity = returnedModel.WorkflowViewModel.WorkflowDescriptionViewModel.CurrentActivity;
             var advanceViewModel = returnedModel.WorkflowViewModel.AdvanceViewModel;
 
             Assert.AreEqual(currentViewModelActivity.WorkflowActivityKey, CURRENTWORKFLOWACTIVITYKEY);
-            Assert.AreEqual(advanceViewModel.WorkflowQuestionChoices.QuestionLabel, "Concur");
-            var expectedChoices = new Dictionary<string, string>
+            Assert.AreEqual(advanceViewModel.WorkflowQuestionChoices.QuestionLabel, "Do you Concur");
+            var yesJustificationEnums = new List<JustificationEnum>()
             {
-                {"Concur", "Concur"},
-                {"Don't Concur", "Don't Concur"}
-            }.ToList();
-            CollectionAssert.AreEquivalent(advanceViewModel.WorkflowQuestionChoices.Choices.ToList(), expectedChoices);
+                JustificationEnum.ContractNotComplete,
+                JustificationEnum.ServicePeriodNotExpired,
+                JustificationEnum.ContractorFiledClaim,
+                JustificationEnum.WatingOnRelease,
+                JustificationEnum.NoRecentActivity,
+                JustificationEnum.ValidRecurringContract,
+                JustificationEnum.Other
+            };
+            var noJustificationEnums = new List<JustificationEnum>()
+            {
+                JustificationEnum.ItemInvalid,
+                JustificationEnum.InvalidRecurringContract,
+                JustificationEnum.Other
+            };
+
+            var expectedChoices = new List<QuestionChoice>()
+            {
+                new QuestionChoice()
+                {
+                    Value = "Concur",
+                    Text = "Concur",
+                    JustificationsEnums = yesJustificationEnums
+                },
+                new QuestionChoice()
+                {
+                    Value = "Don't concur",
+                    Text = "Don't Concur",
+                    JustificationsEnums = noJustificationEnums
+                },
+            };
+
+            //TODO: create custom commparer to compare whole object
+            //CollectionAssert.AreEquivalent(advanceViewModel.WorkflowQuestionChoices.Choices, expectedChoices, IEqualityComparer<QuestionChoice>);
+            Assert.AreEqual(advanceViewModel.WorkflowQuestionChoices.Choices.Count, expectedChoices.Count);
+        }
+
+        [TestMethod]
+        public async Task Details_returns_view_with_correct_Document_information()
+        {
+            var view = await UloController.Details(ULOID, WORKFLOWID) as ViewResult;
+            var returnedModel = (UloViewModel)view.Model;
+            Assert.AreEqual(returnedModel.CurretUnliquidatedObligation.UloId, ULOID);
         }
 
         private ULODBEntities SetUpEntityMocks(List<AspNetUser> userData)

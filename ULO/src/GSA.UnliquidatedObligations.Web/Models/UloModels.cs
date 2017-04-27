@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
@@ -13,25 +14,44 @@ namespace GSA.UnliquidatedObligations.Web.Models
     //TODO. May need to break these up a bit.
     public class UloWfQuestionsViewModel
     {
-        public List<UnliqudatedObjectsWorkflowQuestion> Questions { get; set; }
+        public List<UloWfQuestionViewModel> Questions { get; set; }
 
         public UloWfQuestionsViewModel(List<UnliqudatedObjectsWorkflowQuestion> questions)
         {
-            Questions = questions;
+            Questions = new List<UloWfQuestionViewModel>();
+            foreach (var question in questions)
+            {
+                Questions.Add(new UloWfQuestionViewModel(question));
+            }
+        }
+    }
+
+    public class UloWfQuestionViewModel
+    {
+        public string Username { get; set; }
+        public string Answer { get; set; }
+        public string Justification { get; set; }
+        public string Comments { get; set; }
+
+        public UloWfQuestionViewModel(UnliqudatedObjectsWorkflowQuestion question)
+        {
+            Username = question.AspNetUser.UserName;
+            Answer = question.Answer;
+            Justification = JustificationChoices.Choices[(JustificationEnum) question.JustificationId].JustificationText;
+            Comments = question.Comments;
         }
     }
 
     public class AdvanceViewModel
     {
 
-        public WorkflowQuestionChoices WorkflowQuestionChoices { get; set; }
+        public List<QuestionChoicesViewModel> QuestionChoices { get; set; }
+
+        public string QuestionLabel { get; set; }
 
         public string Answer { get; set; }
 
-        //TODO, will eventually be from database
-        public Dictionary<string, string> JustificationChoices { get; }
-
-        public string Justification { get; set; }
+        public int JustificationId { get; set; }
         public string Comments { get; set; }
 
         public int WorkflowId { get; }
@@ -41,24 +61,43 @@ namespace GSA.UnliquidatedObligations.Web.Models
             
         }
 
+
         public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, int workflowId)
         {
-            WorkflowQuestionChoices = workflowQuestionChoices;
-            JustificationChoices = new Dictionary<string, string>()
+            
+            QuestionLabel = workflowQuestionChoices.QuestionLabel;
+            QuestionChoices = new List<QuestionChoicesViewModel>();
+            foreach (var questionChoice in workflowQuestionChoices.Choices)
             {
-                {"The Contract is not complete and work is on-going", "The Contract is not complete and work is on-going"},
-                {"The service period has not Expired", "The service period has not Expired"},
-                {"Contractor has filed claim against GSA", "Contractor has filed claim against GSA" },
-                {"Waiting on release of claims from vendor", "Waiting on release of claims from vendor" },
-                {"There has been no recent activity but a notice to proceed will be issued", "There has been no recent activity but a notice to proceed will be issued" },
-                {"Item is invalid and Contracting Officer is working on modification to deobligate the balance", "Item is invalid and Contracting Officer is working on modification to deobligate the balance" },
-                {"Invalid - Recurring Contract - $ not needed - will adjust accordingly" , "Invalid - Recurring Contract - $ not needed - will adjust accordingly" },
-                {"Valid - Recurring Contract - $ needed", "Valid - Recurring Contract - $ needed" },
-                {"Other", "Other" }
-            };
+                QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
+            }
             WorkflowId = workflowId;
         }
     }
+
+    public class QuestionChoicesViewModel
+    {
+        public string Text { get; set; }
+        public string Value { get; set; }
+        public List<Justification> Justifications { get; set; }
+
+        public QuestionChoicesViewModel()
+        {
+            
+        }
+
+        public QuestionChoicesViewModel(QuestionChoice questionChoice)
+        {
+            Text = questionChoice.Text;
+            Value = questionChoice.Value;
+            Justifications = new List<Justification>();
+            foreach (var questionChoiceJustificationsEnum in questionChoice.JustificationsEnums)
+            {
+                Justifications.Add(JustificationChoices.Choices[questionChoiceJustificationsEnum]);
+            }
+        }
+    }
+
 
     public class WorkflowViewModel
     {

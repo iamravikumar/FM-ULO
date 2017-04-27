@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Services;
@@ -45,6 +46,18 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc));
         }
 
+        [HttpPost]
+        [Route("Ulo/Justifications")]
+        public List<Justification> Justifications(List<JustificationEnum> justificationEnums)
+        {
+            var justifications = new List<Justification>();
+            foreach (var justificationEnum in justificationEnums)
+            {
+                justifications.Add(JustificationChoices.Choices[justificationEnum]);
+            }
+
+            return justifications;
+        }
 
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
         {
@@ -106,11 +119,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
                     Date = DateTime.Now,
-                    Justification = advanceModel.Justification,
+                    JustificationId = advanceModel.JustificationId,
                     UserId = user.Id,
                     Answer = advanceModel.Answer,
                     WorkflowId = workflowId,
-                    Comments = advanceModel.Justification == "Other" ? advanceModel.Comments : ""
+                    Comments = advanceModel.Comments
                 };
                 return await AdvanceAsync(wf, question);
             }
