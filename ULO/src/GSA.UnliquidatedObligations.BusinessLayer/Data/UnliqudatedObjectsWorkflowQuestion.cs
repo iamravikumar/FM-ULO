@@ -14,6 +14,12 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
     public partial class UnliqudatedObjectsWorkflowQuestion
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public UnliqudatedObjectsWorkflowQuestion()
+        {
+            this.RequestForReassignments = new HashSet<RequestForReassignment>();
+        }
+    
         public int UnliqudatedWorkflowQuestionsId { get; set; }
         public int WorkflowId { get; set; }
         public Nullable<System.DateTime> Date { get; set; }
@@ -23,6 +29,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string Comments { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RequestForReassignment> RequestForReassignments { get; set; }
         public virtual Workflow Workflow { get; set; }
     }
 }

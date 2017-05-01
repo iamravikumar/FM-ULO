@@ -52,6 +52,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
 
         }
 
+
         [TestMethod]
         public async Task Details_returns_view_with_correct_model()
         {
@@ -83,7 +84,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             var advanceViewModel = returnedModel.WorkflowViewModel.AdvanceViewModel;
 
             Assert.AreEqual(currentViewModelActivity.WorkflowActivityKey, CURRENTWORKFLOWACTIVITYKEY);
-            Assert.AreEqual(advanceViewModel.WorkflowQuestionChoices.QuestionLabel, "Do you Concur");
+            Assert.AreEqual(advanceViewModel.QuestionLabel, "Do you Concur");
             var yesJustificationEnums = new List<JustificationEnum>()
             {
                 JustificationEnum.ContractNotComplete,
@@ -119,7 +120,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
 
             //TODO: create custom commparer to compare whole object
             //CollectionAssert.AreEquivalent(advanceViewModel.WorkflowQuestionChoices.Choices, expectedChoices, IEqualityComparer<QuestionChoice>);
-            Assert.AreEqual(advanceViewModel.WorkflowQuestionChoices.Choices.Count, expectedChoices.Count);
+            Assert.AreEqual(advanceViewModel.QuestionChoices.Count, expectedChoices.Count);
         }
 
         [TestMethod]

@@ -12,16 +12,16 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class UserUser
+    public partial class RequestForReassignment
     {
-        public int UserUserId { get; set; }
-        public string ParentUserId { get; set; }
-        public string ChildUserId { get; set; }
-        public Nullable<int> RegionId { get; set; }
-        public bool AutoAssignUser { get; set; }
+        public int RequestForReassignmentID { get; set; }
+        public string SuggestedReviewerId { get; set; }
+        public int UnliqudatedWorkflowQuestionsId { get; set; }
+        public int WorkflowId { get; set; }
+        public bool IsActive { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
-        public virtual AspNetUser AspNetUser1 { get; set; }
-        public virtual Region Region { get; set; }
+        public virtual UnliqudatedObjectsWorkflowQuestion UnliqudatedObjectsWorkflowQuestion { get; set; }
+        public virtual Workflow Workflow { get; set; }
     }
 }

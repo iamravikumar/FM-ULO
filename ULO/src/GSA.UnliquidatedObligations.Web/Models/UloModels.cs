@@ -52,6 +52,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string Answer { get; set; }
 
         public int JustificationId { get; set; }
+        public bool RequestForReassignmentsActive { get; set; }
         public string Comments { get; set; }
 
         public int WorkflowId { get; }
@@ -62,11 +63,12 @@ namespace GSA.UnliquidatedObligations.Web.Models
         }
 
 
-        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, int workflowId)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, bool requestForReassignmentsActive, int workflowId)
         {
             
             QuestionLabel = workflowQuestionChoices.QuestionLabel;
             QuestionChoices = new List<QuestionChoicesViewModel>();
+            RequestForReassignmentsActive = requestForReassignmentsActive;
             foreach (var questionChoice in workflowQuestionChoices.Choices)
             {
                 QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
@@ -116,7 +118,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Workflow = workflow;
             QuestionsViewModel =  new UloWfQuestionsViewModel(workflow.UnliqudatedObjectsWorkflowQuestions.ToList());
             WorkflowDescriptionViewModel = new WorkflowDescriptionViewModel(workflowDecription.WebActionWorkflowActivities.ToList(), workflow.CurrentWorkflowActivityKey);
-            AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, workflow.WorkflowId);
+            var hasActiveRequestForReassignmentsActive = workflow.RequestForReassignments.ToList().Count > 0 &&
+                                                         Workflow.RequestForReassignments.FirstOrDefault() != null &&
+                                                         Workflow.RequestForReassignments.First().IsActive;
+            AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, hasActiveRequestForReassignmentsActive, workflow.WorkflowId);
         }
     }
 

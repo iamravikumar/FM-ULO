@@ -33,30 +33,22 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Index()
         {
             var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-            var workflows = DB.Workflows.Where(wf => wf.OwnerUserId == currentUser.Id).Include(wf => wf.UnliquidatedObligation);
+            var workflowsAssignedtoCurrentUser = DB.Workflows.Where(wf => wf.OwnerUserId == currentUser.Id).Include(wf => wf.UnliquidatedObligation);
+            var groupsUserBelongsTo = await GetUsersGroups(currentUser.Id);
+            var workflowsAssignedToUsersGroups = DB.Workflows.Where(wf => groupsUserBelongsTo.Contains(wf.OwnerUserId));
+            var workflows = workflowsAssignedtoCurrentUser.Concat(workflowsAssignedToUsersGroups);
             return View(workflows);
         }
+
 
         [Route("Ulo/{id}")]
         public async Task<ActionResult> Details(int uloId, int workflowId)
         {
+            //TODO: check if current user is able to view
             var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
             var workflow = await FindWorkflowAsync(workflowId);
             var workflowDesc = await FindWorkflowDescAsync(workflow);
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc));
-        }
-
-        [HttpPost]
-        [Route("Ulo/Justifications")]
-        public List<Justification> Justifications(List<JustificationEnum> justificationEnums)
-        {
-            var justifications = new List<Justification>();
-            foreach (var justificationEnum in justificationEnums)
-            {
-                justifications.Add(JustificationChoices.Choices[justificationEnum]);
-            }
-
-            return justifications;
         }
 
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
@@ -64,16 +56,18 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return await Manager.GetWorkflowDescription(wf);
         }
 
-
+        
+        //TODO: Move to Manager?
         private async Task<Workflow> FindWorkflowAsync(int workflowId)
         {
             var wf = await DB.Workflows.Include(q => q.AspNetUser).Include(q => q.UnliquidatedObligation).FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
             if (wf != null)
             {
                 var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
+                var groupsUserBelongsTo = await GetUsersGroups(currentUser.Id);
                 if (currentUser != null)
                 {
-                    if (wf.OwnerUserId == currentUser.Id) return wf;
+                    if (wf.OwnerUserId == currentUser.Id || groupsUserBelongsTo.Contains(wf.OwnerUserId)) return wf;
                     if (wf.AspNetUser.UserType == UserTypes.Group.ToString())
                     {
                         //TODO: Write recursive then call recursive sproc to see if current user is in the group
@@ -111,8 +105,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (wf == null) return HttpNotFound();
             if (ModelState.IsValid)
             {
-                //
-               
                 wf.UnliquidatedObligation.DOShouldBe = uloModel.DOShouldBe;
                 wf.UnliquidatedObligation.UDOShouldBe = uloModel.UDOShouldBe;
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
@@ -128,6 +120,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 return await AdvanceAsync(wf, question);
             }
             return await Details(uloId, workflowId);
+        }
+
+        private async Task<List<string>> GetUsersGroups(string userId)
+        {
+            return await DB.UserUsers.Where(uu => uu.ChildUserId == userId).Select(uu => uu.ParentUserId).ToListAsync();
         }
 
         private async Task<ActionResult> AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)

@@ -5,7 +5,7 @@
 <div class="row advance">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Advance Workflow</h3>
+            <h3 class="panel-title">Decision</h3>
         </div>
         <div class="panel-body">
             <div class="form-horizontal">
@@ -13,24 +13,44 @@
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     <div class="col-md-3">
                         @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.Answer, new SelectList(Model.QuestionChoices, "Value", "Text"), "Select...", htmlAttributes: new { @onchange="ChoiceChange(this.value,"+ @Html.Raw(Json.Encode(Model)) + ")"})
+                        @Html.DropDownListFor(model => model.Answer, new SelectList(Model.QuestionChoices, "Value", "Text"), "Select...", htmlAttributes: new { @onchange = "ChoiceChange(this.value," + @Html.Raw(Json.Encode(Model)) + ")" })
                         @Html.ValidationMessageFor(model => model.Answer, "", new { @class = "text-danger" })
                     </div>
                     <div class="col-md-9">
                         @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.JustificationId, Enumerable.Empty<SelectListItem>(), "Select....", htmlAttributes: new {id = "justifications"})
+                        @Html.DropDownListFor(model => model.JustificationId, Enumerable.Empty<SelectListItem>(), "Select....", htmlAttributes: new { id = "justifications" })
                         @Html.ValidationMessageFor(model => model.JustificationId, "", new { @class = "text-danger" })
                     </div>
-                   
+
 
                 </div>
                 <div class="row other-comments row-space-top">
-                        @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-1" })
-                        @Html.TextBoxFor(model => model.Comments, new { @class = "col-md-11", @maxlength = "500" })
+                    <div class="row">
+                        @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
+                    </div>
+                    <div class="row">
+                        @Html.TextAreaFor(model => model.Comments, 10, 30, new {@class = "col-md-6"})
+                    </div>
                 </div>
                 <div class="row row-space-top">
                     <div class="col-md-10">
                         <input type="submit" value="Submit" class="btn btn-default" />
+                    </div>
+                </div>
+                <div class="row row-space-top">
+                    <div class="col-md-10">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#requestForReassignModal">
+                            @if (!Model.RequestForReassignmentsActive)
+                            {
+                                @Html.Encode("Request Reassignment");
+                            }
+                            else
+                            {
+                                @Html.Encode("Active Reassignment Requests");
+                            }
+                            
+                        </button>
+
                     </div>
                 </div>
             </div>

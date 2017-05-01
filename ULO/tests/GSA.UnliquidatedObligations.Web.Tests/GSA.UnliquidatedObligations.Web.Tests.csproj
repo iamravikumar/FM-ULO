@@ -144,6 +144,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Controllers\HomeControllerTest.cs" />
+    <Compile Include="Controllers\RequestForReassignmentsControllerTests.cs" />
     <Compile Include="Controllers\UloControllerTests.cs" />
     <Compile Include="Mocks\BackgroundTasksMock.cs" />
     <Compile Include="Mocks\DatabaseWorkflowDescriptionFinderMock.cs" />
@@ -152,8 +153,10 @@
     <Compile Include="Services\BackgorundTasksTest.cs" />
     <Compile Include="Services\WorkflowManagerTest.cs" />
     <Compile Include="TestData\NotesData.cs" />
+    <Compile Include="TestData\UnliqudatedObjectsWorkflowQuestionsData.cs" />
     <Compile Include="TestData\TestDBAsyncQueryProvider.cs" />
     <Compile Include="TestData\DocumentsData.cs" />
+    <Compile Include="TestData\RequestForReassignmentData.cs" />
     <Compile Include="TestData\WorkflowDefinitionData.cs" />
     <Compile Include="TestData\WorkflowDescriptionData.cs" />
     <Compile Include="TestData\UsersData.cs" />

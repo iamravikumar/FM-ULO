@@ -10,6 +10,8 @@
         ItemInvalid,
         InvalidRecurringContract,
         ValidRecurringContract,
+        ReassignVaction,
+        ReassignNeedHelp,
         Other
     }
 }

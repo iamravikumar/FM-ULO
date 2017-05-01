@@ -21,6 +21,19 @@
 
     @Html.Partial("Details/Workflow/_Index", Model.WorkflowViewModel)
 }
+
+@{
+    @Html.AntiForgeryToken()
+
+    if (Model.WorkflowViewModel.Workflow.RequestForReassignments.Count == 0)
+    {
+        Html.RenderAction("Details", "RequestForReassignments");
+    }
+    else
+    {
+        Html.RenderAction("Details", "RequestForReassignments", new {id = Model.WorkflowViewModel.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID});
+    }
+}
 <div class="clearfix">
     @Html.ActionLink("Back to List", "Index")
 </div>

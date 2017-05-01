@@ -1,0 +1,88 @@
+﻿@model GSA.UnliquidatedObligations.Web.Models.RequestForReassignmentViewModel
+
+@{
+    var currentworkflowId = Convert.ToInt32(Context.Request.QueryString["workflowId"]);
+    var isActiveReassignment = Model.RequestForReassignmentId != null;
+    var reviewerLabelText = isActiveReassignment ? "Assign to Reviewer" : "Suggeted Reviewer:";
+    var buttonText = isActiveReassignment ? "Reassign to Selected User" : "Request Reassignment";
+    var actionName = isActiveReassignment ? "Reassign" : "RequestReassign";
+}
+
+@using (Html.BeginForm(@actionName, "RequestForReassignments", new { workflowId = currentworkflowId }, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="requestForReassignModal" tabindex="-1" role="dialog" aria-labelledby="requestForReassignModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="requestForReassignModalLabel">Request For Reassignment</h5>
+                </div>
+                <div id="requestForReassignBody" class="modal-body">
+                    <div class="row">
+                        @Html.LabelFor(model => model.SuggestedReviewerId, @reviewerLabelText, htmlAttributes: new { @class = "col-md-4" })
+                        @Html.DropDownListFor(model => model.SuggestedReviewerId, Model.Users, "Select One..", htmlAttributes: new { @class = "col-md-8" })
+                    </div>
+                    <div class="row">
+                        @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "col-md-4" })
+                        @Html.DropDownListFor(model => model.JustificationId, Model.Justifications, "Select One...", htmlAttributes: new { @class = "col-md-8" })
+                    </div>
+                    <div class="row">
+                        @Html.LabelFor(model => model.Comments, "Comments:", htmlAttributes: new { @class = "col-md-4" })
+                        @Html.TextAreaFor(model => model.Comments, htmlAttributes: new { @class = "col-md-8" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">@buttonText</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.AspNetUser.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UnliqudatedObjectsWorkflowQuestion.UserId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Workflow.WorkflowKey)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.AspNetUser.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UnliqudatedObjectsWorkflowQuestion.UserId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Workflow.WorkflowKey)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+}
+
+</table>*@

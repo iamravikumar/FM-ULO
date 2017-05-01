@@ -4,45 +4,49 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="baea77d28f27474882a0f7d946c3b078" Name="Diagram1" ZoomLevel="29">
-        <EntityTypeShape EntityType="ULODBModel.AspNetRole" Width="1.5" PointX="0.75" PointY="17.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="16.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="18.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.AspNetUser" Width="1.5" PointX="3" PointY="15.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.Attachment" Width="1.5" PointX="9.75" PointY="9.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.Document" Width="1.5" PointX="7.5" PointY="9.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.DocumentType" Width="1.5" PointX="5.25" PointY="8.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.EmailTemplate" Width="1.5" PointX="5.75" PointY="6.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.Note" Width="1.5" PointX="8.25" PointY="17" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.UnliqudatedObjectsWorkflowQuestion" Width="1.5" PointX="10.5" PointY="15" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.UnliquidatedObligation" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.UserUser" Width="1.5" PointX="8.25" PointY="13.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.WorkflowDefinition" Width="1.5" PointX="7.75" PointY="6.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.WorkflowHistory" Width="1.5" PointX="8.25" PointY="20.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.Workflow" Width="1.5" PointX="5.25" PointY="11.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.Region" Width="1.5" PointX="0.75" PointY="6.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ULODBModel.Zone" Width="1.5" PointX="1.5" PointY="22.625" IsExpanded="true" />
-        <AssociationConnector Association="ULODBModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__Notes__UserId__22401542" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__UserUsers__Child__3864608B" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__UserUsers__Paren__37703C52" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__WorkflowH__Owner__4865BE2A" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__Workflows__Owner__40058253" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK_Attachments_ToDocument" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK_Document_ToDocumentType" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK_Document_ToWorkflow" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__Notes__ParentNot__214BF109" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__Notes__UloId__2334397B" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__WorkflowH__Targe__4959E263" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK_UnliquidatedObligations_ToRegions" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK_Workflows_ToUnliquidatedObligations" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__UserUsers__Regio__395884C4" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__WorkflowH__Workf__477199F1" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.FK__Regions__ZoneId__30C33EC3" ManuallyRouted="false" />
-        <AssociationConnector Association="ULODBModel.AspNetUserRoles" ManuallyRouted="false" />
+      <Diagram DiagramId="62953427cbe34d1d8d3e12e1d410a09d" Name="Diagram1" ZoomLevel="33">
+        <EntityTypeShape EntityType="Model.AspNetRole" Width="1.5" PointX="0.75" PointY="17.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="16.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="18.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetUser" Width="1.5" PointX="3" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Attachment" Width="1.5" PointX="9.75" PointY="25.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Document" Width="1.5" PointX="7.5" PointY="25.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.DocumentType" Width="1.5" PointX="5.25" PointY="26.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.EmailTemplate" Width="1.5" PointX="5.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Note" Width="1.5" PointX="8.25" PointY="17" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.RequestForReassignment" Width="1.5" PointX="8.25" PointY="13.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.UnliqudatedObjectsWorkflowQuestion" Width="1.5" PointX="10.5" PointY="19" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.UnliquidatedObligation" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.UserUser" Width="1.5" PointX="8.25" PointY="21.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.WorkflowDefinition" Width="1.5" PointX="5.75" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.WorkflowHistory" Width="1.5" PointX="5.25" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Workflow" Width="1.5" PointX="5.25" PointY="21.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Region" Width="1.5" PointX="0.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Zone" Width="1.5" PointX="1.5" PointY="22.625" IsExpanded="true" />
+        <AssociationConnector Association="Model.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Notes__UserId__22401542" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__RequestFo__Sugge__69C6B1F5" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__UserUsers__Child__3864608B" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__UserUsers__Paren__37703C52" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__WorkflowH__Owner__4865BE2A" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Workflows__Owner__40058253" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_Attachments_ToDocument" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_Document_ToDocumentType" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_Document_ToWorkflow" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Notes__ParentNot__214BF109" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Notes__UloId__2334397B" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__RequestFo__Unliq__6ABAD62E" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__RequestFo__Workf__6BAEFA67" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__WorkflowH__Targe__4959E263" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_UnliquidatedObligations_ToRegions" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK_Workflows_ToUnliquidatedObligations" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__UserUsers__Regio__395884C4" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__WorkflowH__Workf__477199F1" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Regions__ZoneId__30C33EC3" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.AspNetUserRoles" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

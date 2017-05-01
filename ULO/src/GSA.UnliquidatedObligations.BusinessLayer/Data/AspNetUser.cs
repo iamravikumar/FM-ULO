@@ -20,6 +20,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.AspNetUserClaims = new HashSet<AspNetUserClaim>();
             this.AspNetUserLogins = new HashSet<AspNetUserLogin>();
             this.Notes = new HashSet<Note>();
+            this.RequestForReassignments = new HashSet<RequestForReassignment>();
             this.UserUsers = new HashSet<UserUser>();
             this.UserUsers1 = new HashSet<UserUser>();
             this.WorkflowHistories = new HashSet<WorkflowHistory>();
@@ -48,6 +49,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual ICollection<AspNetUserLogin> AspNetUserLogins { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RequestForReassignment> RequestForReassignments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserUser> UserUsers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

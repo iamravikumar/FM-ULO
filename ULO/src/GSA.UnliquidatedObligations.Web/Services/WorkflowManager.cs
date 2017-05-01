@@ -1,5 +1,8 @@
 ﻿using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Threading.Tasks;
@@ -84,10 +87,31 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
+        async Task<ActionResult> IWorkflowManager.RequestReassign(Workflow wf)
+        {
+            //TODO: Get programatically based on user's region
+            var reassignGroupId =  await GetNextOwnerAsync("ab9684e5-a277-41df-a268-f861416a3f0e", wf, "");
+            wf.OwnerUserId = reassignGroupId;
+            var c = new RedirectingController();
+            var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
+            return await Task.FromResult(c.RedirectToAction("Index", "Ulo", routeValues));
+        }
+
+        async Task<ActionResult> IWorkflowManager.Reassign(Workflow wf, string userId)
+        {
+            //TODO: Get programatically based on user's region
+            wf.OwnerUserId = userId;
+            var c = new RedirectingController();
+            var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
+            return await Task.FromResult(c.RedirectToAction("Index", "Ulo", routeValues));
+        }
+
         private async Task<string> GetNextOwnerAsync(string proposedOwnerId, Workflow wf, string nextActivityKey)
         {
             //TODO: check if null, return proposedOwnserId
-            return await Task.FromResult(proposedOwnerId);
+            var output = new ObjectParameter("nextOwnerId", typeof(string));
+            DB.GetNextLevelOwnerId(proposedOwnerId, wf.WorkflowId, nextActivityKey, output);
+            return await Task.FromResult(output.Value.ToString());
         }
 
 
