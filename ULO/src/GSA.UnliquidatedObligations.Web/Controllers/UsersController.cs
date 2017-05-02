@@ -2,11 +2,14 @@
 using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
 
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
     public class UsersController : Controller
     {
         private readonly ULODBEntities DB;

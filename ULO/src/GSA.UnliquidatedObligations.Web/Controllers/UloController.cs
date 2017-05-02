@@ -6,6 +6,7 @@ using GSA.UnliquidatedObligations.Web.Services;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
@@ -32,6 +33,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public async Task<ActionResult> Index()
         {
+            //TODO: wrire stored procedure for nested groups
             var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var workflowsAssignedtoCurrentUser = DB.Workflows.Where(wf => wf.OwnerUserId == currentUser.Id).Include(wf => wf.UnliquidatedObligation);
             var groupsUserBelongsTo = await GetUsersGroups(currentUser.Id);

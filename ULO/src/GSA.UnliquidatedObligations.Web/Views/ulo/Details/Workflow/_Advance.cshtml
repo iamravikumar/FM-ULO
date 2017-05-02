@@ -37,22 +37,6 @@
                         <input type="submit" value="Submit" class="btn btn-default" />
                     </div>
                 </div>
-                <div class="row row-space-top">
-                    <div class="col-md-10">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#requestForReassignModal">
-                            @if (!Model.RequestForReassignmentsActive)
-                            {
-                                @Html.Encode("Request Reassignment");
-                            }
-                            else
-                            {
-                                @Html.Encode("Active Reassignment Requests");
-                            }
-                            
-                        </button>
-
-                    </div>
-                </div>
             </div>
         </div>
     </div>

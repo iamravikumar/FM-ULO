@@ -46,17 +46,17 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
                 new Justification(Convert.ToInt32(JustificationEnum.ValidRecurringContract), "Valid - Recurring Contract - $ needed")
             },
             {
-                JustificationEnum.Other, 
-                new Justification(Convert.ToInt32(JustificationEnum.Other), "Other")
-            },
-            {
                 JustificationEnum.ReassignNeedHelp,
                 new Justification(Convert.ToInt32(JustificationEnum.ReassignNeedHelp), "User needs additional help with this")
             },
             {
                 JustificationEnum.ReassignVaction,
                 new Justification(Convert.ToInt32(JustificationEnum.ReassignVaction), "User is on Vacation this week.")
-            } 
+            },
+             {
+                JustificationEnum.Other,
+                new Justification(Convert.ToInt32(JustificationEnum.Other), "Other")
+            },
     };
 }
 

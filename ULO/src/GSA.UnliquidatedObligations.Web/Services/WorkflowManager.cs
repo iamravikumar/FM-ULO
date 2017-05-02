@@ -70,7 +70,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     //TODO: What happens if it crashes?
                     BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
                 }
-                
+                wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
                 wf.UnliqudatedObjectsWorkflowQuestions.Add(question);
                 //TODO: if owner changes, look at other ways of redirecting.
                 var next = (WebActionWorkflowActivity)nextActivity;

@@ -350,7 +350,6 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\ULO\advance.js" />
     <Content Include="Scripts\ULO\polyfills.js" />
-    <Content Include="Scripts\ULO\Reassign.js" />
     <Content Include="Scripts\ULO\recordsListing.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Content\ULO\Workflows\workflows.css" />
@@ -415,6 +414,7 @@
     <Content Include="Views\RequestForReassignments\Details.cshtml" />
     <Content Include="Views\RequestForReassignments\Edit.cshtml" />
     <Content Include="Views\RequestForReassignments\_Index.cshtml" />
+    <Content Include="Views\Ulo\Details\Workflow\_AssignedTo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
