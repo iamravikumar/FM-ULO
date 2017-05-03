@@ -36,15 +36,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // GET: RequestForReassignments/Details/5
         public ActionResult Details(int? id)
         {
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
             var requestForReassignment = DB.RequestForReassignments.Where(rr => rr.IsActive).FirstOrDefault(r => r.RequestForReassignmentID == id);
-            //if (requestForReassignment == null)
-            //{
-            //    return HttpNotFound();
-            //}
+
             var users = DB.AspNetUsers.OrderBy(u => u.UserName).Where(u => u.UserType == "Person").ToList();
             var justEnums = new List<JustificationEnum>()
             {

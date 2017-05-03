@@ -14,11 +14,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
     public partial class Attachment
     {
-        public int Id { get; set; }
+        public int AttachmentsId { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }
-        public Nullable<int> Document { get; set; }
+        public Nullable<int> DocumentId { get; set; }
     
-        public virtual Document Document1 { get; set; }
+        public virtual Document Document { get; set; }
     }
 }

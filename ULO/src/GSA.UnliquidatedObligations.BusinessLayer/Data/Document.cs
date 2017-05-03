@@ -20,14 +20,14 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.Attachments = new HashSet<Attachment>();
         }
     
-        public int Id { get; set; }
-        public int DocumentType { get; set; }
-        public int UploadedBy { get; set; }
+        public int DocumentId { get; set; }
+        public int DocumentTypeId { get; set; }
+        public int UploadedByUserId { get; set; }
         public int WorkflowId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Attachment> Attachments { get; set; }
-        public virtual DocumentType DocumentType1 { get; set; }
+        public virtual DocumentType DocumentType { get; set; }
         public virtual Workflow Workflow { get; set; }
     }
 }

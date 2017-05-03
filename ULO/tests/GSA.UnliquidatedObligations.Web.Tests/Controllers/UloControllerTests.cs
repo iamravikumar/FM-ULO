@@ -25,7 +25,8 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
     public class UloControllerTests
     {
         private UloController UloController;
-        private const string USERID = "04bf9024-b454-42b9-8671-92d743832483";
+        private const string PERSONUSERID = "04bf9024-b454-42b9-8671-92d743832483";
+        private const string GROUPUSERID = "77cb2b95-4cd2-4c72-a132-6ceb2b14dde6";
         private const int ULOID = 2;
         private const int WORKFLOWID = 3;
         private const string WORKFLOWKEY = "65754ae8-6d5d-49a8-9f3d-15d63e5a0521";
@@ -34,8 +35,10 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         [TestInitialize]
         public void Initialize()
         {
-            var userData = UsersData.GenerateData(5, USERID);
-            var currentUser = userData.First(u => u.Id == USERID);
+            var personUserData = UsersData.GenerateData(5, PERSONUSERID);
+            var groupUserData = UsersData.GenerateData(1, GROUPUSERID, "Group");
+            var userData = personUserData.Concat(groupUserData).ToList();
+            var currentUser = personUserData.First(u => u.Id == PERSONUSERID);
 
             var dbContext = SetUpEntityMocks(userData);
             var wfManager = SetupWorkflowManagerMock();
@@ -135,7 +138,8 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         {
 
             var uloList = UloData.GenerateData(10, ULOID, userData).AsQueryable();
-            var workflowList = WorkflowData.GenerateData(10, WORKFLOWID, userData, USERID, WORKFLOWKEY, CURRENTWORKFLOWACTIVITYKEY).AsQueryable();
+            var workflowList = WorkflowData.GenerateData(10, WORKFLOWID, userData, PERSONUSERID, WORKFLOWKEY, CURRENTWORKFLOWACTIVITYKEY).AsQueryable();
+            var userUsersList = UserUsersData.GenerateData(1, PERSONUSERID, GROUPUSERID).AsQueryable();
             //var notesList = NotesData.GenerateData(3, ULOID, userData).AsQueryable();
 
             var mockUloSet = new Mock<DbSet<UnliquidatedObligation>>();
@@ -162,6 +166,18 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             mockWorkflowSet.As<IQueryable<Workflow>>().Setup(m => m.GetEnumerator()).Returns(workflowList.GetEnumerator());
             mockWorkflowSet.Setup(m => m.Include(It.IsAny<string>())).Returns(mockWorkflowSet.Object);
 
+            var mockUserUsersSet = new Mock<DbSet<UserUser>>();
+            mockUserUsersSet.As<IDbAsyncEnumerable<UserUser>>()
+               .Setup(m => m.GetAsyncEnumerator())
+               .Returns(new TestDbAsyncEnumerator<UserUser>(userUsersList.GetEnumerator()));
+            mockUserUsersSet.As<IQueryable<Workflow>>()
+                .Setup(m => m.Provider)
+                .Returns(new TestDbAsyncQueryProvider<UserUser>(userUsersList.Provider));
+            mockUserUsersSet.As<IQueryable<UserUser>>().Setup(m => m.Expression).Returns(userUsersList.Expression);
+            mockUserUsersSet.As<IQueryable<UserUser>>().Setup(m => m.ElementType).Returns(userUsersList.ElementType);
+            mockUserUsersSet.As<IQueryable<UserUser>>().Setup(m => m.GetEnumerator()).Returns(userUsersList.GetEnumerator());
+            mockUserUsersSet.Setup(m => m.Include(It.IsAny<string>())).Returns(mockUserUsersSet.Object);
+
             //mockWorkflowDefinitionSet.Setup(m => m.Include(It.IsAny<string>())).Returns(mockWorkflowDefinitionSet.Object);
 
             //var mockNoteSet = new Mock<DbSet<Note>>();
@@ -174,7 +190,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             var mockULODBEntities = new Mock<ULODBEntities>();
             mockULODBEntities.Setup(c => c.UnliquidatedObligations).Returns(mockUloSet.Object);
             mockULODBEntities.Setup(c => c.Workflows).Returns(mockWorkflowSet.Object);
-
+            mockULODBEntities.Setup(c => c.UserUsers).Returns(mockUserUsersSet.Object);
             //mockULODBEntities.Setup(c => c.Notes).Returns(mockNoteSet.Object);
             return mockULODBEntities.Object;
 
@@ -185,7 +201,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             var mockStore = new Mock<IUserStore<ApplicationUser>>();
             var mockIdentityFactoryOptions = new Mock<IdentityFactoryOptions<ApplicationUserManager>>();
 
-            var dummyUser = new ApplicationUser() { Id = USERID, UserName = currentUser.UserName, Email = currentUser.Email };
+            var dummyUser = new ApplicationUser() { Id = PERSONUSERID, UserName = currentUser.UserName, Email = currentUser.Email };
             mockStore.Setup(x => x.FindByNameAsync(currentUser.UserName))
                         .Returns(Task.FromResult(dummyUser));
 

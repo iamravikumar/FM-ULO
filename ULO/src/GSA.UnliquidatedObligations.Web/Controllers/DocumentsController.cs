@@ -13,12 +13,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class DocumentsController : Controller
     {
-        private ULODBEntities db = new ULODBEntities();
+        private ULODBEntities DB;
+
+        public DocumentsController(ULODBEntities db)
+        {
+            DB = db;
+        }
 
         // GET: Documents
         public async Task<ActionResult> Index()
         {
-            var documents = db.Documents.Include(d => d.DocumentType1).Include(d => d.Workflow);
+            var documents = DB.Documents.Include(d => d.DocumentType).Include(d => d.Workflow);
             return View(await documents.ToListAsync());
         }
 
@@ -29,7 +34,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Document document = await db.Documents.FindAsync(id);
+            Document document = await DB.Documents.FindAsync(id);
             if (document == null)
             {
                 return HttpNotFound();
@@ -40,8 +45,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // GET: Documents/Create
         public ActionResult Create()
         {
-            ViewBag.DocumentType = new SelectList(db.DocumentTypes, "Id", "Name");
-            ViewBag.WorkflowId = new SelectList(db.Workflows, "WorkflowId", "WorkflowKey");
+            ViewBag.DocumentType = new SelectList(DB.DocumentTypes, "Id", "Name");
+            ViewBag.WorkflowId = new SelectList(DB.Workflows, "WorkflowId", "WorkflowKey");
             return View();
         }
 
@@ -54,13 +59,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Documents.Add(document);
-                await db.SaveChangesAsync();
+                DB.Documents.Add(document);
+                await DB.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.DocumentType = new SelectList(db.DocumentTypes, "Id", "Name", document.DocumentType);
-            ViewBag.WorkflowId = new SelectList(db.Workflows, "WorkflowId", "WorkflowKey", document.WorkflowId);
+            ViewBag.DocumentType = new SelectList(DB.DocumentTypes, "Id", "Name", document.DocumentType);
+            ViewBag.WorkflowId = new SelectList(DB.Workflows, "WorkflowId", "WorkflowKey", document.WorkflowId);
             return View(document);
         }
 
@@ -71,13 +76,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Document document = await db.Documents.FindAsync(id);
+            Document document = await DB.Documents.FindAsync(id);
             if (document == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.DocumentType = new SelectList(db.DocumentTypes, "Id", "Name", document.DocumentType);
-            ViewBag.WorkflowId = new SelectList(db.Workflows, "WorkflowId", "WorkflowKey", document.WorkflowId);
+            ViewBag.DocumentType = new SelectList(DB.DocumentTypes, "Id", "Name", document.DocumentType);
+            ViewBag.WorkflowId = new SelectList(DB.Workflows, "WorkflowId", "WorkflowKey", document.WorkflowId);
             return View(document);
         }
 
@@ -90,12 +95,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(document).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                DB.Entry(document).State = EntityState.Modified;
+                await DB.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.DocumentType = new SelectList(db.DocumentTypes, "Id", "Name", document.DocumentType);
-            ViewBag.WorkflowId = new SelectList(db.Workflows, "WorkflowId", "WorkflowKey", document.WorkflowId);
+            ViewBag.DocumentType = new SelectList(DB.DocumentTypes, "Id", "Name", document.DocumentType);
+            ViewBag.WorkflowId = new SelectList(DB.Workflows, "WorkflowId", "WorkflowKey", document.WorkflowId);
             return View(document);
         }
 
@@ -106,7 +111,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Document document = await db.Documents.FindAsync(id);
+            Document document = await DB.Documents.FindAsync(id);
             if (document == null)
             {
                 return HttpNotFound();
@@ -119,9 +124,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Document document = await db.Documents.FindAsync(id);
-            db.Documents.Remove(document);
-            await db.SaveChangesAsync();
+            Document document = await DB.Documents.FindAsync(id);
+            DB.Documents.Remove(document);
+            await DB.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
@@ -129,7 +134,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                DB.Dispose();
             }
             base.Dispose(disposing);
         }

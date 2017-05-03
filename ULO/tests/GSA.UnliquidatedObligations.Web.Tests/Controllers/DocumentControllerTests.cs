@@ -22,10 +22,10 @@ using Newtonsoft.Json;
 namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
 {
     [TestClass]
-    public class RequestForReassignmentsControllerTests
+    public class DocumentControllerTests
     {
 
-        private RequestForReassignmentsController Controller;
+        private DocumentsController Controller;
         private const int REQUESTFORREASSIGNMENTID = 5;
         private const int WORKFLOWID = 3;
         private const string WORKFLOWKEY = "65754ae8-6d5d-49a8-9f3d-15d63e5a0521";
@@ -42,19 +42,16 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             var userData = personUserData.Concat(groupUserData).ToList();
             var currentUser = userData.First(u => u.Id == PERSONUSERID);
 
-            var mockContext = new Mock<ControllerContext>();
-            mockContext.SetupGet(p => p.HttpContext.User.Identity.Name).Returns(currentUser.UserName);
-            mockContext.SetupGet(p => p.HttpContext.Request.IsAuthenticated).Returns(true);
+            //var mockContext = new Mock<ControllerContext>();
+            //mockContext.SetupGet(p => p.HttpContext.User.Identity.Name).Returns(currentUser.UserName);
+            //mockContext.SetupGet(p => p.HttpContext.Request.IsAuthenticated).Returns(true);
 
 
             dbContext = SetUpEntityMocks(userData);
             var wfManager = SetupWorkflowManagerMock();
             var applicationManager = SetupApplicationUserMocks(currentUser);
 
-            Controller = new RequestForReassignmentsController(wfManager, dbContext, applicationManager)
-            {
-                ControllerContext = mockContext.Object
-            };
+            Controller = new DocumentsController(dbContext);
 
         }
 
@@ -69,7 +66,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         private ULODBEntities SetUpEntityMocks(List<AspNetUser> users)
         {
 
-            var requestForReassignmentList = RequestForReassignmentData.GenerateData(10,REQUESTFORREASSIGNMENTID, WORKFLOWID, PERSONUSERID).AsQueryable();
+            var requestForReassignmentList = RequestForReassignmentData.GenerateData(10, REQUESTFORREASSIGNMENTID, WORKFLOWID, PERSONUSERID).AsQueryable();
             var userList = users.AsQueryable();
             var unliqudatedObjectsWorkflowQuestionsList = UnliqudatedObjectsWorkflowQuestionsData.GenerateData(20);
             var unliqudatedObjectsWorkflowQuestionsListQueryable = unliqudatedObjectsWorkflowQuestionsList.AsQueryable();

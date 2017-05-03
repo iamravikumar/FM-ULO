@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,6 +33,14 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                 JustificationEnum.InvalidRecurringContract,
                 JustificationEnum.Other
             };
+
+            var allJustificationEnumsArr = (JustificationEnum[])Enum.GetValues(typeof(JustificationEnum));
+
+            var allJustificationEnumsList = new List<JustificationEnum>();
+            allJustificationEnumsList.AddRange(allJustificationEnumsArr);
+            allJustificationEnumsList =
+                 allJustificationEnumsList.Where(
+                    j => j != JustificationEnum.ReassignVaction && j != JustificationEnum.ReassignNeedHelp).ToList();
 
 
             var nextActivityConfig = JsonConvert.SerializeObject(new FieldComparisonActivityChooser.MySettings
@@ -67,6 +76,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                         {
                             Code = "wf.CurrentWorkflowActivityKey == \"B4\" && wfQuestion.Answer == \"Not Concur\"",
                             WorkflowActivityKey = "B3"
+                        },
+                         new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B4\" && wfQuestion.Answer == \"Concur\"",
+                            WorkflowActivityKey = "B5"
                         }
                     }
 
@@ -127,13 +141,13 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                             {
                                 Text = "Yes",
                                 Value = "Approve",
-                                JustificationsEnums = yesJustificationEnums
+                                JustificationsEnums = allJustificationEnumsList
                             },
                             new QuestionChoice()
                             {
                                 Text = "No",
                                 Value = "Disapprove",
-                                JustificationsEnums = noJustificationEnums
+                                JustificationsEnums = allJustificationEnumsList
                             }
                         }
                     }
@@ -159,13 +173,13 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                             {
                                 Text = "Yes",
                                 Value = "Concur",
-                                JustificationsEnums = yesJustificationEnums
+                                JustificationsEnums = allJustificationEnumsList
                             },
                             new QuestionChoice()
                             {
                                 Text = "No",
                                 Value = "Not Concur",
-                                JustificationsEnums = noJustificationEnums
+                                JustificationsEnums = allJustificationEnumsList
                             }
                         }
                     }
@@ -191,13 +205,45 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                             {
                                 Text = "Yes",
                                 Value = "Concur",
-                                JustificationsEnums = yesJustificationEnums
+                                JustificationsEnums = allJustificationEnumsList
                             },
                             new QuestionChoice()
                             {
                                 Text = "No",
                                 Value = "Not Concur",
-                                JustificationsEnums = noJustificationEnums
+                                JustificationsEnums = allJustificationEnumsList
+                            }
+                        }
+                    }
+                },
+                new WebActionWorkflowActivity
+                {
+                    ActionName = "Index",
+                    ActivityName = "Complete",
+                    SequenceNumber = 5,
+                    ControllerName = "Ulo",
+                    NextActivityChooserConfig = nextActivityConfig,
+                    NextActivityChooserTypeName = "FieldComparisonActivityChooser",
+                    WorkflowActivityKey = "B5",
+                    OwnerUserId = "bc2e4dc3-7998-4bb7-953e-31c4fe9a1f6d",
+                    RouteValueByName = new Dictionary<string, object>(),
+                    EmailTemplateId = 1,
+                    QuestionChoices = new WorkflowQuestionChoices
+                    {
+                       QuestionLabel = "Do you Concur",
+                       Choices = new List<QuestionChoice>()
+                        {
+                            new QuestionChoice()
+                            {
+                                Text = "Yes",
+                                Value = "Concur",
+                                JustificationsEnums = allJustificationEnumsList
+                            },
+                            new QuestionChoice()
+                            {
+                                Text = "No",
+                                Value = "Not Concur",
+                                JustificationsEnums = allJustificationEnumsList
                             }
                         }
                     }

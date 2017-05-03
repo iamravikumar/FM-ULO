@@ -59,27 +59,27 @@
         </EntityType>
         <EntityType Name="Attachments">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="AttachmentsId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AttachmentsId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="FileName" Type="varchar" MaxLength="500" />
           <Property Name="FilePath" Type="varchar" MaxLength="300" />
-          <Property Name="Document" Type="int" />
+          <Property Name="DocumentId" Type="int" />
         </EntityType>
         <EntityType Name="Document">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="DocumentId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="DocumentType" Type="int" Nullable="false" />
-          <Property Name="UploadedBy" Type="int" Nullable="false" />
+          <Property Name="DocumentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DocumentTypeId" Type="int" Nullable="false" />
+          <Property Name="UploadedByUserId" Type="int" Nullable="false" />
           <Property Name="WorkflowId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="DocumentType">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="DocumentTypeId" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DocumentTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="EmailTemplates">
@@ -422,10 +422,10 @@
           <End Role="Attachments" Type="Self.Attachments" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Document">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="DocumentId" />
             </Principal>
             <Dependent Role="Attachments">
-              <PropertyRef Name="Document" />
+              <PropertyRef Name="DocumentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -490,10 +490,10 @@
           <End Role="Document" Type="Self.Document" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="DocumentType">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="DocumentTypeId" />
             </Principal>
             <Dependent Role="Document">
-              <PropertyRef Name="DocumentType" />
+              <PropertyRef Name="DocumentTypeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -748,31 +748,31 @@
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="AttachmentsId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AttachmentsId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FileName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="FilePath" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="Document" Type="Int32" />
-          <NavigationProperty Name="Document1" Relationship="Self.FK_Attachments_ToDocument" FromRole="Attachments" ToRole="Document" />
+          <Property Name="DocumentId" Type="Int32" />
+          <NavigationProperty Name="Document" Relationship="Self.FK_Attachments_ToDocument" FromRole="Attachments" ToRole="Document" />
         </EntityType>
         <EntityType Name="Document">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="DocumentId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="DocumentType" Type="Int32" Nullable="false" />
-          <Property Name="UploadedBy" Type="Int32" Nullable="false" />
+          <Property Name="DocumentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DocumentTypeId" Type="Int32" Nullable="false" />
+          <Property Name="UploadedByUserId" Type="Int32" Nullable="false" />
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Attachments" Relationship="Self.FK_Attachments_ToDocument" FromRole="Document" ToRole="Attachments" />
-          <NavigationProperty Name="DocumentType1" Relationship="Self.FK_Document_ToDocumentType" FromRole="Document" ToRole="DocumentType" />
+          <NavigationProperty Name="DocumentType" Relationship="Self.FK_Document_ToDocumentType" FromRole="Document" ToRole="DocumentType" />
           <NavigationProperty Name="Workflow" Relationship="Self.FK_Document_ToWorkflow" FromRole="Document" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="DocumentType">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="DocumentTypeId" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DocumentTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToDocumentType" FromRole="DocumentType" ToRole="Document" />
         </EntityType>
@@ -1090,10 +1090,10 @@
           <End Role="Attachments" Type="Self.Attachment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Document">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="DocumentId" />
             </Principal>
             <Dependent Role="Attachments">
-              <PropertyRef Name="Document" />
+              <PropertyRef Name="DocumentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1102,10 +1102,10 @@
           <End Role="Document" Type="Self.Document" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="DocumentType">
-              <PropertyRef Name="Id" />
+              <PropertyRef Name="DocumentTypeId" />
             </Principal>
             <Dependent Role="Document">
-              <PropertyRef Name="DocumentType" />
+              <PropertyRef Name="DocumentTypeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1434,19 +1434,19 @@
           <EntitySetMapping Name="Attachments">
             <EntityTypeMapping TypeName="Model.Attachment">
               <MappingFragment StoreEntitySet="Attachments">
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="AttachmentsId" ColumnName="AttachmentsId" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="FilePath" ColumnName="FilePath" />
-                <ScalarProperty Name="Document" ColumnName="Document" />
+                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Documents">
             <EntityTypeMapping TypeName="Model.Document">
               <MappingFragment StoreEntitySet="Document">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
-                <ScalarProperty Name="UploadedBy" ColumnName="UploadedBy" />
+                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+                <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
+                <ScalarProperty Name="UploadedByUserId" ColumnName="UploadedByUserId" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1454,7 +1454,7 @@
           <EntitySetMapping Name="DocumentTypes">
             <EntityTypeMapping TypeName="Model.DocumentType">
               <MappingFragment StoreEntitySet="DocumentType">
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -6,15 +6,14 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
 namespace GSA.UnliquidatedObligations.Web.Tests.TestData
 {
-    public static class DocumentData
+    public static class AttachmentsData
     {
-        public static List<Document> GenerateData(int listSize, int withUploadedById)
+        public static List<Attachment> GenerateData(int listSize, int withDocumentId)
         {
-
-            return Builder<Document>
+            return Builder<Attachment>
                 .CreateListOfSize(listSize)
-                .TheFirst(1)
-                .With(u => u.UploadedByUserId = withUploadedById)
+                .Random(1)
+                .With(u => u.DocumentId = withDocumentId)
                 .Build()
                 .ToList();
         }
