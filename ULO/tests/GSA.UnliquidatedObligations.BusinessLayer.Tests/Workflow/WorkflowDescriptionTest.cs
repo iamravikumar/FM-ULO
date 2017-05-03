@@ -40,7 +40,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     {  
                         new FieldComparisonActivityChooser.Expression
                         {
-                            Code = "wf.CurrentWorkflowActivityKey == \"B1\" && wfQuestion.Answer == \"Valid\"",
+                            Code = "wf.CurrentWorkflowActivityKey == \"B1\"",
                             WorkflowActivityKey = "B2"
                         },
                         new FieldComparisonActivityChooser.Expression
@@ -53,10 +53,20 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                             Code = "wf.CurrentWorkflowActivityKey == \"B2\" && wfQuestion.Answer == \"Approve\"",
                             WorkflowActivityKey = "B3"
                         },
-                         new FieldComparisonActivityChooser.Expression
+                        new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B3\" && wfQuestion.Answer == \"Not Concur\"",
+                            WorkflowActivityKey = "B2"
+                        },
+                        new FieldComparisonActivityChooser.Expression
                         {
                             Code = "wf.CurrentWorkflowActivityKey == \"B3\" && wfQuestion.Answer == \"Concur\"",
                             WorkflowActivityKey = "B4"
+                        },
+                        new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B4\" && wfQuestion.Answer == \"Not Concur\"",
+                            WorkflowActivityKey = "B3"
                         }
                     }
 

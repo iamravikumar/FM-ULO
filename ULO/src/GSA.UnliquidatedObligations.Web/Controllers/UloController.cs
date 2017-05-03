@@ -100,7 +100,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             int uloId,
             [Bind(Include = "DOShouldBe,UDOShouldBe")]
             UloViewModel uloModel,
-            [Bind(Include = "Justification,Answer,Comments")]
+            [Bind(Include = "JustificationId,Answer,Comments")]
             AdvanceViewModel advanceModel)
         {
             var wf = await FindWorkflowAsync(workflowId);
