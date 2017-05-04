@@ -22,9 +22,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
         public int DocumentId { get; set; }
         public int DocumentTypeId { get; set; }
-        public int UploadedByUserId { get; set; }
         public int WorkflowId { get; set; }
+        public string UploadedByUserId { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Attachment> Attachments { get; set; }
         public virtual DocumentType DocumentType { get; set; }

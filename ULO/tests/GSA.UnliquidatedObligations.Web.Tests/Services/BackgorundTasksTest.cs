@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
+﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Data.Entity;
-using System.Linq;
 
 namespace GSA.UnliquidatedObligations.Web.Tests.Services
 {

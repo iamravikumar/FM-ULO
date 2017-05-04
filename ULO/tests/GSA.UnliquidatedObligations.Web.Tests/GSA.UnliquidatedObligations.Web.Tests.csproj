@@ -147,9 +147,13 @@
     <Compile Include="Controllers\DocumentControllerTests.cs" />
     <Compile Include="Controllers\RequestForReassignmentsControllerTests.cs" />
     <Compile Include="Controllers\UloControllerTests.cs" />
-    <Compile Include="Mocks\BackgroundTasksMock.cs" />
-    <Compile Include="Mocks\DatabaseWorkflowDescriptionFinderMock.cs" />
-    <Compile Include="Mocks\WorkflowDescriptionMock.cs" />
+    <Compile Include="Controllers\ControllerTests.cs" />
+    <Compile Include="Mocks\ControllerContextMock.cs" />
+    <Compile Include="Mocks\DbContextMock.cs" />
+    <Compile Include="Mocks\ApplicationUserManagerMock.cs" />
+    <Compile Include="Mocks\IdentityFactoryOptionsMock.cs" />
+    <Compile Include="Mocks\UserStoreMock.cs" />
+    <Compile Include="Mocks\WorkflowManagerMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BackgorundTasksTest.cs" />
     <Compile Include="Services\WorkflowManagerTest.cs" />

@@ -191,13 +191,5 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return await DB.UserUsers.Where(uu => uu.ChildUserId == userId).Select(uu => uu.ParentUserId).ToListAsync();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                DB.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }

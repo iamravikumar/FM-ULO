@@ -1,0 +1,24 @@
+﻿@model GSA.UnliquidatedObligations.Web.Models.AttachmentsViewModel
+    
+<table class="table table-responsive">
+    <tr>
+        <th>
+            File
+        </th>
+        <th>
+        <th></th>
+    </tr>
+    @foreach (var attachment in Model.Attachments)
+    {
+        <tr>
+            <td>
+                @attachment.FileName
+            </td>
+            <td>
+                <a data-target="" data-toggle="modal" data-target="@modalId" href="@modalId">View</a> |
+                @Html.ActionLink("Delete", "Delete", "Documents", new { documentId = document.DocumentId }, null)
+            </td>
+        </tr>
+    }
+</table>
+

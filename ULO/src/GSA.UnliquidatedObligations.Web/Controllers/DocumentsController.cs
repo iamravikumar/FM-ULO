@@ -8,12 +8,13 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Web.Models;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class DocumentsController : Controller
     {
-        private ULODBEntities DB;
+        private readonly ULODBEntities DB;
 
         public DocumentsController(ULODBEntities db)
         {
@@ -28,18 +29,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: Documents/Details/5
-        public async Task<ActionResult> Details(int? id)
+        public ActionResult View(int? documentId)
         {
-            if (id == null)
+            if (documentId == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Document document = await DB.Documents.FindAsync(id);
+            var document = DB.Documents.FirstOrDefault(dt => dt.DocumentId == documentId);
+            var documentTypes = DB.DocumentTypes.OrderBy(dt => dt.Name).ToList();
             if (document == null)
             {
                 return HttpNotFound();
             }
-            return View(document);
+            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentTypeId, documentTypes));
         }
 
         // GET: Documents/Create
@@ -128,15 +130,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             DB.Documents.Remove(document);
             await DB.SaveChangesAsync();
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                DB.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

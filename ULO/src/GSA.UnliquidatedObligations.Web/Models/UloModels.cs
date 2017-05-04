@@ -98,6 +98,20 @@ namespace GSA.UnliquidatedObligations.Web.Models
         }
     }
 
+    public class DocumentsViewModel
+    {
+        public List<Document> Documents { get; set; }
+
+        public DocumentsViewModel()
+        {
+            
+        }
+
+        public DocumentsViewModel(List<Document> documents)
+        {
+            Documents = documents;
+        }
+    }
 
     public class WorkflowViewModel
     {
@@ -106,6 +120,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public UloWfQuestionsViewModel QuestionsViewModel { get; set; }
         public AdvanceViewModel AdvanceViewModel { get; set; }
         public WorkflowDescriptionViewModel WorkflowDescriptionViewModel { get; set; }
+        public DocumentsViewModel DocumentsViewModel { get; set; }
         public bool RequestForReassignmentsActive { get; set; }
         public WorkflowViewModel()
         {
@@ -120,6 +135,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
                                                          Workflow.RequestForReassignments.FirstOrDefault() != null &&
                                                          Workflow.RequestForReassignments.First().IsActive;
             AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, workflow.WorkflowId);
+
+            DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList());
         }
     }
 

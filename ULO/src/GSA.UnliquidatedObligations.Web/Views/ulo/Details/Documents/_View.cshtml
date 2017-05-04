@@ -1,0 +1,36 @@
+﻿@model GSA.UnliquidatedObligations.Web.Models.DocumentModalViewModel
+
+@{
+    var id = Model.DocumentId + "Modal";
+    var label = id + "Label";
+    var body = id + "Body";
+
+}
+
+<div class="modal fade" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="@label">Document</h5>
+            </div>
+            <div id="@body" class="modal-body">
+                <div class="row">
+                    @Html.LabelFor(model => model.DocumentTypeId, "Document Type", htmlAttributes: new { @class = "col-md-4" })
+                    @Html.DropDownListFor(model => model.DocumentTypeId, Model.DocumentTypes, "Select One..", htmlAttributes: new { @class = "col-md-8" })
+                </div>
+                @*<div class="row">
+                    @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "col-md-4" })
+                    @Html.DropDownListFor(model => model.JustificationId, Model.Justifications, "Select One...", htmlAttributes: new { @class = "col-md-8" })
+                </div>
+                <div class="row">
+                    @Html.LabelFor(model => model.Comments, "Comments:", htmlAttributes: new { @class = "col-md-4" })
+                    @Html.TextAreaFor(model => model.Comments, htmlAttributes: new { @class = "col-md-8" })
+                </div>*@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>

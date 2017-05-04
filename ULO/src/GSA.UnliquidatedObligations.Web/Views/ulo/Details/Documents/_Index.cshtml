@@ -1,4 +1,4 @@
-﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.Document
+﻿@model GSA.UnliquidatedObligations.Web.Models.DocumentsViewModel
 <div class="row documents">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -10,44 +10,37 @@
                     <table class="table table-responsive">
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model)
+                                Uploaded By
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.DocumentType.Name)
+                                Name
                             </th>
                             <th></th>
                         </tr>
-                        <tr>
-                            <td>
-                                user4
-                            </td>
-                            <td>
-                                Contract Award
-                            </td>
-                            <td>
-                                @Html.ActionLink("Edit", "Edit", new { id = 1 }) |
-                                @Html.ActionLink("Details", "Details", new { id = 1}) |
-                                @Html.ActionLink("Delete", "Delete", new { id = 1 })
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                user4
-                            </td>
-                            <td>
-                                Justification
-                            </td>
-                            <td>
-                                @Html.ActionLink("Edit", "Edit", new { id = 2}) |
-                                @Html.ActionLink("Details", "Details", new { id = 2 }) |
-                                @Html.ActionLink("Delete", "Delete", new { id = 2 })
-                            </td>
-                        </tr>
-
+                        @foreach (var document in Model.Documents)
+                        {
+                            var modalId = "#" + @document.DocumentId + "Modal";
+                            <tr>
+                                <td>
+                                    @document.AspNetUser.UserName
+                                </td>
+                                <td>
+                                    @document.DocumentType.Name
+                                </td>
+                                <td>
+                                    <a data-target="" data-toggle="modal" data-target="@modalId" href="@modalId">View</a> |
+                                    @Html.ActionLink("Delete", "Delete", "Documents", new { documentId = document.DocumentId }, null)
+                                </td>
+                            </tr>
+                        }
                     </table>
                 </div>
             </div>
         </div>
     </div>
-   
+   @foreach (var document in Model.Documents)
+   {
+       Html.RenderAction("View", "Documents", new { documentId = document.DocumentId });
+   }
 </div>
+

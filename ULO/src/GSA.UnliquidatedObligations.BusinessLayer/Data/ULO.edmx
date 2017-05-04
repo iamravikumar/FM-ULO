@@ -66,16 +66,16 @@
           <Property Name="FilePath" Type="varchar" MaxLength="300" />
           <Property Name="DocumentId" Type="int" />
         </EntityType>
-        <EntityType Name="Document">
+        <EntityType Name="Documents">
           <Key>
             <PropertyRef Name="DocumentId" />
           </Key>
           <Property Name="DocumentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="DocumentTypeId" Type="int" Nullable="false" />
-          <Property Name="UploadedByUserId" Type="int" Nullable="false" />
           <Property Name="WorkflowId" Type="int" Nullable="false" />
+          <Property Name="UploadedByUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
-        <EntityType Name="DocumentType">
+        <EntityType Name="DocumentTypes">
           <Key>
             <PropertyRef Name="DocumentTypeId" />
           </Key>
@@ -249,6 +249,18 @@
           <Property Name="ZoneId" Type="int" Nullable="false" />
           <Property Name="ZoneName" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
+        <Association Name="FK__Document__Upload__7720AD13">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Documents">
+              <PropertyRef Name="UploadedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Notes__ParentNot__214BF109">
           <End Role="Notes" Type="Self.Notes" Multiplicity="0..1" />
           <End Role="Notes1" Type="Self.Notes" Multiplicity="*" />
@@ -418,10 +430,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Attachments_ToDocument">
-          <End Role="Document" Type="Self.Document" Multiplicity="0..1" />
+          <End Role="Documents" Type="Self.Documents" Multiplicity="0..1" />
           <End Role="Attachments" Type="Self.Attachments" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Document">
+            <Principal Role="Documents">
               <PropertyRef Name="DocumentId" />
             </Principal>
             <Dependent Role="Attachments">
@@ -486,25 +498,25 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Document_ToDocumentType">
-          <End Role="DocumentType" Type="Self.DocumentType" Multiplicity="1" />
-          <End Role="Document" Type="Self.Document" Multiplicity="*" />
+          <End Role="DocumentTypes" Type="Self.DocumentTypes" Multiplicity="1" />
+          <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="DocumentType">
+            <Principal Role="DocumentTypes">
               <PropertyRef Name="DocumentTypeId" />
             </Principal>
-            <Dependent Role="Document">
+            <Dependent Role="Documents">
               <PropertyRef Name="DocumentTypeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Document_ToWorkflow">
           <End Role="Workflows" Type="Self.Workflows" Multiplicity="1" />
-          <End Role="Document" Type="Self.Document" Multiplicity="*" />
+          <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Workflows">
               <PropertyRef Name="WorkflowId" />
             </Principal>
-            <Dependent Role="Document">
+            <Dependent Role="Documents">
               <PropertyRef Name="WorkflowId" />
             </Dependent>
           </ReferentialConstraint>
@@ -570,8 +582,8 @@
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Attachments" EntityType="Self.Attachments" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Document" EntityType="Self.Document" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="DocumentType" EntityType="Self.DocumentType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Documents" EntityType="Self.Documents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DocumentTypes" EntityType="Self.DocumentTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EmailTemplates" EntityType="Self.EmailTemplates" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Notes" EntityType="Self.Notes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestForReassignment" EntityType="Self.RequestForReassignment" Schema="dbo" store:Type="Tables" />
@@ -583,6 +595,10 @@
           <EntitySet Name="Workflows" EntityType="Self.Workflows" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Regions" EntityType="Self.Regions" Schema="gsa" store:Type="Tables" />
           <EntitySet Name="Zones" EntityType="Self.Zones" Schema="gsa" store:Type="Tables" />
+          <AssociationSet Name="FK__Document__Upload__7720AD13" Association="Self.FK__Document__Upload__7720AD13">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Documents" EntitySet="Documents" />
+          </AssociationSet>
           <AssociationSet Name="FK__Notes__ParentNot__214BF109" Association="Self.FK__Notes__ParentNot__214BF109">
             <End Role="Notes" EntitySet="Notes" />
             <End Role="Notes1" EntitySet="Notes" />
@@ -640,7 +656,7 @@
             <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
           <AssociationSet Name="FK_Attachments_ToDocument" Association="Self.FK_Attachments_ToDocument">
-            <End Role="Document" EntitySet="Document" />
+            <End Role="Documents" EntitySet="Documents" />
             <End Role="Attachments" EntitySet="Attachments" />
           </AssociationSet>
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
@@ -660,12 +676,12 @@
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
           <AssociationSet Name="FK_Document_ToDocumentType" Association="Self.FK_Document_ToDocumentType">
-            <End Role="DocumentType" EntitySet="DocumentType" />
-            <End Role="Document" EntitySet="Document" />
+            <End Role="DocumentTypes" EntitySet="DocumentTypes" />
+            <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
           <AssociationSet Name="FK_Document_ToWorkflow" Association="Self.FK_Document_ToWorkflow">
             <End Role="Workflows" EntitySet="Workflows" />
-            <End Role="Document" EntitySet="Document" />
+            <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
           <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" Association="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -737,6 +753,7 @@
           <Property Name="UserType" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
+          <NavigationProperty Name="Documents" Relationship="Self.FK__Document__Upload__7720AD13" FromRole="AspNetUsers" ToRole="Documents" />
           <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UserId__22401542" FromRole="AspNetUsers" ToRole="Notes" />
           <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Sugge__69C6B1F5" FromRole="AspNetUsers" ToRole="RequestForReassignment" />
           <NavigationProperty Name="UserUsers" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="AspNetUsers" ToRole="UserUsers" />
@@ -754,7 +771,7 @@
           <Property Name="FileName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="FilePath" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Name="DocumentId" Type="Int32" />
-          <NavigationProperty Name="Document" Relationship="Self.FK_Attachments_ToDocument" FromRole="Attachments" ToRole="Document" />
+          <NavigationProperty Name="Document" Relationship="Self.FK_Attachments_ToDocument" FromRole="Attachments" ToRole="Documents" />
         </EntityType>
         <EntityType Name="Document">
           <Key>
@@ -762,11 +779,12 @@
           </Key>
           <Property Name="DocumentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="DocumentTypeId" Type="Int32" Nullable="false" />
-          <Property Name="UploadedByUserId" Type="Int32" Nullable="false" />
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Attachments" Relationship="Self.FK_Attachments_ToDocument" FromRole="Document" ToRole="Attachments" />
-          <NavigationProperty Name="DocumentType" Relationship="Self.FK_Document_ToDocumentType" FromRole="Document" ToRole="DocumentType" />
-          <NavigationProperty Name="Workflow" Relationship="Self.FK_Document_ToWorkflow" FromRole="Document" ToRole="Workflows" />
+          <Property Name="UploadedByUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Document__Upload__7720AD13" FromRole="Documents" ToRole="AspNetUsers" />
+          <NavigationProperty Name="Attachments" Relationship="Self.FK_Attachments_ToDocument" FromRole="Documents" ToRole="Attachments" />
+          <NavigationProperty Name="DocumentType" Relationship="Self.FK_Document_ToDocumentType" FromRole="Documents" ToRole="DocumentTypes" />
+          <NavigationProperty Name="Workflow" Relationship="Self.FK_Document_ToWorkflow" FromRole="Documents" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="DocumentType">
           <Key>
@@ -774,7 +792,7 @@
           </Key>
           <Property Name="DocumentTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToDocumentType" FromRole="DocumentType" ToRole="Document" />
+          <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToDocumentType" FromRole="DocumentTypes" ToRole="Documents" />
         </EntityType>
         <EntityType Name="EmailTemplate">
           <Key>
@@ -947,7 +965,7 @@
           <Property Name="CurrentActivityEnteredAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="TargetUloId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Workflows__Owner__40058253" FromRole="Workflows" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToWorkflow" FromRole="Workflows" ToRole="Document" />
+          <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToWorkflow" FromRole="Workflows" ToRole="Documents" />
           <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Workf__6BAEFA67" FromRole="Workflows" ToRole="RequestForReassignment" />
           <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="Workflows" ToRole="UnliqudatedObjectsWorkflowQuestions" />
           <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK_Workflows_ToUnliquidatedObligations" FromRole="Workflows" ToRole="UnliquidatedObligations" />
@@ -998,6 +1016,18 @@
             </Principal>
             <Dependent Role="AspNetUserLogins">
               <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Document__Upload__7720AD13">
+          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
+          <End Role="Documents" Type="Self.Document" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Documents">
+              <PropertyRef Name="UploadedByUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1086,10 +1116,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Attachments_ToDocument">
-          <End Role="Document" Type="Self.Document" Multiplicity="0..1" />
+          <End Role="Documents" Type="Self.Document" Multiplicity="0..1" />
           <End Role="Attachments" Type="Self.Attachment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Document">
+            <Principal Role="Documents">
               <PropertyRef Name="DocumentId" />
             </Principal>
             <Dependent Role="Attachments">
@@ -1098,25 +1128,25 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Document_ToDocumentType">
-          <End Role="DocumentType" Type="Self.DocumentType" Multiplicity="1" />
-          <End Role="Document" Type="Self.Document" Multiplicity="*" />
+          <End Role="DocumentTypes" Type="Self.DocumentType" Multiplicity="1" />
+          <End Role="Documents" Type="Self.Document" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="DocumentType">
+            <Principal Role="DocumentTypes">
               <PropertyRef Name="DocumentTypeId" />
             </Principal>
-            <Dependent Role="Document">
+            <Dependent Role="Documents">
               <PropertyRef Name="DocumentTypeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Document_ToWorkflow">
           <End Role="Workflows" Type="Self.Workflow" Multiplicity="1" />
-          <End Role="Document" Type="Self.Document" Multiplicity="*" />
+          <End Role="Documents" Type="Self.Document" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Workflows">
               <PropertyRef Name="WorkflowId" />
             </Principal>
-            <Dependent Role="Document">
+            <Dependent Role="Documents">
               <PropertyRef Name="WorkflowId" />
             </Dependent>
           </ReferentialConstraint>
@@ -1284,6 +1314,10 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
           </AssociationSet>
+          <AssociationSet Name="FK__Document__Upload__7720AD13" Association="Self.FK__Document__Upload__7720AD13">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Documents" EntitySet="Documents" />
+          </AssociationSet>
           <AssociationSet Name="FK__Notes__UserId__22401542" Association="Self.FK__Notes__UserId__22401542">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Notes" EntitySet="Notes" />
@@ -1313,16 +1347,16 @@
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
           </AssociationSet>
           <AssociationSet Name="FK_Attachments_ToDocument" Association="Self.FK_Attachments_ToDocument">
-            <End Role="Document" EntitySet="Documents" />
+            <End Role="Documents" EntitySet="Documents" />
             <End Role="Attachments" EntitySet="Attachments" />
           </AssociationSet>
           <AssociationSet Name="FK_Document_ToDocumentType" Association="Self.FK_Document_ToDocumentType">
-            <End Role="DocumentType" EntitySet="DocumentTypes" />
-            <End Role="Document" EntitySet="Documents" />
+            <End Role="DocumentTypes" EntitySet="DocumentTypes" />
+            <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
           <AssociationSet Name="FK_Document_ToWorkflow" Association="Self.FK_Document_ToWorkflow">
             <End Role="Workflows" EntitySet="Workflows" />
-            <End Role="Document" EntitySet="Documents" />
+            <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
           <AssociationSet Name="FK__Notes__ParentNot__214BF109" Association="Self.FK__Notes__ParentNot__214BF109">
             <End Role="Notes" EntitySet="Notes" />
@@ -1443,17 +1477,17 @@
           </EntitySetMapping>
           <EntitySetMapping Name="Documents">
             <EntityTypeMapping TypeName="Model.Document">
-              <MappingFragment StoreEntitySet="Document">
+              <MappingFragment StoreEntitySet="Documents">
                 <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
                 <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
-                <ScalarProperty Name="UploadedByUserId" ColumnName="UploadedByUserId" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="UploadedByUserId" ColumnName="UploadedByUserId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DocumentTypes">
             <EntityTypeMapping TypeName="Model.DocumentType">
-              <MappingFragment StoreEntitySet="DocumentType">
+              <MappingFragment StoreEntitySet="DocumentTypes">
                 <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
               </MappingFragment>

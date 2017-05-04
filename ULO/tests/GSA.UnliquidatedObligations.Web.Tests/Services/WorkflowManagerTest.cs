@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Autofac.Extras.Moq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
@@ -19,22 +18,13 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Services
         [TestInitialize]
         public void Initialize()
         {
-            using (var mock = AutoMock.GetLoose())
-            {
-                var DatabaseWorkflowDescriptionFinderMock = new DatabaseWorkflowDescriptionFinderMock();
-                var BackgroundTasksMock = new BackgroundTasksMock();
-
-                mock.Provide<IWorkflowDescriptionFinder>(DatabaseWorkflowDescriptionFinderMock);
-                mock.Provide<IBackgroundTasks>(BackgroundTasksMock);
-
-                WorkflowManager = mock.Create<WorkflowManager>();
-                
-            }
+            WorkflowManager = new WorkflowManagerMock().SetupWorkflowManagerMock();
+           
         }
         [TestMethod]
         public void It_exists()
         {
-            Assert.IsInstanceOfType(WorkflowManager, typeof(WorkflowManager));
+            Assert.IsInstanceOfType(WorkflowManager, typeof(IWorkflowManager));
         }
 
         [Ignore]
@@ -46,7 +36,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Services
             wf.WorkflowKey = "4a41abad-bac3-47fb-a8cf-5d667439d7c3";
             wf.OwnerUserId = "f2860baf-a555-4834-baf3-62b929d1b6b1";
             var questions = new Mock<UnliqudatedObjectsWorkflowQuestion>().Object;
-            var actionReslut = await WorkflowManager.AdvanceAsync(wf, questions);
+            var actionResult = await WorkflowManager.AdvanceAsync(wf, questions);
         }
     }
 }
