@@ -14,3 +14,48 @@
 {
     padding: 0 8px;
 }
+
+.row.documents .row {
+    margin-left: inherit;
+    margin-right: inherit;
+}
+
+select.document-type-choices {
+    padding-left: 0;
+}
+
+.row.documents table.attachments {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.row.documents table.attachments tr {
+    border-top: 1px solid #dddddd; 
+}
+
+.row.documents table.attachments tr th 
+{
+    padding: 8px;
+}
+
+.row.documents table.attachments tr td {
+    border-top: 1px solid #dddddd;
+    padding: 8px;
+}
+
+.row.documents table.attachments tr td a.attachments-delete {
+    cursor: pointer;
+}
+
+.row.documents table.attachments tr:last-child {
+    border-bottom: 1px solid #dddddd; 
+}
+
+.row.documents table.attachments td.file-name {
+    width: 70%;
+}
+
+.row.documents table.attachments td.actions {
+    width: 30%;
+    text-align: right;
+}

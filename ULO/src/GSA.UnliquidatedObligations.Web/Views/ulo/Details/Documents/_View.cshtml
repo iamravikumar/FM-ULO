@@ -1,4 +1,6 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.DocumentModalViewModel
+﻿@using System.Net.Mail
+@using GSA.UnliquidatedObligations.Web.Models
+@model GSA.UnliquidatedObligations.Web.Models.DocumentModalViewModel
 
 @{
     var id = Model.DocumentId + "Modal";
@@ -7,7 +9,7 @@
 
 }
 
-<div class="modal fade" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
+<div class="modal fade document-modal" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -15,8 +17,11 @@
             </div>
             <div id="@body" class="modal-body">
                 <div class="row">
-                    @Html.LabelFor(model => model.DocumentTypeId, "Document Type", htmlAttributes: new { @class = "col-md-4" })
-                    @Html.DropDownListFor(model => model.DocumentTypeId, Model.DocumentTypes, "Select One..", htmlAttributes: new { @class = "col-md-8" })
+                    @Html.LabelFor(model => model.DocumentTypeId, "Document Type:", htmlAttributes: new { @class = "col-md-4" })
+                    @Html.DropDownListFor(model => model.DocumentTypeId, Model.DocumentTypes, "Select One..", htmlAttributes: new { @class = "col-md-8 document-type-choices" })
+                </div>
+                <div class="row">
+                    @Html.Partial("~/Views/Ulo/Details/Documents/Attachments/_Index.cshtml", Model.AttachmentsViewModel)
                 </div>
                 @*<div class="row">
                     @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "col-md-4" })

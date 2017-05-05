@@ -1,4 +1,5 @@
 ﻿@using GSA.UnliquidatedObligations.BusinessLayer.Data
+@using GSA.UnliquidatedObligations.Web.Models
 @model GSA.UnliquidatedObligations.Web.Models.UloViewModel
 
 @{
@@ -23,6 +24,8 @@
     @Html.Partial("Details/Workflow/_Index", Model.WorkflowViewModel)
 }
 
+@Html.Partial("Details/Documents/Attachments/_Upload", new UploadViewModel())
+
 @{
 
     if (Model.WorkflowViewModel.Workflow.RequestForReassignments.Count == 0)
@@ -31,9 +34,17 @@
     }
     else
     {
-        Html.RenderAction("Details", "RequestForReassignments", new {id = Model.WorkflowViewModel.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID});
+        Html.RenderAction("Details", "RequestForReassignments", new { id = Model.WorkflowViewModel.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID });
     }
 }
+
 <div class="clearfix">
     @Html.ActionLink("Back to List", "Index")
 </div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryform")
+
+}

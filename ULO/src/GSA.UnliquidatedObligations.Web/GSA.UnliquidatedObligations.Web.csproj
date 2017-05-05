@@ -292,6 +292,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AttachmentsController.cs" />
     <Compile Include="Controllers\DocumentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -342,6 +343,7 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.form.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -350,6 +352,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\ULO\advance.js" />
+    <Content Include="Scripts\ULO\attachments.js" />
     <Content Include="Scripts\ULO\polyfills.js" />
     <Content Include="Scripts\ULO\recordsListing.js" />
     <Content Include="Scripts\_references.js" />
@@ -414,9 +417,10 @@
     <Content Include="Views\Ulo\Details\Workflow\_AssignedTo.cshtml" />
     <Content Include="Views\Ulo\Details\Documents\_View.cshtml" />
     <Content Include="Views\Ulo\Details\Documents\Attachments\_Index.cshtml" />
+    <Content Include="Views\Ulo\Details\Documents\Attachments\_Upload.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="App_Data\DocStorage\" />
     <Folder Include="Views\Attachments\" />
   </ItemGroup>
   <ItemGroup>

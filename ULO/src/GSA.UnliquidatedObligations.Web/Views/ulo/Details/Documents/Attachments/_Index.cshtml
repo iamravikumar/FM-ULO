@@ -1,24 +1,38 @@
 ﻿@model GSA.UnliquidatedObligations.Web.Models.AttachmentsViewModel
-    
-<table class="table table-responsive">
-    <tr>
-        <th>
-            File
-        </th>
-        <th>
-        <th></th>
-    </tr>
-    @foreach (var attachment in Model.Attachments)
-    {
-        <tr>
-            <td>
-                @attachment.FileName
-            </td>
-            <td>
-                <a data-target="" data-toggle="modal" data-target="@modalId" href="@modalId">View</a> |
-                @Html.ActionLink("Delete", "Delete", "Documents", new { documentId = document.DocumentId }, null)
-            </td>
-        </tr>
-    }
-</table>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">Attachments</h4>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <table class="table table-responsive table-striped attachments">
+                <tr>
+                    <th>
+                        File
+                    </th>
+                    <th></th>
+                </tr>
+                @foreach (var attachment in Model.Attachments)
+                {
+                    var id = "attachment" + attachment.AttachmentsId;
+                    <tr id="@id">
+                        <td class="file-name">
+                            @attachment.FileName
+                        </td>
+                        <td class="actions">
+                            <a>View</a> |
+                            <a class="attachments-delete" data-target="@attachment.AttachmentsId">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+            @Html.Hidden("documentId" + Model.DocumentId + "Hidden", Model.DocumentId, htmlAttributes: new { @class = "document-id-hidden"})
+           
+            <button type="button" class="btn btn-primary attachments-add-btn">Add Attachment</button>
+                @*<div class="progress progress-striped">
+                        <div class="progress-bar progress-bar-success">0%</div>
+                    </div>*@
 
+            </div>
+        </div>
+    </div>

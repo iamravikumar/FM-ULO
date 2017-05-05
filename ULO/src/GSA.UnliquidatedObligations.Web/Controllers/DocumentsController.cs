@@ -41,7 +41,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return HttpNotFound();
             }
-            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentTypeId, documentTypes));
+            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentTypeId, documentTypes, document.Attachments.ToList()));
         }
 
         // GET: Documents/Create
