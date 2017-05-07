@@ -25,7 +25,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         public override void Initialize()
         {
             base.Initialize();
-            Controller = new DocumentsController(DbContext);
+            //Controller = new DocumentsController(DbContext, U);
 
         }
 

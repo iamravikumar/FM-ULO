@@ -15,47 +15,47 @@
     padding: 0 8px;
 }
 
-.row.documents .row {
+.document-modal .row {
     margin-left: inherit;
     margin-right: inherit;
 }
 
-select.document-type-choices {
+.document-modal select.document-type-choices {
     padding-left: 0;
 }
 
-.row.documents table.attachments {
+.document-modal table.attachments {
     padding-left: 15px;
     padding-right: 15px;
 }
 
-.row.documents table.attachments tr {
+.document-modal table.attachments tr {
     border-top: 1px solid #dddddd; 
 }
 
-.row.documents table.attachments tr th 
+.document-modal table.attachments tr th 
 {
     padding: 8px;
 }
 
-.row.documents table.attachments tr td {
+.document-modal table.attachments tr td {
     border-top: 1px solid #dddddd;
     padding: 8px;
 }
 
-.row.documents table.attachments tr td a.attachments-delete {
+.document-modal table.attachments tr td.actions a {
     cursor: pointer;
 }
 
-.row.documents table.attachments tr:last-child {
+.document-modal table.attachments tr:last-child {
     border-bottom: 1px solid #dddddd; 
 }
 
-.row.documents table.attachments td.file-name {
+.document-modal table.attachments td.file-name {
     width: 70%;
 }
 
-.row.documents table.attachments td.actions {
+.document-modal table.attachments td.actions {
     width: 30%;
     text-align: right;
 }

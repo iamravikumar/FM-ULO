@@ -309,6 +309,11 @@
     <Compile Include="Models\RequestForReassignmentViewModel.cs" />
     <Compile Include="Models\UloModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Services\BackgroundTasks.cs" />
     <Compile Include="Services\EmailServer.cs" />
     <Compile Include="Services\IBackgroundTasks.cs" />
@@ -320,6 +325,24 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\DocStorage\12932458-36fd-4353-b20d-5ce94e2ea8d4.txt" />
+    <Content Include="Content\DocStorage\14b8beb6-e990-4010-bbaf-bdf463319dad.txt" />
+    <Content Include="Content\DocStorage\15f0554f-191d-4b54-9605-78522ddde796.txt" />
+    <Content Include="Content\DocStorage\1c71e4a1-ec6e-4280-8881-3329c7577e6d.txt" />
+    <Content Include="Content\DocStorage\23043a65-d603-4880-8064-6d5a9128508f.txt" />
+    <Content Include="Content\DocStorage\23289078-75d1-46bd-ac4d-204920b5bd87.txt" />
+    <Content Include="Content\DocStorage\48b5154d-dc70-4e8a-a397-076ef9813363.txt" />
+    <Content Include="Content\DocStorage\6d7b59de-8883-4df8-af8f-d63a0ab2b3a2.txt" />
+    <Content Include="Content\DocStorage\7d96a35c-bb11-40e4-ad3e-ae89e72e3889.txt" />
+    <Content Include="Content\DocStorage\8a5f1852-9b23-41dd-9953-91e618df18b1.txt" />
+    <Content Include="Content\DocStorage\8b7da418-4d7a-4c46-bcfb-c833fa3633fd.txt" />
+    <Content Include="Content\DocStorage\a121e036-da4a-449a-a3cd-c94dbb59dbab.txt" />
+    <Content Include="Content\DocStorage\a3cde726-e8a9-491e-83fe-4fcc0a628cf9.txt" />
+    <Content Include="Content\DocStorage\ac751913-b4b0-41a7-9242-3f178c0481de.txt" />
+    <Content Include="Content\DocStorage\b6613ac0-6529-4a15-98ff-da84b9bfb0af.txt" />
+    <Content Include="Content\DocStorage\d3a4a1e9-fa33-46b0-9e30-5314b959a1e7.txt" />
+    <Content Include="Content\DocStorage\e7e81517-57dd-416d-8e6e-2126c4710ebc.txt" />
+    <Content Include="Content\DocStorage\ff3cb315-1fcc-428c-ac2d-bc125462a419.txt" />
     <Content Include="Content\ULO\Workflows\documents.css" />
     <Content Include="Content\ULO\Details\notes.css" />
     <Content Include="Content\ULO\Details\ulo.css" />
@@ -339,6 +362,10 @@
     <None Include="Properties\PublishProfiles\GSA - Web.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - Web Deploy.pubxml" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -353,6 +380,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\ULO\advance.js" />
     <Content Include="Scripts\ULO\attachments.js" />
+    <Content Include="Scripts\ULO\documents.js" />
     <Content Include="Scripts\ULO\polyfills.js" />
     <Content Include="Scripts\ULO\recordsListing.js" />
     <Content Include="Scripts\_references.js" />
@@ -421,6 +449,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\DocStorage\" />
+    <Folder Include="Content\DocStorage\Temp\" />
     <Folder Include="Views\Attachments\" />
   </ItemGroup>
   <ItemGroup>

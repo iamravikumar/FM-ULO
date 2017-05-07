@@ -36,6 +36,13 @@
     {
         Html.RenderAction("Details", "RequestForReassignments", new { id = Model.WorkflowViewModel.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID });
     }
+
+    foreach (var document in Model.WorkflowViewModel.DocumentsViewModel.Documents)
+    {
+        Html.RenderAction("View", "Documents", new { documentId = document.DocumentId });
+    }
+
+    Html.RenderAction("View", "Documents", new { documentId = 0});
 }
 
 <div class="clearfix">

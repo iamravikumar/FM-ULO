@@ -7,7 +7,7 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-responsive">
+                    <table class="table table-responsive documents-list">
                         <tr>
                             <th>
                                 Uploaded By
@@ -34,13 +34,10 @@
                             </tr>
                         }
                     </table>
+                    <button type="button" class="btn btn-primary document-add-btn" data-toggle="modal" data-target="#0Modal">Add Document</button>
                 </div>
             </div>
         </div>
     </div>
-   @foreach (var document in Model.Documents)
-   {
-       Html.RenderAction("View", "Documents", new { documentId = document.DocumentId });
-   }
 </div>
 

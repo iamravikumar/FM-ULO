@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using GSA.UnliquidatedObligations.Web.Models;
+using GSA.UnliquidatedObligations.Web.Properties;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -24,6 +27,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<JsonResult> FileUpload(int documentId)
         {
             var attachmentsAdded = new List<Attachment>();
+            List<Attachment> attachmentsTempData;
+            if (TempData["attachments"] != null)
+            {
+                attachmentsTempData = (List<Attachment>) TempData["attachments"];
+            }
+            else
+            {
+                attachmentsTempData = new List<Attachment>();
+            }
             try
             {
                 foreach (string file in Request.Files)
@@ -36,7 +48,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         // and optionally write the file to disk
                         var fileName = Path.GetFileName(fileContent.FileName);
                         var storageName = Guid.NewGuid() + Path.GetExtension(fileName);
-                        var path = Path.Combine(Server.MapPath("~/App_Data/DocStorage"), storageName);
+                        var path = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage/Temp"), storageName);
+                        var webPath = Settings.Default.SiteUrl + "/Content/DocStorage/Temp/" + storageName;
                         using (var fileStream = System.IO.File.Create(path))
                         {
                             stream.CopyTo(fileStream);
@@ -44,14 +57,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         var attachment = new Attachment
                         {
                             FileName = fileName,
-                            FilePath = path,
+                            FilePath = webPath,
                             DocumentId = documentId
                         };
                         attachmentsAdded.Add(attachment);
-                        DB.Attachments.Add(attachment);
+                        
+                        //DB.Attachments.Add(attachment);
                     }
                 }
-                await DB.SaveChangesAsync();
+                attachmentsTempData.AddRange(attachmentsAdded);
+                TempData["attachments"] = attachmentsTempData;
+                //await DB.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -60,6 +76,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
 
             return Json(attachmentsAdded);
+        }
+
+        [HttpGet]
+        public async Task<FileResult> Download(int attachmentId)
+        {
+            try
+            {
+                var attachment = await DB.Attachments.FindAsync(attachmentId);
+                return File(attachment.FilePath, System.Net.Mime.MediaTypeNames.Application.Octet);
+            }
+            catch (Exception)
+            {
+                throw new HttpException(404, "Error Downloading file");
+            }
         }
 
 
