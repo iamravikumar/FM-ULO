@@ -58,7 +58,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         {
                             FileName = fileName,
                             FilePath = webPath,
-                            DocumentId = documentId
+                            DocumentId = documentId,
                         };
                         attachmentsAdded.Add(attachment);
                         

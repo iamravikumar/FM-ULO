@@ -14,17 +14,25 @@
     });
 });
 
-function addRow(attachment) {
-    $(".attachments > tbody:last-child").append("<tr class='temp-attachment' id='attachment" + attachment.AttachmentsId + "'><td class='file-name'>" + attachment.FileName + "</td><td class='actions'><a class='attachments-view' href='" + attachment.FilePath +"' download>View</a> | <a class='attachments-delete' data-target='" + attachment.AttachmentsId + "'>Delete</a></td></tr>");
+function addRow(attachment, documentId) {
+    //var dId = $(this).siblings(".document-id-hidden")[0].value;
+    $("#" + documentId + "Modal .attachments-heading-row").addClass("show").removeClass("hide");
+    $("#" + documentId + "Modal .attachments > tbody:last-child").append("<tr class='temp-attachment' id='attachment" + attachment.AttachmentsId + "'><td class='file-name'>" + attachment.FileName + "</td><td class='actions'><a class='attachments-view' href='" + attachment.FilePath + "' download>View</a> | <a class='attachments-delete' data-target='" + attachment.AttachmentsId + "'>Delete</a></td></tr>");
     addDeleteClick();
 }
 
-
+function deleteAttachmentRow(attachId) {
+    $("#attachment" + attachId).remove();
+}
 
 function addDeleteClick() {
     $(".attachments-delete").click(function () {
         var attachId = $(this).data("target");
-        return deleteAttachment(attachId);
+        if (attachId === 0) {
+            showAttachmentErrMsg("You must save before you can delete attachments");
+        } else {
+            return deleteAttachment(attachId);
+        }
     });
 }
 
@@ -33,7 +41,7 @@ function deleteAttachment(attachId) {
         type: "POST",
         url: "/Attachments/Delete?attachmentId=" + attachId,
         success: function (result) {
-            deleteRow(result.AttachmentsId);
+            deleteAttachmentRow(result.AttachmentsId);
         },
         error: function (xhr, status, p3, p4) {
             var err = "Error " + " " + status + " " + p3 + " " + p4;
@@ -43,12 +51,6 @@ function deleteAttachment(attachId) {
         }
     });
     return false;
-}
-
-
-
-function updateTempAddresses() {
-    
 }
 
 
@@ -71,7 +73,7 @@ function uploadAttachment(documentId, files) {
                 data: data,
                 success: function (result) {
                     result.forEach(function (e) {
-                        addRow(e);
+                        addRow(e,  $("[name='DocumentIdForUpload']").val());
                     });
                 },
                 error: function (xhr, status, p3, p4) {
@@ -103,3 +105,11 @@ function downloadAttachment(attachmentId) {
     });
 }
 
+function showAttachmentErrMsg(msg) {
+    $(".document-error-msg").html(msg);
+    $(".document-error-msg").show();
+}
+
+function hideErrorMsg() {
+    $(".document-error-msg").hide();
+}

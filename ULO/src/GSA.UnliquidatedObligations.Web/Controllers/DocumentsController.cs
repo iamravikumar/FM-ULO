@@ -111,7 +111,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-               
+
                 var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
                 Document document;
                 if (documentId != 0)
@@ -136,7 +136,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 if (TempData["attachments"] != null)
                 {
-                    List<Attachment> attachmentsTempData = (List<Attachment>) TempData["attachments"];
+                    List<Attachment> attachmentsTempData = (List<Attachment>)TempData["attachments"];
                     foreach (var tempAttachment in attachmentsTempData)
                     {
                         var newWebPath = tempAttachment.FilePath.Replace("Temp/", "");
@@ -153,11 +153,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         DB.Attachments.Add(attachment);
                     }
                     await DB.SaveChangesAsync();
-                    TempData["attachments"] = null;              
+                    TempData["attachments"] = null;
                 }
-                document.AspNetUser = new AspNetUser {UserName = currentUser.UserName};
-                document.DocumentType = await DB.DocumentTypes.FindAsync(documentTypeId);
-                return Json(document);
+
+                var documentType = await DB.DocumentTypes.FindAsync(documentTypeId);
+                return Json(new
+                {
+                    Id = document.DocumentId,
+                    UserName = currentUser.UserName,
+                    DocumentTypeName = documentType.Name,
+                });
             }
             return null;
         }
@@ -168,7 +173,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 var path = HostingEnvironment.MapPath("~/Content/DocStorage/Temp");
                 var di = new DirectoryInfo(path);
-        
+
                 foreach (FileInfo file in di.GetFiles())
                 {
                     file.Delete();
@@ -195,13 +200,29 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Documents/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        //[ValidateAntiForgeryToken]
+        public async Task<JsonResult> DeleteConfirmed(int documentId)
         {
-            Document document = await DB.Documents.FindAsync(id);
+            var document = await DB.Documents.FindAsync(documentId);
+            var attachments = await DB.Attachments.Where(a => a.DocumentId == documentId).ToListAsync();
+
+            //TODO: look into hangfire for this
+            if (attachments != null)
+            {
+                foreach (var attachment in attachments)
+                {
+                    var fileName = Path.GetFileName(attachment.FilePath);
+                    var physicalPath = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage"), fileName);
+
+                    System.IO.File.Delete(physicalPath);
+                }
+            }
             DB.Documents.Remove(document);
             await DB.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return Json(new
+            {
+                Id = documentId
+            });
         }
     }
 }

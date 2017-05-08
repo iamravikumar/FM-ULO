@@ -1,0 +1,16 @@
+﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Document>
+
+<div id="document-edit-modals">
+    @foreach (var document in Model)
+    {
+        <div id="modal-container-@document.DocumentId">
+            @{
+                Html.RenderAction("View", "Documents", new { documentId = document.DocumentId });
+            }
+            
+        </div>
+    }
+</div>
+@{
+    Html.RenderAction("View", "Documents", new { documentId = 0 });
+}

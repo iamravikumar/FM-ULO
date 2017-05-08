@@ -15,6 +15,11 @@
     padding: 0 8px;
 }
 
+.row.documents table.documents-list tr th,
+.row.documents table.documents-list tr td {
+    padding: 8px;
+}
+
 .document-modal .row {
     margin-left: inherit;
     margin-right: inherit;
@@ -24,19 +29,37 @@
     padding-left: 0;
 }
 
+.document-modal .modal-footer .document-error-msg {
+    float: left;
+    color: #ff0000;
+    display: none;
+}
+
 .document-modal table.attachments {
     padding-left: 15px;
     padding-right: 15px;
 }
 
 .document-modal table.attachments tr {
-    border-top: 1px solid #dddddd; 
+    border-top: 1px solid #dddddd;
 }
+
+.row.documents table.documents-list tr.documents-heading-row.show,
+.document-modal table.attachments tr.attachments-heading-row.show {
+     display: table-row !important;
+} 
+
+.row.documents table.documents-list tr.documents-heading-row.hide,
+.document-modal table.attachments tr.attachments-heading-row.hide {
+     display: none !important;
+} 
+
 
 .document-modal table.attachments tr th 
 {
     padding: 8px;
 }
+
 
 .document-modal table.attachments tr td {
     border-top: 1px solid #dddddd;

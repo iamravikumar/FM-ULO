@@ -7,12 +7,14 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections;
+
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Document
+    public partial class Document : IEnumerable
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Document()
@@ -30,5 +32,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual ICollection<Attachment> Attachments { get; set; }
         public virtual DocumentType DocumentType { get; set; }
         public virtual Workflow Workflow { get; set; }
+        public IEnumerator GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

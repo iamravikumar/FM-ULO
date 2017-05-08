@@ -5,13 +5,16 @@
     </div>
     <div class="panel-body">
         <div class="row">
+
             <table class="table table-responsive table-striped attachments">
-                <tr>
-                    <th>
-                        File
-                    </th>
-                    <th></th>
-                </tr>
+
+                    <tr class="attachments-heading-row @(@Model.Attachments.Count > 0 ? "show" : "hide")">
+                        <th>
+                            File
+                        </th>
+                        <th></th>
+                    </tr>
+                
                 @foreach (var attachment in Model.Attachments)
                 {
                     var id = "attachment" + attachment.AttachmentsId;
@@ -24,15 +27,17 @@
                             <a class="attachments-delete" data-target="@attachment.AttachmentsId">Delete</a>
                         </td>
                     </tr>
+
                 }
             </table>
-            @Html.Hidden("documentId" + Model.DocumentId + "Hidden", Model.DocumentId, htmlAttributes: new { @class = "document-id-hidden"})
-           
-            <button type="button" class="btn btn-primary attachments-add-btn">Add Attachment</button>
-                @*<div class="progress progress-striped">
-                        <div class="progress-bar progress-bar-success">0%</div>
-                    </div>*@
 
-            </div>
+            @Html.Hidden("documentId" + Model.DocumentId + "Hidden", Model.DocumentId, htmlAttributes: new { @class = "document-id-hidden" })
+
+            <button type="button" class="btn btn-primary attachments-add-btn">Add Attachment</button>
+            @*<div class="progress progress-striped">
+                    <div class="progress-bar progress-bar-success">0%</div>
+                </div>*@
+
         </div>
     </div>
+</div>

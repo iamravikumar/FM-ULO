@@ -37,13 +37,9 @@
         Html.RenderAction("Details", "RequestForReassignments", new { id = Model.WorkflowViewModel.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID });
     }
 
-    foreach (var document in Model.WorkflowViewModel.DocumentsViewModel.Documents)
-    {
-        Html.RenderAction("View", "Documents", new { documentId = document.DocumentId });
-    }
-
-    Html.RenderAction("View", "Documents", new { documentId = 0});
 }
+
+@Html.Partial("Details/Documents/_ViewModals", Model.WorkflowViewModel.DocumentsViewModel.Documents)
 
 <div class="clearfix">
     @Html.ActionLink("Back to List", "Index")
@@ -53,5 +49,20 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jqueryform")
+
+    <script>
+        function loadDocumentModal(documentId, doneFn) {
+            var url = '@Url.Action("View", "Documents")';
+            url += '/?documentId=' + documentId;
+            var $div = $("#" + "modal-container-" + documentId);
+            if ($div.length === 0) {
+                $div = $(document.createElement('div')).attr('id', "modal-container-" + documentId);
+                $("#document-edit-modals").append($div);
+            }
+            $($div).load(url, function() {
+                doneFn();
+            });
+        }
+    </script>
 
 }
