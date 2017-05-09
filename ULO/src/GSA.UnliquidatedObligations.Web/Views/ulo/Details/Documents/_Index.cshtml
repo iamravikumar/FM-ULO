@@ -10,10 +10,16 @@
                     <table class="table table-responsive table-striped documents-list">
                         <tr class="documents-heading-row @(@Model.Documents.Count > 0 ? "show" : "hide")">
                             <th>
+                                Name
+                            </th>
+                            <th>
+                                Document Type
+                            </th>
+                            <th>
                                 Uploaded By
                             </th>
                             <th>
-                                Name
+                                Uploaded Date
                             </th>
                             <th></th>
                         </tr>
@@ -24,14 +30,20 @@
                             var deleteModalId = modalId + "Delete";
                             <tr id="@rowId">
                                 <td>
-                                    @document.AspNetUser.UserName
+                                    @document.DocumentName
                                 </td>
                                 <td>
                                     @document.DocumentType.Name
                                 </td>
                                 <td>
+                                    @document.AspNetUser.UserName
+                                </td>
+                                <td>
+                                    @document.UploadDate.ToString("MM/dd/yyyy")
+                                </td>
+                                <td>
                                     <a data-toggle="modal" data-target="@modalId" href="@modalId">View</a> |
-                                    <a data-toggle="modal" data-target="@deleteModalId" href="@deleteModalId">Delete</a> 
+                                    <a data-toggle="modal" data-target="@deleteModalId" href="@deleteModalId">Delete</a>
                                 </td>
                             </tr>
                         }

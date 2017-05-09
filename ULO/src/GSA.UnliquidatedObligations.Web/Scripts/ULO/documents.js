@@ -5,20 +5,30 @@
     });
 
     addDocumentDeleteClick();
+    addDocumentSaveClick();
+});
 
+function addDocumentSaveClick() {
     $(".save-document").on("click", function () {
+        hideErrorMsg();
+        $(this).prop('disabled', true);
         var documentId = $(this).data("target");
         var workflowId = getParameterByName("workflowId");
         var documentTypeId = $("#" + documentId + "ModalDocumentType").val();
+        var documentName = $("#" + documentId + "ModalDocumentName").val();
         if (documentTypeId === "") {
             showErrMsg("You must select a Document Type before saving", $(this));
+            $(this).prop('disabled', false);
+        } else if (documentName === "") {
+            showErrMsg("You must enter a Document Name before saving", $(this));
+            $(this).prop('disabled', false);
         } else {
-            hideErrorMsg();
-            saveDocument(documentId, workflowId, documentTypeId);
+            saveDocument(documentId, documentName, workflowId, documentTypeId);
+            $(this).prop('disabled', false);
         }
-        
+
     });
-});
+}
 
 function addDocumentDeleteClick() {
     $(".delete-document").on("click", function () {
@@ -38,6 +48,7 @@ function clearDocument() {
         success: function (result) {
             deleteTempAttachments();
             $("#0ModalDocumentType").val("");
+            $("#0ModalModalDocumentName").val("");
         },
         error: function (xhr, status, p3, p4) {
             var err = "Error " + " " + status + " " + p3 + " " + p4;
@@ -53,26 +64,34 @@ function closeModal() {
     $(".document-modal").modal("hide");
 }
 
-function addDocumentRow(document) {
+function updateDocumentList(documentId, document) {
     $("#" + document.Id + "Modal .document-heading-row").addClass("show").removeClass("hide");
-    $(".documents-list > tbody:last-child").append("<tr id='document" + document.Id + "'><td>" + document.UserName + "</td><td>" + document.DocumentTypeName + "</td><td><a data-target='' data-toggle='modal' href='#" + document.Id + "Modal'>View</a> | <a data-toggle='modal' data-target='#" + document.Id + "ModalDelete' href='#" + document.Id + "ModalDelete'>Delete</a></td></tr>");
+    var tableRowString = "<tr id='document" + document.Id + "'><td>" + document.Name + "</td><td>" + document.DocumentTypeName + "</td><td>" + document.UserName + "</td><td>" + document.UploadedDate + "</td><td><a data-target='' data-toggle='modal' href='#" + document.Id + "Modal'>View</a> | <a data-toggle='modal' data-target='#" + document.Id + "ModalDelete' href='#" + document.Id + "ModalDelete'>Delete</a></td></tr>"
+    if (documentId === 0) {
+        $(".documents-list > tbody:last-child").append(tableRowString);
+    } else {
+        $("#document" + document.Id).replaceWith(tableRowString);
+    }
 }
 
 function deleteDocumentRow(documentId) {
     $("#document" + documentId).remove();
 }
 
-function saveDocument(documentId, workflowId, documentTypeId) {
+function saveDocument(documentId, documentName, workflowId, documentTypeId) {
+    var url = "/Documents/Save?";
+    url += "documentId=" + documentId;
+    url += "&documentName=" + documentName;
+    url += "&workflowId=" + workflowId;
+    url += "&documentTypeId=" + documentTypeId;
     $.ajax({
         type: "POST",
-        url: "/Documents/Save?documentId=" + documentId + "&workflowId=" + workflowId + "&documentTypeId=" + documentTypeId,
+        url: url,
         success: function (result) {
             closeModal();
-            if (documentId == 0) {
-                console.log(result);
-                addDocumentRow(result);         
-            }
-            loadDocumentModal(result.Id, addDocumentDeleteClick);
+            updateDocumentList(documentId, result);
+            loadDocumentModal(result.Id, addDocumentDeleteClick, addDocumentSaveClick);
+
         },
         error: function (xhr, status, p3, p4) {
             var err = "Error " + " " + status + " " + p3 + " " + p4;

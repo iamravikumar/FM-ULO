@@ -23,10 +23,21 @@
 .document-modal .row {
     margin-left: inherit;
     margin-right: inherit;
+    padding: 2px 0;
 }
 
 .document-modal select.document-type-choices {
     padding-left: 0;
+    height: 26px;
+}
+
+.document-modal input[type="text"].document-name {
+    padding-left: 3px;
+    height: 26px;
+}
+
+.document-modal label {
+    text-align: right;
 }
 
 .document-modal .modal-footer .document-error-msg {

@@ -51,7 +51,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var comments = requestForReassignment != null
                 ? requestForReassignment.UnliqudatedObjectsWorkflowQuestion.Comments : "";
 
-            return PartialView("~/Views/RequestForReassignments/_Index.cshtml", new RequestForReassignmentViewModel(suggestedReviewerId, justificationId, requestForReassignmentId, comments, users, justEnums));
+            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", new RequestForReassignmentViewModel(suggestedReviewerId, justificationId, requestForReassignmentId, comments, users, justEnums));
         }
 
         [HttpPost]
@@ -81,7 +81,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 return await Reassign(wf, question, requestForReassignment, requestForReassignmentViewModel.SuggestedReviewerId);
             }
 
-            return PartialView("~/Views/RequestForReassignments/_Index.cshtml", requestForReassignmentViewModel);
+            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);
         }
 
         [HttpPost]
@@ -108,7 +108,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 return await RequestReassign(wf, question, requestForReassignmentViewModel.SuggestedReviewerId);
             }
 
-            return PartialView("~/Views/RequestForReassignments/_Index.cshtml", requestForReassignmentViewModel);
+            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);
         }
 
 

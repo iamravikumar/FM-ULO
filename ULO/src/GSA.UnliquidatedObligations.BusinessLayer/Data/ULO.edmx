@@ -74,6 +74,8 @@
           <Property Name="DocumentTypeId" Type="int" Nullable="false" />
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="UploadedByUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="DocumentName" Type="varchar" MaxLength="200" />
+          <Property Name="UploadDate" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="DocumentTypes">
           <Key>
@@ -781,6 +783,8 @@
           <Property Name="DocumentTypeId" Type="Int32" Nullable="false" />
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <Property Name="UploadedByUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DocumentName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="UploadDate" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Document__Upload__7720AD13" FromRole="Documents" ToRole="AspNetUsers" />
           <NavigationProperty Name="Attachments" Relationship="Self.FK_Attachments_ToDocument" FromRole="Documents" ToRole="Attachments" />
           <NavigationProperty Name="DocumentType" Relationship="Self.FK_Document_ToDocumentType" FromRole="Documents" ToRole="DocumentTypes" />
@@ -1482,6 +1486,8 @@
                 <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
                 <ScalarProperty Name="UploadedByUserId" ColumnName="UploadedByUserId" />
+                <ScalarProperty Name="DocumentName" ColumnName="DocumentName" />
+                <ScalarProperty Name="UploadDate" ColumnName="UploadDate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

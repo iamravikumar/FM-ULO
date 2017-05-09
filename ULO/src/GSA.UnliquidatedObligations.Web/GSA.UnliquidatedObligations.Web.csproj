@@ -423,12 +423,13 @@
     <Content Include="Views\Documents\Details.cshtml" />
     <Content Include="Views\Documents\Edit.cshtml" />
     <Content Include="Views\Documents\Index.cshtml" />
-    <Content Include="Views\RequestForReassignments\_Index.cshtml" />
+    <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_Index.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\_AssignedTo.cshtml" />
     <Content Include="Views\Ulo\Details\Documents\_View.cshtml" />
     <Content Include="Views\Ulo\Details\Documents\Attachments\_Index.cshtml" />
     <Content Include="Views\Ulo\Details\Documents\Attachments\_Upload.cshtml" />
     <Content Include="Views\Ulo\Details\Documents\_ViewModals.cshtml" />
+    <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

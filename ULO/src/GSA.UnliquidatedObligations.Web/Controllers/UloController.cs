@@ -98,8 +98,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Advance(
             int workflowId,
             int uloId,
-            [Bind(Include = "DOShouldBe,UDOShouldBe")]
-            UloViewModel uloModel,
             [Bind(Include = "JustificationId,Answer,Comments")]
             AdvanceViewModel advanceModel)
         {
@@ -107,8 +105,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (wf == null) return HttpNotFound();
             if (ModelState.IsValid)
             {
-                wf.UnliquidatedObligation.DOShouldBe = uloModel.DOShouldBe;
-                wf.UnliquidatedObligation.UDOShouldBe = uloModel.UDOShouldBe;
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {

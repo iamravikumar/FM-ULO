@@ -1,0 +1,14 @@
+﻿@model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
+
+@{
+
+    if (Model.Workflow.RequestForReassignments.Count == 0)
+    {
+        Html.RenderAction("Details", "RequestForReassignments");
+    }
+    else
+    {
+        Html.RenderAction("Details", "RequestForReassignments", new { id = Model.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID });
+    }
+
+}

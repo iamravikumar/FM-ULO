@@ -26,18 +26,8 @@
 
 @Html.Partial("Details/Documents/Attachments/_Upload", new UploadViewModel())
 
-@{
+@Html.Partial("Details/Workflow/RequestForReassignments/_Index", Model.WorkflowViewModel)
 
-    if (Model.WorkflowViewModel.Workflow.RequestForReassignments.Count == 0)
-    {
-        Html.RenderAction("Details", "RequestForReassignments");
-    }
-    else
-    {
-        Html.RenderAction("Details", "RequestForReassignments", new { id = Model.WorkflowViewModel.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID });
-    }
-
-}
 
 @Html.Partial("Details/Documents/_ViewModals", Model.WorkflowViewModel.DocumentsViewModel.Documents)
 
@@ -51,16 +41,20 @@
     @Scripts.Render("~/bundles/jqueryform")
 
     <script>
-        function loadDocumentModal(documentId, doneFn) {
+        function loadDocumentModal(documentId) {
             var url = '@Url.Action("View", "Documents")';
             url += '/?documentId=' + documentId;
             var $div = $("#" + "modal-container-" + documentId);
+            var doneFns = Array.prototype.slice.call(arguments);
+            doneFns.shift();
             if ($div.length === 0) {
                 $div = $(document.createElement('div')).attr('id', "modal-container-" + documentId);
                 $("#document-edit-modals").append($div);
             }
             $($div).load(url, function() {
-                doneFn();
+                doneFns.forEach(function(fn) {
+                    fn();
+                });
             });
         }
     </script>

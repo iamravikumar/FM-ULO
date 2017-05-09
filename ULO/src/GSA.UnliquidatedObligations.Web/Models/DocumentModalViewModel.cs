@@ -10,6 +10,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
     public class DocumentModalViewModel
     {
         public int DocumentId { get; set; }
+        public string DocumentName { get; set; }
         public int? DocumentTypeId { get; set; }
         public List<SelectListItem> DocumentTypes { get; set; }
 
@@ -20,9 +21,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         }
 
-        public DocumentModalViewModel(int documentId, int documentTypeId, List<DocumentType> documentTypes, List<Attachment> attachments )
+        public DocumentModalViewModel(int documentId, string documentName, int documentTypeId, List<DocumentType> documentTypes, List<Attachment> attachments )
         {
             DocumentId = documentId;
+            DocumentName = documentName;
             DocumentTypeId = documentTypeId;
             DocumentTypes = ConvertToSelectList(documentTypes);
             AttachmentsViewModel = new AttachmentsViewModel(attachments, documentId);

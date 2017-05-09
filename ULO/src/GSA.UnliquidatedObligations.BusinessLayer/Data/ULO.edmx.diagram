@@ -4,21 +4,21 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="bcbac89e84a64d028c4df71d665596be" Name="Diagram1" ZoomLevel="29">
+      <Diagram DiagramId="60a1e8aa90af4e03ad8ca26f4e44df6a" Name="Diagram1" ZoomLevel="29">
         <EntityTypeShape EntityType="Model.AspNetRole" Width="1.5" PointX="0.75" PointY="20.625" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="19.125" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="21.875" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.AspNetUser" Width="1.5" PointX="3" PointY="18.625" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.Attachment" Width="1.5" PointX="10.5" PointY="24.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.Document" Width="1.5" PointX="8.25" PointY="20.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Document" Width="1.5" PointX="8.25" PointY="20" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.DocumentType" Width="1.5" PointX="6" PointY="29.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.EmailTemplate" Width="1.5" PointX="0.75" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.EmailTemplate" Width="1.5" PointX="0.75" PointY="6.5" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.Note" Width="1.5" PointX="8.25" PointY="16" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.RequestForReassignment" Width="1.5" PointX="8.25" PointY="24.125" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.UnliqudatedObjectsWorkflowQuestion" Width="1.5" PointX="13.5" PointY="20" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.UnliquidatedObligation" Width="1.5" PointX="6" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.UserUser" Width="1.5" PointX="5.25" PointY="15.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.WorkflowDefinition" Width="1.5" PointX="2.75" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.WorkflowDefinition" Width="1.5" PointX="2.75" PointY="6.5" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.WorkflowHistory" Width="1.5" PointX="5.25" PointY="24.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.Workflow" Width="1.5" PointX="11.25" PointY="19.5" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.Region" Width="1.5" PointX="3" PointY="15.25" IsExpanded="true" />

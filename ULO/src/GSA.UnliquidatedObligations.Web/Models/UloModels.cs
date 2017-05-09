@@ -163,20 +163,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
         //TODO: set properties explicitly for UnliquidatedObligation
         public UnliquidatedObligation CurretUnliquidatedObligation { get; set; }
         public WorkflowViewModel WorkflowViewModel { get; set; }
-
-
-        [DisplayFormat(DataFormatString = "{0:n2}", ApplyFormatInEditMode = true)]
-        public decimal? UDOShouldBe { get; set; }
-        [DisplayFormat(DataFormatString = "{0:n2}", ApplyFormatInEditMode = true)]
-        public decimal? DOShouldBe {get; set; }
-
         public UloViewModel()
         { }
-
-
         public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDecription) { 
-            UDOShouldBe = ulo.UDOShouldBe;
-            DOShouldBe = ulo.DOShouldBe;
             CurretUnliquidatedObligation = ulo;
             WorkflowViewModel = new WorkflowViewModel(workflow, workflowDecription);
             

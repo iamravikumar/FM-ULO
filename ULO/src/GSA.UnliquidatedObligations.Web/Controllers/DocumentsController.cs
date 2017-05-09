@@ -55,51 +55,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return HttpNotFound();
             }
-            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentTypeId, documentTypes, document.Attachments.ToList()));
-        }
-
-        // GET: Documents/Create
-        public ActionResult Create()
-        {
-            ViewBag.DocumentType = new SelectList(DB.DocumentTypes, "Id", "Name");
-            ViewBag.WorkflowId = new SelectList(DB.Workflows, "WorkflowId", "WorkflowKey");
-            return View();
-        }
-
-        // POST: Documents/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,DocumentType,UploadedBy,WorkflowId")] Document document)
-        {
-            if (ModelState.IsValid)
-            {
-                DB.Documents.Add(document);
-                await DB.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.DocumentType = new SelectList(DB.DocumentTypes, "Id", "Name", document.DocumentType);
-            ViewBag.WorkflowId = new SelectList(DB.Workflows, "WorkflowId", "WorkflowKey", document.WorkflowId);
-            return View(document);
-        }
-
-        // GET: Documents/Edit/5
-        public async Task<ActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Document document = await DB.Documents.FindAsync(id);
-            if (document == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.DocumentType = new SelectList(DB.DocumentTypes, "Id", "Name", document.DocumentType);
-            ViewBag.WorkflowId = new SelectList(DB.Workflows, "WorkflowId", "WorkflowKey", document.WorkflowId);
-            return View(document);
+            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentName, document.DocumentTypeId, documentTypes, document.Attachments.ToList()));
         }
 
         // POST: Documents/Edit/5
@@ -107,7 +63,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<JsonResult> Save(int? documentId, int workflowId, int documentTypeId)
+        public async Task<JsonResult> Save(int? documentId, string documentName, int workflowId, int documentTypeId)
         {
             if (ModelState.IsValid)
             {
@@ -120,8 +76,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     if (document != null)
                     {
                         document.DocumentTypeId = documentTypeId;
+                        document.DocumentName = documentName;
                     }
-                    await DB.SaveChangesAsync();
                 }
                 else
                 {
@@ -130,10 +86,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         UploadedByUserId = currentUser.Id,
                         DocumentTypeId = documentTypeId,
                         WorkflowId = workflowId,
+                        DocumentName = documentName
                     };
                     DB.Documents.Add(document);
-                    await DB.SaveChangesAsync();
+
                 }
+                document.UploadDate = DateTime.Now;
+                await DB.SaveChangesAsync();
                 if (TempData["attachments"] != null)
                 {
                     List<Attachment> attachmentsTempData = (List<Attachment>)TempData["attachments"];
@@ -162,6 +121,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     Id = document.DocumentId,
                     UserName = currentUser.UserName,
                     DocumentTypeName = documentType.Name,
+                    Name = document.DocumentName,
+                    UploadedDate = document.UploadDate.ToString("MM/dd/yyyy")
                 });
             }
             return null;

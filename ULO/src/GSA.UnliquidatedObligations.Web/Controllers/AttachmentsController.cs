@@ -71,8 +71,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             catch (Exception ex)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                return Json("Upload failed");
+                //Response.StatusCode = (int)HttpStatusCode;
+                return Json(new
+                {
+                    Exception = ex.Message
+                }); 
             }
 
             return Json(attachmentsAdded);
