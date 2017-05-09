@@ -65,7 +65,7 @@ function closeModal() {
 }
 
 function updateDocumentList(documentId, document) {
-    $("#" + document.Id + "Modal .document-heading-row").addClass("show").removeClass("hide");
+    $(".documents-heading-row").addClass("show").removeClass("hide");
     var tableRowString = "<tr id='document" + document.Id + "'><td>" + document.Name + "</td><td>" + document.DocumentTypeName + "</td><td>" + document.UserName + "</td><td>" + document.UploadedDate + "</td><td><a data-target='' data-toggle='modal' href='#" + document.Id + "Modal'>View</a> | <a data-toggle='modal' data-target='#" + document.Id + "ModalDelete' href='#" + document.Id + "ModalDelete'>Delete</a></td></tr>"
     if (documentId === 0) {
         $(".documents-list > tbody:last-child").append(tableRowString);
