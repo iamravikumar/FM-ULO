@@ -7,19 +7,21 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-    public class RequestForReassignmentsController : Controller
+    public class RequestForReassignmentsController : BaseController
     {
         protected readonly IWorkflowManager Manager;
         protected readonly ULODBEntities DB;
         private readonly ApplicationUserManager UserManager;
 
-        public RequestForReassignmentsController(IWorkflowManager manager, ULODBEntities db, ApplicationUserManager userManager)
+        public RequestForReassignmentsController(IWorkflowManager manager, ULODBEntities db, ApplicationUserManager userManager, IComponentContext componentContext)
+            : base(componentContext)
         {
             Manager = manager;
             DB = db;

@@ -1,0 +1,109 @@
+﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+    @{
+        var todaysDate = DateTime.Today;
+    }
+<h2>Workflows</h2>
+
+<table class="table active-workflows">
+    <tr>
+        <th></th>
+        <th>
+            PDN
+        </th>
+        <th>
+            BA Code
+        </th>
+        <th>
+            Review Status
+        </th>
+        <th>
+            Org Code
+        </th>
+        <th>
+            Amount
+        </th>
+        <th>
+            Valid
+        </th>
+        <th>
+            Due Date
+        </th>
+        <th>
+            Days left
+        </th>
+        <th>
+            Zone
+        </th>
+        <th>
+            Region
+        </th>
+        <th>
+            Assignee
+        </th>
+        <th>
+            Review Name
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="active-workflows-record" data-id="@item.WorkflowId">
+            <td>
+                @Html.ActionLink("View Ulo", "RegionWorkflowDetails", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasusDocumentNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
+            </td>
+          
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.TotalLine)
+            </td>
+            <td>
+                @{
+                    var isValid = item.UnliquidatedObligation.Valid ? "Yes" : "No";
+                    @Html.Encode(isValid)
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ExpectedDateForCompletionResolution)
+            </td>
+            <td>
+                @{
+                    var dueDate = Convert.ToDateTime(item.UnliquidatedObligation.ExpectedDateForCompletionResolution);
+                    var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
+                    @Html.Encode(daysLeft)
+                    
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AspNetUser.UserName)
+            </td>
+            <td>Review Name will go here</td>
+            <td></td>
+            @*<td>
+                    @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |
+                    @Html.ActionLink("Details", "Details", new { id=item.WorkflowId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.WorkflowId })
+                </td>*@
+        </tr>
+                    }
+
+</table>
+
+

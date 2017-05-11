@@ -103,6 +103,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                         QuestionLabel = "Is this Valid?",
+                        DefaultJustificationEnums = null,
                         Choices = new List<QuestionChoice>()
                         {
                             new QuestionChoice()
@@ -135,19 +136,18 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                        QuestionLabel = "Do you Approve?",
+                       DefaultJustificationEnums = allJustificationEnumsList,
                        Choices = new List<QuestionChoice>()
                         {
                             new QuestionChoice()
                             {
                                 Text = "Yes",
-                                Value = "Approve",
-                                JustificationsEnums = allJustificationEnumsList
+                                Value = "Approve"
                             },
                             new QuestionChoice()
                             {
                                 Text = "No",
-                                Value = "Disapprove",
-                                JustificationsEnums = allJustificationEnumsList
+                                Value = "Disapprove"
                             }
                         }
                     }
@@ -167,19 +167,18 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                        QuestionLabel = "Do you Concur",
+                       DefaultJustificationEnums = allJustificationEnumsList,
                        Choices = new List<QuestionChoice>()
                         {
                             new QuestionChoice()
                             {
                                 Text = "Yes",
-                                Value = "Concur",
-                                JustificationsEnums = allJustificationEnumsList
+                                Value = "Concur"
                             },
                             new QuestionChoice()
                             {
                                 Text = "No",
-                                Value = "Not Concur",
-                                JustificationsEnums = allJustificationEnumsList
+                                Value = "Not Concur"
                             }
                         }
                     }
@@ -199,19 +198,18 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                        QuestionLabel = "Do you Concur",
+                       DefaultJustificationEnums = allJustificationEnumsList,
                        Choices = new List<QuestionChoice>()
                         {
                             new QuestionChoice()
                             {
                                 Text = "Yes",
-                                Value = "Concur",
-                                JustificationsEnums = allJustificationEnumsList
+                                Value = "Concur"
                             },
                             new QuestionChoice()
                             {
                                 Text = "No",
-                                Value = "Not Concur",
-                                JustificationsEnums = allJustificationEnumsList
+                                Value = "Not Concur"
                             }
                         }
                     }
@@ -231,19 +229,18 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                        QuestionLabel = "Do you Concur",
+                       DefaultJustificationEnums = allJustificationEnumsList,
                        Choices = new List<QuestionChoice>()
                         {
                             new QuestionChoice()
                             {
                                 Text = "Yes",
-                                Value = "Concur",
-                                JustificationsEnums = allJustificationEnumsList
+                                Value = "Concur"
                             },
                             new QuestionChoice()
                             {
                                 Text = "No",
-                                Value = "Not Concur",
-                                JustificationsEnums = allJustificationEnumsList
+                                Value = "Not Concur"
                             }
                         }
                     }

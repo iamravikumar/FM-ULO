@@ -1,0 +1,17 @@
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            @Html.ActionLink("ULO", "Index", "Ulo", new { area = "" }, new { @class = "navbar-brand" })
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                @if (User.HasPermission(ApplicationPermissionNames.CanViewOtherWorkflows))
+                {
+                    <li>@Html.ActionLink("View Region Workflows", "RegionWorkflows", "Ulo")</li>
+                }
+            </ul>
+            @Html.Partial("_LoginPartial")
+        </div>
+    </div>
+</div>

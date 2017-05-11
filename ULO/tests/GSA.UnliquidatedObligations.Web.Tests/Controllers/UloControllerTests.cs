@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Security;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Controllers;
@@ -103,6 +107,16 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             var returnedModel = (UloViewModel)view.Model;
             Assert.AreEqual(returnedModel.WorkflowViewModel.DocumentsViewModel.Documents.Count, 10);
         }
+
+        [TestMethod]
+        public async Task RegionWorkflows_returns_correct_workflows()
+        {
+            var view = await UloController.RegionWorkflows() as ViewResult;
+            var returnedModel = (IEnumerable<Workflow>) view.Model;
+            Assert.AreEqual(returnedModel.Count(), 5);
+
+        }
+
 
     }
 }

@@ -23,7 +23,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
         public int RegionId { get; set; }
         public int ZoneId { get; set; }
-        public string RegionNumber { get; set; }
         public string RegionName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

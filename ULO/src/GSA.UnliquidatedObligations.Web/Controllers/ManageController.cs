@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Autofac;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using GSA.UnliquidatedObligations.Web.Models;
@@ -8,17 +9,14 @@ using GSA.UnliquidatedObligations.Web.Models;
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
-    public class ManageController : Controller
+    public class ManageController : BaseController
     {
         private readonly ApplicationSignInManager SignInManager;
         private ApplicationUserManager UserManager;
         private readonly IAuthenticationManager AuthenticationManager;
 
-        public ManageController()
-        {
-        }
-
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager)
+        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, IComponentContext componentContext)
+            : base(componentContext) 
         {
             UserManager = userManager;
             SignInManager = signInManager;

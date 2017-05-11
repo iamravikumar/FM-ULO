@@ -121,6 +121,9 @@
     <Compile Include="Data\RequestForReassignment.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\sysdiagram.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\ULO.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

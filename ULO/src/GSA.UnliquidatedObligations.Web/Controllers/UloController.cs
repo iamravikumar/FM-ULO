@@ -1,28 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Services;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
 using Microsoft.AspNet.Identity;
 
+
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
     //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    public class UloController : Controller
+    public class UloController : BaseController
     {
         protected readonly IWorkflowManager Manager;
         protected readonly ULODBEntities DB;
         private readonly ApplicationUserManager UserManager;
+       
 
-        public UloController(IWorkflowManager manager, ULODBEntities db, ApplicationUserManager userManager)
+        public UloController(IWorkflowManager manager, ULODBEntities db, ApplicationUserManager userManager, IComponentContext componentContext) 
+            : base(componentContext)
         {
             Manager = manager;
             DB = db;
@@ -42,8 +48,23 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(workflows);
         }
 
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
+        [Route("Ulo/RegionWorkflows")]
+        public async Task<ActionResult> RegionWorkflows()
+        {
+            //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
+            var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
+            var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
 
-        [Route("Ulo/{id}")]
+            //DB.Database.Log = s => Trace.WriteLine(s);
+            var workflows =
+                await DB.Workflows.Where(wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId)
+                        && wf.OwnerUserId != user.Id).Include(wf => wf.UnliquidatedObligation).ToListAsync();
+
+            return View("_MasterRecordsListing", workflows);
+        }
+
+
         public async Task<ActionResult> Details(int uloId, int workflowId)
         {
             //TODO: check if current user is able to view
@@ -53,18 +74,30 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc));
         }
 
+        public async Task<ActionResult> RegionWorkflowDetails(int uloId, int workflowId)
+        {
+            //TODO: check if current user is able to view
+            var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
+            var workflow = await FindWorkflowAsync(workflowId, false);
+            var workflowDesc = await FindWorkflowDescAsync(workflow);
+            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc));
+        }
+
+
+
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
         {
             return await Manager.GetWorkflowDescription(wf);
         }
 
-        
+
         //TODO: Move to Manager?
-        private async Task<Workflow> FindWorkflowAsync(int workflowId)
+        private async Task<Workflow> FindWorkflowAsync(int workflowId, bool checkOwner = true)
         {
             var wf = await DB.Workflows.Include(q => q.AspNetUser).Include(q => q.UnliquidatedObligation).FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
             if (wf != null)
             {
+                if (checkOwner == false) return wf;
                 var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
                 var groupsUserBelongsTo = await GetUsersGroups(currentUser.Id);
                 if (currentUser != null)
@@ -133,5 +166,5 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
     }
 
-    
+
 }

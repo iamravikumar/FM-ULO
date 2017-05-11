@@ -28,7 +28,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
             Region9 |
             Region10 |
             Region11,
-        NoRegions = 0,
-        AnyRegion = 0,
+        NoRegions = 0
     }
 }

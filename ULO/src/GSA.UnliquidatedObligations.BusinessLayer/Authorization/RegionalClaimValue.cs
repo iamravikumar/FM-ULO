@@ -11,12 +11,35 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
         /// The Region to which this claim applies.  
         /// When null, this claim applies to every region.
         /// </summary>
-        [JsonProperty("regionNumber")]
-        public RegionNumbers Regions { get; set; }
+        //[JsonProperty("regionNumber")]
+        //public RegionNumbers Regions { get; set; }
+
+        [JsonProperty("regionIds")]
+        public HashSet<int> RegionIds { get; set; }
         
-        protected RegionalClaimValue(RegionNumbers region=RegionNumbers.AllRegions)
+        protected RegionalClaimValue(HashSet<int> RegionIds = null)
         {
-            Regions = region;
+            if (RegionIds != null)
+            {
+                RegionIds = RegionIds;
+            }
+            else
+            {
+                RegionIds = new HashSet<int>()
+                {
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11
+                };
+            }
         }
 
         public string ToJson()

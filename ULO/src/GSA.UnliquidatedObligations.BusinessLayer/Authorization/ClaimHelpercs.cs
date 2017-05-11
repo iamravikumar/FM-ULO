@@ -7,7 +7,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {
     public static class ClaimHelpercs
     {
-        public static RegionNumbers GetApplicationPerimissionRegions(string claimType, string claimValue, ApplicationPermissionNames applicationPermission)
+        public static HashSet<int> GetApplicationPerimissionRegions(string claimType, string claimValue, ApplicationPermissionNames applicationPermission)
         {
             if (claimType == ApplicationPermissionClaimValue.ClaimType)
             {
@@ -18,17 +18,20 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
                     {
                         if (ap.ApplicationPermissionName == applicationPermission)
                         {
-                            return ap.Regions;
+                            return ap.RegionIds;
                         }
                     }
                 }
-                catch (Exception)
-                { }
+                catch (Exception ex)
+                {
+                    
+                }
+
             }
-            return RegionNumbers.NoRegions;
+            return new HashSet<int>();
         }
 
-        public static RegionNumbers GetSubjectCategoryRegions(string claimType, string claimValue, SubjectCatagoryNames subjectCategory)
+        public static HashSet<int> GetSubjectCategoryRegions(string claimType, string claimValue, SubjectCatagoryNames subjectCategory)
         {
             if (claimType == SubjectCatagoryClaimValue.ClaimType)
             {
@@ -39,32 +42,32 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
                     {
                         if (ap.SubjectCatagoryName == subjectCategory)
                         {
-                            return ap.Regions;
+                            return ap.RegionIds;
                         }
                     }
                 }
                 catch (Exception)
                 { }
             }
-            return RegionNumbers.NoRegions;
+            return new HashSet<int>();
         }
 
-        private static RegionNumbers GetClaimSubjectRegions<TClaimSubject>(this IEnumerable<Claim> claims, TClaimSubject claimSubject, Func<string, string, TClaimSubject, RegionNumbers> f)
+        private static HashSet<int> GetClaimSubjectRegions<TClaimSubject>(this IEnumerable<Claim> claims, TClaimSubject claimSubject, Func<string, string, TClaimSubject, HashSet<int>> f)
         {
-            RegionNumbers regions = RegionNumbers.NoRegions;
+            HashSet<int> regionIds = new HashSet<int>();
             foreach (var c in claims)
             {
-                regions |= f(c.ValueType, c.Value, claimSubject);
+                regionIds.UnionWith(f(c.Type, c.Value, claimSubject));
             }
-            return regions;
+            return regionIds;
         }
 
-        public static RegionNumbers GetApplicationPerimissionRegions(this IEnumerable<Claim> claims, ApplicationPermissionNames permission)
+        public static HashSet<int> GetApplicationPerimissionRegions(this IEnumerable<Claim> claims, ApplicationPermissionNames permission)
         {
             return claims.GetClaimSubjectRegions(permission, GetApplicationPerimissionRegions);
         }
 
-        public static RegionNumbers GetSubjectCategoryRegions(this IEnumerable<Claim> claims, SubjectCatagoryNames subjectCategory)
+        public static HashSet<int> GetSubjectCategoryRegions(this IEnumerable<Claim> claims, SubjectCatagoryNames subjectCategory)
         {
             return claims.GetClaimSubjectRegions(subjectCategory, GetSubjectCategoryRegions);
         }
@@ -88,12 +91,12 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
         }
 
 
-        public static RegionNumbers GetApplicationPerimissionRegions(this AspNetUser user, ApplicationPermissionNames permission)
+        public static HashSet<int> GetApplicationPerimissionRegions(this AspNetUser user, ApplicationPermissionNames permission)
         {
             return user.GetClaims().GetApplicationPerimissionRegions(permission);
         }
 
-        public static RegionNumbers GetSubjectCategoryRegions(this AspNetUser user, SubjectCatagoryNames subjectCategory)
+        public static HashSet<int> GetSubjectCategoryRegions(this AspNetUser user, SubjectCatagoryNames subjectCategory)
         {
             return user.GetClaims().GetSubjectCategoryRegions(subjectCategory);
         }

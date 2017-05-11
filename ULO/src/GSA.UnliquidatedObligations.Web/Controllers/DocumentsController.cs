@@ -9,18 +9,20 @@ using System.Net;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Properties;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-    public class DocumentsController : Controller
+    public class DocumentsController : BaseController
     {
         private readonly ULODBEntities DB;
         private readonly ApplicationUserManager UserManager;
 
-        public DocumentsController(ULODBEntities db, ApplicationUserManager userManager)
+        public DocumentsController(ULODBEntities db, ApplicationUserManager userManager, IComponentContext componentContext)
+            : base(componentContext)
         {
             DB = db;
             UserManager = userManager;

@@ -48,8 +48,10 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
 
         public ULODBEntities SetUpEntityMocks()
         {
-            var uloList = UloData.GenerateData(10, ULOID, USERDATA).AsQueryable();
-            var workflowList = WorkflowData.GenerateData(10, WORKFLOWID, USERDATA, PERSONUSERID, WORKFLOWKEY, CURRENTWORKFLOWACTIVITYKEY).AsQueryable();
+            var genericUloList = UloData.GenerateData(10, ULOID, USERDATA);
+            var regionUloList = UloData.GenerateRegionData(10, 4);
+            var uloList = genericUloList.Concat(regionUloList).AsQueryable();
+            var workflowList = WorkflowData.GenerateData(10, WORKFLOWID, USERDATA, PERSONUSERID, WORKFLOWKEY, CURRENTWORKFLOWACTIVITYKEY, regionUloList).AsQueryable();
             var userUsersList = UserUsersData.GenerateData(1, PERSONUSERID, GROUPUSERID).AsQueryable();
             var requestForReassignmentList = RequestForReassignmentData.GenerateData(10, REQUESTFORREASSIGNMENTID, WORKFLOWID, PERSONUSERID).AsQueryable();
             var userList = USERDATA.AsQueryable();
@@ -57,6 +59,12 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
             var unliqudatedObjectsWorkflowQuestionsListQueryable = unliqudatedObjectsWorkflowQuestionsList.AsQueryable();
             var documentsList = DocumentData.GenerateData(10, PERSONUSERID, documentId: DOCUMENTID, documentTypeId: DOCUMENTTYPEID).AsQueryable();
             var documentTypesList = DocumentTypesData.GenerateData(5, "Contract", DOCUMENTTYPEID).AsQueryable();
+
+            var claimsListPerson = AspNetUserClaimsData.GenerateData(10, PERSONUSERID);
+            var claimsListGroup = AspNetUserClaimsData.GenerateData(5, GROUPUSERID);
+
+            var claimsList = claimsListPerson.Concat(claimsListGroup).AsQueryable();
+            
             //var notesList = NotesData.GenerateData(3, ULOID, userData).AsQueryable();
 
             var mockUloSet = new Mock<DbSet<UnliquidatedObligation>>();
@@ -152,6 +160,17 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
             mockDocumentTypeSet.As<IQueryable<DocumentType>>().Setup(m => m.ElementType).Returns(documentTypesList.ElementType);
             mockDocumentTypeSet.As<IQueryable<DocumentType>>().Setup(m => m.GetEnumerator()).Returns(documentTypesList.GetEnumerator());
 
+            var mockClaimsSet = new Mock<DbSet<AspNetUserClaim>>();
+            mockClaimsSet.As<IDbAsyncEnumerable<AspNetUserClaim>>()
+                .Setup(m => m.GetAsyncEnumerator())
+                .Returns(new TestDbAsyncEnumerator<AspNetUserClaim>(claimsList.GetEnumerator()));
+            mockClaimsSet.As<IQueryable<AspNetUserClaim>>()
+                .Setup(m => m.Provider)
+                .Returns(new TestDbAsyncQueryProvider<AspNetUserClaim>(claimsList.Provider));
+            mockClaimsSet.As<IQueryable<AspNetUserClaim>>().Setup(m => m.Expression).Returns(claimsList.Expression);
+            mockClaimsSet.As<IQueryable<AspNetUserClaim>>().Setup(m => m.ElementType).Returns(claimsList.ElementType);
+            mockClaimsSet.As<IQueryable<AspNetUserClaim>>().Setup(m => m.GetEnumerator()).Returns(claimsList.GetEnumerator());
+
             var mockULODBEntities = new Mock<ULODBEntities>();
             mockULODBEntities.Setup(c => c.UnliquidatedObligations).Returns(mockUloSet.Object);
             mockULODBEntities.Setup(c => c.Workflows).Returns(mockWorkflowSet.Object);
@@ -161,7 +180,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
             mockULODBEntities.Setup(c => c.UnliqudatedObjectsWorkflowQuestions).Returns(mockQuestionsSet.Object);
             mockULODBEntities.Setup(c => c.Documents).Returns(mockDocumentSet.Object);
             mockULODBEntities.Setup(c => c.DocumentTypes).Returns(mockDocumentTypeSet.Object);
-            //mockULODBEntities.Setup(c => c.Notes).Returns(mockNoteSet.Object);
+            mockULODBEntities.Setup(c => c.AspNetUserClaims).Returns(mockClaimsSet.Object);
             return mockULODBEntities.Object;
 
         }

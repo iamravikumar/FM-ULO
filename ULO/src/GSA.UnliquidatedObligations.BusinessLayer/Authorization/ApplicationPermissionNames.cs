@@ -14,5 +14,10 @@
         /// Can manage other users
         /// </summary>
         ManageUsers,
+
+        /// <summary>
+        /// Can view workflows assigned to others
+        /// </summary>
+        CanViewOtherWorkflows,
     }
 }

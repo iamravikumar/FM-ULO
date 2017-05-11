@@ -9,16 +9,18 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using Autofac;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Properties;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-    public class AttachmentsController : Controller
+    public class AttachmentsController : BaseController
     {
 
         private readonly ULODBEntities DB;
-        public AttachmentsController(ULODBEntities db)
+        public AttachmentsController(ULODBEntities db, IComponentContext componentContext)
+            : base(componentContext)
         {
             DB = db;
         }

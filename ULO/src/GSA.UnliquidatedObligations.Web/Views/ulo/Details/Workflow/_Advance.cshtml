@@ -18,7 +18,7 @@
                     </div>
                     <div class="col-md-9">
                         @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.JustificationId, Enumerable.Empty<SelectListItem>(), "Select....", htmlAttributes: new { id = "justifications" })
+                        @Html.DropDownListFor(model => model.JustificationId, new SelectList(Model.DefaultJustifications, "JustificationId", "JustificationText"), "Select....", htmlAttributes: new { id = "justifications" })
                         @Html.ValidationMessageFor(model => model.JustificationId, "", new { @class = "text-danger" })
                     </div>
 

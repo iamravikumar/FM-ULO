@@ -18,9 +18,9 @@ namespace GSA.UnliquidatedObligations.Web
         {
             try
             {
-                return httpContext.GetOwinContext().Authentication.User.Claims.GetApplicationPerimissionRegions(ApplicationPermission) != RegionNumbers.NoRegions;
+                return httpContext.GetOwinContext().Authentication.User.Claims.GetApplicationPerimissionRegions(ApplicationPermission).Count > 0;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }

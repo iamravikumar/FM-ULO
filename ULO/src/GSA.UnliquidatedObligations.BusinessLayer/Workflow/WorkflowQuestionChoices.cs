@@ -11,5 +11,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         public string QuestionLabel { get; set; }
         [JsonProperty("choices")]
         public List<QuestionChoice> Choices { get; set; }
+
+        public List<JustificationEnum> DefaultJustificationEnums { get; set; }
     }
 }

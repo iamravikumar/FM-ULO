@@ -48,7 +48,7 @@ function clearDocument() {
         success: function (result) {
             deleteTempAttachments();
             $("#0ModalDocumentType").val("");
-            $("#0ModalModalDocumentName").val("");
+            $("#0ModalDocumentName").val("");
         },
         error: function (xhr, status, p3, p4) {
             var err = "Error " + " " + status + " " + p3 + " " + p4;

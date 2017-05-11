@@ -47,6 +47,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public List<QuestionChoicesViewModel> QuestionChoices { get; set; }
 
+        public List<Justification> DefaultJustifications { get; set; }
+
         public string QuestionLabel { get; set; }
 
         public string Answer { get; set; }
@@ -67,9 +69,19 @@ namespace GSA.UnliquidatedObligations.Web.Models
             
             QuestionLabel = workflowQuestionChoices.QuestionLabel;
             QuestionChoices = new List<QuestionChoicesViewModel>();
+            
             foreach (var questionChoice in workflowQuestionChoices.Choices)
             {
                 QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
+            }
+
+            DefaultJustifications = new List<Justification>();
+            if (workflowQuestionChoices.DefaultJustificationEnums != null)
+            {
+                foreach (var justificationsEnum in workflowQuestionChoices.DefaultJustificationEnums)
+                {
+                    DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
+                }
             }
             WorkflowId = workflowId;
         }
