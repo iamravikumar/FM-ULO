@@ -426,7 +426,7 @@
     <Content Include="Views\Documents\Edit.cshtml" />
     <Content Include="Views\Documents\Index.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_Index.cshtml" />
-    <Content Include="Views\Ulo\Details\Workflow\_AssignedTo.cshtml" />
+    <Content Include="Views\Ulo\Details\Workflow\Assignment\_AssignedTo.cshtml" />
     <Content Include="Views\Ulo\Details\Documents\_View.cshtml" />
     <Content Include="Views\Ulo\Details\Documents\Attachments\_Index.cshtml" />
     <Content Include="Views\Ulo\Details\Documents\Attachments\_Upload.cshtml" />
@@ -434,6 +434,9 @@
     <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_Details.cshtml" />
     <Content Include="Views\Shared\_Navigation.cshtml" />
     <Content Include="Views\Ulo\_MasterRecordsListing.cshtml" />
+    <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_ReassignButton.cshtml" />
+    <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_ReassignButtonForMasterList.cshtml" />
+    <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_DetailsMasterList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

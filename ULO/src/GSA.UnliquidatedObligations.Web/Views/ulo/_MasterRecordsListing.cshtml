@@ -1,8 +1,9 @@
-﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+﻿@using GSA.UnliquidatedObligations.Web.Models
+    @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
     @{
         var todaysDate = DateTime.Today;
     }
-<h2>Workflows</h2>
+    <h2>Workflows</h2>
 
 <table class="table active-workflows">
     <tr>
@@ -43,6 +44,7 @@
         <th>
             Review Name
         </th>
+        <th></th>
 
     </tr>
 
@@ -58,7 +60,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
             </td>
-          
+
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
             </td>
@@ -82,7 +84,7 @@
                     var dueDate = Convert.ToDateTime(item.UnliquidatedObligation.ExpectedDateForCompletionResolution);
                     var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
                     @Html.Encode(daysLeft)
-                    
+
                 }
             </td>
             <td>
@@ -95,15 +97,30 @@
                 @Html.DisplayFor(modelItem => item.AspNetUser.UserName)
             </td>
             <td>Review Name will go here</td>
-            <td></td>
+            <td>@Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList", new WorkflowViewModel(item))</td>
+
             @*<td>
-                    @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |
-                    @Html.ActionLink("Details", "Details", new { id=item.WorkflowId }) |
-                    @Html.ActionLink("Delete", "Delete", new { id=item.WorkflowId })
-                </td>*@
+                        @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |
+                        @Html.ActionLink("Details", "Details", new { id=item.WorkflowId }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.WorkflowId })
+                    </td>*@
         </tr>
-                    }
+
+    }
 
 </table>
 
+
+@foreach (var item in Model)
+{
+    if (item.RequestForReassignments.Count == 0)
+    {
+        Html.RenderAction("Details", "RequestForReassignments", new { workflowId = item.WorkflowId, isAdmin = true });
+    }
+    else
+    {
+        Html.RenderAction("Details", "RequestForReassignments", new { id = item.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = item.WorkflowId, isAdmin = true });
+    }
+
+}
 

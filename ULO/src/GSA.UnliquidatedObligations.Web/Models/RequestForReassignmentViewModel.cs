@@ -10,6 +10,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
     public class RequestForReassignmentViewModel
     {
         public int? RequestForReassignmentId { get; set; } 
+        public int WorkflowId { get; set; }
         public string SuggestedReviewerId { get; set; }
 
         public List<SelectListItem> Users { get; set; }
@@ -23,7 +24,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         }
 
-        public RequestForReassignmentViewModel(string suggestedReviewerId, int? justificationId, int? requestForReassignmentId, string comments, List<AspNetUser> users, List<JustificationEnum> justificationEnums)
+        public RequestForReassignmentViewModel(string suggestedReviewerId, int? justificationId, int? requestForReassignmentId, string comments, int workflowId, List<AspNetUser> users, List<JustificationEnum> justificationEnums)
         {
             RequestForReassignmentId = requestForReassignmentId;
             SuggestedReviewerId = suggestedReviewerId;
@@ -31,6 +32,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Users = ConvertToSelectList(users);
             Comments = comments;
             Justifications = ConvertToSelectList(justificationEnums);
+            WorkflowId = workflowId;
 
         }
 

@@ -12,7 +12,7 @@
 <h2>Details</h2>
 @Html.Partial("Details/Workflow/_WorkflowDescription", Model.WorkflowViewModel.WorkflowDescriptionViewModel)
 <br />
-@Html.Partial("Details/Workflow/_AssignedTo", Model.WorkflowViewModel)
+@Html.Partial("Details/Workflow/Assignment/_AssignedTo", Model.WorkflowViewModel)
 
 @using (Html.BeginForm("Advance", "Ulo", new { uloId = @currentUloId, workflowId = @currentworkflowId }, FormMethod.Post))
 {

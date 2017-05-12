@@ -4,11 +4,11 @@
 
     if (Model.Workflow.RequestForReassignments.Count == 0)
     {
-        Html.RenderAction("Details", "RequestForReassignments");
+        Html.RenderAction("Details", "RequestForReassignments", new {workflowId = Model.Workflow.WorkflowId});
     }
     else
     {
-        Html.RenderAction("Details", "RequestForReassignments", new { id = Model.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID });
+        Html.RenderAction("Details", "RequestForReassignments", new { id = Model.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = Model.Workflow.WorkflowId });
     }
 
 }

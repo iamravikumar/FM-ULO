@@ -97,13 +97,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return await Task.FromResult(c.RedirectToAction("Index", "Ulo", routeValues));
         }
 
-        async Task<ActionResult> IWorkflowManager.Reassign(Workflow wf, string userId)
+        async Task<ActionResult> IWorkflowManager.Reassign(Workflow wf, string userId, string actionName)
         {
             //TODO: Get programatically based on user's region
             wf.OwnerUserId = userId;
             var c = new RedirectingController();
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
-            return await Task.FromResult(c.RedirectToAction("Index", "Ulo", routeValues));
+            return await Task.FromResult(c.RedirectToAction(actionName, "Ulo", routeValues));
         }
 
         private async Task<string> GetNextOwnerAsync(string proposedOwnerId, Workflow wf, string nextActivityKey)

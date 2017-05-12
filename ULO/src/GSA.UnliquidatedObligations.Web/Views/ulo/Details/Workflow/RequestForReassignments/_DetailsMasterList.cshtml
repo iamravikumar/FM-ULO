@@ -7,13 +7,9 @@
     var modalLabel = modalId + "Label";
     var suggestedReviwerId = currentworkflowId + "SuggestedReviewerId";
     var commentsId = currentworkflowId + "RequestComments";
-    var isActiveReassignment = Model.RequestForReassignmentId != null;
-    var reviewerLabelText = isActiveReassignment ? "Assign to Reviewer" : "Suggeted Reviewer:";
-    var buttonText = isActiveReassignment ? "Reassign to Selected User" : "Request Reassignment";
-    var actionName = isActiveReassignment ? "Reassign" : "RequestReassign";
 }
 
-@using (Html.BeginForm(@actionName, "RequestForReassignments", new { workflowId = currentworkflowId }, FormMethod.Post))
+@using (Html.BeginForm("ReassignFromMasterList", "RequestForReassignments", new { workflowId = currentworkflowId }, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     <div class="modal fade requestForReassignModal" id="@modalId" tabindex="-1" role="dialog" aria-labelledby="@modalId" aria-hidden="true">
@@ -24,7 +20,7 @@
                 </div>
                 <div id="@modalBody" class="modal-body">
                     <div class="row">
-                        @Html.LabelFor(model => model.SuggestedReviewerId, @reviewerLabelText, htmlAttributes: new { @class = "col-md-4", @for = @suggestedReviwerId })
+                        @Html.LabelFor(model => model.SuggestedReviewerId, "Assign To Reviewer", htmlAttributes: new { @class = "col-md-4", @for = @suggestedReviwerId })
                         @Html.DropDownListFor(model => model.SuggestedReviewerId, Model.Users, "Select One..", htmlAttributes: new { @class = "col-md-8", id = @suggestedReviwerId })
                     </div>
                     <div class="row">
@@ -34,7 +30,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">@buttonText</button>
+                    <button type="submit" class="btn btn-primary">Reassign to Selected User</button>
                 </div>
             </div>
         </div>

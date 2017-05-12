@@ -36,7 +36,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: RequestForReassignments/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, int workflowId, bool isAdmin = false)
         {
             var requestForReassignment = DB.RequestForReassignments.Where(rr => rr.IsActive).FirstOrDefault(r => r.RequestForReassignmentID == id);
 
@@ -50,10 +50,38 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var requestForReassignmentId = requestForReassignment?.RequestForReassignmentID;
             var suggestedReviewerId = requestForReassignment != null ? requestForReassignment.SuggestedReviewerId : "";
             var justificationId = requestForReassignment?.UnliqudatedObjectsWorkflowQuestion.JustificationId;
+
             var comments = requestForReassignment != null
                 ? requestForReassignment.UnliqudatedObjectsWorkflowQuestion.Comments : "";
 
-            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", new RequestForReassignmentViewModel(suggestedReviewerId, justificationId, requestForReassignmentId, comments, users, justEnums));
+            var detailsView = isAdmin ? "_DetailsMasterList.cshtml" : "_Details.cshtml"; 
+            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/" + detailsView, new RequestForReassignmentViewModel(suggestedReviewerId, justificationId, requestForReassignmentId, comments, workflowId, users, justEnums));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ReassignFromMasterList(int workflowId, [Bind(Include = "SuggestedReviewerId,Comments")] RequestForReassignmentViewModel requestForReassignmentViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                var wf = await FindWorkflowAsync(workflowId, false);
+                if (wf == null) return HttpNotFound();
+                var question = new UnliqudatedObjectsWorkflowQuestion
+                {
+                    Date = DateTime.Now,
+                    JustificationId = requestForReassignmentViewModel.JustificationId,
+                    UserId = user.Id,
+                    Answer = "Reassigned",
+                    WorkflowId = workflowId,
+                    Comments = requestForReassignmentViewModel.Comments
+                };
+                var ret = await Manager.Reassign(wf, requestForReassignmentViewModel.SuggestedReviewerId, "RegionWorkflows");
+                await DB.SaveChangesAsync();
+                return ret;
+            }
+
+            return RedirectToAction("RegionWorkflows", "Ulo");
         }
 
         [HttpPost]
@@ -141,11 +169,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         //TODO: Move to Manager?
-        private async Task<Workflow> FindWorkflowAsync(int workflowId)
+        private async Task<Workflow> FindWorkflowAsync(int workflowId, bool checkOwner = true)
         {
             var wf = await DB.Workflows.Include(q => q.AspNetUser).Include(q => q.UnliquidatedObligation).FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
             if (wf != null)
             {
+                if (checkOwner == false) return wf;
                 var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
                 var groupsUserBelongsTo = await GetUsersGroups(currentUser.Id);
                 if (currentUser != null)
@@ -182,7 +211,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             requestForReassignment.UnliqudatedWorkflowQuestionsId = question.UnliqudatedWorkflowQuestionsId;
             requestForReassignment.WorkflowId = wf.WorkflowId;
             requestForReassignment.IsActive = false;
-            var ret = await Manager.Reassign(wf, suggestedReviewerId);
+            var ret = await Manager.Reassign(wf, suggestedReviewerId, "Index");
             await DB.SaveChangesAsync();
             return ret;
         }

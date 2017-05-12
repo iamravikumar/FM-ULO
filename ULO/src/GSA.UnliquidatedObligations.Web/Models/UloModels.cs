@@ -37,7 +37,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
             Username = question.AspNetUser.UserName;
             Answer = question.Answer;
-            Justification = JustificationChoices.Choices[(JustificationEnum) question.JustificationId].JustificationText;
+            Justification = question.JustificationId != null ? JustificationChoices.Choices[(JustificationEnum) question.JustificationId].JustificationText : null;
             Comments = question.Comments;
         }
     }
@@ -138,15 +138,22 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
            
         }
-        public WorkflowViewModel(Workflow workflow, IWorkflowDescription workflowDecription)
+        public WorkflowViewModel(Workflow workflow, IWorkflowDescription workflowDecription = null)
         {
             Workflow = workflow;
             QuestionsViewModel =  new UloWfQuestionsViewModel(workflow.UnliqudatedObjectsWorkflowQuestions.ToList());
-            WorkflowDescriptionViewModel = new WorkflowDescriptionViewModel(workflowDecription.WebActionWorkflowActivities.ToList(), workflow.CurrentWorkflowActivityKey);
+
+            if (workflowDecription != null)
+            {
+                WorkflowDescriptionViewModel =
+                    new WorkflowDescriptionViewModel(workflowDecription.WebActionWorkflowActivities.ToList(),
+                        workflow.CurrentWorkflowActivityKey);
+                AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, workflow.WorkflowId);
+            }
             RequestForReassignmentsActive = workflow.RequestForReassignments.ToList().Count > 0 &&
                                                          Workflow.RequestForReassignments.FirstOrDefault() != null &&
                                                          Workflow.RequestForReassignments.First().IsActive;
-            AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, workflow.WorkflowId);
+          
 
             DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList());
         }

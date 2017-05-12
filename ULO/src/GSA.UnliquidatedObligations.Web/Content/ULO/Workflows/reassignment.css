@@ -1,11 +1,15 @@
-﻿#requestForReassignModal #requestForReassignBody select.col-md-8 {
+﻿.requestForReassignModal select.col-md-8 {
     padding: 0;
 }
 
-#requestForReassignModal #requestForReassignBody textarea.col-md-8 {
+.requestForReassignModal textarea.col-md-8 {
     padding: 2px 15px 2px 2px;
 }
 
-#requestForReassignModal #requestForReassignBody label.col-md-4 {
+.requestForReassignModal label.col-md-4 {
     text-align: right;
+}
+
+.btn.master.request-active {
+    background-color: green;
 }
