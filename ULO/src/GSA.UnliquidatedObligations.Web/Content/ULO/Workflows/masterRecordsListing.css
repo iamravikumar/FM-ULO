@@ -1,0 +1,22 @@
+﻿.show-filters {
+    width: 104px;
+}
+
+.filter-region-workflows {
+    width: 50%;
+    border: 1px solid #dddddd;
+    margin: 3px 0;
+}
+
+.filter-region-workflows select {
+    height: 26px;
+}
+
+.filter-region-workflows label {
+    text-align: right;
+}
+
+
+.filter-region-workflows td {
+    border-top: none !important;
+}

@@ -310,6 +310,7 @@
     <Compile Include="Models\RequestForReassignmentViewModel.cs" />
     <Compile Include="Models\UloModels.cs" />
     <Compile Include="PortalHelpers.cs" />
+    <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -331,6 +332,7 @@
     <Content Include="Content\ULO\Details\notes.css" />
     <Content Include="Content\ULO\Details\ulo.css" />
     <Content Include="Content\ULO\Workflows\advance.css" />
+    <Content Include="Content\ULO\Workflows\masterRecordsListing.css" />
     <Content Include="Content\ULO\Workflows\reassignment.css" />
     <Content Include="Content\ULO\Workflows\workflowDescription.css" />
     <Content Include="Content\ULO\Workflows\workflowQuestions.css" />
@@ -365,6 +367,7 @@
     <Content Include="Scripts\ULO\advance.js" />
     <Content Include="Scripts\ULO\attachments.js" />
     <Content Include="Scripts\ULO\documents.js" />
+    <Content Include="Scripts\ULO\filter.js" />
     <Content Include="Scripts\ULO\polyfills.js" />
     <Content Include="Scripts\ULO\recordsListing.js" />
     <Content Include="Scripts\_references.js" />
@@ -433,10 +436,13 @@
     <Content Include="Views\Ulo\Details\Documents\_ViewModals.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_Details.cshtml" />
     <Content Include="Views\Shared\_Navigation.cshtml" />
-    <Content Include="Views\Ulo\_MasterRecordsListing.cshtml" />
+    <Content Include="Views\Ulo\Search\_MasterRecordsListing.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_ReassignButton.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_ReassignButtonForMasterList.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_DetailsMasterList.cshtml" />
+    <Content Include="Views\Ulo\Search\Index.cshtml" />
+    <Content Include="Views\Ulo\Search\_Data.cshtml" />
+    <Content Include="Views\Ulo\Search\_Filtering.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

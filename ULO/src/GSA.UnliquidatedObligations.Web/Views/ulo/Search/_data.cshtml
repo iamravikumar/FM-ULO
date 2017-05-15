@@ -1,11 +1,10 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Models
-    @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
-    @{
-        var todaysDate = DateTime.Today;
-    }
-    <h2>Workflows</h2>
-
+@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+@{
+    var todaysDate = DateTime.Today;
+}
 <table class="table active-workflows">
+
     <tr>
         <th></th>
         <th>
@@ -101,7 +100,7 @@
 
         </tr>
 
-    }
+                    }
 
 </table>
 
@@ -118,4 +117,5 @@
     }
 
 }
+
 

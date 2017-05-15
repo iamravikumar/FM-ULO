@@ -7,6 +7,7 @@ using GSA.UnliquidatedObligations.Web.Services;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
@@ -48,6 +49,36 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(workflows);
         }
 
+
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
+        public async Task<ActionResult> Search(string pegasysDocumentNumber, string organization)
+        {
+            //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
+            var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
+            var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
+            DB.Database.Log = s => Trace.WriteLine(s);
+
+            var wfPredicate =
+                PredicateBuilder.Create<Workflow>(
+                    wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId)
+                          && wf.OwnerUserId != user.Id);
+            var pdn = HttpUtility.HtmlDecode(pegasysDocumentNumber);
+            var org = HttpUtility.HtmlDecode(organization);
+            if (!string.IsNullOrEmpty(pdn))
+            {
+                wfPredicate = wfPredicate.And(wf => wf.UnliquidatedObligation.PegasusDocumentNumber == pdn);
+            }
+
+            if (!string.IsNullOrEmpty(org))
+            {
+                wfPredicate = wfPredicate.And(wf => wf.UnliquidatedObligation.Organization == org);
+            }
+            var workflows =
+                await DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).ToListAsync();
+
+            return PartialView("~/Views/Ulo/Search/_Data.cshtml", workflows);
+        }
+
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulo/RegionWorkflows")]
         public async Task<ActionResult> RegionWorkflows()
@@ -55,13 +86,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
+            DB.Database.Log = s => Trace.WriteLine(s);
 
-            //DB.Database.Log = s => Trace.WriteLine(s);
+            var wfPredicate =
+                PredicateBuilder.Create<Workflow>(
+                    wf => claimRegionIds.Contains((int) wf.UnliquidatedObligation.RegionId)
+                          && wf.OwnerUserId != user.Id);
+
             var workflows =
-                await DB.Workflows.Where(wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId)
-                        && wf.OwnerUserId != user.Id).Include(wf => wf.UnliquidatedObligation).ToListAsync();
+                await DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).ToListAsync();
 
-            return View("_MasterRecordsListing", workflows);
+            return View("~/Views/Ulo/Search/Index.cshtml", workflows);
         }
 
 

@@ -1,0 +1,9 @@
+﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+
+@{
+    ViewBag.Title = "Region Workflows";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("~/Views/Ulo/Search/_MasterRecordsListing.cshtml", Model)
+

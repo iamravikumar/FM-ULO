@@ -1,0 +1,8 @@
+﻿@using GSA.UnliquidatedObligations.Web.Models
+@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+
+<h2>Workflows</h2>
+@Html.Partial("~/Views/Ulo/Search/_Filtering.cshtml", Model)
+<div id="masterRecordsListing">
+    @Html.Partial("~/Views/Ulo/Search/_Data.cshtml", Model)
+</div>
