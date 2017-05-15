@@ -15,7 +15,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         public override void Initialize()
         {
             base.Initialize();
-            HomeController = new HomeController(DbContext)
+            HomeController = new HomeController(DbContext, ComponentContext)
             {
                 ControllerContext = ControllerContext
             };
@@ -27,14 +27,6 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         {
             var result = HomeController.Index() as ViewResult;
             Assert.AreEqual("", result.ViewName);
-        }
-
-        [TestMethod]
-        public void Navigation_returns_view_model_based_on_persmissions()
-        {
-            var view = HomeController.Navigation() as PartialViewResult;
-            var returnedModel = (NavigationViewModel)view.Model;
-            Assert.IsTrue(returnedModel.CanViewOtherWorkflows);
         }
 
 

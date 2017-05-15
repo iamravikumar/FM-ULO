@@ -103,9 +103,12 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Text = questionChoice.Text;
             Value = questionChoice.Value;
             Justifications = new List<Justification>();
-            foreach (var questionChoiceJustificationsEnum in questionChoice.JustificationsEnums)
+            if (questionChoice.JustificationsEnums != null)
             {
-                Justifications.Add(JustificationChoices.Choices[questionChoiceJustificationsEnum]);
+                foreach (var questionChoiceJustificationsEnum in questionChoice.JustificationsEnums)
+                {
+                    Justifications.Add(JustificationChoices.Choices[questionChoiceJustificationsEnum]);
+                }
             }
         }
     }

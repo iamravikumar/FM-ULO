@@ -22,7 +22,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         public override void Initialize()
         {
             base.Initialize();
-            UloController = new UloController(WorkflowManager, DbContext, ApplicationUserManager)
+            UloController = new UloController(WorkflowManager, DbContext, ApplicationUserManager, ComponentContext)
             {
                 ControllerContext = ControllerContext
             };
@@ -113,10 +113,8 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         {
             var view = await UloController.RegionWorkflows() as ViewResult;
             var returnedModel = (IEnumerable<Workflow>) view.Model;
-            Assert.AreEqual(returnedModel.Count(), 5);
+            Assert.AreEqual(returnedModel.Count(), 6);
 
         }
-
-
     }
 }

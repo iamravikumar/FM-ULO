@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Services;
 using GSA.UnliquidatedObligations.Web.Tests.Mocks;
 using GSA.UnliquidatedObligations.Web.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
 {
@@ -14,6 +17,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
     {
         protected ULODBEntities DbContext { get; private set; }
         protected IWorkflowManager WorkflowManager { get; private set; }
+        protected IComponentContext ComponentContext { get; private set;}
         protected ApplicationUserManager ApplicationUserManager { get; private set; }
         protected ControllerContext ControllerContext { get; private set; }
         protected string PersonUserId { get; private set; }
@@ -50,7 +54,10 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
 
             ApplicationUserManager = SetupApplicationUserMocks(currentUser);
 
+            ComponentContext = new Mock<IComponentContext>().Object; 
+
             ControllerContext = new ControllerContextMock().SetupControllerContextMock(currentUser);
+            HttpContext.Current = new HttpContext(new HttpRequest(null, "http://tempuri.org", null), new HttpResponse(null));
         }
 
         private ApplicationUserManager SetupApplicationUserMocks(AspNetUser currentUser)

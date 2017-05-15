@@ -4,8 +4,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     public class Justification
     {
-        public readonly int JustificationId;
-        public readonly string JustificationText;
+        public int JustificationId { get; }
+        public string JustificationText { get; }
 
         public Justification(int justificationId, string justificationText)
         {

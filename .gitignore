@@ -5,7 +5,7 @@
 
 **/bin/
 **/obj/
-.suo
+*.suo
 *.cache
 /ULO/src/GSA.UnliquidatedObligations.BusinessLayer/App.Config
 /ULO/.vs/config/application/host.config
