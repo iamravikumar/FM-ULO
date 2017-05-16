@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Common.EntitySql;
 using System.Diagnostics;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Services;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -51,7 +53,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
-        public async Task<ActionResult> Search(string pegasysDocumentNumber, string organization)
+        public async Task<ActionResult> Search(string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName)
         {
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
@@ -62,22 +64,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 PredicateBuilder.Create<Workflow>(
                     wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId)
                           && wf.OwnerUserId != user.Id);
-            var pdn = HttpUtility.HtmlDecode(pegasysDocumentNumber);
-            var org = HttpUtility.HtmlDecode(organization);
-            if (!string.IsNullOrEmpty(pdn))
-            {
-                wfPredicate = wfPredicate.And(wf => wf.UnliquidatedObligation.PegasusDocumentNumber == pdn);
-            }
 
-            if (!string.IsNullOrEmpty(org))
-            {
-                wfPredicate = wfPredicate.And(wf => wf.UnliquidatedObligation.Organization == org);
-            }
+
+            wfPredicate = wfPredicate.GenerateWorkflowPredicate(pegasysDocumentNumber, organization, region, zone, fund,
+                baCode, pegasysTitleNumber, pegasysVendorName);
+
+
             var workflows =
                 await DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).ToListAsync();
 
             return PartialView("~/Views/Ulo/Search/_Data.cshtml", workflows);
         }
+
+       
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulo/RegionWorkflows")]

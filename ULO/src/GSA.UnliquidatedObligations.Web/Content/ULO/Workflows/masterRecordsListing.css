@@ -3,8 +3,6 @@
 }
 
 .filter-region-workflows {
-    width: 50%;
-    border: 1px solid #dddddd;
     margin: 3px 0;
 }
 
@@ -19,4 +17,8 @@
 
 .filter-region-workflows td {
     border-top: none !important;
+}
+
+.filter-region-workflows td.label-container {
+    text-align: right;
 }

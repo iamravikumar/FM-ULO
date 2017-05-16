@@ -3,17 +3,30 @@
 </button>
 
 
-<table class="table filter-region-workflows" id="filterRegions">
+<table class="table filter-region-workflows table" id="filterRegions">
     <tr>
-        <td><label for="pdn">PDN:</label></td>
+        <td class="label-container"><label for="organization">Zone:</label></td>
+        <td><input type="text" name="zone" id="zone" /></td>
+        <td class="label-container"><label for="pdn">Region:</label></td>
+        <td><input type="text" name="region" id="region" /></td>
+        <td class="label-container"><label for="pdn">BA Code:</label></td>
+        <td><input type="text" name="baCode" id="baCode" /></td>
+    </tr>
+    <tr>
+        <td class="label-container"><label for="pdn">PDN:</label></td>
         <td><input type="text" name="pdn" id="pdn" /></td>
-        <td><label for="organization">Organization:</label></td>
+        <td class="label-container"><label for="organization">Org Code:</label></td>
         <td><input type="text" name="organization" id="organization" /></td>
+        <td></td>
+        <td></td>
     </tr>
     <tr>
         <td colspan="4">
             <button id="filterWorkflows" type="button" class="btn btn-primary">
                 Apply Filters
+            </button>
+            <button id="clearFilters" type="button" class="btn btn-danger">
+                Clear Filters
             </button>
         </td>
     </tr>

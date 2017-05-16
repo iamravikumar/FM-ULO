@@ -7,6 +7,7 @@ namespace GSA.UnliquidatedObligations.Web
 {
     /// <summary>  
     /// Enables the efficient, dynamic composition of query predicates.  
+    /// http://www.c-sharpcorner.com/UploadFile/c42694/dynamic-query-in-linq-using-predicate-builder/
     /// </summary>  
     public static class PredicateBuilder
     {

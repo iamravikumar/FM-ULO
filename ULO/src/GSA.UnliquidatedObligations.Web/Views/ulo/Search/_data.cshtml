@@ -3,21 +3,27 @@
 @{
     var todaysDate = DateTime.Today;
 }
-<table class="table active-workflows">
+<table class="table table-responsive active-workflows">
 
     <tr>
         <th></th>
         <th>
-            PDN
+            Zone
+        </th>
+        <th>
+            Region
         </th>
         <th>
             BA Code
         </th>
         <th>
-            Review Status
+            PDN
         </th>
         <th>
             Org Code
+        </th>
+        <th>
+            Review Status
         </th>
         <th>
             Amount
@@ -30,12 +36,6 @@
         </th>
         <th>
             Days left
-        </th>
-        <th>
-            Zone
-        </th>
-        <th>
-            Region
         </th>
         <th>
             Assignee
@@ -54,17 +54,22 @@
                 @Html.ActionLink("View Ulo", "RegionWorkflowDetails", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasusDocumentNumber)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
             </td>
-
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasusDocumentNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.TotalLine)
@@ -85,12 +90,6 @@
                     @Html.Encode(daysLeft)
 
                 }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.AspNetUser.UserName)
