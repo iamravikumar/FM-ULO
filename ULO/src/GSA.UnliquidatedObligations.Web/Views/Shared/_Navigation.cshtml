@@ -10,6 +10,12 @@
                 {
                     <li>@Html.ActionLink("View Region Workflows", "RegionWorkflows", "Ulo")</li>
                 }
+
+                @if (User.HasPermission(ApplicationPermissionNames.CanViewReviews))
+                {
+                    <li>@Html.ActionLink("View Reviews", "Index", "Review")</li>
+                }
+
             </ul>
             @Html.Partial("_LoginPartial")
         </div>

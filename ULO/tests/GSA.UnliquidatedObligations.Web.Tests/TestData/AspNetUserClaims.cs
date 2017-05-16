@@ -14,7 +14,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
             var claimValue = new ApplicationPermissionClaimValue()
             {
                 RegionIds = new HashSet<int>() {1, 4},
-                ApplicationPermissionName = ApplicationPermissionNames.CanViewOtherWorkflows
+                ApplicationPermissionName = ApplicationPermissionNames.CanViewReviews
             };
             var claimType = ApplicationPermissionClaimValue.ClaimType;
 

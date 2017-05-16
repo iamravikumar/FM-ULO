@@ -19,5 +19,10 @@
         /// Can view workflows assigned to others
         /// </summary>
         CanViewOtherWorkflows,
+
+        /// <summary>
+        /// Can view the Reviews
+        /// </summary>
+        CanViewReviews,
     }
 }

@@ -298,6 +298,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\RequestForReassignmentsController.cs" />
+    <Compile Include="Controllers\ReviewController.cs" />
     <Compile Include="Controllers\UloController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
@@ -443,12 +444,14 @@
     <Content Include="Views\Ulo\Search\Index.cshtml" />
     <Content Include="Views\Ulo\Search\_Data.cshtml" />
     <Content Include="Views\Ulo\Search\_Filtering.cshtml" />
+    <Content Include="Views\Reviews\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\DocStorage\Temp\" />
     <Folder Include="Views\Attachments\" />
     <Folder Include="Views\Base\" />
+    <Folder Include="Views\Review\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
