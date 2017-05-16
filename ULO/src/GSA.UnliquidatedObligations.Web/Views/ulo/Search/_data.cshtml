@@ -51,7 +51,7 @@
     {
         <tr class="active-workflows-record" data-id="@item.WorkflowId">
             <td>
-                @Html.ActionLink("View Ulo", "RegionWorkflowDetails", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+                @Html.ActionLink("View ULO", "RegionWorkflowDetails", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneId)
