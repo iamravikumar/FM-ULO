@@ -21,8 +21,6 @@
                         @Html.DropDownListFor(model => model.JustificationId, new SelectList(Model.DefaultJustifications, "JustificationId", "JustificationText"), "Select....", htmlAttributes: new { id = "justifications" })
                         @Html.ValidationMessageFor(model => model.JustificationId, "", new { @class = "text-danger" })
                     </div>
-
-
                 </div>
                 <div class="row other-comments row-space-top">
                     <div class="row">

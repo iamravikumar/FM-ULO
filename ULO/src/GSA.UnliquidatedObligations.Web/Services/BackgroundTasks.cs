@@ -14,7 +14,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         public void Email(string subject, string recipient, string template, object model)
         {
-            
             var compiledEmailBody = Engine.Razor.RunCompile(template, "email", null, model);
             EmailServer.SendEmail(subject, compiledEmailBody, recipient);
         }

@@ -15,6 +15,11 @@
                 {
                     <li>@Html.ActionLink("View Reviews", "Index", "Review")</li>
                 }
+                
+                @if (User.HasPermission(ApplicationPermissionNames.ManageUsers))
+                {
+                    <li>@Html.ActionLink("Manage Users", "Index", "Users")</li>
+                }
 
             </ul>
             @Html.Partial("_LoginPartial")

@@ -103,6 +103,16 @@ namespace GSA.UnliquidatedObligations.Web.Services
             wf.OwnerUserId = userId;
             var c = new RedirectingController();
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
+            var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId); 
+            var emailTemplate = await DB.EmailTemplates.FindAsync(1);
+                    var emailModel = new EmailViewModel
+                    {
+                        UserName = nextUser.UserName,
+                        PDN = wf.UnliquidatedObligation.PegasusDocumentNumber
+                    };
+                    //TODO: What happens if it crashes?
+                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
+        
             return await Task.FromResult(c.RedirectToAction(actionName, "Ulo", routeValues));
         }
 

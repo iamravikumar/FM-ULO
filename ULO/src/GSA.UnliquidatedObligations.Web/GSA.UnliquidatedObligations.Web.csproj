@@ -329,6 +329,7 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\ULO\users.css" />
     <Content Include="Content\ULO\Workflows\documents.css" />
     <Content Include="Content\ULO\Details\notes.css" />
     <Content Include="Content\ULO\Details\ulo.css" />

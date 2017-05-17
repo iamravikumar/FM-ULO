@@ -199,9 +199,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string UserName { get; set; }
 
         public string PDN { get; set; }
+
+        public string SiteUrl { get; set; }
         public EmailViewModel()
         {
-            
+            SiteUrl = Properties.Settings.Default.SiteUrl;
         }
     }
 

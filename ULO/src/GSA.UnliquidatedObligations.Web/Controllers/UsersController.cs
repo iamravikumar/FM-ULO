@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
+using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
@@ -10,11 +11,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
     [Authorize]
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
         private readonly ULODBEntities DB;
 
-        public UsersController(ULODBEntities db)
+        public UsersController(ULODBEntities db, IComponentContext context) : base(context)
         {
             DB = db;
         }

@@ -1,14 +1,15 @@
-﻿$(document).ready(function() {
-    $(".document-modal").on("hidden.bs.modal", function () {
-        clearDocument();
-        hideErrorMsg();
-    });
+﻿var preventDismiss = false;
+$(document).ready(function () {
+    //$(".document-modal").on("hidden.bs.modal", function () {
+       
+    //});
 
     addDocumentDeleteClick();
     addDocumentSaveClick();
 });
 
 function addDocumentSaveClick() {
+    $(".save-document").unbind("click");
     $(".save-document").on("click", function () {
         hideErrorMsg();
         $(this).prop('disabled', true);
@@ -31,6 +32,7 @@ function addDocumentSaveClick() {
 }
 
 function addDocumentDeleteClick() {
+    $(".delete-document").unbind("click");
     $(".delete-document").on("click", function () {
         var documentId = $(this).data("target");
         deleteDocument(documentId);
@@ -62,6 +64,9 @@ function clearDocument() {
 
 function closeModal() {
     $(".document-modal").modal("hide");
+    $(".modal-backdrop").remove();
+    clearDocument();
+    hideErrorMsg();
 }
 
 function updateDocumentList(documentId, document) {
@@ -90,7 +95,7 @@ function saveDocument(documentId, documentName, workflowId, documentTypeId) {
         success: function (result) {
             closeModal();
             updateDocumentList(documentId, result);
-            loadDocumentModal(result.Id, addDocumentDeleteClick, addDocumentSaveClick);
+            loadDocumentModal(result.Id, addDocumentDeleteClick, addDocumentSaveClick, window.addAddAttachmentClick, window.addDeleteAttachmentClick);
 
         },
         error: function (xhr, status, p3, p4) {

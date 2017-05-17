@@ -1,31 +1,34 @@
-﻿$(document).ready(function () {
+﻿var parentDocumentId;
+$(document).ready(function () {
 
-    var documentId;
-
-    addDeleteClick();
-
-    $(".attachments-add-btn").click(function () {
-        documentId = $(this).siblings(".document-id-hidden")[0].value;
-        $("#attachment-file-upload").click();
-    });
-
+    addDeleteAttachmentClick();
+    addAddAttachmentClick();
     $("#attachment-file-upload").change(function (e) {
-        uploadAttachment(documentId, e.target.files);
+        uploadAttachment(parentDocumentId, e.target.files);
     });
 });
+
+function addAddAttachmentClick() {
+    $(".attachments-add-btn").unbind("click");
+    $(".attachments-add-btn").click(function () {
+        parentDocumentId = $(this).siblings(".document-id-hidden")[0].value;
+        $("#attachment-file-upload").click();
+    });
+}
 
 function addRow(attachment, documentId) {
     //var dId = $(this).siblings(".document-id-hidden")[0].value;
     $("#" + documentId + "Modal .attachments-heading-row").addClass("show").removeClass("hide");
-    $("#" + documentId + "Modal .attachments > tbody:last-child").append("<tr class='temp-attachment' id='attachment" + attachment.AttachmentsId + "'><td class='file-name'>" + attachment.FileName + "</td><td class='actions'><a class='attachments-view' href='" + attachment.FilePath + "' download>View</a> | <a class='attachments-delete' data-target='" + attachment.AttachmentsId + "'>Delete</a></td></tr>");
-    addDeleteClick();
+    $("#" + documentId + "Modal .attachments > tbody:last-child").append("<tr class='temp-attachment' id='attachment" + attachment.AttachmentsId + "'><td class='file-name'>" + attachment.FileName + "</td><td class='actions'><a class='attachments-view' href='" + attachment.FilePath + "' target='_blank'>View</a> | <a class='attachments-delete' data-target='" + attachment.AttachmentsId + "'>Delete</a></td></tr>");
+    addDeleteAttachmentClick();
 }
 
 function deleteAttachmentRow(attachId) {
     $("#attachment" + attachId).remove();
 }
 
-function addDeleteClick() {
+function addDeleteAttachmentClick() {
+    $(".attachments-delete").unbind("click");
     $(".attachments-delete").click(function () {
         var attachId = $(this).data("target");
         if (attachId === 0) {
