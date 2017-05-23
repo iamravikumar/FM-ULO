@@ -47,9 +47,6 @@
             Valid
         </th>
         <th>
-            Reviewed By
-        </th>
-        <th>
             Status
         </th>
         <th></th>
@@ -103,9 +100,6 @@
                     var isValid = item.UnliquidatedObligation.Valid ? "Yes" : "No";
                     @Html.Encode(isValid)
                 }
-            </td>
-            <td>
-                Data Not Present?
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)

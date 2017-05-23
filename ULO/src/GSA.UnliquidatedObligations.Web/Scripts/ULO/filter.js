@@ -1,24 +1,21 @@
 ﻿$(document).ready(function () {
     $("#filterRegions").hide();
     $("#filterWorkflows").click(function () {
-        var pdn = $("#pdn").val();
-        var org = $("#organization").val();
-        var region = $("#region").val();
-        var zone = $("#zone").val();
-        var fund = $("#fund").val();
-        var baCode = $("#baCode").val();
-        var docType = $("#docType").val();
-        var ptn = $("#ptn").val();
-        var pvn = $("#pvn").val();
-        var contractingOfficersName = $("#contractingOfficersName").val();
-        var awardNumber = $("#awardNumber").val();
-        var reasonIncludedInReview = $("#reasonIncludedInReview").val();
-        var valid = $("#valid").val();
-        var reviewedBy = $("#reviewedBy").val();
+        var pdn = encodeURI($("#pdn").val());
+        var org = encodeURI($("#organization").val());
+        var region = encodeURI($("#region").val());
+        var zone = encodeURI($("#zone").val());
+        var fund = encodeURI($("#fund").val());
+        var baCode = encodeURI($("#baCode").val());
+        var docType = encodeURI($("#docType").val());
+        var ptn = encodeURI($("#ptn").val());
+        var pvn = encodeURI($("#pvn").val());
+        var contractingOfficersName = encodeURI($("#contractingOfficersName").val());
+        var awardNumber = encodeURI($("#awardNumber").val());
+        var reasonIncludedInReview = encodeURI($("#reasonIncludedInReview").val());
+        var valid = encodeURI($("#valid").val());
         var status = encodeURI($("#status").val());
-        //var pegasysTitleNumber = $("#pegasysTitleNumber").val();
-        //var pegasysVendorName = $("#pegasysVendorName").val();
-        filter(pdn, org, region, zone, fund, baCode, docType, ptn, pvn, contractingOfficersName, awardNumber, reasonIncludedInReview, valid, reviewedBy, status);
+        filter(pdn, org, region, zone, fund, baCode, docType, ptn, pvn, contractingOfficersName, awardNumber, reasonIncludedInReview, valid, status);
     });
 
     $("#clearFilters").click(function() {
@@ -26,8 +23,16 @@
         $("#organization").val("");
         $("#region").val("");
         $("#zone").val("");
+        $("#fund").val("");
         $("#baCode").val("");
         $("#docType").val("");
+        $("#ptn").val("");
+        $("#pvn").val("");
+        $("#contractingOfficersName").val("");
+        $("#awardNumber").val("");
+        $("#reasonIncludedInReview").val("");
+        $("#valid").val("");
+        $("#status").val("");
         filter();
     });
 
@@ -49,7 +54,7 @@ function filter(pdn, org, region, zone, fund, baCode, docType, ptn, pvn, contrac
     url += "&organization=" + (org ? org : "");
     url += "&region=" + (region ? region : "");
     url += "&zone=" + (zone ? zone : "");
-    url += "&fund=" + fund;
+    url += "&fund=" + (fund ? fund : "");
     url += "&baCode=" + (baCode ? baCode : "");
     url += "&docType=" + (docType ? docType : "");
     url += "&pegasysTitleNumber=" + (ptn ? ptn : "");
@@ -58,7 +63,6 @@ function filter(pdn, org, region, zone, fund, baCode, docType, ptn, pvn, contrac
     url += "&awardNumber" + (awardNumber ? awardNumber : "");
     url += "&reasonIncludedInReview" + (reasonIncludedInReview ? reasonIncludedInReview : "");
     url += "&valid=" + (valid ? valid : "");
-    url += "&reviewedBy=" + (reviewedBy ? reviewedBy : "");
     url += "&status=" + (status ? status : "");
     $("#masterRecordsListing").load(url);
 }

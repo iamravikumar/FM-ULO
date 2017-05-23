@@ -8,7 +8,9 @@
 
 .filter-region-workflows select {
     height: 26px;
-    padding: 3px 12px; 
+    padding: 3px 12px;
+    width: 174px;
+    border-radius: 0;
 }
 
 .filter-region-workflows label {

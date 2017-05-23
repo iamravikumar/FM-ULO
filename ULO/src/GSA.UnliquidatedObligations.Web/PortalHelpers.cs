@@ -27,7 +27,7 @@ namespace GSA.UnliquidatedObligations.Web
         }
 
         public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, string pegasysDocumentNumber, string organization,
-           int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string reviewedBy, string status)
+           int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string status)
         {
 
             var predicate = originalPredicate;
@@ -41,7 +41,6 @@ namespace GSA.UnliquidatedObligations.Web
             var contractingOfficersNameDecoded = HttpUtility.HtmlDecode(contractingOfficersName);
             var awardNumberDecoded = HttpUtility.HtmlDecode(awardNumber);
             var reasonIncludedInReviewDecoded = HttpUtility.HtmlDecode(reasonIncludedInReview);
-            var reviewedByDecoded = HttpUtility.HtmlDecode(reviewedBy);
             var statusDecoded = HttpUtility.HtmlDecode(status);
 
             if (!string.IsNullOrEmpty(pdnDecoded))
@@ -108,12 +107,6 @@ namespace GSA.UnliquidatedObligations.Web
             if (valid.HasValue)
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Valid == valid);
-            }
-
-            if (!string.IsNullOrEmpty(reviewedByDecoded))
-            {
-                //TODO: Add logic to check ReviewedBy
-                
             }
 
             if (!string.IsNullOrEmpty(statusDecoded))

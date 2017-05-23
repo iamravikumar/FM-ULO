@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Threading.Tasks;
@@ -104,6 +105,21 @@ namespace GSA.UnliquidatedObligations.Web.Services
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
             return await Task.FromResult(c.RedirectToAction("Index", "Ulo", routeValues));
         }
+
+        //async Task<ActionResult> IWorkflowManager.SaveQuestion(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
+        //{
+        //    var questionFromDB = DB.UnliqudatedObjectsWorkflowQuestions.Find(question.UnliqudatedWorkflowQuestionsId);
+        //    if (questionFromDB == null)
+        //    {
+        //        wf.UnliqudatedObjectsWorkflowQuestions.Add(question);
+        //    }
+        //    else
+        //    {
+        //        questionFromDB.Answer = questionFromDB.Answer;
+        //        questionFromDB.Comments = question.Comments;
+
+        //    }
+        //}
 
         async Task<ActionResult> IWorkflowManager.Reassign(Workflow wf, string userId, string actionName)
         {
