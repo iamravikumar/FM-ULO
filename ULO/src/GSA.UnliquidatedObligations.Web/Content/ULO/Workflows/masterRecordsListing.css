@@ -8,6 +8,7 @@
 
 .filter-region-workflows select {
     height: 26px;
+    padding: 3px 12px; 
 }
 
 .filter-region-workflows label {
@@ -21,4 +22,6 @@
 
 .filter-region-workflows td.label-container {
     text-align: right;
+    font-size: 12px;
+    padding-top: 11px;
 }

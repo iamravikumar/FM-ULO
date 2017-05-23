@@ -53,7 +53,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
-        public async Task<ActionResult> Search(string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName)
+        public async Task<ActionResult> Search(string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string reviewedBy, string status)
         {
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
@@ -67,7 +67,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 
             wfPredicate = wfPredicate.GenerateWorkflowPredicate(pegasysDocumentNumber, organization, region, zone, fund,
-                baCode, pegasysTitleNumber, pegasysVendorName);
+                baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, awardNumber, reasonIncludedInReview, valid, reviewedBy, status);
 
 
             var workflows =

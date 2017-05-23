@@ -27,7 +27,7 @@ namespace GSA.UnliquidatedObligations.Web
         }
 
         public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, string pegasysDocumentNumber, string organization,
-           int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName)
+           int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string reviewedBy, string status)
         {
 
             var predicate = originalPredicate;
@@ -37,6 +37,12 @@ namespace GSA.UnliquidatedObligations.Web
             var baCodeDecoded = HttpUtility.HtmlDecode(baCode);
             var pegasysTitleNumberDecoded = HttpUtility.HtmlDecode(pegasysTitleNumber);
             var pegasysVendorNameDecoded = HttpUtility.HtmlDecode(pegasysVendorName);
+            var docTypeDecoded = HttpUtility.HtmlDecode(docType);
+            var contractingOfficersNameDecoded = HttpUtility.HtmlDecode(contractingOfficersName);
+            var awardNumberDecoded = HttpUtility.HtmlDecode(awardNumber);
+            var reasonIncludedInReviewDecoded = HttpUtility.HtmlDecode(reasonIncludedInReview);
+            var reviewedByDecoded = HttpUtility.HtmlDecode(reviewedBy);
+            var statusDecoded = HttpUtility.HtmlDecode(status);
 
             if (!string.IsNullOrEmpty(pdnDecoded))
             {
@@ -76,6 +82,43 @@ namespace GSA.UnliquidatedObligations.Web
             if (!string.IsNullOrEmpty(pegasysVendorNameDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.PegasysVendorName == pegasysVendorNameDecoded);
+            }
+
+            if (!string.IsNullOrEmpty(docTypeDecoded))
+            {
+                //TODO: Add Doctype comparison code
+                //predicate = predicate.And(wf => wf.UnliquidatedObligation.PegasysVendorName == pegasysVendorNameDecoded);
+            }
+
+            if (!string.IsNullOrEmpty(contractingOfficersNameDecoded))
+            {
+                predicate = predicate.And(wf => wf.UnliquidatedObligation.ContractingOfficersName == contractingOfficersNameDecoded);
+            }
+
+            if (!string.IsNullOrEmpty(awardNumberDecoded))
+            {
+                predicate = predicate.And(wf => wf.UnliquidatedObligation.AwardNbr == awardNumberDecoded);
+            }
+
+            if (!string.IsNullOrEmpty(reasonIncludedInReviewDecoded))
+            {
+                predicate = predicate.And(wf => wf.UnliquidatedObligation.ReasonIncludedInReview == reasonIncludedInReview);
+            }
+
+            if (valid.HasValue)
+            {
+                predicate = predicate.And(wf => wf.UnliquidatedObligation.Valid == valid);
+            }
+
+            if (!string.IsNullOrEmpty(reviewedByDecoded))
+            {
+                //TODO: Add logic to check ReviewedBy
+                
+            }
+
+            if (!string.IsNullOrEmpty(statusDecoded))
+            {
+                predicate = predicate.And(wf => wf.UnliquidatedObligation.Status == statusDecoded);
             }
 
             return predicate;

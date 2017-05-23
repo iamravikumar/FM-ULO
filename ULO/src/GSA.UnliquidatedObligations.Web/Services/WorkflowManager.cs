@@ -71,6 +71,14 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
                 }
                 wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
+                if (question.Answer == "Valid")
+                {
+                    wf.UnliquidatedObligation.Valid = true;
+                }
+                else if (question.Answer == "Invalid")
+                {
+                    wf.UnliquidatedObligation.Valid = false;
+                }
                 wf.UnliqudatedObjectsWorkflowQuestions.Add(question);
                 //TODO: if owner changes, look at other ways of redirecting.
                 var next = (WebActionWorkflowActivity)nextActivity;

@@ -14,34 +14,43 @@
             Region
         </th>
         <th>
+            Document Type
+        </th>
+        <th>
+            Pesasys Document Number
+        </th>
+        <th>
+            Pegasys Title Number
+        </th>
+        <th>
+            Fund
+        </th>
+        <th>
+            Organiztion
+        </th>
+        <th>
             BA Code
+        </th>      
+        <th>
+            Pegasys Vendor Name
+        </th> 
+        <th>
+            Contracting Officer Name
+        </th> 
+        <th>
+            Award Number
         </th>
         <th>
-            PDN
-        </th>
-        <th>
-            Org Code
-        </th>
-        <th>
-            Review Status
-        </th>
-        <th>
-            Amount
+            Reason Included In Review
         </th>
         <th>
             Valid
         </th>
         <th>
-            Due Date
+            Reviewed By
         </th>
         <th>
-            Days left
-        </th>
-        <th>
-            Assignee
-        </th>
-        <th>
-            Review Name
+            Status
         </th>
         <th></th>
 
@@ -60,19 +69,34 @@
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
+                Data Not Present
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasusDocumentNumber)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysTitleNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Fund)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.TotalLine)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysVendorName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ContractingOfficersName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.AwardNbr)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReasonIncludedInReview)
             </td>
             <td>
                 @{
@@ -81,20 +105,11 @@
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ExpectedDateForCompletionResolution)
+                Data Not Present?
             </td>
             <td>
-                @{
-                    var dueDate = Convert.ToDateTime(item.UnliquidatedObligation.ExpectedDateForCompletionResolution);
-                    var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
-                    @Html.Encode(daysLeft)
-
-                }
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AspNetUser.UserName)
-            </td>
-            <td>Review Name will go here</td>
             <td>@Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList", new WorkflowViewModel(item))</td>
 
         </tr>
