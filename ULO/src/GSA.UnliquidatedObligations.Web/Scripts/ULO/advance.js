@@ -1,9 +1,10 @@
 ﻿var select;
 
+
 $(document).ready(function() {
 
     select = document.getElementById("justifications");
-    if (select) {select.selectedIndex = 0;}
+    if (select && select.length === 1) {select.selectedIndex = 0;}
 });
 
 function ChoiceChange(value, model) {

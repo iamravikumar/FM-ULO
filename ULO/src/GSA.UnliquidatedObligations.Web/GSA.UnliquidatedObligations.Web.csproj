@@ -325,6 +325,7 @@
     <Compile Include="Services\IWorkflowManager.cs" />
     <Compile Include="Services\WorkflowManager.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="SubmitButtonSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />

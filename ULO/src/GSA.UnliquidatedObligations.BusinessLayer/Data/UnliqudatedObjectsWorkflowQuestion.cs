@@ -27,6 +27,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string Answer { get; set; }
         public Nullable<int> JustificationId { get; set; }
         public string Comments { get; set; }
+        public bool Pending { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

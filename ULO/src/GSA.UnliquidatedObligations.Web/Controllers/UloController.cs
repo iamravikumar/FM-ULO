@@ -160,12 +160,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         //TODO: be able to open either ULO or workflow
         //TODO: Attributes will probably change
         [HttpPost]
-        [ActionName("Advance")]
-        [Route("Advance/{workflowId}")]
+        [SubmitButtonSelector(Name = "Advance")]
         public async Task<ActionResult> Advance(
             int workflowId,
             int uloId,
-            [Bind(Include = "JustificationId,Answer,Comments")]
+            [Bind(Include = "JustificationId,Answer,Comments,UnliqudatedWorkflowQuestionsId")]
             AdvanceViewModel advanceModel)
         {
             var wf = await FindWorkflowAsync(workflowId);
@@ -180,10 +179,36 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     UserId = user.Id,
                     Answer = advanceModel.Answer,
                     WorkflowId = workflowId,
-                    Comments = advanceModel.Comments
+                    Comments = advanceModel.Comments,
+                    Pending = false,
+                    UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId
                 };
                 return await AdvanceAsync(wf, question);
             }
+            return await Details(uloId, workflowId);
+        }
+
+        [HttpPost]
+        [SubmitButtonSelector(Name = "Save")]
+        public async Task<ActionResult> SaveQuestion(int workflowId, int uloId,
+            [Bind(Include = "JustificationId,Answer,Comments,UnliqudatedWorkflowQuestionsId")] AdvanceViewModel advanceModel)
+        {
+            var wf = await FindWorkflowAsync(workflowId);
+            if (wf == null) return HttpNotFound();
+            var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+            var question = new UnliqudatedObjectsWorkflowQuestion
+            {
+                Date = DateTime.Now,
+                JustificationId = advanceModel.JustificationId,
+                UserId = user.Id,
+                Answer = advanceModel.Answer,
+                WorkflowId = workflowId,
+                Comments = advanceModel.Comments,
+                Pending = true,
+                UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId
+            };
+            await Manager.SaveQuestion(wf, question);
+            await DB.SaveChangesAsync();
             return await Details(uloId, workflowId);
         }
 
@@ -194,6 +219,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private async Task<ActionResult> AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
         {
+            await Manager.SaveQuestion(wf, question);
             var ret = await Manager.AdvanceAsync(wf, question);
             await DB.SaveChangesAsync();
             return ret;

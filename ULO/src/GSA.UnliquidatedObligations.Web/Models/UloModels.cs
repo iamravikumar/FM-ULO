@@ -37,7 +37,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
             Username = question.AspNetUser.UserName;
             Answer = question.Answer;
-            Justification = question.JustificationId != null ? JustificationChoices.Choices[(JustificationEnum) question.JustificationId].JustificationText : null;
+            Justification = question.JustificationId != null ? JustificationChoices.Choices[(JustificationEnum)question.JustificationId].JustificationText : null;
             Comments = question.Comments;
         }
     }
@@ -48,6 +48,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public List<QuestionChoicesViewModel> QuestionChoices { get; set; }
 
         public List<Justification> DefaultJustifications { get; set; }
+
+        public int UnliqudatedWorkflowQuestionsId { get; set; }
 
         public string QuestionLabel { get; set; }
 
@@ -60,30 +62,42 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public AdvanceViewModel()
         {
-            
+
         }
 
 
-        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, int workflowId)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId)
         {
-            
+
             QuestionLabel = workflowQuestionChoices.QuestionLabel;
             QuestionChoices = new List<QuestionChoicesViewModel>();
-            
+
             foreach (var questionChoice in workflowQuestionChoices.Choices)
             {
                 QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
             }
 
+            Answer = question != null ? question.Answer : "";  
+            Comments = question != null ? question.Comments : "";
+            UnliqudatedWorkflowQuestionsId = question?.UnliqudatedWorkflowQuestionsId ?? 0;
+            JustificationId = question  != null ? Convert.ToInt32(question.JustificationId) : 0;
+            WorkflowId = workflowId;
             DefaultJustifications = new List<Justification>();
-            if (workflowQuestionChoices.DefaultJustificationEnums != null)
+            if (Answer != "")
+            {
+                var justificationEnums = workflowQuestionChoices.Choices.First(c => c.Value == Answer).JustificationsEnums;
+                foreach (var justificationsEnum in justificationEnums)
+                {
+                    DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
+                }
+            }
+            else if (workflowQuestionChoices.DefaultJustificationEnums != null)
             {
                 foreach (var justificationsEnum in workflowQuestionChoices.DefaultJustificationEnums)
                 {
                     DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
                 }
             }
-            WorkflowId = workflowId;
         }
     }
 
@@ -95,7 +109,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public QuestionChoicesViewModel()
         {
-            
+
         }
 
         public QuestionChoicesViewModel(QuestionChoice questionChoice)
@@ -119,7 +133,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public DocumentsViewModel()
         {
-            
+
         }
 
         public DocumentsViewModel(List<Document> documents)
@@ -139,24 +153,27 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public bool RequestForReassignmentsActive { get; set; }
         public WorkflowViewModel()
         {
-           
+
         }
         public WorkflowViewModel(Workflow workflow, IWorkflowDescription workflowDecription = null)
         {
             Workflow = workflow;
-            QuestionsViewModel =  new UloWfQuestionsViewModel(workflow.UnliqudatedObjectsWorkflowQuestions.ToList());
+
+            QuestionsViewModel = new UloWfQuestionsViewModel(workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList());
 
             if (workflowDecription != null)
             {
                 WorkflowDescriptionViewModel =
                     new WorkflowDescriptionViewModel(workflowDecription.WebActionWorkflowActivities.ToList(),
                         workflow.CurrentWorkflowActivityKey);
-                AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, workflow.WorkflowId);
+
+                var unliqudatedObjectsWorkflowQuestion = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
+                AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestion, workflow.WorkflowId);
             }
             RequestForReassignmentsActive = workflow.RequestForReassignments.ToList().Count > 0 &&
                                                          Workflow.RequestForReassignments.FirstOrDefault() != null &&
                                                          Workflow.RequestForReassignments.First().IsActive;
-          
+
 
             DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList());
         }
@@ -170,10 +187,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public WorkflowDescriptionViewModel()
         {
-            
+
         }
 
-        public WorkflowDescriptionViewModel(List<WebActionWorkflowActivity> activities , string currentActivityKey)
+        public WorkflowDescriptionViewModel(List<WebActionWorkflowActivity> activities, string currentActivityKey)
         {
             Activites = new List<WebActionWorkflowActivity>(activities.OrderBy(a => a.SequenceNumber));
             CurrentActivity = activities.FirstOrDefault(a => a.WorkflowActivityKey == currentActivityKey);
@@ -187,10 +204,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public WorkflowViewModel WorkflowViewModel { get; set; }
         public UloViewModel()
         { }
-        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDecription) { 
+        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDecription)
+        {
             CurretUnliquidatedObligation = ulo;
             WorkflowViewModel = new WorkflowViewModel(workflow, workflowDecription);
-            
+
         }
     }
 

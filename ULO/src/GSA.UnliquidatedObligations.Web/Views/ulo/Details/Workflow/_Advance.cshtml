@@ -30,9 +30,12 @@
                         @Html.TextAreaFor(model => model.Comments, 10, 30, new {@class = "col-md-6"})
                     </div>
                 </div>
+                @Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
+               
                 <div class="row row-space-top">
                     <div class="col-md-10">
-                        <input type="submit" value="Submit" class="btn btn-default" />
+                        <input type="submit" value="Submit" name="Advance" class="btn btn-default" />
+                        <input type="submit" value="Save" name="Save" class="btn btn-primary" />
                     </div>
                 </div>
             </div>

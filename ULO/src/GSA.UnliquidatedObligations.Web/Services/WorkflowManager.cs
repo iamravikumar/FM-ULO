@@ -80,7 +80,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 {
                     wf.UnliquidatedObligation.Valid = false;
                 }
-                wf.UnliqudatedObjectsWorkflowQuestions.Add(question);
+
                 //TODO: if owner changes, look at other ways of redirecting.
                 var next = (WebActionWorkflowActivity)nextActivity;
                 var c = new RedirectingController();
@@ -106,20 +106,23 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return await Task.FromResult(c.RedirectToAction("Index", "Ulo", routeValues));
         }
 
-        //async Task<ActionResult> IWorkflowManager.SaveQuestion(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
-        //{
-        //    var questionFromDB = DB.UnliqudatedObjectsWorkflowQuestions.Find(question.UnliqudatedWorkflowQuestionsId);
-        //    if (questionFromDB == null)
-        //    {
-        //        wf.UnliqudatedObjectsWorkflowQuestions.Add(question);
-        //    }
-        //    else
-        //    {
-        //        questionFromDB.Answer = questionFromDB.Answer;
-        //        questionFromDB.Comments = question.Comments;
-
-        //    }
-        //}
+        async Task IWorkflowManager.SaveQuestion(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
+        {
+            var questionFromDB = await DB.UnliqudatedObjectsWorkflowQuestions.FirstOrDefaultAsync(q => q.WorkflowId == wf.WorkflowId && q.Pending == true);
+            if (questionFromDB == null)
+            {
+                wf.UnliqudatedObjectsWorkflowQuestions.Add(question);
+            }
+            else
+            {
+                questionFromDB.Answer = questionFromDB.Answer;
+                questionFromDB.Comments = question.Comments;
+                questionFromDB.JustificationId = question.JustificationId;
+                questionFromDB.Date = DateTime.Now;
+                questionFromDB.UserId = question.UserId;
+                questionFromDB.Pending = question.Pending;
+            }
+        }
 
         async Task<ActionResult> IWorkflowManager.Reassign(Workflow wf, string userId, string actionName)
         {
