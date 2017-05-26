@@ -148,6 +148,7 @@
     <Compile Include="Controllers\RequestForReassignmentsControllerTests.cs" />
     <Compile Include="Controllers\UloControllerTests.cs" />
     <Compile Include="Controllers\ControllerTests.cs" />
+    <Compile Include="Controllers\UsersControllerTests.cs" />
     <Compile Include="Mocks\ControllerContextMock.cs" />
     <Compile Include="Mocks\DbContextMock.cs" />
     <Compile Include="Mocks\ApplicationUserManagerMock.cs" />

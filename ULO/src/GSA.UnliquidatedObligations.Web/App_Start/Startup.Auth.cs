@@ -5,6 +5,7 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
 using GSA.UnliquidatedObligations.Web.Models;
+using Microsoft.Owin.Security;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -19,15 +20,15 @@ namespace GSA.UnliquidatedObligations.Web
             //app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
 
 
-
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
             // Configure the sign in cookie
+
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString("/Account/Login"),
-                Provider = new CookieAuthenticationProvider
+                Provider = new CookieAuthenticationProvider()
                 {
                     // Enables the application to validate the security stamp when the user logs in.
                     // This is a security feature which is used when you change a password or add an external login to your account.  
@@ -35,7 +36,21 @@ namespace GSA.UnliquidatedObligations.Web
                         validateInterval: TimeSpan.FromMinutes(30),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 }
-            });            
+            });
+
+            app.SetDefaultSignInAsAuthenticationType(DefaultAuthenticationTypes.ExternalCookie);
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AuthenticationMode = AuthenticationMode.Passive,
+                AuthenticationType = DefaultAuthenticationTypes.ExternalCookie,
+                CookieName = CookieAuthenticationDefaults.CookiePrefix + "External",
+                LoginPath = new PathString("/SecureAuth199/SecureAuth.aspx"),
+                Provider = new CookieAuthenticationProvider
+                {
+                    OnApplyRedirect = ApplyRedirect
+                }
+            });
+
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Enables the application to temporarily store user information when they are verifying the second factor in the two-factor authentication process.
@@ -61,9 +76,27 @@ namespace GSA.UnliquidatedObligations.Web
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
-            //    ClientId = "",
-            //    ClientSecret = ""
+            //    ClientId = "ABC.apps.googleusercontent.com",
+            //    ClientSecret = "XYZ"
             //});
+        }
+
+        private static void ApplyRedirect(CookieApplyRedirectContext context)
+        {
+            Uri absoluteUri;
+            if (Uri.TryCreate(context.RedirectUri, UriKind.Absolute, out absoluteUri))
+            {
+                var path = PathString.FromUriComponent(absoluteUri);
+                if (path == context.OwinContext.Request.PathBase + context.Options.LoginPath)
+                {
+                    context.RedirectUri = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
+                        new QueryString(
+                            context.Options.ReturnUrlParameter,
+                            "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
+                }
+            }
+
+            context.Response.Redirect(context.RedirectUri);
         }
     }
 }

@@ -9,25 +9,44 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
 {
     public static class AspNetUserClaimsData
     {
-        public static List<AspNetUserClaim> GenerateData(int listSize, string withUserId)
+        public static List<AspNetUserClaim> GenerateData(int listSize, string withUserId )
         {
-            var claimValue = new ApplicationPermissionClaimValue()
+            var canViewReviewsClaimValue = new ApplicationPermissionClaimValue
             {
-                RegionIds = new HashSet<int>() {1, 4},
+                Regions = new HashSet<int>() {1, 4},
                 ApplicationPermissionName = ApplicationPermissionNames.CanViewReviews
             };
+
+            var canManageUsersClaimValue = new ApplicationPermissionClaimValue
+            {
+                Regions = new HashSet<int>() { 1, 4 },
+                ApplicationPermissionName = ApplicationPermissionNames.ManageUsers
+            };
+            var scClaimValue = new SubjectCatagoryClaimValue
+            {
+                Regions = new HashSet<int>() { 1, 4 },
+                DocType = "UE",
+                BACode = "F40000",
+                OrgCode = "G1234"
+            };
+
             var claimType = ApplicationPermissionClaimValue.ClaimType;
 
-            var serializedClaimValue = JsonConvert.SerializeObject(claimValue);
-
-            return Builder<AspNetUserClaim>
+            var serializedCanViewReviewsClaimValue = canViewReviewsClaimValue.ToXml();
+            var serializedCanManageUsersClaimValue = canManageUsersClaimValue.ToXml();
+            var serializedScClaimValue = scClaimValue.ToXml();
+            var claims = Builder<AspNetUserClaim>
                 .CreateListOfSize(listSize)
-                .Random(1)
+                .TheFirst(2)
                 .With(u => u.UserId = withUserId)
                 .With(u => u.ClaimType = claimType)
-                .With(u => u.ClaimValue = serializedClaimValue)
                 .Build()
                 .ToList();
+
+            claims[0].ClaimValue = serializedCanViewReviewsClaimValue;
+            claims[1].ClaimValue = serializedCanManageUsersClaimValue;
+
+            return claims;
         }
     }
 }

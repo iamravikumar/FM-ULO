@@ -25,10 +25,19 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:63964")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://ulo.azurewebsites.net/")]
         public string SiteUrl {
             get {
                 return ((string)(this["SiteUrl"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseDevAuthentication {
+            get {
+                return ((bool)(this["UseDevAuthentication"]));
             }
         }
     }

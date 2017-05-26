@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="1faa3d13a96547648d67cef7b597afce" Name="Diagram1" ZoomLevel="15">
+      <Diagram DiagramId="4660603004b84d7ca5f32b6b67918987" Name="Diagram1" ZoomLevel="25">
         <EntityTypeShape EntityType="Model.AspNetRole" Width="1.5" PointX="0.75" PointY="20.625" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="19.125" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="21.875" IsExpanded="true" />
@@ -23,6 +23,8 @@
         <EntityTypeShape EntityType="Model.Workflow" Width="1.5" PointX="11.25" PointY="19.5" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.Region" Width="1.5" PointX="3" PointY="15.375" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.Zone" Width="1.5" PointX="0.75" PointY="15.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspnetUserApplicationPermissionClaim" Width="1.5" PointX="0.75" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspnetUserSubjectCategoryClaim" Width="1.5" PointX="2.75" PointY="9.5" IsExpanded="true" />
         <AssociationConnector Association="Model.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__Document__Upload__7720AD13" ManuallyRouted="false" />

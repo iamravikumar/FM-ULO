@@ -1,10 +1,12 @@
 ﻿using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
 using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Web.Models;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -23,7 +25,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // GET: Users
         public async Task<ActionResult> Index()
         {
-            return View(await DB.AspNetUsers.Include(u => u.AspNetUserClaims).ToListAsync());
+            //var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == this.User.Identity.Name);
+            //var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers);
+            //var user
+            //return View(new UsersModels(claimRegionIds));
+            return View();
         }
 
         // GET: Users/Details/5

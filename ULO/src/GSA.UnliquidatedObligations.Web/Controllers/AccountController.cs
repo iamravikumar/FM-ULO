@@ -1,11 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Security;
 using Autofac;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using GSA.UnliquidatedObligations.Web.Models;
+using Microsoft.Owin;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -30,8 +32,27 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
+            if (Properties.Settings.Default.UseDevAuthentication)
+            {
+                ViewBag.ReturnUrl = returnUrl;
+                return View();
+            }
+
+                var cookie = Request.Cookies["PostAuthToken199"];
+                if (cookie == null)
+                {
+                    var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
+                                    new QueryString(
+                                        "ReturnUrl",
+                                        "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
+                    return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
+                        redirectUrl);
+                }
+                else
+                {
+                    return ExternalLoginCallback(returnUrl);
+                }
+            
         }
 
         //
@@ -253,7 +274,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }), null, AuthenticationManager);
+            //return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }), null, AuthenticationManager);
+
+             return new ChallengeResult(provider, returnUrl, null, AuthenticationManager);
         }
 
         //
@@ -294,31 +317,57 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         //
         // GET: /Account/ExternalLoginCallback
         [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
+        public ActionResult ExternalLoginCallback(string returnUrl)
         {
-            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
-            if (loginInfo == null)
+            FormsAuthenticationTicket ticket = null;
+            var cookie = Request.Cookies["PostAuthToken199"];
+            if (cookie != null)
+            {
+                ticket = FormsAuthentication.Decrypt(cookie.Value);
+            }
+            if (ticket == null)
             {
                 return RedirectToAction("Login");
             }
 
-            // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = SignInManager.PasswordSignIn(ticket.Name, "", true, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
                     return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-                case SignInStatus.Failure:
+                //case SignInStatus.LockedOut:
+                //    return View("Lockout");
+                //case SignInStatus.RequiresVerification:
+                //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                //case SignInStatus.Failure:
                 default:
-                    // If the user does not have an account, then prompt the user to create an account
-                    ViewBag.ReturnUrl = returnUrl;
-                    ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+                    var user = new ApplicationUser { UserName = ticket.Name, Email = ticket.UserData };
+                    var createResult = UserManager.Create(user);
+                    if (createResult.Succeeded)
+                    {
+                        return RedirectToLocal(returnUrl);
+                    }
+                    return null;
             }
+            
+
+            // Sign in the user with this external login provider if the user already has a login
+            //var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            //switch (result)
+            //{
+            //    case SignInStatus.Success:
+            //        return RedirectToLocal(returnUrl);
+            //    case SignInStatus.LockedOut:
+            //        return View("Lockout");
+            //    case SignInStatus.RequiresVerification:
+            //        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
+            //    case SignInStatus.Failure:
+            //    default:
+            //        // If the user does not have an account, then prompt the user to create an account
+            //        ViewBag.ReturnUrl = returnUrl;
+            //        ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
+            //        return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+            //}
         }
 
         //

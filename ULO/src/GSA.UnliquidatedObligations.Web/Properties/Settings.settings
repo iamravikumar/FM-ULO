@@ -3,7 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="SiteUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost:63964</Value>
+      <Value Profile="(Default)">http://ulo.azurewebsites.net/</Value>
+    </Setting>
+    <Setting Name="UseDevAuthentication" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

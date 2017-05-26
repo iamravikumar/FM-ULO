@@ -1,17 +1,38 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
+using GSA.UnliquidatedObligations.BusinessLayer.Helpers;
+using Newtonsoft.Json;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {
+    [DataContract(Namespace = ClaimTypePrefix)]
     public class SubjectCatagoryClaimValue : RegionalClaimValue
     {
-        public const string ClaimType = ClaimTypePrefix+"SubjectCatagoryClaim";
+        public const string ClaimType = ClaimTypePrefix+"SubjectCatagoryClaimValueValue";
+        private static readonly DataContractSerializer Serializer = new DataContractSerializer(typeof(SubjectCatagoryClaimValue), new[] { typeof(RegionalClaimValue) });
 
-        [JsonProperty("subjectCatagoryName", Required = Required.Always)]
-        public SubjectCatagoryNames SubjectCatagoryName { get; set; }
+        public SubjectCatagoryClaimValue()
+            : base(Serializer)
+        { }
 
-        public static new SubjectCatagoryClaimValue CreateFromJson(string json)
+        public static SubjectCatagoryClaimValue Load(string xml)
         {
-            return string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<SubjectCatagoryClaimValue>(json);
+            return (SubjectCatagoryClaimValue)Serializer.ReadObject(xml);
         }
+
+        [DataMember(Name = "DocumentType")]
+        public string DocType { get; set; }
+
+        [DataMember]
+        public string BACode { get; set; }
+
+        [DataMember]
+        public string OrgCode { get; set; }
+        //[JsonProperty("subjectCatagoryName", Required = Required.Always)]
+        //public SubjectCatagoryName SubjectCatagoryName { get; set; }
+
+        //public static new SubjectCatagoryClaimValueValueValue CreateFromJson(string json)
+        //{
+        //    return string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<SubjectCatagoryClaimValueValueValue>(json);
+        //}
     }
 }

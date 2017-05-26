@@ -7,18 +7,27 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
 {
     public static class UsersData
     {
-        public static List<AspNetUser> GenerateData(int listSize, string withUserID, string withUserType = "Person")
+        public static List<AspNetUser> GenerateData(int listSize, string withUserID, string withUserType = "Person", bool addClaimsForAllUsers = false)
         {
-            var claims = AspNetUserClaimsData.GenerateData(1, withUserID);
+            var claims = AspNetUserClaimsData.GenerateData(2, withUserID);
 
-            return Builder<AspNetUser>
-                .CreateListOfSize(3)
+            var users =  Builder<AspNetUser>
+                .CreateListOfSize(listSize)
                 .Random(1)
                 .With(u => u.Id = withUserID)
                 .With(u => u.UserType = withUserType)
                 .With(u => u.AspNetUserClaims = claims)
                 .Build()
                 .ToList();
+
+            if (addClaimsForAllUsers)
+            {
+                
+            }
+
+
+
+            return users;
         }
 
     }

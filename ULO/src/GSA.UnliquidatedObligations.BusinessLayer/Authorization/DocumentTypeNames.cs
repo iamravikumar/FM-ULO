@@ -1,6 +1,6 @@
 ﻿namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {
-    public enum SubjectCatagoryNames
+    public enum DocumentTypeNames
     {
         UE,
         LR,

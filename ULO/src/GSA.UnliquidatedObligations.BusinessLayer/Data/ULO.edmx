@@ -251,6 +251,28 @@
           <Property Name="ZoneId" Type="int" Nullable="false" />
           <Property Name="ZoneName" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="AspnetUserApplicationPermissionClaims">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Region" Type="int" />
+          <Property Name="PermissionName" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="AspnetUserSubjectCategoryClaims">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Region" Type="int" />
+          <Property Name="BACode" Type="nvarchar" MaxLength="50" />
+          <Property Name="DocumentType" Type="nvarchar" MaxLength="50" />
+          <Property Name="OrgCode" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <Association Name="FK__Document__Upload__7720AD13">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
@@ -597,6 +619,22 @@
           <EntitySet Name="Workflows" EntityType="Self.Workflows" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Regions" EntityType="Self.Regions" Schema="gsa" store:Type="Tables" />
           <EntitySet Name="Zones" EntityType="Self.Zones" Schema="gsa" store:Type="Tables" />
+          <EntitySet Name="AspnetUserApplicationPermissionClaims" EntityType="Self.AspnetUserApplicationPermissionClaims" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [AspnetUserApplicationPermissionClaims].[UserId] AS [UserId], 
+    [AspnetUserApplicationPermissionClaims].[Region] AS [Region], 
+    [AspnetUserApplicationPermissionClaims].[PermissionName] AS [PermissionName]
+    FROM [dbo].[AspnetUserApplicationPermissionClaims] AS [AspnetUserApplicationPermissionClaims]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="AspnetUserSubjectCategoryClaims" EntityType="Self.AspnetUserSubjectCategoryClaims" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [AspnetUserSubjectCategoryClaims].[UserId] AS [UserId], 
+    [AspnetUserSubjectCategoryClaims].[Region] AS [Region], 
+    [AspnetUserSubjectCategoryClaims].[BACode] AS [BACode], 
+    [AspnetUserSubjectCategoryClaims].[DocumentType] AS [DocumentType], 
+    [AspnetUserSubjectCategoryClaims].[OrgCode] AS [OrgCode]
+    FROM [dbo].[AspnetUserSubjectCategoryClaims] AS [AspnetUserSubjectCategoryClaims]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK__Document__Upload__7720AD13" Association="Self.FK__Document__Upload__7720AD13">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Documents" EntitySet="Documents" />
@@ -995,6 +1033,24 @@
           <Property Name="ZoneName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Regions" Relationship="Self.FK__Regions__ZoneId__30C33EC3" FromRole="Zones" ToRole="Regions" />
         </EntityType>
+        <EntityType Name="AspnetUserApplicationPermissionClaim">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Region" Type="Int32" />
+          <Property Name="PermissionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AspnetUserSubjectCategoryClaim">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Region" Type="Int32" />
+          <Property Name="BACode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DocumentType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OrgCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1310,6 +1366,8 @@
           <EntitySet Name="Workflows" EntityType="Self.Workflow" />
           <EntitySet Name="Regions" EntityType="Self.Region" />
           <EntitySet Name="Zones" EntityType="Self.Zone" />
+          <EntitySet Name="AspnetUserApplicationPermissionClaims" EntityType="Self.AspnetUserApplicationPermissionClaim" />
+          <EntitySet Name="AspnetUserSubjectCategoryClaims" EntityType="Self.AspnetUserSubjectCategoryClaim" />
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
@@ -1674,6 +1732,26 @@
               <MappingFragment StoreEntitySet="Zones">
                 <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
                 <ScalarProperty Name="ZoneName" ColumnName="ZoneName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspnetUserApplicationPermissionClaims">
+            <EntityTypeMapping TypeName="Model.AspnetUserApplicationPermissionClaim">
+              <MappingFragment StoreEntitySet="AspnetUserApplicationPermissionClaims">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="PermissionName" ColumnName="PermissionName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspnetUserSubjectCategoryClaims">
+            <EntityTypeMapping TypeName="Model.AspnetUserSubjectCategoryClaim">
+              <MappingFragment StoreEntitySet="AspnetUserSubjectCategoryClaims">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="BACode" ColumnName="BACode" />
+                <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
+                <ScalarProperty Name="OrgCode" ColumnName="OrgCode" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -310,6 +310,7 @@
     <Compile Include="Models\DocumentModalViewModel.cs" />
     <Compile Include="Models\RequestForReassignmentViewModel.cs" />
     <Compile Include="Models\UloModels.cs" />
+    <Compile Include="Models\UsersModels.cs" />
     <Compile Include="PortalHelpers.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -375,9 +376,9 @@
     <Content Include="Scripts\ULO\recordsListing.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Content\ULO\Workflows\workflows.css" />
-    <Content Include="Web.config">
+    <None Include="Web.config">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
