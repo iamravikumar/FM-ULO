@@ -9,7 +9,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
     {
         public static List<AspNetUser> GenerateData(int listSize, string withUserID, string withUserType = "Person", bool addClaimsForAllUsers = false)
         {
-            var claims = AspNetUserClaimsData.GenerateData(2, withUserID);
+            var claims = AspNetUserClaimsData.GenerateData(3, withUserID);
 
             var users =  Builder<AspNetUser>
                 .CreateListOfSize(listSize)

@@ -32,21 +32,26 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
 
             var claimType = ApplicationPermissionClaimValue.ClaimType;
 
+
+
             var serializedCanViewReviewsClaimValue = canViewReviewsClaimValue.ToXml();
             var serializedCanManageUsersClaimValue = canManageUsersClaimValue.ToXml();
             var serializedScClaimValue = scClaimValue.ToXml();
             var claims = Builder<AspNetUserClaim>
                 .CreateListOfSize(listSize)
-                .TheFirst(2)
+                .TheFirst(3)
                 .With(u => u.UserId = withUserId)
-                .With(u => u.ClaimType = claimType)
                 .Build()
                 .ToList();
 
             claims[0].ClaimValue = serializedCanViewReviewsClaimValue;
+            claims[0].ClaimType = ApplicationPermissionClaimValue.ClaimType;
             claims[1].ClaimValue = serializedCanManageUsersClaimValue;
-
+            claims[1].ClaimType = ApplicationPermissionClaimValue.ClaimType;
+            claims[2].ClaimValue = serializedScClaimValue;
+            claims[2].ClaimType = SubjectCatagoryClaimValue.ClaimType;
             return claims;
         }
+
     }
 }

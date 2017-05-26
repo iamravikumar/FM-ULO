@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -12,15 +13,15 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public List<SelectListItem> Regions { get; set; }
 
         public int RegionId { get; set; }
-        public List<AspNetUser> Users { get; set; }
-        public UsersModels(HashSet<int> regions, List<AspNetUser> users)
+        public List<UserModel> Users { get; set; }
+        public UsersModels(List<int> regions, List<AspNetUser> users, List<AspnetUserApplicationPermissionClaim> regionClaims, List<AspnetUserApplicationPermissionClaim> otherRegionClaims)
         {
             Regions = ConvertToSelectList(regions);
             RegionId = Convert.ToInt32(Regions[0].Value);
-            Users = users;
+            Users = users.Select(u => new UserModel(u, regionClaims)).ToList();
         }
 
-        private List<SelectListItem> ConvertToSelectList(HashSet<int> regions)
+        private List<SelectListItem> ConvertToSelectList(List<int> regions)
         {
             var regionsSelect = new List<SelectListItem>();
 
@@ -30,6 +31,19 @@ namespace GSA.UnliquidatedObligations.Web.Models
             }
             return regionsSelect;
 
+        }
+    }
+
+    public class UserModel
+    {
+        public string UserName { get; set; }
+        public List<string> Claims { get; set; }
+        public List<string> Groups { get; set; }
+        public UserModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> regionClaims )
+        {
+            UserName = user.UserName;
+            Claims = regionClaims.Where(c => c.UserId == user.Id).Select(c => c.PermissionName).ToList();
+            Groups = user.UserUsers.Select(uu => uu.AspNetUser1.UserName).ToList();
         }
     }
 }

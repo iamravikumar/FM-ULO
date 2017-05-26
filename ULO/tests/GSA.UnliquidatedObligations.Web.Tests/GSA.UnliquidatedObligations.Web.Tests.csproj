@@ -160,6 +160,7 @@
     <Compile Include="Services\WorkflowManagerTest.cs" />
     <Compile Include="TestData\AspNetUserClaims.cs" />
     <Compile Include="TestData\AttachmentsData.cs" />
+    <Compile Include="TestData\AspnetUserApplicationPermissionClaimsViewData.cs" />
     <Compile Include="TestData\DocumentTypesData.cs" />
     <Compile Include="TestData\UserUsersData.cs" />
     <Compile Include="TestData\NotesData.cs" />

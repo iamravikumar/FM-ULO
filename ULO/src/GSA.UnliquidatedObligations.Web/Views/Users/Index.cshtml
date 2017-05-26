@@ -7,13 +7,16 @@
 
 <h2>Users</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+<div class="row user-options">
+    <div class="col-md-3">
+        @Html.LabelFor(model => model.RegionId, "Select Region:", htmlAttributes: new { @class = "control-label" })
+        @Html.DropDownListFor(model => model.RegionId, Model.Regions, new { @class = "form-control" })
+    </div>
+</div>
 <table class="table table-responsive">
     <tr>
         <th>
-            @*@Html.DisplayNameFor(model => model.UserName)*@
+            User Name
         </th>
         <th>
             Claims
@@ -23,41 +26,40 @@
         <th></th>
     </tr>
 
-    @*@foreach (var item in Model)
-        {*@
-    <tr>
-        <td>
-            regionApprover
-        </td>
-        <td>
-            <ul>
-                <li>
-                    ApplicationUser
-                </li>
-                <li>
-                    CanViewOtherOtherWorkflows
-                </li>
-                <li>
-                    ManageUsers
-                </li>
-            </ul>
+    @foreach (var user in Model.Users)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => user.UserName)
+            </td>
+            <td>
+                <ul>
+                    @foreach (var claim in user.Claims)
+                    {
+                        <li>@claim</li>
+                    }
+                </ul>
 
-        </td>
-        <td>
-            <ul>
-                <li>
-                    Admin
-                </li>
-
-            </ul>
-        </td>
-        <td></td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = 1 }) |
-            @Html.ActionLink("Details", "Details", new { id = 1 }) |
-            @Html.ActionLink("Delete", "Delete", new { id = 1 })
-        </td>
-    </tr>
-    @*}*@
+            </td>
+            <td>
+                <ul>
+                    @foreach (var group in user.Groups)
+                    {
+                        <li>@group</li>
+                    }
+                </ul>
+            </td>
+            <td></td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = 1 }) |
+                @Html.ActionLink("Details", "Details", new { id = 1 }) |
+                @Html.ActionLink("Delete", "Delete", new { id = 1 })
+            </td>
+        </tr>
+    }
 
 </table>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>

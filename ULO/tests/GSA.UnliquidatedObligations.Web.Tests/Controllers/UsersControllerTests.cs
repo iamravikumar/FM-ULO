@@ -24,13 +24,16 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task Gets_Users_Information()
+        public async Task Index_Gets_Model_Information()
         {
             var view = await UsersController.Index() as ViewResult;
             var returnedModel = (UsersModels)view.Model;
             Assert.AreEqual(returnedModel.Regions[0].Value, 1.ToString());
             Assert.AreEqual(returnedModel.Regions[1].Value, 4.ToString());
             Assert.AreEqual(returnedModel.RegionId, 1);
+            Assert.AreEqual(returnedModel.Regions.Count, 2);
+            Assert.AreEqual(returnedModel.Users.Count, 2);
+            Assert.AreEqual(returnedModel.Users[0].Claims.Count, 2);
 
         }
     }

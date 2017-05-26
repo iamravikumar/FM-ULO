@@ -25,11 +25,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // GET: Users
         public async Task<ActionResult> Index()
         {
-            //var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == this.User.Identity.Name);
-            //var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers);
-            //var user
-            //return View(new UsersModels(claimRegionIds));
-            return View();
+            var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == this.User.Identity.Name);
+            var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
+            var defaultRegionId = claimRegionIds[0];
+            var regionPermissionClaims =
+                DB.AspnetUserApplicationPermissionClaims.Where(c => c.Region.Value == defaultRegionId);
+            var userIdsforClaimRegion = regionPermissionClaims.Select(c => c.UserId);
+            var usersOtherClaimRegions =
+                DB.AspnetUserApplicationPermissionClaims.Where(c => userIdsforClaimRegion.Contains(c.UserId) && c.Region.Value != defaultRegionId);
+            var users = DB.AspNetUsers.Where(u => userIdsforClaimRegion.Contains(u.Id) && u.UserType == "Person").ToList();
+            return View(new UsersModels(claimRegionIds, users, regionPermissionClaims.ToList()));
         }
 
         // GET: Users/Details/5

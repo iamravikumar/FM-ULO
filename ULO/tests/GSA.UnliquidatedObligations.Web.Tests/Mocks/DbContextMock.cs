@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Tests.TestData;
 using Moq;
@@ -64,7 +65,10 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
             var claimsListGroup = AspNetUserClaimsData.GenerateData(5, GROUPUSERID);
 
             var claimsList = claimsListPerson.Concat(claimsListGroup).AsQueryable();
-            
+            var aspnetUserApplicationPermissionClaimsViewList =
+                AspnetUserApplicationPermissionClaimsViewData.GenerateData(
+                    claimsList.Where(c => c.ClaimType == ApplicationPermissionClaimValue.ClaimType).ToList()).AsQueryable();
+
             //var notesList = NotesData.GenerateData(3, ULOID, userData).AsQueryable();
 
             var mockUloSet = new Mock<DbSet<UnliquidatedObligation>>();
@@ -171,6 +175,17 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
             mockClaimsSet.As<IQueryable<AspNetUserClaim>>().Setup(m => m.ElementType).Returns(claimsList.ElementType);
             mockClaimsSet.As<IQueryable<AspNetUserClaim>>().Setup(m => m.GetEnumerator()).Returns(claimsList.GetEnumerator());
 
+            var mockaspnetUserApplicationPermissionClaimsViewSet = new Mock<DbSet<AspnetUserApplicationPermissionClaim>>();
+            mockaspnetUserApplicationPermissionClaimsViewSet.As<IDbAsyncEnumerable<AspnetUserApplicationPermissionClaim>>()
+                .Setup(m => m.GetAsyncEnumerator())
+                .Returns(new TestDbAsyncEnumerator<AspnetUserApplicationPermissionClaim>(aspnetUserApplicationPermissionClaimsViewList.GetEnumerator()));
+            mockaspnetUserApplicationPermissionClaimsViewSet.As<IQueryable<AspnetUserApplicationPermissionClaim>>()
+                .Setup(m => m.Provider)
+                .Returns(new TestDbAsyncQueryProvider<AspnetUserApplicationPermissionClaim>(aspnetUserApplicationPermissionClaimsViewList.Provider));
+            mockaspnetUserApplicationPermissionClaimsViewSet.As<IQueryable<AspnetUserApplicationPermissionClaim>>().Setup(m => m.Expression).Returns(aspnetUserApplicationPermissionClaimsViewList.Expression);
+            mockaspnetUserApplicationPermissionClaimsViewSet.As<IQueryable<AspnetUserApplicationPermissionClaim>>().Setup(m => m.ElementType).Returns(aspnetUserApplicationPermissionClaimsViewList.ElementType);
+            mockaspnetUserApplicationPermissionClaimsViewSet.As<IQueryable<AspnetUserApplicationPermissionClaim>>().Setup(m => m.GetEnumerator()).Returns(aspnetUserApplicationPermissionClaimsViewList.GetEnumerator());
+
             var mockULODBEntities = new Mock<ULODBEntities>();
             mockULODBEntities.Setup(c => c.UnliquidatedObligations).Returns(mockUloSet.Object);
             mockULODBEntities.Setup(c => c.Workflows).Returns(mockWorkflowSet.Object);
@@ -181,6 +196,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
             mockULODBEntities.Setup(c => c.Documents).Returns(mockDocumentSet.Object);
             mockULODBEntities.Setup(c => c.DocumentTypes).Returns(mockDocumentTypeSet.Object);
             mockULODBEntities.Setup(c => c.AspNetUserClaims).Returns(mockClaimsSet.Object);
+            mockULODBEntities.Setup(c => c.AspnetUserApplicationPermissionClaims).Returns(mockaspnetUserApplicationPermissionClaimsViewSet.Object);
             return mockULODBEntities.Object;
 
         }

@@ -1,2 +1,8 @@
-﻿body {
+﻿.row.user-options {
+    margin: 15px -15px;
+}
+
+.row.user-options .form-control {
+    width: auto;
+    display: inline-block;
 }
