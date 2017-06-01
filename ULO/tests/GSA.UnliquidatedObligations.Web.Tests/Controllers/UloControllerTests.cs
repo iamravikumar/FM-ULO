@@ -113,7 +113,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         {
             var view = await UloController.RegionWorkflows() as ViewResult;
             var returnedModel = (IEnumerable<Workflow>) view.Model;
-            Assert.AreEqual(returnedModel.Count(), 6);
+            Assert.AreEqual(returnedModel.Count(), 7);
 
         }
     }

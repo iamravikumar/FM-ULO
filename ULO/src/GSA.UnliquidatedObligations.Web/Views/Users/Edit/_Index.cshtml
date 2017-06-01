@@ -3,14 +3,14 @@
 @using (Html.BeginForm("", "Users", new { id = 1 }, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    <div class="modal fade requestForReassignModal" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModal" aria-hidden="true">
+    <div class="modal fade edit-user-modal" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModal" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
                 </div>
                 <div id="editUserModalBody" class="modal-body">
-                    @Html.Partial("Edit/_UserEditBody", new UserModel())
+                    @Html.Partial("Edit/Body/_Index", new EditUserModel())
 
                     @*<div class="row">
                             @Html.LabelFor(model => model.SuggestedReviewerId, @reviewerLabelText, htmlAttributes: new { @class = "col-md-4", @for = @suggestedReviwerId })

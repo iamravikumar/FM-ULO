@@ -167,7 +167,7 @@
     <Compile Include="Helpers\XmlHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\UloHelpers.cs" />
-    <Compile Include="SubjectCategoryNames.cs" />
+    <Compile Include="Authorization\SubjectCategoryNames.cs" />
     <Compile Include="Workflow\DatabaseWorkflowDescriptionFinder.cs" />
     <Compile Include="Workflow\FieldComparisonActivityChooser.cs" />
     <Compile Include="Workflow\IActivityChooser.cs" />

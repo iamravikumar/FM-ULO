@@ -44,7 +44,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             DocumentTypeId = 2;
 
             var personUserData = UsersData.GenerateData(5, PersonUserId);
-            var groupUserData = UsersData.GenerateData(1, GroupUserId, "Group");
+            var groupUserData = UsersData.GenerateData(1, GroupUserId, "Group", false, "testGroup");
             var userData = personUserData.Concat(groupUserData).ToList();
             var currentUser = personUserData.First(u => u.Id == PersonUserId);
 

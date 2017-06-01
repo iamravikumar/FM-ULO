@@ -10,6 +10,7 @@ using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
+using System;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -84,7 +85,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return users.Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), usersOtherClaimRegions.ToList())).ToList();
         }
 
-        private async Task<UserModel> GetUserById(string userID, int regionId)
+        private async Task<EditUserModel> GetEditUserById(string userID, int regionId)
         {
             //get application permission regions
             var applicationPermissionRegionPermissionClaims =
@@ -95,8 +96,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var subjectCategoryPermissionClaims =
                 DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userID && c.Region.Value == regionId);
 
+            var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).ToList();
+            var allSubjectCategoryClaims = Enum.GetNames(typeof(SubjectCatagoryNames)).ToList();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userID);
-            return new UserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), null);
+            var groupNames = await DB.AspNetUsers.Where(u => u.UserType == "Group").Select(u => u.UserName).ToListAsync();
+            return new EditUserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), allApplicationPermissionNames, allSubjectCategoryClaims, groupNames);
         }
         // GET: Users/Details/5
         public async Task<ActionResult> Details(string id)
@@ -139,8 +143,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // GET: Users/Edit/5
         public async Task<ActionResult> Edit(string userId, int regionId)
         {
-            var user = await GetUserById(userId, regionId);
-            return PartialView("Edit/_UserEditBody", user);
+            var user = await GetEditUserById(userId, regionId);
+            return PartialView("Edit/Body/_Index", user);
+        }
+
+        public ActionResult AddSubjectCategoryRow()
+        {
+            var allSubjectCategoryClaims = EditUserModel.ConvertToSelectList(Enum.GetNames(typeof(SubjectCatagoryNames)).ToList());
+
+            return PartialView("Edit/Body/SubjectCategories/_SubjectCategory",
+                new EditSubjectPermissionClaimModel(allSubjectCategoryClaims));
         }
 
         // POST: Users/Edit/5

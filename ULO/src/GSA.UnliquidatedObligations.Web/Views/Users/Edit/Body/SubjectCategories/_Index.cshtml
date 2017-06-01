@@ -1,0 +1,20 @@
+﻿@using GSA.UnliquidatedObligations.Web.Models
+@model EditUserModel
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">Subject Category Claims</h4>
+    </div>
+    <div class="panel-body">
+        <div class="form-group subject-category-claims">
+            @foreach (var claim in Model.SubjectCategoryClaims ?? Enumerable.Empty<EditSubjectPermissionClaimModel>())
+            {
+                @Html.Partial("Edit/Body/SubjectCategories/_SubjectCategory", claim)
+               
+            }
+
+        </div>
+        <button type="button" class="btn add-subject-category">Add Subject Category Claim</button>
+    </div>
+
+</div>

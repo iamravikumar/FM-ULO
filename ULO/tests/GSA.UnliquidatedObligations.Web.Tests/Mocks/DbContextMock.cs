@@ -53,7 +53,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
             var regionUloList = UloData.GenerateRegionData(10, 4);
             var uloList = genericUloList.Concat(regionUloList).AsQueryable();
             var workflowList = WorkflowData.GenerateData(10, WORKFLOWID, USERDATA, PERSONUSERID, WORKFLOWKEY, CURRENTWORKFLOWACTIVITYKEY, regionUloList).AsQueryable();
-            var userUsersList = UserUsersData.GenerateData(1, USERDATA.FirstOrDefault(u => u.Id == PERSONUSERID), GROUPUSERID).AsQueryable();
+            var userUsersList = UserUsersData.GenerateData(1, USERDATA.FirstOrDefault(u => u.Id == GROUPUSERID), GROUPUSERID).AsQueryable();
             var requestForReassignmentList = RequestForReassignmentData.GenerateData(10, REQUESTFORREASSIGNMENTID, WORKFLOWID, PERSONUSERID).AsQueryable();
             USERDATA.AddParentUser(PERSONUSERID, userUsersList.ToList()[0]);
             var userList = USERDATA.AsQueryable();
