@@ -1,4 +1,4 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.UsersModels
+﻿@model GSA.UnliquidatedObligations.Web.Models.UsersModel
 
 @{
     ViewBag.Title = "Users";
@@ -13,53 +13,9 @@
         @Html.DropDownListFor(model => model.RegionId, Model.Regions, new { @class = "form-control" })
     </div>
 </div>
-<table class="table table-responsive">
-    <tr>
-        <th>
-            User Name
-        </th>
-        <th>
-            Claims
-        </th>
-        <th>Groups</th>
-        <th>Other Regions</th>
-        <th></th>
-    </tr>
-
-    @foreach (var user in Model.Users)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => user.UserName)
-            </td>
-            <td>
-                <ul>
-                    @foreach (var claim in user.Claims)
-                    {
-                        <li>@claim</li>
-                    }
-                </ul>
-
-            </td>
-            <td>
-                <ul>
-                    @foreach (var group in user.Groups)
-                    {
-                        <li>@group</li>
-                    }
-                </ul>
-            </td>
-            <td></td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = 1 }) |
-                @Html.ActionLink("Details", "Details", new { id = 1 }) |
-                @Html.ActionLink("Delete", "Delete", new { id = 1 })
-            </td>
-        </tr>
-    }
-
-</table>
-
+@Html.Partial("_Data", Model.Users)
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+@Html.Partial("Edit/_Index");

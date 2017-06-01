@@ -1,8 +1,11 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
+using System.Web.UI.WebControls.Expressions;
 using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
@@ -24,19 +27,77 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // GET: Users
         public async Task<ActionResult> Index()
-        {
+        { 
+            //get user object for user logged in.
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == this.User.Identity.Name);
+
+            //get claim Region Ids for user
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
-            var defaultRegionId = claimRegionIds[0];
-            var regionPermissionClaims =
-                DB.AspnetUserApplicationPermissionClaims.Where(c => c.Region.Value == defaultRegionId);
-            var userIdsforClaimRegion = regionPermissionClaims.Select(c => c.UserId);
-            var usersOtherClaimRegions =
-                DB.AspnetUserApplicationPermissionClaims.Where(c => userIdsforClaimRegion.Contains(c.UserId) && c.Region.Value != defaultRegionId);
-            var users = DB.AspNetUsers.Where(u => userIdsforClaimRegion.Contains(u.Id) && u.UserType == "Person").ToList();
-            return View(new UsersModels(claimRegionIds, users, regionPermissionClaims.ToList()));
+            var userData = await GetUsersByRegion(claimRegionIds[0]);
+            return View(new UsersModel(claimRegionIds, userData));
+
         }
 
+        public async Task<ActionResult> Search(int regionId, string username = "")
+        {
+            var usersData = await GetUsersByRegion(regionId);
+            return PartialView("_Data", usersData);
+        }
+
+
+        private async Task<List<UserModel>> GetUsersByRegion(int regionId, string username = "")
+        {
+         //get application permission regions
+            var applicationPermissionRegionPermissionClaims =
+                DB.AspnetUserApplicationPermissionClaims.Where(c => c.Region.Value == regionId);
+
+            //DB.Database.Log = s => Trace.WriteLine(s);
+            //get subject category claims
+            var subjectCategoryPermissionClaims =
+                DB.AspnetUserSubjectCategoryClaims.Where(c => c.Region.Value == regionId);
+
+            //get userIDClaimREgions
+            var userIdsforClaimRegion =
+                 applicationPermissionRegionPermissionClaims.Select(c => c.UserId)
+                 .Concat(subjectCategoryPermissionClaims.Select(c => c.UserId))
+                    .Distinct()
+                    .ToList();
+
+            var usersOtherApplicationClaimRegions =
+                DB.AspnetUserApplicationPermissionClaims
+                    .Where(c => userIdsforClaimRegion.Contains(c.UserId) && c.Region.Value != regionId)
+                    .Select(c => c.Region.Value);
+
+            var usersOtherSubjectCategoryClaimRegions =
+                DB.AspnetUserApplicationPermissionClaims
+                    .Where(c => userIdsforClaimRegion.Contains(c.UserId) && c.Region.Value != regionId)
+                    .Select(c => c.Region.Value);
+
+            var usersOtherClaimRegions = await
+                usersOtherSubjectCategoryClaimRegions
+                .Concat(usersOtherApplicationClaimRegions)
+                .Distinct()
+                .ToListAsync();
+
+            var users = await DB.AspNetUsers.Where(u => userIdsforClaimRegion.Contains(u.Id) && u.UserType == "Person").ToListAsync();
+
+            return users.Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), usersOtherClaimRegions.ToList())).ToList();
+        }
+
+        private async Task<UserModel> GetUserById(string userID, int regionId)
+        {
+            //get application permission regions
+            var applicationPermissionRegionPermissionClaims =
+                DB.AspnetUserApplicationPermissionClaims.Where(c => c.UserId == userID && c.Region.Value == regionId);
+
+            //DB.Database.Log = s => Trace.WriteLine(s);
+            //get subject category claims
+            var subjectCategoryPermissionClaims =
+                DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userID && c.Region.Value == regionId);
+
+            var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userID);
+            return new UserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), null);
+        }
         // GET: Users/Details/5
         public async Task<ActionResult> Details(string id)
         {
@@ -76,18 +137,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: Users/Edit/5
-        public async Task<ActionResult> Edit(string id)
+        public async Task<ActionResult> Edit(string userId, int regionId)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AspNetUser aspNetUser = await DB.AspNetUsers.FindAsync(id);
-            if (aspNetUser == null)
-            {
-                return HttpNotFound();
-            }
-            return View(aspNetUser);
+            var user = await GetUserById(userId, regionId);
+            return PartialView("Edit/_UserEditBody", user);
         }
 
         // POST: Users/Edit/5

@@ -9,7 +9,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
     {
         public static List<AspNetUser> GenerateData(int listSize, string withUserID, string withUserType = "Person", bool addClaimsForAllUsers = false)
         {
-            var claims = AspNetUserClaimsData.GenerateData(3, withUserID);
+            var claims = AspNetUserClaimsData.GenerateData(4, withUserID);
 
             var users =  Builder<AspNetUser>
                 .CreateListOfSize(listSize)
@@ -30,5 +30,12 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
             return users;
         }
 
+        public static void AddParentUser(this List<AspNetUser> users, string childId, UserUser parent)
+        {
+            var user = users.FirstOrDefault(u => u.Id == childId);
+            var userUsers =  new List<UserUser>();
+            userUsers.Add(parent);
+            user.UserUsers = userUsers;
+        }
     }
 }

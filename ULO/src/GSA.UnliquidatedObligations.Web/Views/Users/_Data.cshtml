@@ -1,0 +1,52 @@
+﻿@model IEnumerable<GSA.UnliquidatedObligations.Web.Models.UserModel>
+
+<table class="table table-responsive users-data">
+    <tr>
+        <th>
+            User Name
+        </th>
+        <th>
+            Claims
+        </th>
+        <th>Groups</th>
+        <th>Other Regions</th>
+        <th></th>
+    </tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => user.UserName)
+            </td>
+            <td>
+                <ul>
+                    @foreach (var claim in user.Claims)
+                    {
+                        <li>@claim</li>
+                    }
+                </ul>
+
+            </td>
+            <td>
+                <ul>
+                    @foreach (var group in user.Groups)
+                    {
+                        <li>@group</li>
+                    }
+                </ul>
+            </td>
+            <td><ul>
+                    @foreach (var otherRegion in user.OtherRegions)
+                    {
+                        <li>@otherRegion</li>
+                    }
+</ul></td>
+            <td>
+                <a data-id="@user.UserId" class="edit-user" href="#editUserModal">Edit</a> |
+                @Html.ActionLink("Delete", "Delete", new {id = 1})
+            </td>
+        </tr>
+    }
+
+</table>
+

@@ -11,6 +11,12 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
     {
         public static List<AspNetUserClaim> GenerateData(int listSize, string withUserId )
         {
+            var canViewOtherWorkflowsClaimValue = new ApplicationPermissionClaimValue
+            {
+                Regions = new HashSet<int>() { 1, 4 },
+                ApplicationPermissionName = ApplicationPermissionNames.CanViewOtherWorkflows
+            };
+
             var canViewReviewsClaimValue = new ApplicationPermissionClaimValue
             {
                 Regions = new HashSet<int>() {1, 4},
@@ -33,13 +39,13 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
             var claimType = ApplicationPermissionClaimValue.ClaimType;
 
 
-
+            var seralizedCanViewOtherWorkflowsClaimValue = canViewOtherWorkflowsClaimValue.ToXml();
             var serializedCanViewReviewsClaimValue = canViewReviewsClaimValue.ToXml();
             var serializedCanManageUsersClaimValue = canManageUsersClaimValue.ToXml();
             var serializedScClaimValue = scClaimValue.ToXml();
             var claims = Builder<AspNetUserClaim>
                 .CreateListOfSize(listSize)
-                .TheFirst(3)
+                .TheFirst(4)
                 .With(u => u.UserId = withUserId)
                 .Build()
                 .ToList();
@@ -50,6 +56,8 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
             claims[1].ClaimType = ApplicationPermissionClaimValue.ClaimType;
             claims[2].ClaimValue = serializedScClaimValue;
             claims[2].ClaimType = SubjectCatagoryClaimValue.ClaimType;
+            claims[3].ClaimValue = seralizedCanViewOtherWorkflowsClaimValue;
+            claims[3].ClaimType = ApplicationPermissionClaimValue.ClaimType;
             return claims;
         }
 

@@ -22,7 +22,6 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
                        PermissionName = Enum.GetName(typeof(ApplicationPermissionNames), loadedClaim.ApplicationPermissionName),
                        Region = loadedClaimRegion,
                        UserId = claim.UserId
-
                    });
                 }
             }

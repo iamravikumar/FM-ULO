@@ -310,7 +310,7 @@
     <Compile Include="Models\DocumentModalViewModel.cs" />
     <Compile Include="Models\RequestForReassignmentViewModel.cs" />
     <Compile Include="Models\UloModels.cs" />
-    <Compile Include="Models\UsersModels.cs" />
+    <Compile Include="Models\UsersModel.cs" />
     <Compile Include="PortalHelpers.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -374,8 +374,11 @@
     <Content Include="Scripts\ULO\filter.js" />
     <Content Include="Scripts\ULO\polyfills.js" />
     <Content Include="Scripts\ULO\recordsListing.js" />
+    <Content Include="Scripts\ULO\users.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Content\ULO\Workflows\workflows.css" />
+    <Content Include="Views\Users\_Data.cshtml" />
+    <Content Include="Views\Users\Edit\_UserEditBody.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -415,7 +418,7 @@
     <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\Users\Delete.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
-    <Content Include="Views\Users\Edit.cshtml" />
+    <Content Include="Views\Users\Edit\_Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Ulo\Index.cshtml" />
     <Content Include="Views\Ulo\_RecordsListing.cshtml" />

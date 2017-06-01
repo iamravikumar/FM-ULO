@@ -256,7 +256,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' d
         <EntityType Name="AspnetUserApplicationPermissionClaims">
           <Key>
             <PropertyRef Name="UserId" />
+            <PropertyRef Name="Id" />
           </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="PermissionName" Type="nvarchar" MaxLength="50" />
@@ -266,7 +268,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
         <EntityType Name="AspnetUserSubjectCategoryClaims">
           <Key>
             <PropertyRef Name="UserId" />
+            <PropertyRef Name="Id" />
           </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="BACode" Type="nvarchar" MaxLength="50" />
@@ -621,6 +625,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <EntitySet Name="Zones" EntityType="Self.Zones" Schema="gsa" store:Type="Tables" />
           <EntitySet Name="AspnetUserApplicationPermissionClaims" EntityType="Self.AspnetUserApplicationPermissionClaims" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
+    [AspnetUserApplicationPermissionClaims].[Id] AS [Id], 
     [AspnetUserApplicationPermissionClaims].[UserId] AS [UserId], 
     [AspnetUserApplicationPermissionClaims].[Region] AS [Region], 
     [AspnetUserApplicationPermissionClaims].[PermissionName] AS [PermissionName]
@@ -628,6 +633,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           </EntitySet>
           <EntitySet Name="AspnetUserSubjectCategoryClaims" EntityType="Self.AspnetUserSubjectCategoryClaims" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
+    [AspnetUserSubjectCategoryClaims].[Id] AS [Id], 
     [AspnetUserSubjectCategoryClaims].[UserId] AS [UserId], 
     [AspnetUserSubjectCategoryClaims].[Region] AS [Region], 
     [AspnetUserSubjectCategoryClaims].[BACode] AS [BACode], 
@@ -1036,7 +1042,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
         <EntityType Name="AspnetUserApplicationPermissionClaim">
           <Key>
             <PropertyRef Name="UserId" />
+            <PropertyRef Name="Id" />
           </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="PermissionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1044,7 +1052,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
         <EntityType Name="AspnetUserSubjectCategoryClaim">
           <Key>
             <PropertyRef Name="UserId" />
+            <PropertyRef Name="Id" />
           </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="BACode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1738,6 +1748,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <EntitySetMapping Name="AspnetUserApplicationPermissionClaims">
             <EntityTypeMapping TypeName="Model.AspnetUserApplicationPermissionClaim">
               <MappingFragment StoreEntitySet="AspnetUserApplicationPermissionClaims">
+                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Region" ColumnName="Region" />
                 <ScalarProperty Name="PermissionName" ColumnName="PermissionName" />
@@ -1747,6 +1758,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <EntitySetMapping Name="AspnetUserSubjectCategoryClaims">
             <EntityTypeMapping TypeName="Model.AspnetUserSubjectCategoryClaim">
               <MappingFragment StoreEntitySet="AspnetUserSubjectCategoryClaims">
+                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Region" ColumnName="Region" />
                 <ScalarProperty Name="BACode" ColumnName="BACode" />

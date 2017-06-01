@@ -85,7 +85,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
-            DB.Database.Log = s => Trace.WriteLine(s);
 
             var wfPredicate =
                 PredicateBuilder.Create<Workflow>(
