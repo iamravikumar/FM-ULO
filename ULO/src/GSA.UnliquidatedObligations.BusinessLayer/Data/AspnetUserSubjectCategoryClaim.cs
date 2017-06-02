@@ -20,5 +20,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string BACode { get; set; }
         public string DocumentType { get; set; }
         public string OrgCode { get; set; }
+        public int ClaimId { get; set; }
     }
 }

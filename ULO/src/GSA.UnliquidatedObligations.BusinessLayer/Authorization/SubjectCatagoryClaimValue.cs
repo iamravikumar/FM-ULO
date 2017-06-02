@@ -1,13 +1,14 @@
 ﻿using System.Runtime.Serialization;
 using GSA.UnliquidatedObligations.BusinessLayer.Helpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {
     [DataContract(Namespace = ClaimTypePrefix)]
     public class SubjectCatagoryClaimValue : RegionalClaimValue
     {
-        public const string ClaimType = ClaimTypePrefix+"SubjectCatagoryClaimValueValue";
+        public const string ClaimType = ClaimTypePrefix+"SubjectCatagoryClaim";
         private static readonly DataContractSerializer Serializer = new DataContractSerializer(typeof(SubjectCatagoryClaimValue), new[] { typeof(RegionalClaimValue) });
 
         public SubjectCatagoryClaimValue()
@@ -19,6 +20,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
             return (SubjectCatagoryClaimValue)Serializer.ReadObject(xml);
         }
 
+
         [DataMember(Name = "DocumentType")]
         public string DocType { get; set; }
 
@@ -27,12 +29,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 
         [DataMember]
         public string OrgCode { get; set; }
-        //[JsonProperty("subjectCatagoryName", Required = Required.Always)]
-        //public SubjectCatagoryName SubjectCatagoryName { get; set; }
 
-        //public static new SubjectCatagoryClaimValueValueValue CreateFromJson(string json)
-        //{
-        //    return string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<SubjectCatagoryClaimValueValueValue>(json);
-        //}
     }
 }

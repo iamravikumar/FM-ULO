@@ -1,21 +1,17 @@
 ﻿@model GSA.UnliquidatedObligations.Web.Models.EditSubjectPermissionClaimModel
 <div class="row">
-    <div class="col-md-2">
-        @Html.LabelFor(claimItem => Model.DocType, "Doc Type:", htmlAttributes: new { @class = "control-label" })
+    
+    <div class="col-md-3">
+        @Html.DropDownListFor(claimItem => Model.DocType, Model.DocTypes, "", htmlAttributes: new {@class = "form-control"})
     </div>
-    <div class="col-md-2">
-        @Html.DropDownListFor(claimItem => Model.DocType, Model.DocTypes, "", htmlAttributes: new { @class = "form-control" })
+    <div class="col-md-3">
+        @Html.TextBoxFor(claimItem => Model.BACode, htmlAttributes: new {@class = "form-control"})
     </div>
-    <div class="col-md-2">
-        @Html.LabelFor(claimItem => Model.BACode, "BA Code:", htmlAttributes: new { @class = "control-label" })
+    
+    <div class="col-md-3">
+        @Html.TextBoxFor(claimItem => Model.OrgCode, htmlAttributes: new {@class = "form-control"})
     </div>
-    <div class="col-md-2">
-        @Html.TextBoxFor(claimItem => Model.BACode, htmlAttributes: new { @class = "form-control" })
-    </div>
-    <div class="col-md-2">
-        @Html.LabelFor(claimItem => Model.OrgCode, "Org Code", htmlAttributes: new { @class = "control-label" })
-    </div>
-    <div class="col-md-2">
-        @Html.TextBoxFor(claimItem => Model.OrgCode, htmlAttributes: new { @class = "form-control" })
+    <div class="col-md-3 delete-subject-category-action-container">
+        <a class="delete-action">Delete</a>
     </div>
 </div>

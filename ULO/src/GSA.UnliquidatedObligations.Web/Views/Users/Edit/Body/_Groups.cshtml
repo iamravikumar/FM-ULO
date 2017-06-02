@@ -10,7 +10,7 @@
             @foreach (var group in Model.Groups ?? Enumerable.Empty<EditGroupsModel>())
             {
                 <div class="checkbox">
-                    @Html.CheckBoxFor(groupItem => group.Selected, htmlAttributes: new { @id = group.GroupName })
+                    <input type="checkbox" name="Groups" id="@group.GroupName" checked="@group.Selected" value="@group.GroupId"/>
                     <label for="@group.GroupName">@group.GroupName</label>
                 </div>
             }

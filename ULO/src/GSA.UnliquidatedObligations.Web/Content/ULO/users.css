@@ -13,9 +13,11 @@
 .edit-user-modal .modal-dialog .subject-category-claims .row {
      margin: 7px 0;
 }
-.edit-user-modal .modal-dialog .subject-category-claims .col-md-2 {
-    text-align: right;
+
+.edit-user-modal .modal-dialog .subject-category-claims .col-md-3.delete-subject-category-action-container {
+    padding: 6px;
 }
-.edit-user-modal .modal-dialog .subject-category-claims .col-md-2 label {
-    margin-top: 5px;
+
+.edit-user-modal .modal-dialog .subject-category-claims .col-md-3.delete-subject-category-action-container .delete-action {
+    cursor: pointer;
 }

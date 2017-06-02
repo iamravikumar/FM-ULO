@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
@@ -7,6 +8,7 @@ using System.Web;
 using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using Newtonsoft.Json;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -43,12 +45,12 @@ namespace GSA.UnliquidatedObligations.Web
             var reasonIncludedInReviewDecoded = HttpUtility.HtmlDecode(reasonIncludedInReview);
             var statusDecoded = HttpUtility.HtmlDecode(status);
 
-            if (!string.IsNullOrEmpty(pdnDecoded))
+            if (!String.IsNullOrEmpty(pdnDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.PegasusDocumentNumber == pdnDecoded);
             }
 
-            if (!string.IsNullOrEmpty(orgDecoded))
+            if (!String.IsNullOrEmpty(orgDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Organization == orgDecoded);
             }
@@ -63,43 +65,43 @@ namespace GSA.UnliquidatedObligations.Web
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Region.ZoneId == zone);
             }
 
-            if (!string.IsNullOrEmpty(fundDecoded))
+            if (!String.IsNullOrEmpty(fundDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Fund == fundDecoded);
             }
 
-            if (!string.IsNullOrEmpty(baCodeDecoded))
+            if (!String.IsNullOrEmpty(baCodeDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Prog == baCodeDecoded);
             }
 
-            if (!string.IsNullOrEmpty(pegasysTitleNumberDecoded))
+            if (!String.IsNullOrEmpty(pegasysTitleNumberDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.PegasysTitleNumber == pegasysTitleNumberDecoded);
             }
 
-            if (!string.IsNullOrEmpty(pegasysVendorNameDecoded))
+            if (!String.IsNullOrEmpty(pegasysVendorNameDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.PegasysVendorName == pegasysVendorNameDecoded);
             }
 
-            if (!string.IsNullOrEmpty(docTypeDecoded))
+            if (!String.IsNullOrEmpty(docTypeDecoded))
             {
                 //TODO: Add Doctype comparison code
                 //predicate = predicate.And(wf => wf.UnliquidatedObligation.PegasysVendorName == pegasysVendorNameDecoded);
             }
 
-            if (!string.IsNullOrEmpty(contractingOfficersNameDecoded))
+            if (!String.IsNullOrEmpty(contractingOfficersNameDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.ContractingOfficersName == contractingOfficersNameDecoded);
             }
 
-            if (!string.IsNullOrEmpty(awardNumberDecoded))
+            if (!String.IsNullOrEmpty(awardNumberDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.AwardNbr == awardNumberDecoded);
             }
 
-            if (!string.IsNullOrEmpty(reasonIncludedInReviewDecoded))
+            if (!String.IsNullOrEmpty(reasonIncludedInReviewDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.ReasonIncludedInReview == reasonIncludedInReview);
             }
@@ -109,7 +111,7 @@ namespace GSA.UnliquidatedObligations.Web
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Valid == valid);
             }
 
-            if (!string.IsNullOrEmpty(statusDecoded))
+            if (!String.IsNullOrEmpty(statusDecoded))
             {
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Status == statusDecoded);
             }
@@ -118,7 +120,11 @@ namespace GSA.UnliquidatedObligations.Web
 
         }
 
-
-
+        public static T BodyAsJsonObject<T>(this HttpRequestBase req)
+        {
+            req.InputStream.Seek(0, SeekOrigin.Begin);
+            var json = new StreamReader(req.InputStream).ReadToEnd();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+        }
     }
 }

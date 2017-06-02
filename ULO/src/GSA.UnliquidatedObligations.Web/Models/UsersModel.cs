@@ -77,7 +77,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
 
         }
-        public EditUserModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> applicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<string> groupNames)
+        public EditUserModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> applicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<AspNetUser> groups)
         {
             UserId = user.Id;
             var usersApplicationPermissions = applicationPermissionClaims.Select(ac => ac.PermissionName);
@@ -85,7 +85,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             var subjectCategorySelectList = ConvertToSelectList(subjectCategoryPermissionClaimNames);
             SubjectCategoryClaims = subjectCategoryClaims.Select(scc => new EditSubjectPermissionClaimModel(scc, subjectCategorySelectList)).ToList();
             var usersGroups = user.UserUsers.Select(uu => uu.AspNetUser1.UserName).ToList();
-            Groups = groupNames.Select(g => new EditGroupsModel(g, usersGroups.Contains(g))).ToList();
+            Groups = groups.Select(g => new EditGroupsModel(g.UserName, g.Id, usersGroups.Contains(g.UserName))).ToList();
         }
 
         public static List<SelectListItem> ConvertToSelectList(List<string> docTypes)
@@ -125,11 +125,13 @@ namespace GSA.UnliquidatedObligations.Web.Models
     public class EditGroupsModel
     {
         public string GroupName { get; set; }
+        public string GroupId { get; set; }
         public bool Selected { get; set; }
 
-        public EditGroupsModel(string groupName, bool selected)
+        public EditGroupsModel(string groupName, string groupId, bool selected)
         {
             GroupName = groupName;
+            GroupId = groupId;
             Selected = selected;
         }
     }

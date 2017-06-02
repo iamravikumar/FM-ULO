@@ -10,7 +10,7 @@
             @foreach (var claim in Model.ApplicationPermissionClaims ?? Enumerable.Empty<EditApplicationPermissionClaimModel>())
             {
                 <div class="checkbox">
-                    @Html.CheckBoxFor(claimItem => claim.Selected, htmlAttributes: new { @id = claim.ApplicationPermission })
+                    <input name="ApplicationPermission" type="checkbox" checked="@claim.Selected" value="@claim.ApplicationPermission" id="@claim.ApplicationPermission"/>
                     <label for="@claim.ApplicationPermission">@claim.ApplicationPermission</label>
                 </div>
             }
