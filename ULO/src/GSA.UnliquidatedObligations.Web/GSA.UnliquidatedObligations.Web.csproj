@@ -298,7 +298,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\RequestForReassignmentsController.cs" />
-    <Compile Include="Controllers\ReviewController.cs" />
+    <Compile Include="Controllers\ReviewsController.cs" />
     <Compile Include="Controllers\UloController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
@@ -383,6 +383,10 @@
     <Content Include="Views\Users\Edit\Body\_Groups.cshtml" />
     <Content Include="Views\Users\Edit\Body\SubjectCategories\_Index.cshtml" />
     <Content Include="Views\Users\Edit\Body\SubjectCategories\_SubjectCategory.cshtml" />
+    <Content Include="Views\Reviews\Create.cshtml" />
+    <Content Include="Views\Reviews\Delete.cshtml" />
+    <Content Include="Views\Reviews\Details.cshtml" />
+    <Content Include="Views\Reviews\Edit.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

@@ -82,9 +82,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public System.DateTime CreatedAtUTC { get; set; }
         public Nullable<decimal> DOShouldBe { get; set; }
         public Nullable<decimal> UDOShouldBe { get; set; }
+        public Nullable<int> ReviewId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }
+        public virtual Review Review { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
         public virtual Region Region { get; set; }

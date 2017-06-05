@@ -99,8 +99,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var subjectCategoryPermissionClaims =
                 DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userID && c.Region.Value == regionId);
 
-            var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).ToList();
-            var allSubjectCategoryClaims = Enum.GetNames(typeof(SubjectCatagoryNames)).ToList();
+            var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).OrderBy(ap => ap).ToList();
+            var allSubjectCategoryClaims = Enum.GetNames(typeof(SubjectCatagoryNames)).OrderBy(sc => sc).ToList();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userID);
             var groups = await DB.AspNetUsers.Where(u => u.UserType == "Group").ToListAsync();
             return new EditUserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), allApplicationPermissionNames, allSubjectCategoryClaims, groups);
@@ -152,7 +152,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public ActionResult AddSubjectCategoryRow()
         {
-            var allSubjectCategoryClaims = EditUserModel.ConvertToSelectList(Enum.GetNames(typeof(SubjectCatagoryNames)).ToList());
+            var allSubjectCategoryClaims = EditUserModel.ConvertToSelectList(Enum.GetNames(typeof(SubjectCatagoryNames)).OrderBy(sc => sc).ToList());
 
             return PartialView("Edit/Body/SubjectCategories/_SubjectCategory",
                 new EditSubjectPermissionClaimModel(allSubjectCategoryClaims));

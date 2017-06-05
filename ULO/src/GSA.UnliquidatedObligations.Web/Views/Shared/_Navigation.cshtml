@@ -13,7 +13,7 @@
 
                 @if (User.HasPermission(ApplicationPermissionNames.CanViewReviews))
                 {
-                    <li>@Html.ActionLink("View Reviews", "Index", "Review")</li>
+                    <li>@Html.ActionLink("View Reviews", "Index", "Reviews")</li>
                 }
                 
                 @if (User.HasPermission(ApplicationPermissionNames.ManageUsers))

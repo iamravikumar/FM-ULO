@@ -1,84 +1,59 @@
-﻿
+﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Review>
+
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Reviews</h2>
+<h2>Index</h2>
 
-<table class="table table-responsive">
+
+<table class="table">
     <tr>
         <th>
-            Review Name
+            @Html.DisplayNameFor(model => model.ReviewName)
         </th>
         <th>
-            Type Of Review
+            @Html.DisplayNameFor(model => model.Status)
         </th>
         <th>
-            Status
+            @Html.DisplayNameFor(model => model.TypeOfReview)
         </th>
         <th>
-            Number of Ulos Reviewed
+            @Html.DisplayNameFor(model => model.Comments)
         </th>
         <th>
-            Number of Total Items
+            @Html.DisplayNameFor(model => model.Region.RegionName)
         </th>
-        <th>
-            Completion Percentage
-        </th>
-        <th>
-           Region With Most Outstanding
-        </th>
-
+        <th></th>
     </tr>
+
+@foreach (var item in Model) {
     <tr>
         <td>
-            <a>High Risk 2017 Q2</a>
+            @Html.DisplayFor(modelItem => item.ReviewName)
         </td>
         <td>
-            High Risk
+            @Html.DisplayFor(modelItem => item.Status)
         </td>
         <td>
-            Open
-        </td>
-
-        <td>
-            221
+            @Html.DisplayFor(modelItem => item.TypeOfReview)
         </td>
         <td>
-            330
+            @Html.DisplayFor(modelItem => item.Comments)
         </td>
         <td>
-            67%
+            @Html.DisplayFor(modelItem => item.Region.RegionName)
         </td>
         <td>
-            4
+            @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
         </td>
     </tr>
-    <tr>
-        <td>
-            <a>High Risk 2017 Q1</a>
-        </td>
-        <td>
-            High Risk
-        </td>
-        <td>
-            Open
-        </td>
-
-        <td>
-            67
-        </td>
-        <td>
-            300
-        </td>
-        <td>
-            22.3%
-        </td>
-        <td>
-            4
-        </td>
-    </tr>
+}
 
 </table>
-
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>

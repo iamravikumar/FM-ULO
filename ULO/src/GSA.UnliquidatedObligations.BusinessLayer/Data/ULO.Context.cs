@@ -37,7 +37,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
         public virtual DbSet<Note> Notes { get; set; }
         public virtual DbSet<RequestForReassignment> RequestForReassignments { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
         public virtual DbSet<UnliquidatedObligation> UnliquidatedObligations { get; set; }
         public virtual DbSet<UserUser> UserUsers { get; set; }

@@ -127,7 +127,7 @@
     <Compile Include="Data\RequestForReassignment.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
-    <Compile Include="Data\sysdiagram.cs">
+    <Compile Include="Data\Review.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\ULO.Context.cs">

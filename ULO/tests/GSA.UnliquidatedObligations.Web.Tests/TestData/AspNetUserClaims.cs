@@ -11,6 +11,12 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
     {
         public static List<AspNetUserClaim> GenerateData(int listSize, string withUserId )
         {
+            var applicationPermission = new ApplicationPermissionClaimValue
+            {
+                Regions = new HashSet<int>() { 1, 4 },
+                ApplicationPermissionName = ApplicationPermissionNames.ApplicationUser
+            };
+
             var canViewOtherWorkflowsClaimValue = new ApplicationPermissionClaimValue
             {
                 Regions = new HashSet<int>() { 1, 4 },
@@ -43,6 +49,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
             var serializedCanViewReviewsClaimValue = canViewReviewsClaimValue.ToXml();
             var serializedCanManageUsersClaimValue = canManageUsersClaimValue.ToXml();
             var serializedScClaimValue = scClaimValue.ToXml();
+            var serializedApplicationPermission = applicationPermission.ToXml();
             var claims = Builder<AspNetUserClaim>
                 .CreateListOfSize(listSize)
                 .TheFirst(4)
