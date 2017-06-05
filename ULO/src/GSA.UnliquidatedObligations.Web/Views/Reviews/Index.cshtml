@@ -1,4 +1,5 @@
-﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Review>
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Review>
 
 @{
     ViewBag.Title = "Index";
@@ -28,32 +29,35 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReviewName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TypeOfReview)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Comments)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Region.RegionName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReviewName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TypeOfReview)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comments)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Region.RegionName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
+                @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
+            </td>
+        </tr>
+    }
 
 </table>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@if (User.HasPermission(ApplicationPermissionNames.CanCreateReviews))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}

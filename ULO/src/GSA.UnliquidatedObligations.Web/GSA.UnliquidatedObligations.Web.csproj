@@ -310,6 +310,7 @@
     <Compile Include="Models\DocumentModalViewModel.cs" />
     <Compile Include="Models\RequestForReassignmentViewModel.cs" />
     <Compile Include="Models\UloModels.cs" />
+    <Compile Include="Models\ReviewsModel.cs" />
     <Compile Include="Models\UsersModel.cs" />
     <Compile Include="PortalHelpers.cs" />
     <Compile Include="PredicateBuilder.cs" />
@@ -465,7 +466,6 @@
     <Folder Include="Content\DocStorage\Temp\" />
     <Folder Include="Views\Attachments\" />
     <Folder Include="Views\Base\" />
-    <Folder Include="Views\Review\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

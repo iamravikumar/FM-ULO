@@ -24,5 +24,11 @@
         /// Can view the Reviews
         /// </summary>
         CanViewReviews,
+
+        /// <summary>
+        /// Can create Reviews
+        /// </summary>
+        CanCreateReviews,
+
     }
 }

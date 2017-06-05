@@ -34,6 +34,12 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
                 Regions = new HashSet<int>() { 1, 4 },
                 ApplicationPermissionName = ApplicationPermissionNames.ManageUsers
             };
+
+            var canCreateReviews = new ApplicationPermissionClaimValue
+            {
+                Regions = new HashSet<int>() { 1, 4 },
+                ApplicationPermissionName = ApplicationPermissionNames.CanCreateReviews
+            };
             var scClaimValue = new SubjectCatagoryClaimValue
             {
                 Regions = new HashSet<int>() { 1, 4 },
@@ -50,6 +56,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.TestData
             var serializedCanManageUsersClaimValue = canManageUsersClaimValue.ToXml();
             var serializedScClaimValue = scClaimValue.ToXml();
             var serializedApplicationPermission = applicationPermission.ToXml();
+            var serializedCreateReviews = canCreateReviews.ToXml();
             var claims = Builder<AspNetUserClaim>
                 .CreateListOfSize(listSize)
                 .TheFirst(4)

@@ -4,6 +4,7 @@
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.DocumentIdForUpload)
+    
     <input type="file" name="file" class="hidden" id="attachment-file-upload" multiple><br>
     <input type="submit" class="hidden" id="attachment-file-submit">
 }
