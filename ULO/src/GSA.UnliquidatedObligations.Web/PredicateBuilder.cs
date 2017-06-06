@@ -68,6 +68,39 @@ namespace GSA.UnliquidatedObligations.Web
             return Expression.Lambda<T>(merge(first.Body, secondBody), first.Parameters);
         }
 
+        public static Expression<Func<T, bool>> StringLike<T>(Expression<Func<T, string>> selector, string pattern)
+        {
+            var expr = True<T>();
+            var parts = pattern.Split('%');
+            if (parts.Length == 1) // not '%' sign
+            {
+               return expr;
+            }
+            else
+            {
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    string p = parts[i];
+                    if (p.Length > 0)
+                    {
+                        if (i == 0)
+                        {
+                            expr = s => selector.Compile()(s).StartsWith(p);
+                        }
+                        else if (i == parts.Length - 1)
+                        {
+                            expr = s => selector.Compile()(s).EndsWith(p);
+                        }
+                        else
+                        {
+                            expr = s => selector.Compile()(s).Contains(p);
+                        }
+                    }
+                }
+            }
+            return expr;
+        }
+
         class ParameterRebinder : ExpressionVisitor
         {
             readonly Dictionary<ParameterExpression, ParameterExpression> map;

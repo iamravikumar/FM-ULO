@@ -59,9 +59,9 @@ function filter(pdn, org, region, zone, fund, baCode, docType, ptn, pvn, contrac
     url += "&docType=" + (docType ? docType : "");
     url += "&pegasysTitleNumber=" + (ptn ? ptn : "");
     url += "&pegasysVendorName=" + (pvn ? pvn : "");
-    url += "&contractingOfficersName" + (contractingOfficersName ? contractingOfficersName : "");
-    url += "&awardNumber" + (awardNumber ? awardNumber : "");
-    url += "&reasonIncludedInReview" + (reasonIncludedInReview ? reasonIncludedInReview : "");
+    url += "&contractingOfficersName=" + (contractingOfficersName ? contractingOfficersName : "");
+    url += "&awardNumber=" + (awardNumber ? awardNumber : "");
+    url += "&reasonIncludedInReview=" + (reasonIncludedInReview ? reasonIncludedInReview : "");
     url += "&valid=" + (valid ? valid : "");
     url += "&status=" + (status ? status : "");
     $("#masterRecordsListing").load(url);
