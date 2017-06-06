@@ -112,16 +112,66 @@
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULO B.dbo.ReviewHoldingTable' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="ReviewHoldingTable">
+          <Property Name="ReviewId" Type="int" />
+          <Property Name="SourceRowNumber" Type="int" />
+          <Property Name="Region" Type="int" />
+          <Property Name="Fund" Type="nvarchar(max)" />
+          <Property Name="Organization" Type="nvarchar(max)" />
+          <Property Name="Prog" Type="nvarchar(max)" />
+          <Property Name="DocType" Type="nvarchar(max)" />
+          <Property Name="Doc Num" Type="nvarchar(max)" />
+          <Property Name="Itmz Ln Num" Type="int" />
+          <Property Name="Actg Ln Num" Type="int" />
+          <Property Name="Title" Type="nvarchar(max)" />
+          <Property Name="BBFY" Type="nvarchar(max)" />
+          <Property Name="EBFY" Type="nvarchar(max)" />
+          <Property Name="Acty" Type="nvarchar(max)" />
+          <Property Name="O/C" Type="nvarchar(max)" />
+          <Property Name="SOC" Type="nvarchar(max)" />
+          <Property Name="Project" Type="nvarchar(max)" />
+          <Property Name="Agreement" Type="nvarchar(max)" />
+          <Property Name="Contract Num" Type="nvarchar(max)" />
+          <Property Name="Bldg" Type="nvarchar(max)" />
+          <Property Name="Sys/Loc" Type="nvarchar(max)" />
+          <Property Name="Veh Tag" Type="nvarchar(max)" />
+          <Property Name="WI" Type="nvarchar(max)" />
+          <Property Name="Lease Number" Type="nvarchar(max)" />
+          <Property Name="Vendor Name" Type="nvarchar(max)" />
+          <Property Name="Actg Pd" Type="nvarchar(max)" />
+          <Property Name="Total Line" Type="nvarchar(max)" />
+          <Property Name="Commitments" Type="nvarchar(max)" />
+          <Property Name="Prepayments" Type="nvarchar(max)" />
+          <Property Name="Undel Orders" Type="nvarchar(max)" />
+          <Property Name="Rcpt" Type="nvarchar(max)" />
+          <Property Name="Accrual" Type="nvarchar(max)" />
+          <Property Name="Pend Payments" Type="nvarchar(max)" />
+          <Property Name="Pymts(In Transit)" Type="nvarchar(max)" />
+          <Property Name="Pymts(Confirmed)" Type="nvarchar(max)" />
+          <Property Name="Holdbacks" Type="nvarchar(max)" />
+          <Property Name="TAFS" Type="nvarchar(max)" />
+          <Property Name="DUNS #" Type="nvarchar(max)" />
+          <Property Name="Date of Last Activity" Type="nvarchar(max)" />
+          <Property Name="Days Since First Activity" Type="int" />
+          <Property Name="Days Since Last Activity" Type="int" />
+          <Property Name="Date of First Activity" Type="nvarchar(max)" />
+          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
+          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
+          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
+        </EntityType>-->
         <EntityType Name="Reviews">
           <Key>
             <PropertyRef Name="ReviewId" />
           </Key>
+          <Property Name="ReviewId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="RegionId" Type="int" Nullable="false" />
           <Property Name="ReviewName" Type="varchar" MaxLength="100" />
           <Property Name="Status" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="TypeOfReview" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Comments" Type="varchar" MaxLength="500" />
-          <Property Name="ReviewId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestions">
           <Key>
@@ -267,10 +317,9 @@
 warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspnetUserApplicationPermissionClaims">
           <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="uniqueidentifier" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="PermissionName" Type="nvarchar" MaxLength="50" />
@@ -280,10 +329,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' d
 warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspnetUserSubjectCategoryClaims">
           <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="uniqueidentifier" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="BACode" Type="nvarchar" MaxLength="50" />
@@ -387,7 +435,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Review__RegionId__7CD98669">
+        <Association Name="FK__Reviews__RegionI__093F5D4E">
           <End Role="Regions" Type="Self.Regions" Multiplicity="1" />
           <End Role="Reviews" Type="Self.Reviews" Multiplicity="*" />
           <ReferentialConstraint>
@@ -399,7 +447,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Revie__7FB5F314">
+        <Association Name="FK__Unliquida__Revie__084B3915">
           <End Role="Reviews" Type="Self.Reviews" Multiplicity="0..1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
           <ReferentialConstraint>
@@ -714,11 +762,11 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="RequestForReassignment" EntitySet="RequestForReassignment" />
           </AssociationSet>
-          <AssociationSet Name="FK__Review__RegionId__7CD98669" Association="Self.FK__Review__RegionId__7CD98669">
+          <AssociationSet Name="FK__Reviews__RegionI__093F5D4E" Association="Self.FK__Reviews__RegionI__093F5D4E">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__7FB5F314" Association="Self.FK__Unliquida__Revie__7FB5F314">
+          <AssociationSet Name="FK__Unliquida__Revie__084B3915" Association="Self.FK__Unliquida__Revie__084B3915">
             <End Role="Reviews" EntitySet="Reviews" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
@@ -930,14 +978,15 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Key>
             <PropertyRef Name="ReviewId" />
           </Key>
+          <Property Name="ReviewId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="RegionId" Type="Int32" Nullable="false" />
           <Property Name="ReviewName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="TypeOfReview" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="ReviewId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <NavigationProperty Name="Region" Relationship="Self.FK__Review__RegionId__7CD98669" FromRole="Reviews" ToRole="Regions" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Revie__7FB5F314" FromRole="Reviews" ToRole="UnliquidatedObligations" />
+          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Region" Relationship="Self.FK__Reviews__RegionI__093F5D4E" FromRole="Reviews" ToRole="Regions" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Revie__084B3915" FromRole="Reviews" ToRole="UnliquidatedObligations" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestion">
           <Key>
@@ -1021,7 +1070,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="UDOShouldBe" Type="Decimal" Precision="19" Scale="4" />
           <Property Name="ReviewId" Type="Int32" />
           <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__2334397B" FromRole="UnliquidatedObligations" ToRole="Notes" />
-          <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__7FB5F314" FromRole="UnliquidatedObligations" ToRole="Reviews" />
+          <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__084B3915" FromRole="UnliquidatedObligations" ToRole="Reviews" />
           <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Targe__4959E263" FromRole="UnliquidatedObligations" ToRole="WorkflowHistory" />
           <NavigationProperty Name="Region" Relationship="Self.FK_UnliquidatedObligations_ToRegions" FromRole="UnliquidatedObligations" ToRole="Regions" />
           <NavigationProperty Name="Workflows" Relationship="Self.FK_Workflows_ToUnliquidatedObligations" FromRole="UnliquidatedObligations" ToRole="Workflows" />
@@ -1091,7 +1140,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="RegionId" Type="Int32" Nullable="false" />
           <Property Name="ZoneId" Type="Int32" Nullable="false" />
           <Property Name="RegionName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Reviews" Relationship="Self.FK__Review__RegionId__7CD98669" FromRole="Regions" ToRole="Reviews" />
+          <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__RegionI__093F5D4E" FromRole="Regions" ToRole="Reviews" />
           <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK_UnliquidatedObligations_ToRegions" FromRole="Regions" ToRole="UnliquidatedObligations" />
           <NavigationProperty Name="UserUsers" Relationship="Self.FK__UserUsers__Regio__395884C4" FromRole="Regions" ToRole="UserUsers" />
           <NavigationProperty Name="Zone" Relationship="Self.FK__Regions__ZoneId__30C33EC3" FromRole="Regions" ToRole="Zones" />
@@ -1106,10 +1155,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
         </EntityType>
         <EntityType Name="AspnetUserApplicationPermissionClaim">
           <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Guid" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="PermissionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1117,10 +1165,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
         </EntityType>
         <EntityType Name="AspnetUserSubjectCategoryClaim">
           <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Guid" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="BACode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1336,7 +1383,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Review__RegionId__7CD98669">
+        <Association Name="FK__Reviews__RegionI__093F5D4E">
           <End Role="Regions" Type="Self.Region" Multiplicity="1" />
           <End Role="Reviews" Type="Self.Review" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1348,7 +1395,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Revie__7FB5F314">
+        <Association Name="FK__Unliquida__Revie__084B3915">
           <End Role="Reviews" Type="Self.Review" Multiplicity="0..1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1538,11 +1585,11 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
           </AssociationSet>
-          <AssociationSet Name="FK__Review__RegionId__7CD98669" Association="Self.FK__Review__RegionId__7CD98669">
+          <AssociationSet Name="FK__Reviews__RegionI__093F5D4E" Association="Self.FK__Reviews__RegionI__093F5D4E">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__7FB5F314" Association="Self.FK__Unliquida__Revie__7FB5F314">
+          <AssociationSet Name="FK__Unliquida__Revie__084B3915" Association="Self.FK__Unliquida__Revie__084B3915">
             <End Role="Reviews" EntitySet="Reviews" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
@@ -1701,12 +1748,13 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <EntitySetMapping Name="Reviews">
             <EntityTypeMapping TypeName="Model.Review">
               <MappingFragment StoreEntitySet="Reviews">
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
                 <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="TypeOfReview" ColumnName="TypeOfReview" />
                 <ScalarProperty Name="Comments" ColumnName="Comments" />
-                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

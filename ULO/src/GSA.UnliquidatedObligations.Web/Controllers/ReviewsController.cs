@@ -12,16 +12,20 @@ using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Properties;
+using GSA.UnliquidatedObligations.Web.Services;
+using Hangfire;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class ReviewsController : BaseController
     {
         private readonly ULODBEntities DB;
-        public ReviewsController(ULODBEntities db, IComponentContext componentContext)
+        private readonly IBackgroundJobClient BackgroundJobClient;
+        public ReviewsController(ULODBEntities db, IBackgroundJobClient backgroundJobClient, IComponentContext componentContext)
             : base(componentContext)
         {
             DB = db;
+            BackgroundJobClient = backgroundJobClient;
         }
 
         // GET: Review
@@ -52,43 +56,39 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Review/Create
         [HttpPost]
-        public ActionResult Create(IEnumerable<HttpPostedFileBase> files)
+        public ActionResult Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,TypeOfReview,Comments")] ReviewModel reviewModel)
         {
             try
             {
-
                 foreach (string file in Request.Files)
                 {
                     var fileContent = Request.Files[file];
-                    //if (fileContent != null && fileContent.ContentLength > 0)
-                    //{
-                    //    // get a stream
-                    //    var stream = fileContent.InputStream;
-                    //    // and optionally write the file to disk
-                    //    var fileName = Path.GetFileName(fileContent.FileName);
-                    //    var storageName = Guid.NewGuid() + Path.GetExtension(fileName);
-                    //    var path = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage/Temp"), storageName);
-                    //    var webPath = Settings.Default.SiteUrl + "/Content/DocStorage/Temp/" + storageName;
-                    //    using (var fileStream = System.IO.File.Create(path))
-                    //    {
-                    //        stream.CopyTo(fileStream);
-                    //    }
-                    //    var attachment = new Attachment
-                    //    {
-                    //        FileName = fileName,
-                    //        FilePath = webPath,
-                    //        DocumentId = documentId,
-                    //    };
-                    //    attachmentsAdded.Add(attachment);
-
-                    //    //DB.Attachments.Add(attachment);
-                    //}
-                    //}
-                    //attachmentsTempData.AddRange(attachmentsAdded);
-                    //TempData["attachments"] = attachmentsTempData;
-                    return RedirectToAction("Index");
-                    //await DB.SaveChangesAsync();
+                    if (fileContent != null && fileContent.ContentLength > 0)
+                    {
+                        var stream = fileContent.InputStream;
+                        var fileName = Path.GetFileName(fileContent.FileName);
+                        var storageName = Guid.NewGuid() + Path.GetExtension(fileName);
+                        var path = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage/ReviewUploads"), storageName);
+                        using (var fileStream = System.IO.File.Create(path))
+                        {
+                            stream.CopyTo(fileStream);
+                        }
+                        var review = new Review
+                        {
+                            RegionId = reviewModel.RegionId.Value,
+                            ReviewName = reviewModel.ReviewName,
+                            Status = reviewModel.ReviewStatus,
+                            TypeOfReview = reviewModel.TypeOfReview,
+                            Comments = reviewModel.Comments,
+                            CreatedAtUtc = DateTime.Now
+                        };
+                        DB.Reviews.Add(review);
+                        DB.SaveChanges();
+                        BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.UploadReviewHoldIngTable(review.ReviewId, path));
+                    }
                 }
+
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {

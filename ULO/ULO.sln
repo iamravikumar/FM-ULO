@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSA.UnliquidatedObligations
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSA.UnliquidatedObligations.BusinessLayer.Tests", "tests\GSA.UnliquidatedObligations.BusinessLayer.Tests\GSA.UnliquidatedObligations.BusinessLayer.Tests.csproj", "{2777A424-0425-425A-8F11-6CEA280602BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSA.UnliquidatedObligations.UploadTable", "src\GSA.UnliquidatedObligations.UploadTable\GSA.UnliquidatedObligations.UploadTable.csproj", "{F07879F0-A330-45CD-A85C-C871FD422DC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{2777A424-0425-425A-8F11-6CEA280602BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2777A424-0425-425A-8F11-6CEA280602BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2777A424-0425-425A-8F11-6CEA280602BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F07879F0-A330-45CD-A85C-C871FD422DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F07879F0-A330-45CD-A85C-C871FD422DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F07879F0-A330-45CD-A85C-C871FD422DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F07879F0-A330-45CD-A85C-C871FD422DC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,5 +52,6 @@ Global
 		{D81A6DBD-0915-4485-A83C-1971FB1507EB} = {D103EB61-5F0A-4FFB-AFB9-589ABAF6DCFE}
 		{27BE33B7-1D1D-46C0-92BD-D9375E1AB3C0} = {E65892A2-F6AE-4908-AF7E-4D71AC061DB2}
 		{2777A424-0425-425A-8F11-6CEA280602BA} = {E65892A2-F6AE-4908-AF7E-4D71AC061DB2}
+		{F07879F0-A330-45CD-A85C-C871FD422DC0} = {D103EB61-5F0A-4FFB-AFB9-589ABAF6DCFE}
 	EndGlobalSection
 EndGlobal

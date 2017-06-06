@@ -20,12 +20,13 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.UnliquidatedObligations = new HashSet<UnliquidatedObligation>();
         }
     
+        public int ReviewId { get; set; }
         public int RegionId { get; set; }
         public string ReviewName { get; set; }
         public string Status { get; set; }
         public string TypeOfReview { get; set; }
         public string Comments { get; set; }
-        public int ReviewId { get; set; }
+        public System.DateTime CreatedAtUtc { get; set; }
     
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

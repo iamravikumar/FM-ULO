@@ -12,19 +12,27 @@ namespace GSA.UnliquidatedObligations.Web.Models
     public class ReviewModel
     {
         public List<SelectListItem> RegionChoices { get; set; }
-        public Review Review { get; set; }
+        public Nullable<int> RegionId { get; set; }
+        public string ReviewName { get; set; }
+        public string ReviewStatus { get; set; }
+        public string TypeOfReview { get; set; }
+        public string Comments { get; set; }
 
         public ReviewModel(List<int> regionChoices)
         {
             RegionChoices = ConvertToSelectList(regionChoices.OrderBy(rc => rc).ToList());
-            Review = null;
+            RegionId = null;
+            ReviewName = "";
+            ReviewStatus = "";
+            TypeOfReview = "";
+            Comments = "";
         }
 
-        public ReviewModel(List<int> regionChoices, Review review )
+        public ReviewModel()
         {
-            RegionChoices = ConvertToSelectList(regionChoices.OrderBy(rc => rc).ToList());
-            Review = review;
+            
         }
+
 
         public static List<SelectListItem> ConvertToSelectList(List<int> regions)
         {

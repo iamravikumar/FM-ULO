@@ -480,6 +480,10 @@
       <Project>{dec1ac2c-ed6f-494c-996d-9f58e0ad5112}</Project>
       <Name>GSA.UnliquidatedObligations.BusinessLayer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GSA.UnliquidatedObligations.UploadTable\GSA.UnliquidatedObligations.UploadTable.csproj">
+      <Project>{f07879f0-a330-45cd-a85c-c871fd422dc0}</Project>
+      <Name>GSA.UnliquidatedObligations.UploadTable</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
