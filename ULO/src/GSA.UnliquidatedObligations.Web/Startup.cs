@@ -17,6 +17,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 
 [assembly: OwinStartupAttribute(typeof(GSA.UnliquidatedObligations.Web.Startup))]
@@ -33,11 +34,17 @@ namespace GSA.UnliquidatedObligations.Web
             };
             GlobalConfiguration.Configuration.UseAutofacActivator(container).UseSqlServerStorage("DefaultConnection", options);
 
-            app.UseHangfireDashboard();
+          
 
             app.UseHangfireServer();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
             ConfigureAuth(app);
+
+            DashboardOptions dashboardOptionsoptions = new DashboardOptions
+            {
+                Authorization = new[] { new MyAuthorizationFilter() }
+            };
+            app.UseHangfireDashboard("/hangfire", dashboardOptionsoptions);
 
         }
 
@@ -86,6 +93,19 @@ namespace GSA.UnliquidatedObligations.Web
             //app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
 
             return builder;
+        }
+    }
+
+    public class MyAuthorizationFilter : IDashboardAuthorizationFilter
+    {
+        public bool Authorize(DashboardContext context)
+        {
+            // In case you need an OWIN context, use the next line, `OwinContext` class
+            // is the part of the `Microsoft.Owin` package.
+            var owinContext = new OwinContext(context.GetOwinEnvironment());
+
+            // Allow all authenticated users to see the Dashboard (potentially dangerous).
+            return owinContext.Authentication.User.Identity.IsAuthenticated;
         }
     }
 }
