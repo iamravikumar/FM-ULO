@@ -25,7 +25,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int TargetUloId { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
-        public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }
         public virtual Workflow Workflow { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.BusinessLayer.Data
 @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Review>
 
 @{
@@ -6,30 +7,36 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
-
 
 <table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ReviewName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TypeOfReview)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Comments)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Region.RegionName)
-        </th>
-        <th></th>
-    </tr>
+    @if (Model.Any())
+    {
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ReviewName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
 
-    @foreach (var item in Model) {
+                Type of Review
+            </th>
+            <th>
+                Scope
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Comments)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Region.RegionName)
+            </th>
+            @*<th></th>*@
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ReviewName)
@@ -38,19 +45,31 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TypeOfReview)
+                @{
+                    var reviewType = (ReviewTypeEnum) item.ReviewTypeId;
+                    var reviewTypeName = reviewType.GetDisplayName();
+                }
+                @reviewTypeName
             </td>
+            <td>
+                @{
+                    var scope = (ReviewScopeEnum) item.ReviewScopeId;
+                    var scopeName = scope.GetDisplayName();
+                }
+                @scopeName
+            </td>
+
             <td>
                 @Html.DisplayFor(modelItem => item.Comments)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Region.RegionName)
             </td>
-            <td>
+            @*<td>
                 @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
                 @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
                 @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
-            </td>
+            </td>*@
         </tr>
     }
 

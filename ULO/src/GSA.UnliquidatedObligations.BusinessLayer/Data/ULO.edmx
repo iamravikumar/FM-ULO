@@ -102,19 +102,10 @@
           <Property Name="NoteContents" Type="varchar" MaxLength="1000" />
           <Property Name="UloId" Type="int" Nullable="false" />
         </EntityType>
-        <EntityType Name="RequestForReassignment">
+        <EntityType Name="PegasysObligations">
           <Key>
-            <PropertyRef Name="RequestForReassignmentID" />
+            <PropertyRef Name="PegasysObligationId" />
           </Key>
-          <Property Name="RequestForReassignmentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="SuggestedReviewerId" Type="nvarchar" MaxLength="128" />
-          <Property Name="UnliqudatedWorkflowQuestionsId" Type="int" Nullable="false" />
-          <Property Name="WorkflowId" Type="int" Nullable="false" />
-          <Property Name="IsActive" Type="bit" Nullable="false" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6013: The table/view 'ULO B.dbo.ReviewHoldingTable' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-        <EntityType Name="ReviewHoldingTable">
           <Property Name="ReviewId" Type="int" />
           <Property Name="SourceRowNumber" Type="int" />
           <Property Name="Region" Type="int" />
@@ -160,7 +151,18 @@ warning 6013: The table/view 'ULO B.dbo.ReviewHoldingTable' does not have a prim
           <Property Name="Trading Partner Type" Type="nvarchar(max)" />
           <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
           <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
-        </EntityType>-->
+          <Property Name="PegasysObligationId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RequestForReassignment">
+          <Key>
+            <PropertyRef Name="RequestForReassignmentID" />
+          </Key>
+          <Property Name="RequestForReassignmentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SuggestedReviewerId" Type="nvarchar" MaxLength="128" />
+          <Property Name="UnliqudatedWorkflowQuestionsId" Type="int" Nullable="false" />
+          <Property Name="WorkflowId" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="Reviews">
           <Key>
             <PropertyRef Name="ReviewId" />
@@ -169,9 +171,12 @@ warning 6013: The table/view 'ULO B.dbo.ReviewHoldingTable' does not have a prim
           <Property Name="RegionId" Type="int" Nullable="false" />
           <Property Name="ReviewName" Type="varchar" MaxLength="100" />
           <Property Name="Status" Type="varchar" MaxLength="100" Nullable="false" />
-          <Property Name="TypeOfReview" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Comments" Type="varchar" MaxLength="500" />
           <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
+          <Property Name="ReviewTypeId" Type="int" Nullable="false" />
+          <Property Name="ReviewScopeId" Type="int" Nullable="false" />
+          <Property Name="WorkflowDefinitionId" Type="int" Nullable="false" />
+          <Property Name="ProjectDueDate" Type="datetime" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestions">
           <Key>
@@ -192,15 +197,30 @@ warning 6013: The table/view 'ULO B.dbo.ReviewHoldingTable' does not have a prim
           </Key>
           <Property Name="UloId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="RegionId" Type="int" />
-          <Property Name="DocType" Type="varchar" MaxLength="50" />
-          <Property Name="PegasusDocumentNumber" Type="varchar" MaxLength="50" />
-          <Property Name="PegasysTitleNumber" Type="varchar" MaxLength="50" />
-          <Property Name="Fund" Type="varchar" MaxLength="50" />
+          <Property Name="PegasysObligationId" Type="int" Nullable="false" />
+          <Property Name="ReviewId" Type="int" Nullable="false" />
           <Property Name="Organization" Type="varchar" MaxLength="50" />
+          <Property Name="Fund" Type="varchar" MaxLength="50" />
           <Property Name="Prog" Type="varchar" MaxLength="50" />
+          <Property Name="DocType" Type="varchar" MaxLength="50" />
+          <Property Name="PegasysDocumentNumber" Type="varchar" MaxLength="50" />
+          <Property Name="ItemsLineNumber" Type="int" Nullable="false" />
+          <Property Name="AccountingLineNumber" Type="int" Nullable="false" />
+          <Property Name="PegasysTitleNumber" Type="varchar" MaxLength="100" />
+          <Property Name="BBFY" Type="varchar" MaxLength="10" />
+          <Property Name="EBFY" Type="varchar" MaxLength="10" />
+          <Property Name="Acty" Type="varchar" MaxLength="10" />
+          <Property Name="OC" Type="int" Nullable="false" />
+          <Property Name="SOC" Type="varchar" MaxLength="100" />
+          <Property Name="Project" Type="varchar" MaxLength="100" />
           <Property Name="Agreement" Type="varchar" MaxLength="50" />
-          <Property Name="RWACompletionDate" Type="varchar" MaxLength="50" />
-          <Property Name="DateOfLastActivity" Type="varchar" MaxLength="50" />
+          <Property Name="ContractNum" Type="varchar" MaxLength="100" />
+          <Property Name="Bldg" Type="varchar" MaxLength="50" />
+          <Property Name="SysLoc" Type="varchar" MaxLength="50" />
+          <Property Name="VehTag" Type="varchar" MaxLength="50" />
+          <Property Name="WI" Type="int" Nullable="false" />
+          <Property Name="LeaseNumber" Type="varchar" MaxLength="50" />
+          <Property Name="VendorName" Type="varchar" MaxLength="100" />
           <Property Name="ActgPd" Type="varchar" MaxLength="50" />
           <Property Name="TotalLine" Type="varchar" MaxLength="50" />
           <Property Name="Commitments" Type="varchar" MaxLength="50" />
@@ -214,43 +234,20 @@ warning 6013: The table/view 'ULO B.dbo.ReviewHoldingTable' does not have a prim
           <Property Name="PymtsInTransit" Type="varchar" MaxLength="50" />
           <Property Name="PymtsConfirmed" Type="varchar" MaxLength="50" />
           <Property Name="Holdbacks" Type="varchar" MaxLength="50" />
-          <Property Name="PegasysContractNumber" Type="varchar" MaxLength="50" />
-          <Property Name="PegasysVendorName" Type="varchar" MaxLength="50" />
-          <Property Name="ContractingOfficersName" Type="varchar" MaxLength="50" />
-          <Property Name="AwardNbr" Type="varchar" MaxLength="50" />
-          <Property Name="BaseContractNbr" Type="varchar" MaxLength="50" />
-          <Property Name="GSAFSSOtherNumber" Type="varchar" MaxLength="50" />
-          <Property Name="AwdExpirationDate" Type="varchar" MaxLength="50" />
-          <Property Name="ReasonIncludedInReview" Type="varchar" MaxLength="3000" />
-          <Property Name="Valid" Type="bit" Nullable="false" />
-          <Property Name="ReviewedBy" Type="varchar" MaxLength="50" />
-          <Property Name="ExpectedDateForCompletionResolution" Type="varchar" MaxLength="50" />
-          <Property Name="RegionalSupportOrJustification" Type="varchar" MaxLength="3000" />
-          <Property Name="BGPCommentsAfterReview" Type="varchar" MaxLength="50" />
-          <Property Name="RegionalResponse" Type="varchar" MaxLength="50" />
-          <Property Name="BGPFinalDetermination" Type="varchar" MaxLength="50" />
-          <Property Name="1stReview" Type="varchar" MaxLength="50" />
-          <Property Name="2ndReview" Type="varchar" MaxLength="50" />
-          <Property Name="DateSentToFinCntrForDeobligation" Type="varchar" MaxLength="50" />
-          <Property Name="ULOCategoryForTracker" Type="varchar" MaxLength="50" />
-          <Property Name="When should BGP review again?" Type="varchar" MaxLength="50" />
-          <Property Name="DateBalanceRestored" Type="varchar" MaxLength="50" />
-          <Property Name="AmtToBeRecovered" Type="varchar" MaxLength="50" />
-          <Property Name="1stFollowupDate" Type="varchar" MaxLength="50" />
-          <Property Name="2ndFollowupDate" Type="varchar" MaxLength="50" />
-          <Property Name="NoResponse(w initial submittal)" Type="varchar" MaxLength="50" />
-          <Property Name="NoResponse" Type="varchar" MaxLength="50" />
-          <Property Name="BGPMadeCallValid" Type="varchar" MaxLength="50" />
-          <Property Name="BGPMadeCallInvalid" Type="varchar" MaxLength="50" />
-          <Property Name="BGPFinalDetVariesFromRegionCO" Type="varchar" MaxLength="50" />
-          <Property Name="Column 52" Type="varchar" MaxLength="50" />
-          <Property Name="Column 53" Type="varchar" MaxLength="50" />
+          <Property Name="TAFS" Type="varchar" MaxLength="50" />
+          <Property Name="DUNSNum" Type="varchar" MaxLength="50" />
+          <Property Name="DateOfLastActivity" Type="datetime" />
+          <Property Name="DaysSinceLastActivity" Type="int" />
+          <Property Name="DateOfFirstActivity" Type="datetime" />
+          <Property Name="DaysSinceFirstActivity" Type="int" />
+          <Property Name="TradingPartnerType" Type="varchar" MaxLength="50" />
+          <Property Name="VendorAgencyCode" Type="varchar" MaxLength="50" />
+          <Property Name="VendorBureauCode" Type="varchar" MaxLength="50" />
+          <Property Name="Valid" Type="bit" />
           <Property Name="Status" Type="varchar" MaxLength="50" />
-          <Property Name="Column 55" Type="varchar" MaxLength="50" />
-          <Property Name="CreatedAtUTC" Type="datetime" Nullable="false" />
-          <Property Name="DOShouldBe" Type="money" />
-          <Property Name="UDOShouldBe" Type="money" />
-          <Property Name="ReviewId" Type="int" />
+          <Property Name="AwardNbr" Type="varchar" MaxLength="50" />
+          <Property Name="ContractingOfficersName" Type="varchar" MaxLength="50" />
+          <Property Name="ReasonIncludedInReview" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="UserUsers">
           <Key>
@@ -270,6 +267,8 @@ warning 6013: The table/view 'ULO B.dbo.ReviewHoldingTable' does not have a prim
           <Property Name="WorkflowKey" Type="varchar" MaxLength="80" Nullable="false" />
           <Property Name="Version" Type="int" Nullable="false" />
           <Property Name="DescriptionJson" Type="nvarchar(max)" />
+          <Property Name="DescriptionXml" Type="xml" />
+          <Property Name="WorkflowDefinitionName" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="WorkflowHistory">
           <Key>
@@ -363,7 +362,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notes__UloId__2334397B">
+        <Association Name="FK__Notes__UloId__38EE7070">
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="1" />
           <End Role="Notes" Type="Self.Notes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -447,8 +446,44 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Revie__084B3915">
-          <End Role="Reviews" Type="Self.Reviews" Multiplicity="0..1" />
+        <Association Name="FK__Reviews__Workflo__3BCADD1B">
+          <End Role="WorkflowDefinitions" Type="Self.WorkflowDefinitions" Multiplicity="1" />
+          <End Role="Reviews" Type="Self.Reviews" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkflowDefinitions">
+              <PropertyRef Name="WorkflowDefinitionId" />
+            </Principal>
+            <Dependent Role="Reviews">
+              <PropertyRef Name="WorkflowDefinitionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Unliquida__Pegas__351DDF8C">
+          <End Role="PegasysObligations" Type="Self.PegasysObligations" Multiplicity="1" />
+          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PegasysObligations">
+              <PropertyRef Name="PegasysObligationId" />
+            </Principal>
+            <Dependent Role="UnliquidatedObligations">
+              <PropertyRef Name="PegasysObligationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Unliquida__Regio__361203C5">
+          <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
+          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Regions">
+              <PropertyRef Name="RegionId" />
+            </Principal>
+            <Dependent Role="UnliquidatedObligations">
+              <PropertyRef Name="RegionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Unliquida__Revie__370627FE">
+          <End Role="Reviews" Type="Self.Reviews" Multiplicity="1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Reviews">
@@ -507,18 +542,6 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__WorkflowH__Targe__4959E263">
-          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="1" />
-          <End Role="WorkflowHistory" Type="Self.WorkflowHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UnliquidatedObligations">
-              <PropertyRef Name="UloId" />
-            </Principal>
-            <Dependent Role="WorkflowHistory">
-              <PropertyRef Name="TargetUloId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__WorkflowH__Workf__477199F1">
           <End Role="Workflows" Type="Self.Workflows" Multiplicity="1" />
           <End Role="WorkflowHistory" Type="Self.WorkflowHistory" Multiplicity="*" />
@@ -540,6 +563,18 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Principal>
             <Dependent Role="Workflows">
               <PropertyRef Name="OwnerUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Workflows__Targe__37FA4C37">
+          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="1" />
+          <End Role="Workflows" Type="Self.Workflows" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnliquidatedObligations">
+              <PropertyRef Name="UloId" />
+            </Principal>
+            <Dependent Role="Workflows">
+              <PropertyRef Name="TargetUloId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -659,30 +694,10 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UnliquidatedObligations_ToRegions">
-          <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
-          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Regions">
-              <PropertyRef Name="RegionId" />
-            </Principal>
-            <Dependent Role="UnliquidatedObligations">
-              <PropertyRef Name="RegionId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Workflows_ToUnliquidatedObligations">
-          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="1" />
-          <End Role="Workflows" Type="Self.Workflows" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UnliquidatedObligations">
-              <PropertyRef Name="UloId" />
-            </Principal>
-            <Dependent Role="Workflows">
-              <PropertyRef Name="TargetUloId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
+        <Function Name="CreateULOAndAssignWf" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="reviewId" Type="int" Mode="In" />
+          <Parameter Name="workflowDefinitionId" Type="int" Mode="In" />
+        </Function>
         <Function Name="GetNextLevelOwnerId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="proposedOwnerId" Type="varchar" Mode="In" />
           <Parameter Name="workflowId" Type="int" Mode="In" />
@@ -700,6 +715,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <EntitySet Name="DocumentTypes" EntityType="Self.DocumentTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EmailTemplates" EntityType="Self.EmailTemplates" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Notes" EntityType="Self.Notes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PegasysObligations" EntityType="Self.PegasysObligations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestForReassignment" EntityType="Self.RequestForReassignment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reviews" EntityType="Self.Reviews" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnliqudatedObjectsWorkflowQuestions" EntityType="Self.UnliqudatedObjectsWorkflowQuestions" Schema="dbo" store:Type="Tables" />
@@ -738,7 +754,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="Notes" EntitySet="Notes" />
             <End Role="Notes1" EntitySet="Notes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notes__UloId__2334397B" Association="Self.FK__Notes__UloId__2334397B">
+          <AssociationSet Name="FK__Notes__UloId__38EE7070" Association="Self.FK__Notes__UloId__38EE7070">
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
             <End Role="Notes" EntitySet="Notes" />
           </AssociationSet>
@@ -766,7 +782,19 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="Regions" EntitySet="Regions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__084B3915" Association="Self.FK__Unliquida__Revie__084B3915">
+          <AssociationSet Name="FK__Reviews__Workflo__3BCADD1B" Association="Self.FK__Reviews__Workflo__3BCADD1B">
+            <End Role="WorkflowDefinitions" EntitySet="WorkflowDefinitions" />
+            <End Role="Reviews" EntitySet="Reviews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Pegas__351DDF8C" Association="Self.FK__Unliquida__Pegas__351DDF8C">
+            <End Role="PegasysObligations" EntitySet="PegasysObligations" />
+            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Regio__361203C5" Association="Self.FK__Unliquida__Regio__361203C5">
+            <End Role="Regions" EntitySet="Regions" />
+            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Revie__370627FE" Association="Self.FK__Unliquida__Revie__370627FE">
             <End Role="Reviews" EntitySet="Reviews" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
@@ -786,16 +814,16 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="WorkflowHistory" EntitySet="WorkflowHistory" />
           </AssociationSet>
-          <AssociationSet Name="FK__WorkflowH__Targe__4959E263" Association="Self.FK__WorkflowH__Targe__4959E263">
-            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
-            <End Role="WorkflowHistory" EntitySet="WorkflowHistory" />
-          </AssociationSet>
           <AssociationSet Name="FK__WorkflowH__Workf__477199F1" Association="Self.FK__WorkflowH__Workf__477199F1">
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="WorkflowHistory" EntitySet="WorkflowHistory" />
           </AssociationSet>
           <AssociationSet Name="FK__Workflows__Owner__40058253" Association="Self.FK__Workflows__Owner__40058253">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Workflows" EntitySet="Workflows" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Workflows__Targe__37FA4C37" Association="Self.FK__Workflows__Targe__37FA4C37">
+            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
             <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
           <AssociationSet Name="FK_Attachments_ToDocument" Association="Self.FK_Attachments_ToDocument">
@@ -833,14 +861,6 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" Association="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows">
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UnliquidatedObligations_ToRegions" Association="Self.FK_UnliquidatedObligations_ToRegions">
-            <End Role="Regions" EntitySet="Regions" />
-            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Workflows_ToUnliquidatedObligations" Association="Self.FK_Workflows_ToUnliquidatedObligations">
-            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
-            <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -959,7 +979,59 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Notes__UserId__22401542" FromRole="Notes" ToRole="AspNetUsers" />
           <NavigationProperty Name="Notes1" Relationship="Self.FK__Notes__ParentNot__214BF109" FromRole="Notes" ToRole="Notes1" />
           <NavigationProperty Name="Note1" Relationship="Self.FK__Notes__ParentNot__214BF109" FromRole="Notes1" ToRole="Notes" />
-          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__Notes__UloId__2334397B" FromRole="Notes" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__Notes__UloId__38EE7070" FromRole="Notes" ToRole="UnliquidatedObligations" />
+        </EntityType>
+        <EntityType Name="PegasysObligation">
+          <Key>
+            <PropertyRef Name="PegasysObligationId" />
+          </Key>
+          <Property Name="ReviewId" Type="Int32" />
+          <Property Name="SourceRowNumber" Type="Int32" />
+          <Property Name="Region" Type="Int32" />
+          <Property Name="Fund" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Organization" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Prog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DocType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Doc_Num" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Itmz_Ln_Num" Type="Int32" />
+          <Property Name="Actg_Ln_Num" Type="Int32" />
+          <Property Name="Title" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BBFY" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EBFY" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Acty" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="O_C" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SOC" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Project" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Agreement" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Contract_Num" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Bldg" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Sys_Loc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Veh_Tag" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="WI" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Lease_Number" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Vendor_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Actg_Pd" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Total_Line" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Commitments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Prepayments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Undel_Orders" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Rcpt" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Accrual" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Pend_Payments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Pymts_In_Transit_" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Pymts_Confirmed_" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Holdbacks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TAFS" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DUNS__" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date_of_Last_Activity" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Days_Since_First_Activity" Type="Int32" />
+          <Property Name="Days_Since_Last_Activity" Type="Int32" />
+          <Property Name="Date_of_First_Activity" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Trading_Partner_Type" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Vendor_Agency_Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Vendor_Bureau_Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PegasysObligationId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Pegas__351DDF8C" FromRole="PegasysObligations" ToRole="UnliquidatedObligations" />
         </EntityType>
         <EntityType Name="RequestForReassignment">
           <Key>
@@ -982,11 +1054,15 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="RegionId" Type="Int32" Nullable="false" />
           <Property Name="ReviewName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="TypeOfReview" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ReviewTypeId" Type="Int32" Nullable="false" />
+          <Property Name="ReviewScopeId" Type="Int32" Nullable="false" />
+          <Property Name="WorkflowDefinitionId" Type="Int32" Nullable="false" />
+          <Property Name="ProjectDueDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Region" Relationship="Self.FK__Reviews__RegionI__093F5D4E" FromRole="Reviews" ToRole="Regions" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Revie__084B3915" FromRole="Reviews" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="WorkflowDefinition" Relationship="Self.FK__Reviews__Workflo__3BCADD1B" FromRole="Reviews" ToRole="WorkflowDefinitions" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Revie__370627FE" FromRole="Reviews" ToRole="UnliquidatedObligations" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestion">
           <Key>
@@ -1010,15 +1086,30 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           </Key>
           <Property Name="UloId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="RegionId" Type="Int32" />
-          <Property Name="DocType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PegasusDocumentNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PegasysTitleNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Fund" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PegasysObligationId" Type="Int32" Nullable="false" />
+          <Property Name="ReviewId" Type="Int32" Nullable="false" />
           <Property Name="Organization" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Fund" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Prog" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DocType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PegasysDocumentNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemsLineNumber" Type="Int32" Nullable="false" />
+          <Property Name="AccountingLineNumber" Type="Int32" Nullable="false" />
+          <Property Name="PegasysTitleNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="BBFY" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="EBFY" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Acty" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="OC" Type="Int32" Nullable="false" />
+          <Property Name="SOC" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Project" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Agreement" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="RWACompletionDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateOfLastActivity" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContractNum" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Bldg" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SysLoc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VehTag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="WI" Type="Int32" Nullable="false" />
+          <Property Name="LeaseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VendorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="ActgPd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="TotalLine" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Commitments" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -1032,48 +1123,25 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="PymtsInTransit" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="PymtsConfirmed" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Holdbacks" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PegasysContractNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PegasysVendorName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ContractingOfficersName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AwardNbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BaseContractNbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="GSAFSSOtherNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AwdExpirationDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ReasonIncludedInReview" Type="String" MaxLength="3000" FixedLength="false" Unicode="false" />
-          <Property Name="Valid" Type="Boolean" Nullable="false" />
-          <Property Name="ReviewedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ExpectedDateForCompletionResolution" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="RegionalSupportOrJustification" Type="String" MaxLength="3000" FixedLength="false" Unicode="false" />
-          <Property Name="BGPCommentsAfterReview" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="RegionalResponse" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BGPFinalDetermination" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="C1stReview" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="C2ndReview" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateSentToFinCntrForDeobligation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ULOCategoryForTracker" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="When_should_BGP_review_again_" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateBalanceRestored" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AmtToBeRecovered" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="C1stFollowupDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="C2ndFollowupDate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="NoResponse_w_initial_submittal_" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="NoResponse" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BGPMadeCallValid" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BGPMadeCallInvalid" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BGPFinalDetVariesFromRegionCO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Column_52" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Column_53" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TAFS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DUNSNum" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateOfLastActivity" Type="DateTime" Precision="3" />
+          <Property Name="DaysSinceLastActivity" Type="Int32" />
+          <Property Name="DateOfFirstActivity" Type="DateTime" Precision="3" />
+          <Property Name="DaysSinceFirstActivity" Type="Int32" />
+          <Property Name="TradingPartnerType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VendorAgencyCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VendorBureauCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Valid" Type="Boolean" />
           <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Column_55" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CreatedAtUTC" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="DOShouldBe" Type="Decimal" Precision="19" Scale="4" />
-          <Property Name="UDOShouldBe" Type="Decimal" Precision="19" Scale="4" />
-          <Property Name="ReviewId" Type="Int32" />
-          <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__2334397B" FromRole="UnliquidatedObligations" ToRole="Notes" />
-          <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__084B3915" FromRole="UnliquidatedObligations" ToRole="Reviews" />
-          <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Targe__4959E263" FromRole="UnliquidatedObligations" ToRole="WorkflowHistory" />
-          <NavigationProperty Name="Region" Relationship="Self.FK_UnliquidatedObligations_ToRegions" FromRole="UnliquidatedObligations" ToRole="Regions" />
-          <NavigationProperty Name="Workflows" Relationship="Self.FK_Workflows_ToUnliquidatedObligations" FromRole="UnliquidatedObligations" ToRole="Workflows" />
+          <Property Name="AwardNbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContractingOfficersName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ReasonIncludedInReview" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__38EE7070" FromRole="UnliquidatedObligations" ToRole="Notes" />
+          <NavigationProperty Name="PegasysObligation" Relationship="Self.FK__Unliquida__Pegas__351DDF8C" FromRole="UnliquidatedObligations" ToRole="PegasysObligations" />
+          <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__370627FE" FromRole="UnliquidatedObligations" ToRole="Reviews" />
+          <NavigationProperty Name="Region" Relationship="Self.FK__Unliquida__Regio__361203C5" FromRole="UnliquidatedObligations" ToRole="Regions" />
+          <NavigationProperty Name="Workflows" Relationship="Self.FK__Workflows__Targe__37FA4C37" FromRole="UnliquidatedObligations" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="UserUser">
           <Key>
@@ -1096,6 +1164,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="WorkflowKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
           <Property Name="DescriptionJson" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DescriptionXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="WorkflowDefinitionName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__Workflo__3BCADD1B" FromRole="WorkflowDefinitions" ToRole="Reviews" />
         </EntityType>
         <EntityType Name="WorkflowHistory">
           <Key>
@@ -1111,7 +1182,6 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="CurrentActivityEnteredAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="TargetUloId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK__WorkflowH__Owner__4865BE2A" FromRole="WorkflowHistory" ToRole="AspNetUsers" />
-          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__WorkflowH__Targe__4959E263" FromRole="WorkflowHistory" ToRole="UnliquidatedObligations" />
           <NavigationProperty Name="Workflow" Relationship="Self.FK__WorkflowH__Workf__477199F1" FromRole="WorkflowHistory" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="Workflow">
@@ -1130,7 +1200,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToWorkflow" FromRole="Workflows" ToRole="Documents" />
           <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Workf__6BAEFA67" FromRole="Workflows" ToRole="RequestForReassignment" />
           <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="Workflows" ToRole="UnliqudatedObjectsWorkflowQuestions" />
-          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK_Workflows_ToUnliquidatedObligations" FromRole="Workflows" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__Workflows__Targe__37FA4C37" FromRole="Workflows" ToRole="UnliquidatedObligations" />
           <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Workf__477199F1" FromRole="Workflows" ToRole="WorkflowHistory" />
         </EntityType>
         <EntityType Name="Region">
@@ -1141,7 +1211,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="ZoneId" Type="Int32" Nullable="false" />
           <Property Name="RegionName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__RegionI__093F5D4E" FromRole="Regions" ToRole="Reviews" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK_UnliquidatedObligations_ToRegions" FromRole="Regions" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Regio__361203C5" FromRole="Regions" ToRole="UnliquidatedObligations" />
           <NavigationProperty Name="UserUsers" Relationship="Self.FK__UserUsers__Regio__395884C4" FromRole="Regions" ToRole="UserUsers" />
           <NavigationProperty Name="Zone" Relationship="Self.FK__Regions__ZoneId__30C33EC3" FromRole="Regions" ToRole="Zones" />
         </EntityType>
@@ -1347,7 +1417,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notes__UloId__2334397B">
+        <Association Name="FK__Notes__UloId__38EE7070">
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="1" />
           <End Role="Notes" Type="Self.Note" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1356,6 +1426,18 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Principal>
             <Dependent Role="Notes">
               <PropertyRef Name="UloId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Unliquida__Pegas__351DDF8C">
+          <End Role="PegasysObligations" Type="Self.PegasysObligation" Multiplicity="1" />
+          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PegasysObligations">
+              <PropertyRef Name="PegasysObligationId" />
+            </Principal>
+            <Dependent Role="UnliquidatedObligations">
+              <PropertyRef Name="PegasysObligationId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1395,8 +1477,20 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Revie__084B3915">
-          <End Role="Reviews" Type="Self.Review" Multiplicity="0..1" />
+        <Association Name="FK__Reviews__Workflo__3BCADD1B">
+          <End Role="WorkflowDefinitions" Type="Self.WorkflowDefinition" Multiplicity="1" />
+          <End Role="Reviews" Type="Self.Review" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkflowDefinitions">
+              <PropertyRef Name="WorkflowDefinitionId" />
+            </Principal>
+            <Dependent Role="Reviews">
+              <PropertyRef Name="WorkflowDefinitionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Unliquida__Revie__370627FE">
+          <End Role="Reviews" Type="Self.Review" Multiplicity="1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Reviews">
@@ -1419,19 +1513,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__WorkflowH__Targe__4959E263">
-          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="1" />
-          <End Role="WorkflowHistory" Type="Self.WorkflowHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UnliquidatedObligations">
-              <PropertyRef Name="UloId" />
-            </Principal>
-            <Dependent Role="WorkflowHistory">
-              <PropertyRef Name="TargetUloId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UnliquidatedObligations_ToRegions">
+        <Association Name="FK__Unliquida__Regio__361203C5">
           <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1443,7 +1525,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Workflows_ToUnliquidatedObligations">
+        <Association Name="FK__Workflows__Targe__37FA4C37">
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="1" />
           <End Role="Workflows" Type="Self.Workflow" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1505,6 +1587,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <EntitySet Name="DocumentTypes" EntityType="Self.DocumentType" />
           <EntitySet Name="EmailTemplates" EntityType="Self.EmailTemplate" />
           <EntitySet Name="Notes" EntityType="Self.Note" />
+          <EntitySet Name="PegasysObligations" EntityType="Self.PegasysObligation" />
           <EntitySet Name="RequestForReassignments" EntityType="Self.RequestForReassignment" />
           <EntitySet Name="Reviews" EntityType="Self.Review" />
           <EntitySet Name="UnliqudatedObjectsWorkflowQuestions" EntityType="Self.UnliqudatedObjectsWorkflowQuestion" />
@@ -1573,9 +1656,13 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="Notes" EntitySet="Notes" />
             <End Role="Notes1" EntitySet="Notes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notes__UloId__2334397B" Association="Self.FK__Notes__UloId__2334397B">
+          <AssociationSet Name="FK__Notes__UloId__38EE7070" Association="Self.FK__Notes__UloId__38EE7070">
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
             <End Role="Notes" EntitySet="Notes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Pegas__351DDF8C" Association="Self.FK__Unliquida__Pegas__351DDF8C">
+            <End Role="PegasysObligations" EntitySet="PegasysObligations" />
+            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
           <AssociationSet Name="FK__RequestFo__Unliq__6ABAD62E" Association="Self.FK__RequestFo__Unliq__6ABAD62E">
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
@@ -1589,7 +1676,11 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="Regions" EntitySet="Regions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__084B3915" Association="Self.FK__Unliquida__Revie__084B3915">
+          <AssociationSet Name="FK__Reviews__Workflo__3BCADD1B" Association="Self.FK__Reviews__Workflo__3BCADD1B">
+            <End Role="WorkflowDefinitions" EntitySet="WorkflowDefinitions" />
+            <End Role="Reviews" EntitySet="Reviews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Revie__370627FE" Association="Self.FK__Unliquida__Revie__370627FE">
             <End Role="Reviews" EntitySet="Reviews" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
@@ -1597,15 +1688,11 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
           </AssociationSet>
-          <AssociationSet Name="FK__WorkflowH__Targe__4959E263" Association="Self.FK__WorkflowH__Targe__4959E263">
-            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
-            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UnliquidatedObligations_ToRegions" Association="Self.FK_UnliquidatedObligations_ToRegions">
+          <AssociationSet Name="FK__Unliquida__Regio__361203C5" Association="Self.FK__Unliquida__Regio__361203C5">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
-          <AssociationSet Name="FK_Workflows_ToUnliquidatedObligations" Association="Self.FK_Workflows_ToUnliquidatedObligations">
+          <AssociationSet Name="FK__Workflows__Targe__37FA4C37" Association="Self.FK__Workflows__Targe__37FA4C37">
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
             <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
@@ -1625,6 +1712,10 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
+          <FunctionImport Name="CreateULOAndAssignWf">
+            <Parameter Name="reviewId" Mode="In" Type="Int32" />
+            <Parameter Name="workflowDefinitionId" Mode="In" Type="Int32" />
+          </FunctionImport>
           <FunctionImport Name="GetNextLevelOwnerId">
             <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
             <Parameter Name="workflowId" Mode="In" Type="Int32" />
@@ -1734,6 +1825,58 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="PegasysObligations">
+            <EntityTypeMapping TypeName="Model.PegasysObligation">
+              <MappingFragment StoreEntitySet="PegasysObligations">
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
+                <ScalarProperty Name="SourceRowNumber" ColumnName="SourceRowNumber" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="Fund" ColumnName="Fund" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
+                <ScalarProperty Name="Prog" ColumnName="Prog" />
+                <ScalarProperty Name="DocType" ColumnName="DocType" />
+                <ScalarProperty Name="Doc_Num" ColumnName="Doc Num" />
+                <ScalarProperty Name="Itmz_Ln_Num" ColumnName="Itmz Ln Num" />
+                <ScalarProperty Name="Actg_Ln_Num" ColumnName="Actg Ln Num" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="BBFY" ColumnName="BBFY" />
+                <ScalarProperty Name="EBFY" ColumnName="EBFY" />
+                <ScalarProperty Name="Acty" ColumnName="Acty" />
+                <ScalarProperty Name="O_C" ColumnName="O/C" />
+                <ScalarProperty Name="SOC" ColumnName="SOC" />
+                <ScalarProperty Name="Project" ColumnName="Project" />
+                <ScalarProperty Name="Agreement" ColumnName="Agreement" />
+                <ScalarProperty Name="Contract_Num" ColumnName="Contract Num" />
+                <ScalarProperty Name="Bldg" ColumnName="Bldg" />
+                <ScalarProperty Name="Sys_Loc" ColumnName="Sys/Loc" />
+                <ScalarProperty Name="Veh_Tag" ColumnName="Veh Tag" />
+                <ScalarProperty Name="WI" ColumnName="WI" />
+                <ScalarProperty Name="Lease_Number" ColumnName="Lease Number" />
+                <ScalarProperty Name="Vendor_Name" ColumnName="Vendor Name" />
+                <ScalarProperty Name="Actg_Pd" ColumnName="Actg Pd" />
+                <ScalarProperty Name="Total_Line" ColumnName="Total Line" />
+                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
+                <ScalarProperty Name="Prepayments" ColumnName="Prepayments" />
+                <ScalarProperty Name="Undel_Orders" ColumnName="Undel Orders" />
+                <ScalarProperty Name="Rcpt" ColumnName="Rcpt" />
+                <ScalarProperty Name="Accrual" ColumnName="Accrual" />
+                <ScalarProperty Name="Pend_Payments" ColumnName="Pend Payments" />
+                <ScalarProperty Name="Pymts_In_Transit_" ColumnName="Pymts(In Transit)" />
+                <ScalarProperty Name="Pymts_Confirmed_" ColumnName="Pymts(Confirmed)" />
+                <ScalarProperty Name="Holdbacks" ColumnName="Holdbacks" />
+                <ScalarProperty Name="TAFS" ColumnName="TAFS" />
+                <ScalarProperty Name="DUNS__" ColumnName="DUNS #" />
+                <ScalarProperty Name="Date_of_Last_Activity" ColumnName="Date of Last Activity" />
+                <ScalarProperty Name="Days_Since_First_Activity" ColumnName="Days Since First Activity" />
+                <ScalarProperty Name="Days_Since_Last_Activity" ColumnName="Days Since Last Activity" />
+                <ScalarProperty Name="Date_of_First_Activity" ColumnName="Date of First Activity" />
+                <ScalarProperty Name="Trading_Partner_Type" ColumnName="Trading Partner Type" />
+                <ScalarProperty Name="Vendor_Agency_Code" ColumnName="Vendor Agency Code" />
+                <ScalarProperty Name="Vendor_Bureau_Code" ColumnName="Vendor Bureau Code" />
+                <ScalarProperty Name="PegasysObligationId" ColumnName="PegasysObligationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="RequestForReassignments">
             <EntityTypeMapping TypeName="Model.RequestForReassignment">
               <MappingFragment StoreEntitySet="RequestForReassignment">
@@ -1752,9 +1895,12 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
                 <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="TypeOfReview" ColumnName="TypeOfReview" />
                 <ScalarProperty Name="Comments" ColumnName="Comments" />
                 <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="ReviewTypeId" ColumnName="ReviewTypeId" />
+                <ScalarProperty Name="ReviewScopeId" ColumnName="ReviewScopeId" />
+                <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />
+                <ScalarProperty Name="ProjectDueDate" ColumnName="ProjectDueDate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1777,15 +1923,30 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
               <MappingFragment StoreEntitySet="UnliquidatedObligations">
                 <ScalarProperty Name="UloId" ColumnName="UloId" />
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
-                <ScalarProperty Name="DocType" ColumnName="DocType" />
-                <ScalarProperty Name="PegasusDocumentNumber" ColumnName="PegasusDocumentNumber" />
-                <ScalarProperty Name="PegasysTitleNumber" ColumnName="PegasysTitleNumber" />
-                <ScalarProperty Name="Fund" ColumnName="Fund" />
+                <ScalarProperty Name="PegasysObligationId" ColumnName="PegasysObligationId" />
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
                 <ScalarProperty Name="Organization" ColumnName="Organization" />
+                <ScalarProperty Name="Fund" ColumnName="Fund" />
                 <ScalarProperty Name="Prog" ColumnName="Prog" />
+                <ScalarProperty Name="DocType" ColumnName="DocType" />
+                <ScalarProperty Name="PegasysDocumentNumber" ColumnName="PegasysDocumentNumber" />
+                <ScalarProperty Name="ItemsLineNumber" ColumnName="ItemsLineNumber" />
+                <ScalarProperty Name="AccountingLineNumber" ColumnName="AccountingLineNumber" />
+                <ScalarProperty Name="PegasysTitleNumber" ColumnName="PegasysTitleNumber" />
+                <ScalarProperty Name="BBFY" ColumnName="BBFY" />
+                <ScalarProperty Name="EBFY" ColumnName="EBFY" />
+                <ScalarProperty Name="Acty" ColumnName="Acty" />
+                <ScalarProperty Name="OC" ColumnName="OC" />
+                <ScalarProperty Name="SOC" ColumnName="SOC" />
+                <ScalarProperty Name="Project" ColumnName="Project" />
                 <ScalarProperty Name="Agreement" ColumnName="Agreement" />
-                <ScalarProperty Name="RWACompletionDate" ColumnName="RWACompletionDate" />
-                <ScalarProperty Name="DateOfLastActivity" ColumnName="DateOfLastActivity" />
+                <ScalarProperty Name="ContractNum" ColumnName="ContractNum" />
+                <ScalarProperty Name="Bldg" ColumnName="Bldg" />
+                <ScalarProperty Name="SysLoc" ColumnName="SysLoc" />
+                <ScalarProperty Name="VehTag" ColumnName="VehTag" />
+                <ScalarProperty Name="WI" ColumnName="WI" />
+                <ScalarProperty Name="LeaseNumber" ColumnName="LeaseNumber" />
+                <ScalarProperty Name="VendorName" ColumnName="VendorName" />
                 <ScalarProperty Name="ActgPd" ColumnName="ActgPd" />
                 <ScalarProperty Name="TotalLine" ColumnName="TotalLine" />
                 <ScalarProperty Name="Commitments" ColumnName="Commitments" />
@@ -1799,43 +1960,20 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
                 <ScalarProperty Name="PymtsInTransit" ColumnName="PymtsInTransit" />
                 <ScalarProperty Name="PymtsConfirmed" ColumnName="PymtsConfirmed" />
                 <ScalarProperty Name="Holdbacks" ColumnName="Holdbacks" />
-                <ScalarProperty Name="PegasysContractNumber" ColumnName="PegasysContractNumber" />
-                <ScalarProperty Name="PegasysVendorName" ColumnName="PegasysVendorName" />
-                <ScalarProperty Name="ContractingOfficersName" ColumnName="ContractingOfficersName" />
-                <ScalarProperty Name="AwardNbr" ColumnName="AwardNbr" />
-                <ScalarProperty Name="BaseContractNbr" ColumnName="BaseContractNbr" />
-                <ScalarProperty Name="GSAFSSOtherNumber" ColumnName="GSAFSSOtherNumber" />
-                <ScalarProperty Name="AwdExpirationDate" ColumnName="AwdExpirationDate" />
-                <ScalarProperty Name="ReasonIncludedInReview" ColumnName="ReasonIncludedInReview" />
+                <ScalarProperty Name="TAFS" ColumnName="TAFS" />
+                <ScalarProperty Name="DUNSNum" ColumnName="DUNSNum" />
+                <ScalarProperty Name="DateOfLastActivity" ColumnName="DateOfLastActivity" />
+                <ScalarProperty Name="DaysSinceLastActivity" ColumnName="DaysSinceLastActivity" />
+                <ScalarProperty Name="DateOfFirstActivity" ColumnName="DateOfFirstActivity" />
+                <ScalarProperty Name="DaysSinceFirstActivity" ColumnName="DaysSinceFirstActivity" />
+                <ScalarProperty Name="TradingPartnerType" ColumnName="TradingPartnerType" />
+                <ScalarProperty Name="VendorAgencyCode" ColumnName="VendorAgencyCode" />
+                <ScalarProperty Name="VendorBureauCode" ColumnName="VendorBureauCode" />
                 <ScalarProperty Name="Valid" ColumnName="Valid" />
-                <ScalarProperty Name="ReviewedBy" ColumnName="ReviewedBy" />
-                <ScalarProperty Name="ExpectedDateForCompletionResolution" ColumnName="ExpectedDateForCompletionResolution" />
-                <ScalarProperty Name="RegionalSupportOrJustification" ColumnName="RegionalSupportOrJustification" />
-                <ScalarProperty Name="BGPCommentsAfterReview" ColumnName="BGPCommentsAfterReview" />
-                <ScalarProperty Name="RegionalResponse" ColumnName="RegionalResponse" />
-                <ScalarProperty Name="BGPFinalDetermination" ColumnName="BGPFinalDetermination" />
-                <ScalarProperty Name="C1stReview" ColumnName="1stReview" />
-                <ScalarProperty Name="C2ndReview" ColumnName="2ndReview" />
-                <ScalarProperty Name="DateSentToFinCntrForDeobligation" ColumnName="DateSentToFinCntrForDeobligation" />
-                <ScalarProperty Name="ULOCategoryForTracker" ColumnName="ULOCategoryForTracker" />
-                <ScalarProperty Name="When_should_BGP_review_again_" ColumnName="When should BGP review again?" />
-                <ScalarProperty Name="DateBalanceRestored" ColumnName="DateBalanceRestored" />
-                <ScalarProperty Name="AmtToBeRecovered" ColumnName="AmtToBeRecovered" />
-                <ScalarProperty Name="C1stFollowupDate" ColumnName="1stFollowupDate" />
-                <ScalarProperty Name="C2ndFollowupDate" ColumnName="2ndFollowupDate" />
-                <ScalarProperty Name="NoResponse_w_initial_submittal_" ColumnName="NoResponse(w initial submittal)" />
-                <ScalarProperty Name="NoResponse" ColumnName="NoResponse" />
-                <ScalarProperty Name="BGPMadeCallValid" ColumnName="BGPMadeCallValid" />
-                <ScalarProperty Name="BGPMadeCallInvalid" ColumnName="BGPMadeCallInvalid" />
-                <ScalarProperty Name="BGPFinalDetVariesFromRegionCO" ColumnName="BGPFinalDetVariesFromRegionCO" />
-                <ScalarProperty Name="Column_52" ColumnName="Column 52" />
-                <ScalarProperty Name="Column_53" ColumnName="Column 53" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Column_55" ColumnName="Column 55" />
-                <ScalarProperty Name="CreatedAtUTC" ColumnName="CreatedAtUTC" />
-                <ScalarProperty Name="DOShouldBe" ColumnName="DOShouldBe" />
-                <ScalarProperty Name="UDOShouldBe" ColumnName="UDOShouldBe" />
-                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
+                <ScalarProperty Name="AwardNbr" ColumnName="AwardNbr" />
+                <ScalarProperty Name="ContractingOfficersName" ColumnName="ContractingOfficersName" />
+                <ScalarProperty Name="ReasonIncludedInReview" ColumnName="ReasonIncludedInReview" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1857,6 +1995,8 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
                 <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
                 <ScalarProperty Name="DescriptionJson" ColumnName="DescriptionJson" />
+                <ScalarProperty Name="DescriptionXml" ColumnName="DescriptionXml" />
+                <ScalarProperty Name="WorkflowDefinitionName" ColumnName="WorkflowDefinitionName" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1938,6 +2078,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
           </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="CreateULOAndAssignWf" FunctionName="Model.Store.CreateULOAndAssignWf" />
           <FunctionImportMapping FunctionImportName="GetNextLevelOwnerId" FunctionName="Model.Store.GetNextLevelOwnerId" />
         </EntityContainerMapping>
       </Mapping>

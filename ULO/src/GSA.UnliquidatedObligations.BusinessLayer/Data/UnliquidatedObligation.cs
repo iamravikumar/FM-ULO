@@ -18,21 +18,35 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public UnliquidatedObligation()
         {
             this.Notes = new HashSet<Note>();
-            this.WorkflowHistories = new HashSet<WorkflowHistory>();
             this.Workflows = new HashSet<Workflow>();
         }
     
         public int UloId { get; set; }
         public Nullable<int> RegionId { get; set; }
-        public string DocType { get; set; }
-        public string PegasusDocumentNumber { get; set; }
-        public string PegasysTitleNumber { get; set; }
-        public string Fund { get; set; }
+        public int PegasysObligationId { get; set; }
+        public int ReviewId { get; set; }
         public string Organization { get; set; }
+        public string Fund { get; set; }
         public string Prog { get; set; }
+        public string DocType { get; set; }
+        public string PegasysDocumentNumber { get; set; }
+        public int ItemsLineNumber { get; set; }
+        public int AccountingLineNumber { get; set; }
+        public string PegasysTitleNumber { get; set; }
+        public string BBFY { get; set; }
+        public string EBFY { get; set; }
+        public string Acty { get; set; }
+        public int OC { get; set; }
+        public string SOC { get; set; }
+        public string Project { get; set; }
         public string Agreement { get; set; }
-        public string RWACompletionDate { get; set; }
-        public string DateOfLastActivity { get; set; }
+        public string ContractNum { get; set; }
+        public string Bldg { get; set; }
+        public string SysLoc { get; set; }
+        public string VehTag { get; set; }
+        public int WI { get; set; }
+        public string LeaseNumber { get; set; }
+        public string VendorName { get; set; }
         public string ActgPd { get; set; }
         public string TotalLine { get; set; }
         public string Commitments { get; set; }
@@ -46,49 +60,25 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string PymtsInTransit { get; set; }
         public string PymtsConfirmed { get; set; }
         public string Holdbacks { get; set; }
-        public string PegasysContractNumber { get; set; }
-        public string PegasysVendorName { get; set; }
-        public string ContractingOfficersName { get; set; }
-        public string AwardNbr { get; set; }
-        public string BaseContractNbr { get; set; }
-        public string GSAFSSOtherNumber { get; set; }
-        public string AwdExpirationDate { get; set; }
-        public string ReasonIncludedInReview { get; set; }
-        public bool Valid { get; set; }
-        public string ReviewedBy { get; set; }
-        public string ExpectedDateForCompletionResolution { get; set; }
-        public string RegionalSupportOrJustification { get; set; }
-        public string BGPCommentsAfterReview { get; set; }
-        public string RegionalResponse { get; set; }
-        public string BGPFinalDetermination { get; set; }
-        public string C1stReview { get; set; }
-        public string C2ndReview { get; set; }
-        public string DateSentToFinCntrForDeobligation { get; set; }
-        public string ULOCategoryForTracker { get; set; }
-        public string When_should_BGP_review_again_ { get; set; }
-        public string DateBalanceRestored { get; set; }
-        public string AmtToBeRecovered { get; set; }
-        public string C1stFollowupDate { get; set; }
-        public string C2ndFollowupDate { get; set; }
-        public string NoResponse_w_initial_submittal_ { get; set; }
-        public string NoResponse { get; set; }
-        public string BGPMadeCallValid { get; set; }
-        public string BGPMadeCallInvalid { get; set; }
-        public string BGPFinalDetVariesFromRegionCO { get; set; }
-        public string Column_52 { get; set; }
-        public string Column_53 { get; set; }
+        public string TAFS { get; set; }
+        public string DUNSNum { get; set; }
+        public Nullable<System.DateTime> DateOfLastActivity { get; set; }
+        public Nullable<int> DaysSinceLastActivity { get; set; }
+        public Nullable<System.DateTime> DateOfFirstActivity { get; set; }
+        public Nullable<int> DaysSinceFirstActivity { get; set; }
+        public string TradingPartnerType { get; set; }
+        public string VendorAgencyCode { get; set; }
+        public string VendorBureauCode { get; set; }
+        public Nullable<bool> Valid { get; set; }
         public string Status { get; set; }
-        public string Column_55 { get; set; }
-        public System.DateTime CreatedAtUTC { get; set; }
-        public Nullable<decimal> DOShouldBe { get; set; }
-        public Nullable<decimal> UDOShouldBe { get; set; }
-        public Nullable<int> ReviewId { get; set; }
+        public string AwardNbr { get; set; }
+        public string ContractingOfficersName { get; set; }
+        public string ReasonIncludedInReview { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }
+        public virtual PegasysObligation PegasysObligation { get; set; }
         public virtual Review Review { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Workflow> Workflows { get; set; }

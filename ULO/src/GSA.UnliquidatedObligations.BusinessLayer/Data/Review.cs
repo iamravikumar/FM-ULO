@@ -24,11 +24,15 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int RegionId { get; set; }
         public string ReviewName { get; set; }
         public string Status { get; set; }
-        public string TypeOfReview { get; set; }
         public string Comments { get; set; }
         public System.DateTime CreatedAtUtc { get; set; }
+        public int ReviewTypeId { get; set; }
+        public int ReviewScopeId { get; set; }
+        public int WorkflowDefinitionId { get; set; }
+        public Nullable<System.DateTime> ProjectDueDate { get; set; }
     
         public virtual Region Region { get; set; }
+        public virtual WorkflowDefinition WorkflowDefinition { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UnliquidatedObligation> UnliquidatedObligations { get; set; }
     }

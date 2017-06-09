@@ -14,9 +14,20 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
     public partial class WorkflowDefinition
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public WorkflowDefinition()
+        {
+            this.Reviews = new HashSet<Review>();
+        }
+    
         public int WorkflowDefinitionId { get; set; }
         public string WorkflowKey { get; set; }
         public int Version { get; set; }
         public string DescriptionJson { get; set; }
+        public string DescriptionXml { get; set; }
+        public string WorkflowDefinitionName { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Review> Reviews { get; set; }
     }
 }

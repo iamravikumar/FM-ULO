@@ -4,28 +4,29 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="f5c5984baf0f4edab3e8dcd523faabcf" Name="Diagram1" ZoomLevel="82">
-        <EntityTypeShape EntityType="Model.AspNetRole" Width="1.5" PointX="0.75" PointY="20.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="19.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="22.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.AspNetUser" Width="1.5" PointX="3" PointY="18.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.Attachment" Width="1.5" PointX="10.5" PointY="24.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.Document" Width="1.5" PointX="8.25" PointY="20.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.DocumentType" Width="1.5" PointX="6" PointY="29.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.EmailTemplate" Width="1.5" PointX="0.75" PointY="6.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.Note" Width="1.5" PointX="8.25" PointY="16.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.RequestForReassignment" Width="1.5" PointX="8.25" PointY="24.375" IsExpanded="true" />
+      <Diagram DiagramId="6429b32428ec4d9aa76fae6d3d1f3c17" Name="Diagram1" ZoomLevel="63">
+        <EntityTypeShape EntityType="Model.AspNetRole" Width="1.5" PointX="0.75" PointY="21" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="19.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="22.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspNetUser" Width="1.5" PointX="3" PointY="19" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Attachment" Width="1.5" PointX="10.5" PointY="24.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Document" Width="1.5" PointX="8.25" PointY="20.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.DocumentType" Width="1.5" PointX="6" PointY="30" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.EmailTemplate" Width="1.5" PointX="0.75" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Note" Width="1.5" PointX="8.25" PointY="16.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.PegasysObligation" Width="1.5" PointX="3.75" PointY="29.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.RequestForReassignment" Width="1.5" PointX="8.25" PointY="24.5" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.Review" Width="1.5" PointX="3.75" PointY="11.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.UnliqudatedObjectsWorkflowQuestion" Width="1.5" PointX="13.5" PointY="20" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.UnliqudatedObjectsWorkflowQuestion" Width="1.5" PointX="13.5" PointY="20.25" IsExpanded="true" />
         <EntityTypeShape EntityType="Model.UnliquidatedObligation" Width="1.5" PointX="6" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.UserUser" Width="1.5" PointX="5.25" PointY="15.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.WorkflowDefinition" Width="1.5" PointX="2.75" PointY="6.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.WorkflowHistory" Width="1.5" PointX="5.25" PointY="25" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.Workflow" Width="1.5" PointX="11.25" PointY="19.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.Region" Width="1.5" PointX="3" PointY="15.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.Zone" Width="1.5" PointX="0.75" PointY="15.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.AspnetUserApplicationPermissionClaim" Width="1.5" PointX="0.75" PointY="9.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Model.AspnetUserSubjectCategoryClaim" Width="1.5" PointX="8.75" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.UserUser" Width="1.5" PointX="5.25" PointY="15.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.WorkflowDefinition" Width="1.5" PointX="1.5" PointY="11.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.WorkflowHistory" Width="1.5" PointX="5.25" PointY="25.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Workflow" Width="1.5" PointX="11.25" PointY="20" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Region" Width="1.5" PointX="3" PointY="15.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.Zone" Width="1.5" PointX="0.75" PointY="16" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspnetUserApplicationPermissionClaim" Width="1.5" PointX="2.75" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model.AspnetUserSubjectCategoryClaim" Width="1.5" PointX="8.75" PointY="7" IsExpanded="true" />
         <AssociationConnector Association="Model.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__Document__Upload__7720AD13" ManuallyRouted="false" />
@@ -40,15 +41,16 @@
         <AssociationConnector Association="Model.FK_Document_ToDocumentType" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK_Document_ToWorkflow" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__Notes__ParentNot__214BF109" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK__Notes__UloId__2334397B" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Notes__UloId__38EE7070" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Unliquida__Pegas__351DDF8C" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__RequestFo__Unliq__6ABAD62E" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__RequestFo__Workf__6BAEFA67" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__Reviews__RegionI__093F5D4E" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK__Unliquida__Revie__084B3915" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Reviews__Workflo__3BCADD1B" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Unliquida__Revie__370627FE" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK__WorkflowH__Targe__4959E263" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK_UnliquidatedObligations_ToRegions" ManuallyRouted="false" />
-        <AssociationConnector Association="Model.FK_Workflows_ToUnliquidatedObligations" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Unliquida__Regio__361203C5" ManuallyRouted="false" />
+        <AssociationConnector Association="Model.FK__Workflows__Targe__37FA4C37" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__UserUsers__Regio__395884C4" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__WorkflowH__Workf__477199F1" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__Regions__ZoneId__30C33EC3" ManuallyRouted="false" />

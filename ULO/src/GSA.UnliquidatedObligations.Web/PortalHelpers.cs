@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -10,6 +12,7 @@ using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Newtonsoft.Json;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -53,27 +56,27 @@ namespace GSA.UnliquidatedObligations.Web
                     var pdn = pdnDecoded.Replace("%", "");
                     predicate =
                        predicate.And(
-                           wf => wf.UnliquidatedObligation.PegasusDocumentNumber.Trim().ToLower().Contains(pdn));
+                           wf => wf.UnliquidatedObligation.PegasysDocumentNumber.Trim().ToLower().Contains(pdn));
                 }
                 else if (pdnDecoded.StartsWith("%"))
                 {
                     var pdn = pdnDecoded.Replace("%", "");
                     predicate =
                         predicate.And(
-                            wf => wf.UnliquidatedObligation.PegasusDocumentNumber.Trim().ToLower().EndsWith(pdn));
+                            wf => wf.UnliquidatedObligation.PegasysDocumentNumber.Trim().ToLower().EndsWith(pdn));
                 }
                 else if (pdnDecoded.EndsWith("%"))
                 {
                     var pdn = pdnDecoded.Replace("%", "");
                     predicate =
                         predicate.And(
-                            wf => wf.UnliquidatedObligation.PegasusDocumentNumber.Trim().ToLower().StartsWith(pdn));
+                            wf => wf.UnliquidatedObligation.PegasysDocumentNumber.Trim().ToLower().StartsWith(pdn));
                 }
                 else
                 {
                     predicate =
                         predicate.And(
-                            wf => wf.UnliquidatedObligation.PegasusDocumentNumber.Trim().ToLower() == pdnDecoded);
+                            wf => wf.UnliquidatedObligation.PegasysDocumentNumber.Trim().ToLower() == pdnDecoded);
                 }
             }
 
@@ -216,27 +219,27 @@ namespace GSA.UnliquidatedObligations.Web
                     var pgVendorName = pegasysVendorNameDecoded.Replace("%", "");
                     predicate =
                        predicate.And(
-                           wf => wf.UnliquidatedObligation.PegasysVendorName.Trim().ToLower().Contains(pgVendorName));
+                           wf => wf.UnliquidatedObligation.VendorName.Trim().ToLower().Contains(pgVendorName));
                 }
                 else if (pegasysVendorNameDecoded.StartsWith("%"))
                 {
                     var pgVendorName = pegasysVendorNameDecoded.Replace("%", "");
                     predicate =
                         predicate.And(
-                            wf => wf.UnliquidatedObligation.PegasysVendorName.Trim().ToLower().EndsWith(pgVendorName));
+                            wf => wf.UnliquidatedObligation.VendorName.Trim().ToLower().EndsWith(pgVendorName));
                 }
                 else if (pegasysVendorNameDecoded.EndsWith("%"))
                 {
                     var pgVendorName = pegasysVendorNameDecoded.Replace("%", "");
                     predicate =
                         predicate.And(
-                            wf => wf.UnliquidatedObligation.PegasysVendorName.Trim().ToLower().StartsWith(pgVendorName));
+                            wf => wf.UnliquidatedObligation.VendorName.Trim().ToLower().StartsWith(pgVendorName));
                 } 
                 else
                 {
                     predicate =
                         predicate.And(wf =>
-                            wf.UnliquidatedObligation.PegasysVendorName.Trim().ToLower() == pegasysVendorNameDecoded);
+                            wf.UnliquidatedObligation.VendorName.Trim().ToLower() == pegasysVendorNameDecoded);
                 }
             }
 
@@ -379,6 +382,70 @@ namespace GSA.UnliquidatedObligations.Web
             return predicate;
 
         }
+
+        public static string GetDisplayName(this Enum value)
+        {
+            var type = value.GetType();
+            if (!type.IsEnum) throw new ArgumentException(String.Format("Type '{0}' is not Enum", type));
+
+            var members = type.GetMember(value.ToString());
+            if (members.Length == 0) throw new ArgumentException(String.Format("Member '{0}' not found in type '{1}'", value, type.Name));
+
+            var member = members[0];
+            var attributes = member.GetCustomAttributes(typeof(DisplayAttribute), false);
+            if (attributes.Length == 0) throw new ArgumentException(String.Format("'{0}.{1}' doesn't have DisplayAttribute", type.Name, value));
+
+            var attribute = (DisplayAttribute)attributes[0];
+            return attribute.GetName();
+        }
+
+        public static List<SelectListItem> ConvertToSelectList(this List<int> nums)
+        {
+            var numsSelect = new List<SelectListItem>();
+
+            foreach (var num in nums)
+            {
+                numsSelect.Add(new SelectListItem { Text = num.ToString(), Value = num.ToString() });
+            }
+            return numsSelect;
+
+        }
+
+        public static List<SelectListItem> ConvertToSelectList(this List<WorkflowDefinition> workFlowDefintions)
+        {
+            var workFlowDefintionsSelect = new List<SelectListItem>();
+
+            foreach (var workflowDefinition in workFlowDefintions)
+            {
+                workFlowDefintionsSelect.Add(new SelectListItem {
+                    Text = workflowDefinition.WorkflowDefinitionName,
+                    Value = workflowDefinition.WorkflowDefinitionId.ToString()
+                });
+            }
+            return workFlowDefintionsSelect;
+
+        }
+
+        public static List<SelectListItem> ConvertToSelectList<T>(this List<T> enums) where T : struct, IConvertible
+        {
+
+            if (!typeof(T).IsEnum)
+            {
+                throw new ArgumentException("T must be an enumerated type");
+            }
+
+            var eNumsSelect = new List<SelectListItem>();
+
+            foreach (var enu in Enum.GetValues(typeof(T)))
+            {
+                var e = (Enum)Enum.Parse(typeof(T), enu.ToString());
+                var displayName = e.GetDisplayName();
+                var value = ((int) Enum.Parse(typeof(T), enu.ToString())).ToString();
+                eNumsSelect.Add(new SelectListItem { Text = displayName, Value = value });
+            }
+            return eNumsSelect;
+        }
+
 
 
         public static T BodyAsJsonObject<T>(this HttpRequestBase req)

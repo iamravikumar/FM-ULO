@@ -7,7 +7,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer
     {
         public const string GsaUrn = "urn:gsa.gov/";
         public const string UloUrn = GsaUrn + "unliquidatedObligation/";
-
+        public const string WorkflowDescUrn = UloUrn + "WorkflowDescriptions/";
     }
 
 

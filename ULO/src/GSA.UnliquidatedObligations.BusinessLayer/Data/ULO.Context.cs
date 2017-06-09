@@ -36,6 +36,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<DocumentType> DocumentTypes { get; set; }
         public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
         public virtual DbSet<Note> Notes { get; set; }
+        public virtual DbSet<PegasysObligation> PegasysObligations { get; set; }
         public virtual DbSet<RequestForReassignment> RequestForReassignments { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
@@ -48,6 +49,19 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<Zone> Zones { get; set; }
         public virtual DbSet<AspnetUserApplicationPermissionClaim> AspnetUserApplicationPermissionClaims { get; set; }
         public virtual DbSet<AspnetUserSubjectCategoryClaim> AspnetUserSubjectCategoryClaims { get; set; }
+    
+        public virtual int CreateULOAndAssignWf(Nullable<int> reviewId, Nullable<int> workflowDefinitionId)
+        {
+            var reviewIdParameter = reviewId.HasValue ?
+                new ObjectParameter("reviewId", reviewId) :
+                new ObjectParameter("reviewId", typeof(int));
+    
+            var workflowDefinitionIdParameter = workflowDefinitionId.HasValue ?
+                new ObjectParameter("workflowDefinitionId", workflowDefinitionId) :
+                new ObjectParameter("workflowDefinitionId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CreateULOAndAssignWf", reviewIdParameter, workflowDefinitionIdParameter);
+        }
     
         public virtual int GetNextLevelOwnerId(string proposedOwnerId, Nullable<int> workflowId, string nextActivityKey, ObjectParameter nextOwnerId)
         {

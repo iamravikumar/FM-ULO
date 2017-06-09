@@ -3,7 +3,7 @@
 @model GSA.UnliquidatedObligations.Web.Models.UloViewModel
 
 @{
-    ViewBag.Title = Model.CurretUnliquidatedObligation.PegasusDocumentNumber;
+    ViewBag.Title = Model.CurretUnliquidatedObligation.PegasysDocumentNumber;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var currentUloId = Convert.ToInt32(Context.Request.QueryString["uloId"]);
     var currentworkflowId = Convert.ToInt32(Context.Request.QueryString["workflowId"]);

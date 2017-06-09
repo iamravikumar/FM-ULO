@@ -39,7 +39,7 @@
                 @Html.ActionLink("View ULO", "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasusDocumentNumber)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
@@ -56,19 +56,20 @@
             </td>
             <td>
                 @{
-                    var isValid = item.UnliquidatedObligation.Valid ? "Yes" : "No";
+                    var isValid = item.UnliquidatedObligation.Valid == true ? "Yes" : "No";
                     @Html.Encode(isValid)
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ExpectedDateForCompletionResolution)
+                @* TODO: Get Due Dates from Review *@
+                @*@Html.DisplayFor(modelItem => item.UnliquidatedObligation.ExpectedDateForCompletionResolution)*@
             </td>
             <td>
                 @{
-                    var dueDate = Convert.ToDateTime(item.UnliquidatedObligation.ExpectedDateForCompletionResolution);
+                    @*var dueDate = Convert.ToDateTime(item.UnliquidatedObligation.ExpectedDateForCompletionResolution);
                     var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
-                    @Html.Encode(daysLeft)
-                    ;
+                    @Html.Encode(daysLeft)*@
+                    
                 }
             </td>
             @*<td>

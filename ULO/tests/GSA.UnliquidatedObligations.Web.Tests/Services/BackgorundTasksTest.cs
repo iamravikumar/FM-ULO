@@ -11,12 +11,14 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Services
 
         private BackgroundTasks BackgroundTasks;
         private Mock<IEmailServer> EmailServerMock;
+        private Mock<ULODBEntities> DB;
         [TestInitialize]
         public void Initialize()
         {
            
             EmailServerMock = new Mock<IEmailServer>();
-            BackgroundTasks = new BackgroundTasks(EmailServerMock.Object);
+            DB = new Mock<ULODBEntities>();
+            BackgroundTasks = new BackgroundTasks(EmailServerMock.Object, DB.Object);
         }
         [TestMethod]
         public void It_exists()
@@ -31,7 +33,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Services
             var workflowModel = new Workflow
             {
                 AspNetUser = new AspNetUser {UserName = "testUser"},
-                UnliquidatedObligation = new UnliquidatedObligation {UloId = 1, PegasusDocumentNumber = "CL12345"}
+                UnliquidatedObligation = new UnliquidatedObligation {UloId = 1, PegasysDocumentNumber = "CL12345"}
             };
             var expectedBody = "Dear testUser, Ulo for for PDN: CL12345 is now assigned to you";
             BackgroundTasks.Email("subject", "recipient", "Dear @Model.AspNetUser.UserName, Ulo for for PDN: @Model.UnliquidatedObligation.PegasusDocumentNumber is now assigned to you", workflowModel);

@@ -51,44 +51,67 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             //get claim Region Ids for user
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
-            return View(new ReviewModel(claimRegionIds));
+
+            var reviewTypes = Enum.GetValues(typeof(ReviewTypeEnum)).Cast<ReviewTypeEnum>().ToList();
+            var reviewScopes = Enum.GetValues(typeof(ReviewScopeEnum)).Cast<ReviewScopeEnum>().ToList();
+            var workflowDefinitions = await DB.WorkflowDefinitions.ToListAsync();
+            return View(new ReviewModel(claimRegionIds, reviewTypes, reviewScopes, workflowDefinitions));
         }
 
         // POST: Review/Create
         [HttpPost]
-        public ActionResult Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,TypeOfReview,Comments")] ReviewModel reviewModel)
+        public async Task<ActionResult> Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId,ProjectDueDate")] ReviewModel reviewModel)
         {
             try
             {
-                foreach (string file in Request.Files)
+                if (ModelState.IsValid)
                 {
-                    var fileContent = Request.Files[file];
-                    if (fileContent != null && fileContent.ContentLength > 0)
+                    foreach (string file in Request.Files)
                     {
-                        var stream = fileContent.InputStream;
-                        var fileName = Path.GetFileName(fileContent.FileName);
-                        var storageName = Guid.NewGuid() + Path.GetExtension(fileName);
-                        var path = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage/ReviewUploads"), storageName);
-                        using (var fileStream = System.IO.File.Create(path))
+                        var fileContent = Request.Files[file];
+                        if (fileContent != null && fileContent.ContentLength > 0)
                         {
-                            stream.CopyTo(fileStream);
-                        }
-                        var review = new Review
-                        {
-                            RegionId = reviewModel.RegionId.Value,
-                            ReviewName = reviewModel.ReviewName,
-                            Status = reviewModel.ReviewStatus,
-                            TypeOfReview = reviewModel.TypeOfReview,
-                            Comments = reviewModel.Comments,
-                            CreatedAtUtc = DateTime.Now
-                        };
-                        DB.Reviews.Add(review);
-                        DB.SaveChanges();
-                        BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.UploadReviewHoldIngTable(review.ReviewId, path));
-                    }
-                }
 
-                return RedirectToAction("Index");
+                            var review = new Review
+                            {
+                                RegionId = reviewModel.RegionId.Value,
+                                ReviewName = reviewModel.ReviewName,
+                                Status = "Open",
+                                ReviewTypeId = reviewModel.ReviewTypeId.Value,
+                                Comments = reviewModel.Comments,
+                                ReviewScopeId = reviewModel.ReviewScopeId.Value,
+                                WorkflowDefinitionId = reviewModel.WorkflowDefinitionId.Value,
+                                CreatedAtUtc = DateTime.Now,
+                                ProjectDueDate = reviewModel.ProjectDueDate.Value
+                            };
+                            DB.Reviews.Add(review);
+                            DB.SaveChanges();
+
+                            var stream = fileContent.InputStream;
+                            var storageName = Guid.NewGuid() + ".dat";
+                            var reviewFolder = review.ReviewId / 1024;
+                            var path =
+                                HostingEnvironment.MapPath("~/Content/DocStorage/ReviewUploads/" + reviewFolder + "/" +
+                                                           review.ReviewId);
+                            if (!Directory.Exists(path))
+                            {
+                                DirectoryInfo di = Directory.CreateDirectory(path);
+                            }
+                            var storagePath = Path.Combine(path, storageName);
+                            using (var fileStream = System.IO.File.Create(storagePath))
+                            {
+                                stream.CopyTo(fileStream);
+                            }
+                            BackgroundJobClient.Enqueue<IBackgroundTasks>(
+                                bt => bt.UploadReviewHoldIngTable(review.ReviewId, storagePath));
+                            BackgroundJobClient.Enqueue<IBackgroundTasks>(
+                                bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId));
+                        }
+                    }
+
+                    return RedirectToAction("Index");
+                }
+                return await Create();
             }
             catch (Exception ex)
             {

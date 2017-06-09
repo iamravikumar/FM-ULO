@@ -8,16 +8,19 @@ using System.IO;
 using GSA.UnliquidatedObligations.UploadTable;
 using System.Collections.Generic;
 using System.Configuration;
+using Autofac;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
     public class BackgroundTasks : IBackgroundTasks
     {
         private readonly IEmailServer EmailServer;
+        private readonly ULODBEntities DB;
 
-        public BackgroundTasks(IEmailServer emailServer)
+        public BackgroundTasks(IEmailServer emailServer, ULODBEntities db)
         {
             EmailServer = emailServer;
+            DB = db;
         }
 
         public void Email(string subject, string recipient, string template, object model)
@@ -46,7 +49,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
                             }, true)
                 });
                 dt.SetColumnWithValue("ReviewId", reviewId);
-                dt.TableName = "ReviewHoldingTable";
                 dt.UploadIntoSqlServer(
                     delegate ()
                     {
@@ -66,7 +68,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             var dt = new DataTable()
             {
-                TableName = "PegasysOpenObligations"
+                TableName = "PegasysObligations"
             };
             dt.Columns.Add("ReviewId", typeof(int));
             dt.Columns.Add("SourceRowNumber", typeof(int));
@@ -114,6 +116,12 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.Columns.Add("Vendor Agency Code", typeof(string));
             dt.Columns.Add("Vendor Bureau Code", typeof(string));
             return dt;
+        }
+
+        public void CreateULOsAndAssign(int reviewId, int workflowDefinitionId)
+        {
+            DB.CreateULOAndAssignWf(reviewId, workflowDefinitionId);
+
         }
     }
 }

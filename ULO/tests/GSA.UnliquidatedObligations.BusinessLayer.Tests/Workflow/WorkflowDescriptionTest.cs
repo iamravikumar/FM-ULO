@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
@@ -254,6 +255,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
 
             var serialized = JsonConvert.SerializeObject(d);
             var deserialized = WorkflowDescription.Deserialize(serialized);
+            var xml = d.ToXml();
+            Trace.WriteLine(xml);
             Assert.IsInstanceOfType(deserialized, typeof(WorkflowDescription));
 
         }

@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using System;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -46,7 +47,7 @@ namespace GSA.UnliquidatedObligations.Web
             var builder = new ContainerBuilder();
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
 
-            builder.RegisterType<ULODBEntities>().AsSelf().InstancePerRequest();
+            builder.RegisterType<ULODBEntities>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<WorkflowManager>()
                 .As<IWorkflowManager>()
                 .InstancePerRequest();
