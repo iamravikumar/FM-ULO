@@ -60,7 +60,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Review/Create
         [HttpPost]
-        public async Task<ActionResult> Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId,ProjectDueDate")] ReviewModel reviewModel)
+        public async Task<ActionResult> Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId")] ReviewModel reviewModel)
         {
             try
             {
@@ -81,8 +81,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                                 Comments = reviewModel.Comments,
                                 ReviewScopeId = reviewModel.ReviewScopeId.Value,
                                 WorkflowDefinitionId = reviewModel.WorkflowDefinitionId.Value,
-                                CreatedAtUtc = DateTime.Now,
-                                ProjectDueDate = reviewModel.ProjectDueDate.Value
+                                CreatedAtUtc = DateTime.Now
+                                //ProjectDueDate = reviewModel.ProjectDueDate.Value
                             };
                             DB.Reviews.Add(review);
                             DB.SaveChanges();
@@ -102,10 +102,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             {
                                 stream.CopyTo(fileStream);
                             }
-                            BackgroundJobClient.Enqueue<IBackgroundTasks>(
+                            var jobId = BackgroundJobClient.Enqueue<IBackgroundTasks>(
                                 bt => bt.UploadReviewHoldIngTable(review.ReviewId, storagePath));
-                            BackgroundJobClient.Enqueue<IBackgroundTasks>(
+
+                            var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>( jobId,
                                 bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId));
+
+                            BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
+
                         }
                     }
 

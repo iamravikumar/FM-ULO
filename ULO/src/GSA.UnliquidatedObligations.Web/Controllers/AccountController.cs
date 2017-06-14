@@ -342,11 +342,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 //case SignInStatus.Failure:
                 default:
                     var user = new ApplicationUser { UserName = ticket.Name, Email = ticket.UserData };
-                    var createResult = UserManager.Create(user);
-                    if (createResult.Succeeded)
-                    {
+                    //var createResult = UserManager.Create(user);
+                    //if (createResult.Succeeded)
+                    //{
                         return RedirectToLocal(returnUrl);
-                    }
+                    //}
                     return null;
             }
             

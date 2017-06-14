@@ -296,6 +296,8 @@
           <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
           <Property Name="CurrentActivityEnteredAtUtc" Type="datetime" Nullable="false" />
           <Property Name="TargetUloId" Type="int" Nullable="false" />
+          <Property Name="ExpectedDurationInSeconds" Type="bigint" />
+          <Property Name="DueAtUtc" Type="datetime" StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="Regions">
           <Key>
@@ -1196,6 +1198,8 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CurrentActivityEnteredAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="TargetUloId" Type="Int32" Nullable="false" />
+          <Property Name="ExpectedDurationInSeconds" Type="Int64" />
+          <Property Name="DueAtUtc" Type="DateTime" annotation:StoreGeneratedPattern="Computed" Precision="3" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Workflows__Owner__40058253" FromRole="Workflows" ToRole="AspNetUsers" />
           <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToWorkflow" FromRole="Workflows" ToRole="Documents" />
           <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Workf__6BAEFA67" FromRole="Workflows" ToRole="RequestForReassignment" />
@@ -2026,6 +2030,8 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
                 <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
                 <ScalarProperty Name="CurrentActivityEnteredAtUtc" ColumnName="CurrentActivityEnteredAtUtc" />
                 <ScalarProperty Name="TargetUloId" ColumnName="TargetUloId" />
+                <ScalarProperty Name="ExpectedDurationInSeconds" ColumnName="ExpectedDurationInSeconds" />
+                <ScalarProperty Name="DueAtUtc" ColumnName="DueAtUtc" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

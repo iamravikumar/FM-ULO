@@ -43,6 +43,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Index()
         {
             //TODO: wrire stored procedure for nested groups
+            //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
             var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var workflowsAssignedtoCurrentUser = DB.Workflows.Where(wf => wf.OwnerUserId == currentUser.Id).Include(wf => wf.UnliquidatedObligation);
             var groupsUserBelongsTo = await GetUsersGroups(currentUser.Id);

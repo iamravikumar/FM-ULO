@@ -75,6 +75,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var usersOtherSubjectCategoryClaimRegions =
                 DB.AspnetUserApplicationPermissionClaims
                     .Where(c => userIdsforClaimRegion.Contains(c.UserId) && c.Region.Value != regionId)
+                    .OrderBy(scc => scc.PermissionName)
                     .Select(c => c.Region.Value);
 
             var usersOtherClaimRegions = await
@@ -85,7 +86,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var users = await DB.AspNetUsers.Where(u => userIdsforClaimRegion.Contains(u.Id) && u.UserType == "Person").Include("UserUsers.AspNetUser1").ToListAsync();
 
-            return users.Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), usersOtherClaimRegions.ToList())).ToList();
+            return users
+                .Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), usersOtherClaimRegions.ToList()))
+                .OrderBy(u => u.UserName)
+                .ToList();
         }
 
         private async Task<EditUserModel> GetEditUserById(string userID, int regionId)
@@ -100,10 +104,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userID && c.Region.Value == regionId);
 
             var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).OrderBy(ap => ap).ToList();
-            var allSubjectCategoryClaims = Enum.GetNames(typeof(SubjectCatagoryNames)).OrderBy(sc => sc).ToList();
+            var allSubjectCategoryClaimsValues =
+                Enum.GetValues(typeof(SubjectCatagoryNames))
+                    .Cast<SubjectCatagoryNames>()
+                    .Select(scc => scc.GetDisplayName())
+                    .OrderBy(scc => scc)
+                    .ToList();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userID);
             var groups = await DB.AspNetUsers.Where(u => u.UserType == "Group").ToListAsync();
-            return new EditUserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), allApplicationPermissionNames, allSubjectCategoryClaims, groups);
+            return new EditUserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), allApplicationPermissionNames, allSubjectCategoryClaimsValues, groups);
         }
         // GET: Users/Details/5
         public async Task<ActionResult> Details(string id)
@@ -152,7 +161,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public ActionResult AddSubjectCategoryRow()
         {
-            var allSubjectCategoryClaims = EditUserModel.ConvertToSelectList(Enum.GetNames(typeof(SubjectCatagoryNames)).OrderBy(sc => sc).ToList());
+
+            var allSubjectCategoryClaimsValues =
+                 Enum.GetValues(typeof(SubjectCatagoryNames))
+                     .Cast<SubjectCatagoryNames>()
+                     .Select(scc => scc.GetDisplayName())
+                     .OrderBy(scc => scc)
+                     .ToList();
+
+            var allSubjectCategoryClaims = EditUserModel.ConvertToSelectList(allSubjectCategoryClaimsValues);
+
+
 
             return PartialView("Edit/Body/SubjectCategories/_SubjectCategory",
                 new EditSubjectPermissionClaimModel(allSubjectCategoryClaims));
@@ -177,7 +196,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     ParentUserId = groupId,
                     ChildUserId = userData.UserId,
                     RegionId = userData.RegionId,
-                    AutoAssignUser = false
+                    AutoAssignUser = true
                 };
 
                 DB.UserUsers.Add(userUser);
@@ -309,7 +328,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             DB.AspNetUserClaims.RemoveRange(DB.AspNetUserClaims.Where(c => subjectCategoryClaimIdsToDelete.Contains(c.Id)));
             await DB.SaveChangesAsync();
             DB.AspNetUserClaims.AddRange(subjectCategoryClaimsToAdd);
-            
+
         }
 
         public class EditUserPostData
@@ -335,7 +354,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 [JsonProperty]
                 public string OrgCode { get; set; }
             }
-            
+
         }
 
 

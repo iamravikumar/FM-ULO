@@ -57,14 +57,14 @@ namespace GSA.UnliquidatedObligations.Web
             builder.RegisterType<ULODBEntities>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<WorkflowManager>()
                 .As<IWorkflowManager>()
-                .InstancePerRequest();
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<DatabaseWorkflowDescriptionFinder>()
                 .As<IWorkflowDescriptionFinder>()
-                .InstancePerRequest();
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<BackgroundTasks>().As<IBackgroundTasks>().InstancePerBackgroundJob();
-            builder.RegisterType<BackgroundJobClient>().As<IBackgroundJobClient>().InstancePerRequest();
+            builder.RegisterType<BackgroundJobClient>().As<IBackgroundJobClient>().InstancePerLifetimeScope();
 
             builder.Register(ctx => new EmailServer(new SmtpClient())).As<IEmailServer>();
 

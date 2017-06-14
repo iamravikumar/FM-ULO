@@ -95,10 +95,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     ActivityName = "Region Review",
                     SequenceNumber = 1,
                     ControllerName = "Ulo",
+                    DueIn = new TimeSpan(20, 0, 0, 0),
                     NextActivityChooserConfig = nextActivityConfig,
                     NextActivityChooserTypeName = "FieldComparisonActivityChooser",
                     WorkflowActivityKey = "B1",
-                    OwnerUserId = "00188258-4467-484f-8c59-8e0da3e991f1",
+                    OwnerUserId = "d63d01de-1b02-4e77-a6da-127ebfb1727d",
                     RouteValueByName = new Dictionary<string, object>(),
                     EmailTemplateId = 1,
                     QuestionChoices = new WorkflowQuestionChoices

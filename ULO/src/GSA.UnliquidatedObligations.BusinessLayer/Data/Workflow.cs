@@ -31,6 +31,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public System.DateTime CreatedAtUtc { get; set; }
         public System.DateTime CurrentActivityEnteredAtUtc { get; set; }
         public int TargetUloId { get; set; }
+        public Nullable<long> ExpectedDurationInSeconds { get; set; }
+        public Nullable<System.DateTime> DueAtUtc { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

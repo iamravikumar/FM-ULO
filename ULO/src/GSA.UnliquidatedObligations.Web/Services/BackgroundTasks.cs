@@ -8,6 +8,7 @@ using System.IO;
 using GSA.UnliquidatedObligations.UploadTable;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Threading.Tasks;
 using Autofac;
 
 namespace GSA.UnliquidatedObligations.Web.Services
@@ -16,11 +17,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
     {
         private readonly IEmailServer EmailServer;
         private readonly ULODBEntities DB;
+        private readonly IWorkflowManager WorkflowManager;
 
-        public BackgroundTasks(IEmailServer emailServer, ULODBEntities db)
+        public BackgroundTasks(IEmailServer emailServer, ULODBEntities db, IWorkflowManager workflowManager)
         {
             EmailServer = emailServer;
             DB = db;
+            WorkflowManager = workflowManager;
         }
 
         public void Email(string subject, string recipient, string template, object model)
@@ -122,6 +125,19 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             DB.CreateULOAndAssignWf(reviewId, workflowDefinitionId);
 
+        }
+
+        public async Task AssignWorkFlows(int reviewId)
+        {
+            var workflows = DB.Workflows.Where(wf => wf.UnliquidatedObligation.ReviewId == reviewId).ToList();
+
+            foreach (var workflow in workflows)
+            {
+                await WorkflowManager.AdvanceAsync(workflow, null, true);
+                await DB.SaveChangesAsync();
+
+            }
+            
         }
     }
 }

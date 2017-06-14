@@ -109,18 +109,29 @@ function addAddSubjectCategoryClick() {
     });
 }
 
+function loading(isLoading) {
+    if (isLoading) {
+        $("#loadingUser").hide();
+        $("#userBodyData").show();
+    } else {
+        $("#loadingUser").show();
+        $("#userBodyData").hide();
+    }
+}
+
 function addEditClick() {
     $(".edit-user").click(function () {
         var userId = $(this).attr("data-id");
         var url = "/Users/Edit?";
         url += "userId=" + encodeURI(userId);
         url += "&regionId=" + encodeURI($("#RegionId").val());
+        loading(true)
+        $("#editUserModal").modal("show");
+
         $("#editUserModalBody").load(url, function () {
             addAddSubjectCategoryClick();
             addDeleteSubjectCategoryDeleteClick();
-            $("#editUserModal").modal("show");
-
-
+            loading(false);
         });
         return false;
     });

@@ -15,6 +15,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         [JsonProperty("actionName")]
         public string ActionName { get; set; }
 
+        [DataMember(Name = "RouteValueByName")]
         [JsonProperty("routeValueByName")]
         public IDictionary<string, object> RouteValueByName { get; set; }
         

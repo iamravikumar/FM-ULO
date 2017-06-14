@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics;
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Threading.Tasks;
@@ -42,15 +43,27 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
+        async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance = false)
         {
             var desc = await (this as IWorkflowManager).GetWorkflowDescription(wf);
             var currentActivity = desc.WebActionWorkflowActivities.FirstOrDefault(z => z.WorkflowActivityKey == wf.CurrentWorkflowActivityKey);
-            var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
-            var nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig);
+            
+            //if question is null stays in current activity
+            string nextActivityKey = "";
+            WorkflowActivity nextActivity ;
+            if (question != null)
+            {
+                var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
+                nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig);
+                nextActivity = desc.Activities.First(z => z.WorkflowActivityKey == nextActivityKey) ?? currentActivity;
+            }
+            else
+            {
+                nextActivity = currentActivity;
+            }
 
             //TODO: Handle null case which says stay where you are.
-            var nextActivity = desc.Activities.First(z => z.WorkflowActivityKey == nextActivityKey) ?? currentActivity;
+
             wf.CurrentWorkflowActivityKey = nextActivity.WorkflowActivityKey;
 
 
@@ -58,7 +71,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             //TODO: Add logic for handling groups of users.
             if (nextActivity is WebActionWorkflowActivity)
             {
-                if (wf.OwnerUserId != nextActivity.OwnerUserId)
+                if (wf.OwnerUserId != nextActivity.OwnerUserId || forceAdvance == true)
                 {
                     wf.OwnerUserId = await GetNextOwnerAsync(nextActivity.OwnerUserId, wf, nextActivity.WorkflowActivityKey);
                     var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId);
@@ -72,16 +85,21 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
                 }
                 wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
-                if (question.Answer == "Valid")
+
+                if (nextActivity.DueIn != null)
+                    wf.ExpectedDurationInSeconds = (long?) nextActivity.DueIn.Value.TotalSeconds;
+
+                if (question != null && question.Answer == "Valid")
                 {
                     wf.UnliquidatedObligation.Valid = true;
                 }
-                else if (question.Answer == "Invalid")
+                else if (question != null && question.Answer == "Invalid")
                 {
                     wf.UnliquidatedObligation.Valid = false;
                 }
 
                 //TODO: if owner changes, look at other ways of redirecting.
+                
                 var next = (WebActionWorkflowActivity)nextActivity;
                 var c = new RedirectingController();
 
@@ -127,6 +145,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         async Task<ActionResult> IWorkflowManager.Reassign(Workflow wf, string userId, string actionName)
         {
             //TODO: Get programatically based on user's region
+            //TODO: split up into two for redirect and reassign.
             wf.OwnerUserId = userId;
             var c = new RedirectingController();
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
@@ -143,12 +162,28 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return await Task.FromResult(c.RedirectToAction(actionName, "Ulo", routeValues));
         }
 
+
+
         private async Task<string> GetNextOwnerAsync(string proposedOwnerId, Workflow wf, string nextActivityKey)
         {
-            //TODO: check if null, return proposedOwnserId
-            var output = new ObjectParameter("nextOwnerId", typeof(string));
-            DB.GetNextLevelOwnerId(proposedOwnerId, wf.WorkflowId, nextActivityKey, output);
-            return await Task.FromResult(output.Value.ToString());
+            try
+            {
+                //TODO: check if null, return proposedOwnserId
+                var output = new ObjectParameter("nextOwnerId", typeof(string));
+                //DB.Database.Log = s => Trace.WriteLine(s);
+                DB.GetNextLevelOwnerId(proposedOwnerId, wf.WorkflowId, nextActivityKey, output);
+                if (output.Value == DBNull.Value)
+                {
+                    return await Task.FromResult(proposedOwnerId);
+                }
+                return await Task.FromResult(output.Value.ToString());
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                return null;
+            }
+
         }
 
 

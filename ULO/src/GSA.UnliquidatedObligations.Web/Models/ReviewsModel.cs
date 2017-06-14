@@ -31,9 +31,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string ReviewName { get; set; }
         public string Comments { get; set; }
 
-        [Required(ErrorMessage = "Project Due Date is required")]
-        [DataType(DataType.Date)]
-        public DateTime? ProjectDueDate { get; set; }
+        //[Required(ErrorMessage = "Project Due Date is required")]
+        //[DataType(DataType.Date)]
+        //public DateTime? ProjectDueDate { get; set; }
 
         public ReviewModel(List<int> regionChoices, List<ReviewTypeEnum> reviewTypeEnums, List<ReviewScopeEnum> reviewScopeEnums, List<WorkflowDefinition> workflowDefinitions  )
         {

@@ -7,7 +7,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
 {
     public interface IWorkflowManager
     {
-        Task<ActionResult> AdvanceAsync(BusinessLayer.Data.Workflow wf, BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion question);
+        Task<ActionResult> AdvanceAsync(BusinessLayer.Data.Workflow wf, BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance = false);
         Task<ActionResult> RequestReassign(BusinessLayer.Data.Workflow wf);
         Task<ActionResult> Reassign(BusinessLayer.Data.Workflow wf, string userId, string actionName);
         Task SaveQuestion(Workflow wf, UnliqudatedObjectsWorkflowQuestion question);

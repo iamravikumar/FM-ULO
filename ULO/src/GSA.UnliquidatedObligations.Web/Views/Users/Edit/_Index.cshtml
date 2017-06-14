@@ -8,7 +8,12 @@
                     <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
                 </div>
                 <div id="editUserModalBody" class="modal-body">
-                    @Html.Partial("Edit/Body/_Index", new EditUserModel())
+                    <div id="loadingUser">
+                        Loading User...
+                    </div>
+                    <div id="userBodyData">
+                        @Html.Partial("Edit/Body/_Index", new EditUserModel())
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

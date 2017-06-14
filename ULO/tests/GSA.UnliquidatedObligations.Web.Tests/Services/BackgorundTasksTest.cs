@@ -12,13 +12,15 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Services
         private BackgroundTasks BackgroundTasks;
         private Mock<IEmailServer> EmailServerMock;
         private Mock<ULODBEntities> DB;
+        private Mock<IWorkflowManager> WorkflowManager;
         [TestInitialize]
         public void Initialize()
         {
            
             EmailServerMock = new Mock<IEmailServer>();
             DB = new Mock<ULODBEntities>();
-            BackgroundTasks = new BackgroundTasks(EmailServerMock.Object, DB.Object);
+            WorkflowManager = new Mock<IWorkflowManager>();
+            BackgroundTasks = new BackgroundTasks(EmailServerMock.Object, DB.Object, WorkflowManager.Object);
         }
         [TestMethod]
         public void It_exists()

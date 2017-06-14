@@ -30,7 +30,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
             
             if (z != null)
             {
-                var d = (IWorkflowDescription) WorkflowDescription.Deserialize(z.DescriptionJson);
+                var d = (IWorkflowDescription) WorkflowDescription.DeserializeFromXml(z.DescriptionXml);
                 //TODO: This is just for testing:
                 //var nextActivityConfig = JsonConvert.SerializeObject(new FieldComparisonActivityChooser.MySettings
                 //{

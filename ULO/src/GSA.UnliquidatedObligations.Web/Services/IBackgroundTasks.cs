@@ -14,5 +14,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         void UploadReviewHoldIngTable(int reviewId, string uploadPath);
 
         void CreateULOsAndAssign(int reviewId, int WorkflowDefinitionId);
+
+        Task AssignWorkFlows(int reviewId);
     }
 }

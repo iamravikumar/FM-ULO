@@ -31,6 +31,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
             get { return Type.GetType(NextActivityChooserTypeName); }
         }
 
+        [DataMember(Name="DueIn")]
+        public TimeSpan? DueIn { get; set; }
+
         [DataMember(Name = "NextActivityChooserType")]
         [JsonProperty("nextActivityChooserType")]
         public string NextActivityChooserTypeName { get; set; }

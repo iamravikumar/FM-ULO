@@ -212,6 +212,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             requestForReassignment.WorkflowId = wf.WorkflowId;
             requestForReassignment.IsActive = false;
             var ret = await Manager.Reassign(wf, suggestedReviewerId, "Index");
+            //TODO: add redirect method here.
             await DB.SaveChangesAsync();
             return ret;
         }
