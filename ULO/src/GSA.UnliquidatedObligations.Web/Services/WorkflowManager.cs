@@ -45,12 +45,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance = false)
         {
+            string nextOwnerId = "";
             var desc = await (this as IWorkflowManager).GetWorkflowDescription(wf);
             var currentActivity = desc.WebActionWorkflowActivities.FirstOrDefault(z => z.WorkflowActivityKey == wf.CurrentWorkflowActivityKey);
-            
+
             //if question is null stays in current activity
             string nextActivityKey = "";
-            WorkflowActivity nextActivity ;
+            WorkflowActivity nextActivity;
             if (question != null)
             {
                 var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
@@ -69,55 +70,58 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
             //TODO: Updata other info like the owner, date
             //TODO: Add logic for handling groups of users.
-            if (nextActivity is WebActionWorkflowActivity)
-            {
-                if (wf.OwnerUserId != nextActivity.OwnerUserId || forceAdvance == true)
+                if (nextActivity is WebActionWorkflowActivity)
                 {
-                    wf.OwnerUserId = await GetNextOwnerAsync(nextActivity.OwnerUserId, wf, nextActivity.WorkflowActivityKey);
-                    var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId);
-                    var emailTemplate = await DB.EmailTemplates.FindAsync(nextActivity.EmailTemplateId);
-                    var emailModel = new EmailViewModel
+                    if (wf.OwnerUserId != nextActivity.OwnerUserId || forceAdvance == true)
                     {
-                        UserName = nextUser.UserName,
-                        PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
-                    };
-                    //TODO: What happens if it crashes?
-                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
+                        nextOwnerId = await GetNextOwnerAsync(nextActivity.OwnerUserId, wf,
+                            nextActivity.WorkflowActivityKey);
+                        wf.OwnerUserId = nextOwnerId;
+                        var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId);
+                        var emailTemplate = await DB.EmailTemplates.FindAsync(nextActivity.EmailTemplateId);
+                        var emailModel = new EmailViewModel
+                        {
+                            UserName = nextUser.UserName,
+                            PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
+                        };
+                        //TODO: What happens if it crashes?
+                        //BackgroundJobClient.Enqueue<IBackgroundTasks>(
+                           // bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
+                    }
+                    wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
+
+                    if (nextActivity.DueIn != null)
+                        wf.ExpectedDurationInSeconds = (long?)nextActivity.DueIn.Value.TotalSeconds;
+
+                    if (question != null && question.Answer == "Valid")
+                    {
+                        wf.UnliquidatedObligation.Valid = true;
+                    }
+                    else if (question != null && question.Answer == "Invalid")
+                    {
+                        wf.UnliquidatedObligation.Valid = false;
+                    }
+
+                    //TODO: if owner changes, look at other ways of redirecting.
+
+                    var next = (WebActionWorkflowActivity)nextActivity;
+                    var c = new RedirectingController();
+
+                    var routeValues = new RouteValueDictionary(next.RouteValueByName);
+                    //routeValues[WorkflowIdRouteValueName] = wf.WorkflowId;
+                    return c.RedirectToAction(next.ActionName, next.ControllerName, routeValues);
                 }
-                wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
-
-                if (nextActivity.DueIn != null)
-                    wf.ExpectedDurationInSeconds = (long?) nextActivity.DueIn.Value.TotalSeconds;
-
-                if (question != null && question.Answer == "Valid")
+                else
                 {
-                    wf.UnliquidatedObligation.Valid = true;
+                    //TODO: handle background hangfire.
+                    throw new NotImplementedException();
                 }
-                else if (question != null && question.Answer == "Invalid")
-                {
-                    wf.UnliquidatedObligation.Valid = false;
-                }
-
-                //TODO: if owner changes, look at other ways of redirecting.
-                
-                var next = (WebActionWorkflowActivity)nextActivity;
-                var c = new RedirectingController();
-
-                var routeValues = new RouteValueDictionary(next.RouteValueByName);
-                //routeValues[WorkflowIdRouteValueName] = wf.WorkflowId;
-                return c.RedirectToAction(next.ActionName, next.ControllerName, routeValues);
-            }
-            else
-            {
-                //TODO: handle background hangfire.
-                throw new NotImplementedException();
-            }
         }
 
         async Task<ActionResult> IWorkflowManager.RequestReassign(Workflow wf)
         {
             //TODO: Get programatically based on user's region
-            var reassignGroupId =  await GetNextOwnerAsync("ab9684e5-a277-41df-a268-f861416a3f0e", wf, "");
+            var reassignGroupId = await GetNextOwnerAsync("ab9684e5-a277-41df-a268-f861416a3f0e", wf, "");
             wf.OwnerUserId = reassignGroupId;
             var c = new RedirectingController();
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
@@ -149,16 +153,16 @@ namespace GSA.UnliquidatedObligations.Web.Services
             wf.OwnerUserId = userId;
             var c = new RedirectingController();
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
-            var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId); 
+            var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId);
             var emailTemplate = await DB.EmailTemplates.FindAsync(1);
-                    var emailModel = new EmailViewModel
-                    {
-                        UserName = nextUser.UserName,
-                        PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
-                    };
-                    //TODO: What happens if it crashes?
-                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
-        
+            var emailModel = new EmailViewModel
+            {
+                UserName = nextUser.UserName,
+                PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
+            };
+            //TODO: What happens if it crashes?
+            BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
+
             return await Task.FromResult(c.RedirectToAction(actionName, "Ulo", routeValues));
         }
 
@@ -166,23 +170,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         private async Task<string> GetNextOwnerAsync(string proposedOwnerId, Workflow wf, string nextActivityKey)
         {
-            try
+            //TODO: check if null, return proposedOwnserId
+            var output = new ObjectParameter("nextOwnerId", typeof(string));
+            //DB.Database.Log = s => Trace.WriteLine(s);
+            DB.GetNextLevelOwnerId(proposedOwnerId, wf.WorkflowId, nextActivityKey, output);
+            if (output.Value == DBNull.Value)
             {
-                //TODO: check if null, return proposedOwnserId
-                var output = new ObjectParameter("nextOwnerId", typeof(string));
-                //DB.Database.Log = s => Trace.WriteLine(s);
-                DB.GetNextLevelOwnerId(proposedOwnerId, wf.WorkflowId, nextActivityKey, output);
-                if (output.Value == DBNull.Value)
-                {
-                    return await Task.FromResult(proposedOwnerId);
-                }
-                return await Task.FromResult(output.Value.ToString());
+                return await Task.FromResult(proposedOwnerId);
             }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex);
-                return null;
-            }
+            return await Task.FromResult(output.Value.ToString());
 
         }
 

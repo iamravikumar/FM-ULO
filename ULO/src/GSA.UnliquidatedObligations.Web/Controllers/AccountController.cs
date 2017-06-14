@@ -20,7 +20,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, IComponentContext componentContext)
-            :base(componentContext)
+            : base(componentContext)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -35,32 +35,64 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (Properties.Settings.Default.UseDevAuthentication)
             {
                 ViewBag.ReturnUrl = returnUrl;
-                return View();
+                return View("DevLogin");
             }
 
-                var cookie = Request.Cookies["PostAuthToken199"];
-                if (cookie == null)
-                {
-                    var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
-                                    new QueryString(
-                                        "ReturnUrl",
-                                        "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
-                    return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
-                        redirectUrl);
-                }
-                else
-                {
-                    return ExternalLoginCallback(returnUrl);
-                }
-            
+            var cookie = Request.Cookies["PostAuthToken199"];
+            if (cookie == null)
+            {
+                var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
+                                new QueryString(
+                                    "ReturnUrl",
+                                    "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
+                return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
+                    redirectUrl);
+            }
+            return ExternalLoginCallback(returnUrl);
+
+
+
+            //var cookie = Request.Cookies["PostAuthToken199"];
+            //if (cookie == null)
+            //{
+            //    var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
+            //                    new QueryString(
+            //                        "ReturnUrl",
+            //                        "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
+            //    return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
+            //        redirectUrl);
+            //}
+            //else
+            //{
+            //    return ExternalLoginCallback(returnUrl);
+            //}
+
         }
 
         //
-        // POST: /Account/Login
+        // POST: /Account/DevLogin
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(DevLoginViewModel model, string returnUrl)
+        {
+                var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
+                                new QueryString(
+                                    "ReturnUrl",
+                                    "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
+                return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
+                    redirectUrl);
+
+
+        }
+
+
+        //
+        // POST: /Account/DevLogin
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DevLogin(DevLoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -115,7 +147,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -150,8 +182,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -276,7 +308,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             // Request a redirect to the external login provider
             //return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }), null, AuthenticationManager);
 
-             return new ChallengeResult(provider, returnUrl, null, AuthenticationManager);
+            return new ChallengeResult(provider, returnUrl, null, AuthenticationManager);
         }
 
         //
@@ -345,11 +377,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     //var createResult = UserManager.Create(user);
                     //if (createResult.Succeeded)
                     //{
-                        return RedirectToLocal(returnUrl);
+                    return RedirectToLocal(returnUrl);
                     //}
                     return null;
             }
-            
+
 
             // Sign in the user with this external login provider if the user already has a login
             //var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);

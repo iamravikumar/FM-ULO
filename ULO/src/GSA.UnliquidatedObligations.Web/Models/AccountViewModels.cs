@@ -48,6 +48,16 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class LoginViewModel
     {
+        public bool ShowUserNotInDBMessage { get; set; }
+
+        public LoginViewModel(bool showUserNotInDbMessage)
+        {
+            ShowUserNotInDBMessage = showUserNotInDbMessage;
+        }
+    }
+
+    public class DevLoginViewModel
+    {
         [Required]
         [Display(Name = "Username")]
         public string Username { get; set; }

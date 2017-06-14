@@ -69,7 +69,7 @@
                 Data Not Present
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasusDocumentNumber)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysTitleNumber)
@@ -84,7 +84,7 @@
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysVendorName)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.VendorName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ContractingOfficersName)
@@ -97,7 +97,7 @@
             </td>
             <td>
                 @{
-                    var isValid = item.UnliquidatedObligation.Valid ? "Yes" : "No";
+                    var isValid = item.UnliquidatedObligation.Valid == true ? "Yes" : "No";
                     @Html.Encode(isValid)
                 }
             </td>
