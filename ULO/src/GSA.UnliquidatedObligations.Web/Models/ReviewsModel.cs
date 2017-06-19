@@ -63,5 +63,27 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     }
 
+    public class UploadFilesModel
+    {
+        public int ReviewId { get; set; }
+
+        public List<string> PegasysFilePathsList { get; set; }
+
+        public List<string> RetaFileList { get; set; }
+
+        public List<string> EasiFileList { get; set; }
+
+        public List<string> One92FileList { get; set; }
+
+        public UploadFilesModel(int reviewId)
+        {
+            ReviewId = reviewId;
+            PegasysFilePathsList = new List<string>();
+            RetaFileList = new List<string>();
+            EasiFileList = new List<string>();
+            One92FileList = new List<string>();
+        }
+    }
+
 
 }

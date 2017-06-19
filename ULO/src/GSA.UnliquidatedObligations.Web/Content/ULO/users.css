@@ -7,9 +7,6 @@
     display: inline-block;
 }
 
-.edit-user-modal .modal-dialog{
-    min-width: 780px;
-}
 .edit-user-modal .modal-dialog .subject-category-claims .row {
      margin: 7px 0;
 }

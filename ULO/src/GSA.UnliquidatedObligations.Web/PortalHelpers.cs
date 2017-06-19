@@ -399,6 +399,18 @@ namespace GSA.UnliquidatedObligations.Web
             return attribute.GetName();
         }
 
+        public static List<SelectListItem> ConvertToSelectList(this List<string> stringsToConvert)
+        {
+            var stringsSelect = new List<SelectListItem>();
+
+            foreach (var stringToConvert in stringsToConvert)
+            {
+                stringsSelect.Add(new SelectListItem { Text = stringToConvert, Value = stringToConvert });
+            }
+            return stringsSelect;
+
+        }
+
         public static List<SelectListItem> ConvertToSelectList(this List<int> nums)
         {
             var numsSelect = new List<SelectListItem>();

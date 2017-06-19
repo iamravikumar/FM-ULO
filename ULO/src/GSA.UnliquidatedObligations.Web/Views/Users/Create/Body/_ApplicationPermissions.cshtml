@@ -1,0 +1,21 @@
+﻿@using GSA.UnliquidatedObligations.Web.Models
+@model CreateUserModel
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">Application Permission Claims</h4>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            @foreach (var claim in Model.ApplicationPermissionClaims ?? Enumerable.Empty<EditApplicationPermissionClaimModel>())
+            {
+                <div class="checkbox">
+                    <input name="ApplicationPermission" type="checkbox" checked="@claim.Selected" value="@claim.ApplicationPermission" id="@claim.ApplicationPermission"/>
+                    <label for="@claim.ApplicationPermission">@claim.ApplicationPermission</label>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+

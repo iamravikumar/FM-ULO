@@ -1,0 +1,19 @@
+﻿@using GSA.UnliquidatedObligations.Web.Models
+@model CreateUserModel
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">Groups</h4>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            @foreach (var group in Model.Groups ?? Enumerable.Empty<EditGroupsModel>())
+            {
+                <div class="checkbox">
+                    <input type="checkbox" name="Groups" id="@group.GroupName" checked="@group.Selected" value="@group.GroupId"/>
+                    <label for="@group.GroupName">@group.GroupName</label>
+                </div>
+            }
+        </div>
+    </div>
+</div>

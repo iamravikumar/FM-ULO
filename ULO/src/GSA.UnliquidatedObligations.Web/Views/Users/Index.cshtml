@@ -6,7 +6,9 @@
 }
 
 <h2>Users</h2>
-
+<p>
+    <a class="create-user" href="#createUserModal">Create New</a>
+</p>
 <div class="row user-options">
     <div class="col-md-3">
         @Html.LabelFor(model => model.RegionId, "Select Region:", htmlAttributes: new { @class = "control-label" })
@@ -14,7 +16,6 @@
     </div>
 </div>
 @Html.Partial("_Data", Model.Users)
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+
 @Html.Partial("Edit/_Index")
+@Html.Partial("Create/_Index")

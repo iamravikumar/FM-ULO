@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -72,7 +74,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
             return sb.ToString();
         }
 
-        public static void UploadIntoSqlServer(this DataTable dt, Func<SqlConnection> createConnection, UploadIntoSqlServerSettings settings=null)
+        public static void UploadIntoSqlServer(this DataTable dt, Func<SqlConnection> createConnection, UploadIntoSqlServerSettings settings = null)
         {
             Requires.NonNull(dt, nameof(dt));
             settings = settings ?? new UploadIntoSqlServerSettings();
@@ -154,7 +156,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
 
         public static void SetColumnWithValue<T>(this DataTable dt, string columnName, T value)
         {
-            dt.SetColumnWithValue(columnName, (a,b) => value);
+            dt.SetColumnWithValue(columnName, (a, b) => value);
         }
 
         public static void SetColumnWithValue<T>(this DataTable dt, string columnName, Func<DataRow, int, T> valueGenerator)
@@ -172,9 +174,9 @@ namespace GSA.UnliquidatedObligations.UploadTable
             }
         }
 
-        private static void RequiresZeroRows(DataTable dt, string argName=null)
+        private static void RequiresZeroRows(DataTable dt, string argName = null)
         {
-            Requires.NonNull(dt, argName??nameof(dt));
+            Requires.NonNull(dt, argName ?? nameof(dt));
             if (dt.Rows.Count > 0) throw new ArgumentException("dt must not already have any rows", nameof(dt));
         }
 
@@ -186,6 +188,144 @@ namespace GSA.UnliquidatedObligations.UploadTable
         public static void RowAddErrorTraceAndIgnore(Exception ex, int rowNum)
         {
             Trace.WriteLine(string.Format("Problem adding row {0}.  Will Skip.\n{1}", rowNum, ex));
+        }
+
+        public static object ExcelTypeConverter(object val, Type t)
+        {
+            try
+            {
+                return Convert.ChangeType(val, t);
+            }
+            catch (Exception ex)
+            {
+                if (t == typeof(DateTime))
+                {
+                    return DateTime.FromOADate(Convert.ToDouble(val));
+                }
+                throw ex;
+            }
+        }
+
+        public static void LoadSheetsFromExcel(this DataSet ds, Stream st, LoadSheetsFromExcelSettings settings = null)
+        {
+            settings = settings ?? new LoadSheetsFromExcelSettings();
+            using (var sd = SpreadsheetDocument.Open(st, false))
+            {
+                var sheetSettings = settings.SheetSettings;
+                if (sheetSettings == null || sheetSettings.Count == 0)
+                {
+                    sheetSettings = new List<LoadRowsFromExcelSettings>();
+                    for (int n = 0; n < sd.WorkbookPart.Workbook.GetFirstChild<Sheets>().Elements<Sheet>().Count(); ++n)
+                    {
+                        sheetSettings.Add(new LoadRowsFromExcelSettings(settings.LoadAllSheetsDefaultSettings) { SheetNumber = n, UseSheetNameForTableName = true, TypeConverter = ExcelTypeConverter });
+                    }
+                }
+                foreach (var ss in sheetSettings)
+                {
+                    var dt = settings.CreateDataTable == null ? new DataTable() : settings.CreateDataTable();
+                    dt.LoadRowsFromExcel(sd, ss);
+                    ds.Tables.Add(dt);
+                }
+            }
+        }
+
+        public static void LoadRowsFromExcel(this DataTable dt, Stream st, LoadRowsFromExcelSettings settings)
+        {
+            using (var sd = SpreadsheetDocument.Open(st, false))
+            {
+                dt.LoadRowsFromExcel(sd, settings ?? new LoadRowsFromExcelSettings { SheetNumber = 0 });
+            }
+        }
+
+        private static void LoadRowsFromExcel(this DataTable dt, SpreadsheetDocument sd, LoadRowsFromExcelSettings settings)
+        {
+            RequiresZeroRows(dt, nameof(dt));
+            Requires.NonNull(sd, nameof(sd));
+            Requires.NonNull(settings, nameof(settings));
+
+            var rows = new List<IList<object>>();
+
+            var sharedStringPart = sd.WorkbookPart.SharedStringTablePart;
+            var sheets = sd.WorkbookPart.Workbook.GetFirstChild<Sheets>().Elements<Sheet>();
+            int sheetNumber = 0;
+            foreach (var sheet in sheets)
+            {
+                if (sheetNumber == settings.SheetNumber || 0 == string.Compare(settings.SheetName, sheet.Name, true))
+                {
+                    if (settings.UseSheetNameForTableName)
+                    {
+                        dt.TableName = sheet.Name;
+                    }
+                    string relationshipId = sheet.Id.Value;
+                    var worksheetPart = (WorksheetPart)sd.WorkbookPart.GetPartById(relationshipId);
+                    SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+                    IEnumerable<Row> eRows = sheetData.Descendants<Row>();
+                    foreach (Row erow in eRows)
+                    {
+                    CreateRow:
+                        var row = new List<object>();
+                        rows.Add(row);
+                        foreach (var cell in erow.Descendants<Cell>())
+                        {
+                            var cr = GetColRowFromCellReference(cell.CellReference);
+                            if (rows.Count <= cr.Item2) goto CreateRow;
+                            while (row.Count < cr.Item1)
+                            {
+                                row.Add(null);
+                            }
+                            Debug.Assert(row.Count == cr.Item1);
+                            var val = GetCellValue(sd, cell, settings.TreatAllValuesAsText, sharedStringPart);
+                            row.Add(val);
+                        }
+                    }
+                    GC.Collect();
+                    dt.LoadRows(rows.Skip(settings.SkipRawRows), settings);
+                    return;
+                }
+                ++sheetNumber;
+            }
+            throw new Exception(string.Format(
+                "Sheet [{0}] was not found",
+                (object)settings.SheetNumber ?? (object)settings.SheetName));
+        }
+
+        private static readonly Regex ColRowExpr = new Regex(@"\s*([A-Z]+)(\d+)\s*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static Tuple<int, int> GetColRowFromCellReference(string cellReference)
+        {
+            var m = ColRowExpr.Match(cellReference);
+            int colNum = 0;
+            string colRef = m.Groups[1].Value.ToLower();
+            for (int z = 0; z < colRef.Length; ++z)
+            {
+                colNum = colNum * 26 + (colRef[z] - 'a' + 1);
+            }
+            return new Tuple<int, int>(colNum - 1, int.Parse(m.Groups[2].Value) - 1);
+        }
+
+        private static object GetCellValue(SpreadsheetDocument document, Cell cell, bool treatAllValuesAsText, SharedStringTablePart stringTablePart = null)
+        {
+            string value = cell.CellValue.InnerXml;
+            if (cell.DataType == null) return value;
+            var t = cell.DataType.Value;
+            if (treatAllValuesAsText && t != CellValues.SharedString)
+            {
+                return value;
+            }
+            switch (t)
+            {
+                case CellValues.SharedString:
+                    stringTablePart = stringTablePart ?? document.WorkbookPart.SharedStringTablePart;
+                    return stringTablePart.SharedStringTable.ChildElements[Int32.Parse(value)].InnerText;
+                case CellValues.Boolean:
+                    return value == "1";
+                case CellValues.Number:
+                    return value;
+                case CellValues.Date:
+                    return value;
+                default:
+                    return value;
+            }
         }
 
         public static void LoadRowsFromDelineatedText(this DataTable dt, Stream st, LoadRowsFromDelineatedTextSettings settings)
@@ -243,7 +383,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
             dt.LoadRows(rows.Skip(settings.SkipRawRows), settings);
         }
 
-        public static void LoadRows(this DataTable dt, IEnumerable<IList<object>> rows, LoadRowsSettings settings=null)
+        public static void LoadRows(this DataTable dt, IEnumerable<IList<object>> rows, LoadRowsSettings settings = null)
         {
             RequiresZeroRows(dt, nameof(dt));
             Requires.NonNull(rows, nameof(rows));
@@ -305,7 +445,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
                         dt.Columns.Add(c);
                     }
                 }
-                else if (c==null)
+                else if (c == null)
                 {
                     Trace.WriteLine(string.Format("Will ignore source column #{0} with name=[{1}]", z, colName));
                 }
@@ -325,14 +465,14 @@ namespace GSA.UnliquidatedObligations.UploadTable
                     {
                         var c = columnMap[z];
                         if (c == null) continue;
-                        object val = row[z];
+                        object val = z >= row.Count ? null : row[z];
                         if (val == null)
                         {
                             val = DBNull.Value;
                         }
-                        else if (val.GetType()!=c.DataType)
+                        else if (val.GetType() != c.DataType)
                         {
-                            val = Convert.ChangeType(val, c.DataType);
+                            val = settings.TypeConverter(val, c.DataType);
                         }
                         fields[c.Ordinal] = val;
                     }
@@ -345,6 +485,61 @@ namespace GSA.UnliquidatedObligations.UploadTable
                 catch (Exception ex)
                 {
                     onRowAddError(ex, rowNum);
+                }
+            }
+        }
+
+        public static DataColumn CloneToUnbound(this DataColumn c)
+            => new DataColumn(c.ColumnName, c.DataType)
+            {
+                AllowDBNull = c.AllowDBNull,
+                Caption = c.Caption,
+                AutoIncrement = c.AutoIncrement,
+                AutoIncrementSeed = c.AutoIncrementSeed,
+                AutoIncrementStep = c.AutoIncrementStep,
+                DateTimeMode = c.DateTimeMode,
+                DefaultValue = c.DefaultValue,
+                Expression = c.Expression,
+                MaxLength = c.MaxLength,
+                Namespace = c.Namespace,
+                Prefix = c.Prefix,
+                ReadOnly = c.ReadOnly,
+                Unique = c.Unique
+            };
+
+        public static void Append(this DataTable dt, DataTable other, bool appendOtherTableColumns = false)
+        {
+            Requires.NonNull(other, nameof(other));
+
+            bool sameStructure = dt.Columns.Count == other.Columns.Count;
+            var dtWasBlank = dt.Columns.Count == 0;
+            var columnNamesToAppend = new List<string>();
+            foreach (DataColumn bCol in other.Columns)
+            {
+                var aCol = dt.Columns[bCol.ColumnName];
+                sameStructure = sameStructure && aCol != null && aCol.Ordinal == bCol.Ordinal;
+                if (aCol == null)
+                {
+                    if (!appendOtherTableColumns) continue;
+                    dt.Columns.Add(bCol.CloneToUnbound());
+                }
+                columnNamesToAppend.Add(bCol.ColumnName);
+            }
+            sameStructure = sameStructure || dtWasBlank;
+            foreach (DataRow bRow in other.Rows)
+            {
+                if (sameStructure)
+                {
+                    dt.Rows.Add(bRow.ItemArray);
+                }
+                else
+                {
+                    var aRow = dt.NewRow();
+                    foreach (var columnName in columnNamesToAppend)
+                    {
+                        aRow[columnName] = bRow[columnName];
+                    }
+                    dt.Rows.Add(aRow);
                 }
             }
         }
@@ -365,7 +560,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
             return s;
         }
 
-        public static Func<string, string> CreateDictionaryMapper(IDictionary<string, string> m, bool onMissingPassthrough=false)
+        public static Func<string, string> CreateDictionaryMapper(IDictionary<string, string> m, bool onMissingPassthrough = false)
         {
             Requires.NonNull(m, nameof(m));
             Func<string, string> f = delegate (string s)

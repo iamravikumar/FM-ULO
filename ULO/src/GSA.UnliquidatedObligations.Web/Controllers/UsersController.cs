@@ -12,6 +12,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using System;
 using System.Web;
+using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
@@ -22,10 +23,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     public class UsersController : BaseController
     {
         private readonly ULODBEntities DB;
+        private ApplicationUserManager UserManager;
 
-        public UsersController(ULODBEntities db, IComponentContext context) : base(context)
+        public UsersController(ULODBEntities db, ApplicationUserManager userManager, IComponentContext context) : base(context)
         {
             DB = db;
+            UserManager = userManager;
         }
 
         // GET: Users
@@ -53,16 +56,21 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             //get application permission regions
             var applicationPermissionRegionPermissionClaims =
-                DB.AspnetUserApplicationPermissionClaims.Where(c => c.Region.Value == regionId);
+                 await DB.AspnetUserApplicationPermissionClaims
+                    .Where(c => c.Region.Value == regionId)
+                    .ToListAsync();
 
             //DB.Database.Log = s => Trace.WriteLine(s);
             //get subject category claims
             var subjectCategoryPermissionClaims =
-                DB.AspnetUserSubjectCategoryClaims.Where(c => c.Region.Value == regionId);
+                await DB.AspnetUserSubjectCategoryClaims
+                .Where(c => c.Region.Value == regionId)
+                .ToListAsync();
 
             //get userIDClaimREgions
             var userIdsforClaimRegion =
-                 applicationPermissionRegionPermissionClaims.Select(c => c.UserId)
+                 applicationPermissionRegionPermissionClaims
+                 .Select(c => c.UserId)
                  .Concat(subjectCategoryPermissionClaims.Select(c => c.UserId))
                     .Distinct()
                     .ToList();
@@ -87,7 +95,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var users = await DB.AspNetUsers.Where(u => userIdsforClaimRegion.Contains(u.Id) && u.UserType == "Person").Include("UserUsers.AspNetUser1").ToListAsync();
 
             return users
-                .Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), usersOtherClaimRegions.ToList()))
+                .Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims, subjectCategoryPermissionClaims, usersOtherClaimRegions.ToList()))
                 .OrderBy(u => u.UserName)
                 .ToList();
         }
@@ -130,26 +138,61 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: Users/Create
-        public ActionResult Create()
+        [HttpGet]
+        public async Task<ActionResult> Create()
         {
-            return View();
+            //get application permission regions
+
+            var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).OrderBy(ap => ap).ToList();
+            var allSubjectCategoryClaimsValues =
+                Enum.GetValues(typeof(SubjectCatagoryNames))
+                    .Cast<SubjectCatagoryNames>()
+                    .Select(scc => scc.GetDisplayName())
+                    .OrderBy(scc => scc)
+                    .ToList();
+
+            var groups = await DB.AspNetUsers.Where(u => u.UserType == "Group").ToListAsync();
+            var createModel = new CreateUserModel(allApplicationPermissionNames, allSubjectCategoryClaimsValues, groups);
+            return PartialView("Create/Body/_Index", createModel);
         }
 
         // POST: Users/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        //[ValidateAntiForgeryToken]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName,UserType")] AspNetUser aspNetUser)
+        public async Task<ActionResult> CreateUser()
         {
-            if (ModelState.IsValid)
+            var userData = Request.BodyAsJsonObject<CreateUserPostData>();
+
+            var appUser = new ApplicationUser { UserName = userData.UserName, Email = userData.UserEmail };
+            var createResult = UserManager.Create(appUser);
+            if (createResult.Succeeded)
             {
-                DB.AspNetUsers.Add(aspNetUser);
+                var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == appUser.UserName);
+                await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, userData.RegionId, user);
+                await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id, userData.RegionId);
                 await DB.SaveChangesAsync();
-                return RedirectToAction("Index");
+                foreach (var groupId in userData.GroupIds)
+                {
+                    var userUser = new UserUser
+                    {
+                        ParentUserId = groupId,
+                        ChildUserId = user.Id,
+                        RegionId = userData.RegionId,
+                        AutoAssignUser = true
+                    };
+
+                    DB.UserUsers.Add(userUser);
+                }
+
+                DB.UserUsers.RemoveRange(DB.UserUsers.Where(uu => uu.ChildUserId == user.Id).ToList());
+                await DB.SaveChangesAsync();
+                return View();
             }
 
-            return View(aspNetUser);
+            
         }
 
         // GET: Users/Edit/5
@@ -169,7 +212,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                      .OrderBy(scc => scc)
                      .ToList();
 
-            var allSubjectCategoryClaims = EditUserModel.ConvertToSelectList(allSubjectCategoryClaimsValues);
+            var allSubjectCategoryClaims = allSubjectCategoryClaimsValues.ConvertToSelectList();
 
 
 
@@ -186,8 +229,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var userData = Request.BodyAsJsonObject<EditUserPostData>();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userData.UserId);
-            await SaveApplicationPermissionUserClaims(userData, user);
-            await SaveSubjectCategories(userData);
+            await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, userData.RegionId, user);
+            await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id,  userData.RegionId);
             await DB.SaveChangesAsync();
             foreach (var groupId in userData.GroupIds)
             {
@@ -208,7 +251,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return await Search(userData.RegionId);
         }
 
-        private async Task SaveApplicationPermissionUserClaims(EditUserPostData userData, AspNetUser user)
+        private async Task SaveApplicationPermissionUserClaims(List<string> applicationPermissionNames, int regionId, AspNetUser user)
         {
             var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).ToList();
             var applicationPermisionClaimsToAdd = new List<AspNetUserClaim>();
@@ -219,9 +262,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     Enum.Parse(typeof(ApplicationPermissionNames), applicationPermission);
 
                 var claimRegionIds = user.GetApplicationPerimissionRegions(applicationPermissionClaim);
-                if (userData.ApplicationPermissionNames.Contains(applicationPermission))
+                if (applicationPermissionNames.Contains(applicationPermission))
                 {
-                    claimRegionIds.Add(userData.RegionId);
+                    claimRegionIds.Add(regionId);
                 }
                 if (claimRegionIds.Count > 0)
                 {
@@ -233,33 +276,35 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                     applicationPermisionClaimsToAdd.Add(new AspNetUserClaim
                     {
-                        UserId = userData.UserId,
+                        UserId = user.Id,
                         ClaimType = ApplicationPermissionClaimValue.ClaimType,
                         ClaimValue = claim
                     });
                 }
 
             }
-            DB.AspNetUserClaims.RemoveRange(DB.AspNetUserClaims.Where(c => c.UserId == userData.UserId
+            DB.AspNetUserClaims.RemoveRange(DB.AspNetUserClaims.Where(c => c.UserId == user.Id
                     && c.ClaimType == ApplicationPermissionClaimValue.ClaimType).ToList());
 
             await DB.SaveChangesAsync();
             DB.AspNetUserClaims.AddRange(applicationPermisionClaimsToAdd);
         }
 
-        private async Task SaveSubjectCategories(EditUserPostData userData)
+
+
+        private async Task SaveSubjectCategories(List<PostSubjectCategoryClaim> subjectCategoryClaims, string userId, int regionId)
         {
-            var postedClaims = userData.SubjectCategoryClaims;
-            var userCurrentSubjectCategoryClaims = await DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userData.UserId).ToListAsync();
+            var postedClaims = subjectCategoryClaims;
+            var userCurrentSubjectCategoryClaims = await DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userId).ToListAsync();
             var usersCurrentSubjectCategoryClaimsNotInPostData =
-                userCurrentSubjectCategoryClaims.Where(c => c.UserId == userData.UserId && c.Region.Value == userData.RegionId &&
+                userCurrentSubjectCategoryClaims.Where(c => c.UserId == userId && c.Region.Value == regionId &&
                     !postedClaims.Any(pc => pc.DocType == c.DocumentType && pc.BACode == c.BACode && pc.OrgCode == c.OrgCode));
             var subjectCategoryClaimsToAdd = new List<AspNetUserClaim>();
             var subjectCategoryClaimIdsToDelete = new List<int>();
             foreach (var subjectCategoryClaim in postedClaims)
             {
                 var claimsForSubjectCategoryClaim =
-                    userCurrentSubjectCategoryClaims.Where(c => c.UserId == userData.UserId
+                    userCurrentSubjectCategoryClaims.Where(c => c.UserId == userId
                                                                && c.DocumentType == subjectCategoryClaim.DocType &&
                                                                c.BACode == subjectCategoryClaim.BACode &&
                                                                c.OrgCode == subjectCategoryClaim.OrgCode)
@@ -267,7 +312,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                 var claimRegionIds = new HashSet<int>(claimsForSubjectCategoryClaim.Select(c => c.Region.Value));
 
-                claimRegionIds.Add(userData.RegionId);
+                claimRegionIds.Add(regionId);
 
                 var subjectClaimValue = new SubjectCatagoryClaimValue
                 {
@@ -279,7 +324,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                 subjectCategoryClaimsToAdd.Add(new AspNetUserClaim
                 {
-                    UserId = userData.UserId,
+                    UserId = userId,
                     ClaimType = SubjectCatagoryClaimValue.ClaimType,
                     ClaimValue = subjectClaimValue
                 });
@@ -293,14 +338,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             foreach (var subjectCategoryClaim in usersCurrentSubjectCategoryClaimsNotInPostData)
             {
                 var claimsForSubjectCategoryClaim =
-                    userCurrentSubjectCategoryClaims.Where(c => c.UserId == userData.UserId
+                    userCurrentSubjectCategoryClaims.Where(c => c.UserId == userId
                                                                 && c.DocumentType == subjectCategoryClaim.DocumentType &&
                                                                 c.BACode == subjectCategoryClaim.BACode &&
                                                                 c.OrgCode == subjectCategoryClaim.OrgCode)
                                                                 .ToList();
                 var claimRegionIds = new HashSet<int>(claimsForSubjectCategoryClaim.Select(c => c.Region.Value));
 
-                claimRegionIds.Remove(userData.RegionId);
+                claimRegionIds.Remove(regionId);
 
                 if (claimRegionIds.Count > 0)
                 {
@@ -314,7 +359,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                     subjectCategoryClaimsToAdd.Add(new AspNetUserClaim
                     {
-                        UserId = userData.UserId,
+                        UserId = userId,
                         ClaimType = SubjectCatagoryClaimValue.ClaimType,
                         ClaimValue = subjectClaimValue
                     });
@@ -330,33 +375,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             DB.AspNetUserClaims.AddRange(subjectCategoryClaimsToAdd);
 
         }
-
-        public class EditUserPostData
-        {
-            [JsonProperty]
-            public List<string> ApplicationPermissionNames { get; set; }
-            [JsonProperty]
-            public List<EditUserPostSubjectCategoryClaim> SubjectCategoryClaims { get; set; }
-            [JsonProperty]
-            public List<string> GroupIds { get; set; }
-            [JsonProperty]
-            public string UserId { get; set; }
-            [JsonProperty]
-            public int RegionId { get; set; }
-
-            [JsonObject]
-            public class EditUserPostSubjectCategoryClaim
-            {
-                [JsonProperty]
-                public string DocType { get; set; }
-                [JsonProperty]
-                public string BACode { get; set; }
-                [JsonProperty]
-                public string OrgCode { get; set; }
-            }
-
-        }
-
 
 
         // GET: Users/Delete/5

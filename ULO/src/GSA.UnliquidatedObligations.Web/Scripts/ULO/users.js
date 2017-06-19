@@ -7,7 +7,7 @@ $(document).ready(function () {
         var data = $("form[name=editUserForm]").serializeArray();
         
         var postData = new FormPostData(data, $("#RegionId").val());
-        console.log(postData);
+        //console.log(postData);
         $.ajax({
             type: "POST",
             url: "/Users/Edit",
@@ -26,7 +26,31 @@ $(document).ready(function () {
         });
     });
 
+    $(".save-new-user").click(function () {
+        var data = $("form[name=createUserForm]").serializeArray();
+
+        var postData = new CreateUserFormData(data, $("#RegionId").val());
+       // console.log(postData);
+        $.ajax({
+            type: "POST",
+            url: "/Users/CreateUser",
+            data: JSON.stringify(postData),
+            success: function (result) {
+               // $(".users-data").html(result);
+                //addEditClick();
+                $("#createUserModal").modal("hide");
+            },
+            error: function (xhr, status, p3, p4) {
+                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                if (xhr.responseText && xhr.responseText[0] == "{")
+                    err = JSON.parse(xhr.responseText).Message;
+                console.log(err);
+            }
+        });
+    });
+
     addEditClick();
+    addCreateClick();
 });
 
 function addDeleteSubjectCategoryDeleteClick() {
@@ -36,6 +60,36 @@ function addDeleteSubjectCategoryDeleteClick() {
         $($element).remove();
         return false;
     });
+}
+
+function CreateUserFormData(data, regionId) {
+    this.UserName = data.filter(function (a) {
+        return a.name === "UserName";
+    })[0].value;
+
+    this.UserEmail = data.filter(function (a) {
+        return a.name === "UserEmail";
+    })[0].value;
+
+
+    this.ApplicationPermissionNames = data
+    .filter(function (a) {
+        return a.name === "ApplicationPermission";
+    })
+    .map(function (a) {
+        return a.value;
+    });
+    this.GroupIds = data
+        .filter(function (a) {
+            return a.name === "Groups";
+        })
+        .map(function (a) {
+            return a.value;
+        });
+
+    this.SubjectCategoryClaims = getSubjectCategoryClaims(data);
+
+    this.RegionId = regionId;
 }
 
 function FormPostData(data, regionId) {
@@ -106,6 +160,22 @@ function addAddSubjectCategoryClick() {
                 console.log(err);
             }
         });
+    });
+}
+
+function addCreateClick() {
+    $(".create-user").click(function () {
+        var url = "/Users/Create";
+        //url += "&regionId=" + encodeURI($("#RegionId").val());
+        loading(true)
+        $("#createUserModal").modal("show");
+
+        $("#createUserModalBody").load(url, function () {
+            addAddSubjectCategoryClick();
+            addDeleteSubjectCategoryDeleteClick();
+            loading(false);
+        });
+        return false;
     });
 }
 

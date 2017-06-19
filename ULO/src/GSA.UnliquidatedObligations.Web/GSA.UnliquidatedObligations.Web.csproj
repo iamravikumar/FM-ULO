@@ -391,6 +391,13 @@
     <Content Include="Views\Reviews\Details.cshtml" />
     <Content Include="Views\Reviews\Edit.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Users\Create\_Index.cshtml" />
+    <Content Include="Views\Users\Create\Body\_ApplicationPermissions.cshtml" />
+    <Content Include="Views\Users\Create\Body\_Groups.cshtml" />
+    <Content Include="Views\Users\Create\Body\_Index.cshtml" />
+    <Content Include="Views\Users\Create\Body\SubjectCategories\_Index.cshtml" />
+    <Content Include="Views\Users\Create\Body\SubjectCategories\_SubjectCategory.cshtml" />
+    <Content Include="Views\Users\Create\Body\_UserInfo.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -484,7 +491,7 @@
       <Name>GSA.UnliquidatedObligations.BusinessLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\GSA.UnliquidatedObligations.UploadTable\GSA.UnliquidatedObligations.UploadTable.csproj">
-      <Project>{f07879f0-a330-45cd-a85c-c871fd422dc0}</Project>
+      <Project>{15a9f264-48d6-4bd5-a787-93f01091a957}</Project>
       <Name>GSA.UnliquidatedObligations.UploadTable</Name>
     </ProjectReference>
   </ItemGroup>

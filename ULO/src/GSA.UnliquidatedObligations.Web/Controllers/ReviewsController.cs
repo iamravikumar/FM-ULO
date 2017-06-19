@@ -64,28 +64,31 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             try
             {
+                Dictionary<string, List<string>> fileDictionary = new Dictionary<string, List<string>>();
                 if (ModelState.IsValid)
                 {
+                    var review = new Review
+                    {
+                        RegionId = reviewModel.RegionId.Value,
+                        ReviewName = reviewModel.ReviewName,
+                        Status = "Open",
+                        ReviewTypeId = reviewModel.ReviewTypeId.Value,
+                        Comments = reviewModel.Comments,
+                        ReviewScopeId = reviewModel.ReviewScopeId.Value,
+                        WorkflowDefinitionId = reviewModel.WorkflowDefinitionId.Value,
+                        CreatedAtUtc = DateTime.Now
+                        //ProjectDueDate = reviewModel.ProjectDueDate.Value
+                    };
+                    DB.Reviews.Add(review);
+                    DB.SaveChanges();
+
+                    var uploadFiles = new UploadFilesModel(review.ReviewId);
                     foreach (string file in Request.Files)
                     {
+
                         var fileContent = Request.Files[file];
                         if (fileContent != null && fileContent.ContentLength > 0)
                         {
-
-                            var review = new Review
-                            {
-                                RegionId = reviewModel.RegionId.Value,
-                                ReviewName = reviewModel.ReviewName,
-                                Status = "Open",
-                                ReviewTypeId = reviewModel.ReviewTypeId.Value,
-                                Comments = reviewModel.Comments,
-                                ReviewScopeId = reviewModel.ReviewScopeId.Value,
-                                WorkflowDefinitionId = reviewModel.WorkflowDefinitionId.Value,
-                                CreatedAtUtc = DateTime.Now
-                                //ProjectDueDate = reviewModel.ProjectDueDate.Value
-                            };
-                            DB.Reviews.Add(review);
-                            DB.SaveChanges();
 
                             var stream = fileContent.InputStream;
                             var storageName = Guid.NewGuid() + ".dat";
@@ -102,16 +105,36 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             {
                                 stream.CopyTo(fileStream);
                             }
-                            var jobId = BackgroundJobClient.Enqueue<IBackgroundTasks>(
-                                bt => bt.UploadReviewHoldIngTable(review.ReviewId, storagePath));
 
-                            var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>( jobId,
-                                bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId));
+                            switch (file)
+                            {
+                                case "pegasysFiles":
+                                    uploadFiles.PegasysFilePathsList.Add(storagePath);
+                                    break;
+                                case "retaFiles":
+                                    uploadFiles.RetaFileList.Add(storagePath);
+                                    break;
+                                case "easiFiles":
+                                    uploadFiles.EasiFileList.Add(storagePath);
+                                    break;
+                                case "One92Files":
+                                    uploadFiles.One92FileList.Add(storagePath);
+                                    break;
+                                default:
+                                    break;
+                            }
 
-                            BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
 
                         }
                     }
+
+                    var uploadFilesJobId = BackgroundJobClient.Enqueue<IBackgroundTasks>(
+                            bt => bt.UploadFiles(uploadFiles));
+
+                    //var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>(jobId,
+                    //    bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId));
+
+                    //BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
 
                     return RedirectToAction("Index");
                 }

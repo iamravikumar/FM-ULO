@@ -73,8 +73,29 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="col-md-10 col-md-offset-2">
-                <input type="file" name="file" class="form-control" multiple />
+            @Html.LabelFor(model => model.Comments, "Upload Pegasys Files:", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" name="pegasysFiles" class="form-control" multiple/>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Comments, "Upload Reta Files:", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" name="retaFiles" class="form-control" multiple />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.Comments, "Upload Easi Files:", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" name="easiFiles" class="form-control" multiple />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.Comments, "Upload 192 Files:", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" name="One92Files" class="form-control" multiple />
             </div>
         </div>
 

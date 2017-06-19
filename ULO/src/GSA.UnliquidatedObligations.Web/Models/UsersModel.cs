@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using Newtonsoft.Json;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
@@ -82,27 +83,44 @@ namespace GSA.UnliquidatedObligations.Web.Models
             UserId = user.Id;
             var usersApplicationPermissions = applicationPermissionClaims.Select(ac => ac.PermissionName);
             ApplicationPermissionClaims = applicationPermissionClaimNames.Select(c => new EditApplicationPermissionClaimModel(c, usersApplicationPermissions.Contains(c))).ToList();
-            var subjectCategorySelectList = ConvertToSelectList(subjectCategoryPermissionClaimNames);
+            var subjectCategorySelectList = subjectCategoryPermissionClaimNames.ConvertToSelectList();
             SubjectCategoryClaims = subjectCategoryClaims.Select(scc => new EditSubjectPermissionClaimModel(scc, subjectCategorySelectList)).ToList();
             var usersGroups = user.UserUsers.Select(uu => uu.AspNetUser1.UserName).ToList();
             Groups = groups.Select(g => new EditGroupsModel(g.UserName, g.Id, usersGroups.Contains(g.UserName))).ToList();
         }
 
-        public static List<SelectListItem> ConvertToSelectList(List<string> docTypes)
-        {
-            var docTypesSelect = new List<SelectListItem>();
-
-            foreach (var docType in docTypes)
-            {
-                docTypesSelect.Add(new SelectListItem { Text = docType, Value = docType });
-            }
-            return docTypesSelect;
-
-        }
     }
 
+    public class CreateUserModel
+    {
+        public string UserName { get; set; }
+        public string UserEmail { get; set; }
+        public List<EditApplicationPermissionClaimModel> ApplicationPermissionClaims { get; set; }
+        public List<EditSubjectPermissionClaimModel> SubjectCategoryClaims { get; set; }
+        public List<EditGroupsModel> Groups { get; set; }
 
+        public CreateUserModel()
+        {
 
+        }
+        public CreateUserModel(List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<AspNetUser> groups)
+        {
+            ApplicationPermissionClaims = applicationPermissionClaimNames.Select(c => new EditApplicationPermissionClaimModel(c, false)).ToList();
+            var subjectCategorySelectList = subjectCategoryPermissionClaimNames.ConvertToSelectList();
+            SubjectCategoryClaims = new List<EditSubjectPermissionClaimModel>()
+            {
+                new EditSubjectPermissionClaimModel(new AspnetUserSubjectCategoryClaim
+                    {
+                        BACode = "",
+                        OrgCode = "",
+                        DocumentType = ""
+                    },
+                    subjectCategorySelectList)
+            };
+            Groups = groups.Select(g => new EditGroupsModel(g.UserName, g.Id, false)).ToList();
+        }
+
+    }
 
     public class EditApplicationPermissionClaimModel
     {
@@ -155,6 +173,51 @@ namespace GSA.UnliquidatedObligations.Web.Models
             OrgCode = subjectCategoryClaim.OrgCode;
             DocTypes = docTypes;
         }
+    }
+
+    public class EditUserPostData
+    {
+        [JsonProperty]
+        public List<string> ApplicationPermissionNames { get; set; }
+        [JsonProperty]
+        public List<PostSubjectCategoryClaim> SubjectCategoryClaims { get; set; }
+        [JsonProperty]
+        public List<string> GroupIds { get; set; }
+        [JsonProperty]
+        public string UserId { get; set; }
+        [JsonProperty]
+        public int RegionId { get; set; }
+
+    }
+
+    public class CreateUserPostData
+    {
+        [JsonProperty]
+        public string UserName { get; set; }
+        [JsonProperty]
+        public string UserEmail { get; set; }
+        [JsonProperty]
+        public List<string> ApplicationPermissionNames { get; set; }
+        [JsonProperty]
+        public List<PostSubjectCategoryClaim> SubjectCategoryClaims { get; set; }
+        [JsonProperty]
+        public List<string> GroupIds { get; set; }
+        [JsonProperty]
+        public int RegionId { get; set; }
+
+        
+
+    }
+
+    [JsonObject]
+    public class PostSubjectCategoryClaim
+    {
+        [JsonProperty]
+        public string DocType { get; set; }
+        [JsonProperty]
+        public string BACode { get; set; }
+        [JsonProperty]
+        public string OrgCode { get; set; }
     }
 
 

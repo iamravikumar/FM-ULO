@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using Autofac;
@@ -41,12 +43,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var cookie = Request.Cookies["PostAuthToken199"];
             if (cookie == null)
             {
-                var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
-                                new QueryString(
-                                    "ReturnUrl",
-                                    "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
-                return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
-                    redirectUrl);
+                return View(new LoginViewModel());
+
+                //var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
+                //                new QueryString(
+                //                    "ReturnUrl",
+                //                    "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
+                //return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
+                //    redirectUrl);
             }
             return ExternalLoginCallback(returnUrl);
 
@@ -82,7 +86,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                                     "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
                 return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
                     redirectUrl);
-
 
         }
 
@@ -373,13 +376,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 //case SignInStatus.Failure:
                 default:
-                    var user = new ApplicationUser { UserName = ticket.Name, Email = ticket.UserData };
+                    //var user = new ApplicationUser { UserName = ticket.Name, Email = ticket.UserData };
                     //var createResult = UserManager.Create(user);
                     //if (createResult.Succeeded)
                     //{
-                    return RedirectToLocal(returnUrl);
+                    return View("Login", new LoginViewModel(true));
                     //}
-                    return null;
             }
 
 
@@ -446,8 +448,33 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Ulo");
+            try
+            {
+                if (Properties.Settings.Default.UseDevAuthentication)
+                {
+                    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                }
+                else
+                {
+                    Request.GetOwinContext()
+                           .Authentication
+                           .SignOut(HttpContext.GetOwinContext()
+                                               .Authentication.GetAuthenticationTypes()
+                                               .Select(o => o.AuthenticationType).ToArray());
+                    //if (Request.Cookies["PostAuthToken199"] != null)
+                    //{
+                    //    Response.Cookies["PostAuthToken199"].Value = "";
+                    //    Response.Cookies["PostAuthToken199"].Expires = DateTime.Now.AddDays(-1);
+                    //}
+                    //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                    //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+                }
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         //

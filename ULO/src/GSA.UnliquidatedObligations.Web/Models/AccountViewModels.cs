@@ -50,7 +50,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public bool ShowUserNotInDBMessage { get; set; }
 
-        public LoginViewModel(bool showUserNotInDbMessage)
+        public LoginViewModel(bool showUserNotInDbMessage = false)
         {
             ShowUserNotInDBMessage = showUserNotInDbMessage;
         }

@@ -1,0 +1,17 @@
+﻿@model GSA.UnliquidatedObligations.Web.Models.EditSubjectPermissionClaimModel
+<div class="row">
+    
+    <div class="col-md-3">
+        @Html.DropDownListFor(claimItem => Model.DocType, Model.DocTypes, "", htmlAttributes: new {@class = "form-control"})
+    </div>
+    <div class="col-md-3">
+        @Html.TextBoxFor(claimItem => Model.BACode, htmlAttributes: new {@class = "form-control", maxlength="4"})
+    </div>
+    
+    <div class="col-md-3">
+        @Html.TextBoxFor(claimItem => Model.OrgCode, htmlAttributes: new {@class = "form-control"})
+    </div>
+    <div class="col-md-3 delete-subject-category-action-container">
+        <a class="delete-action">Delete</a>
+    </div>
+</div>

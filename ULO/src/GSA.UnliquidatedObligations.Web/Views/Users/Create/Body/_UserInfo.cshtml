@@ -1,0 +1,22 @@
+﻿@using GSA.UnliquidatedObligations.Web.Models
+@model CreateUserModel
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">User Information</h4>
+    </div>
+    <div class="panel-body form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => model.UserName, "User Name:", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.UserEmail, "User Email:", htmlAttributes: new {@class = "control-label col-md-3"})
+            <div class="col-md-9">
+                @Html.EditorFor(model => model.UserEmail, new {htmlAttributes = new {@class = "form-control"}})
+            </div>
+        </div>
+    </div>
+</div>
