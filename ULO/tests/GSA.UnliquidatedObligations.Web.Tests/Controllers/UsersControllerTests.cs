@@ -12,12 +12,13 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
     public class UsersControllerTests : ControllerTests
     {
         private UsersController UsersController;
+        
 
         [TestInitialize]
         public override void Initialize()
         {
             base.Initialize();
-            UsersController = new UsersController(DbContext, ComponentContext)
+            UsersController = new UsersController(DbContext, ApplicationUserManager, ComponentContext)
             {
                 ControllerContext = ControllerContext
             };

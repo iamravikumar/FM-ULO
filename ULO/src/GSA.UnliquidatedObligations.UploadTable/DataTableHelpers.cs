@@ -305,6 +305,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
 
         private static object GetCellValue(SpreadsheetDocument document, Cell cell, bool treatAllValuesAsText, SharedStringTablePart stringTablePart = null)
         {
+            if (cell == null || cell.CellValue == null) return null;
             string value = cell.CellValue.InnerXml;
             if (cell.DataType == null) return value;
             var t = cell.DataType.Value;
@@ -525,7 +526,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
                 }
                 columnNamesToAppend.Add(bCol.ColumnName);
             }
-            sameStructure = sameStructure || dtWasBlank;
+            sameStructure = (sameStructure || dtWasBlank) && (dt.Columns.Count == other.Columns.Count);
             foreach (DataRow bRow in other.Rows)
             {
                 if (sameStructure)

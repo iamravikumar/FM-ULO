@@ -23,7 +23,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     public class UsersController : BaseController
     {
         private readonly ULODBEntities DB;
-        private ApplicationUserManager UserManager;
+        private readonly ApplicationUserManager UserManager;
 
         public UsersController(ULODBEntities db, ApplicationUserManager userManager, IComponentContext context) : base(context)
         {
@@ -78,26 +78,39 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var usersOtherApplicationClaimRegions =
                 DB.AspnetUserApplicationPermissionClaims
                     .Where(c => userIdsforClaimRegion.Contains(c.UserId) && c.Region.Value != regionId)
-                    .Select(c => c.Region.Value);
+                    .ToList()
+                    .Select(c => new OtherRegionInfo(c.UserId, c.Region.Value));
 
             var usersOtherSubjectCategoryClaimRegions =
                 DB.AspnetUserApplicationPermissionClaims
                     .Where(c => userIdsforClaimRegion.Contains(c.UserId) && c.Region.Value != regionId)
                     .OrderBy(scc => scc.PermissionName)
-                    .Select(c => c.Region.Value);
+                    .ToList()
+                      .Select(c => new OtherRegionInfo(c.UserId, c.Region.Value));
 
-            var usersOtherClaimRegions = await
+            var usersOtherClaimRegions =
                 usersOtherSubjectCategoryClaimRegions
-                .Concat(usersOtherApplicationClaimRegions)
-                .Distinct()
-                .ToListAsync();
-
+                    .Concat(usersOtherApplicationClaimRegions)
+                    .ToList();
             var users = await DB.AspNetUsers.Where(u => userIdsforClaimRegion.Contains(u.Id) && u.UserType == "Person").Include("UserUsers.AspNetUser1").ToListAsync();
 
             return users
-                .Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims, subjectCategoryPermissionClaims, usersOtherClaimRegions.ToList()))
+                .Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims, subjectCategoryPermissionClaims, GetOtherRegionsForUser(u.Id, usersOtherClaimRegions)))
                 .OrderBy(u => u.UserName)
                 .ToList();
+        }
+
+        private List<int> GetOtherRegionsForUser(string userId, List<OtherRegionInfo> otherRegionInfoList)
+        {
+            var regionsList = otherRegionInfoList
+                .Where(or => or.UserId == userId)
+                .Select(or => or.RegionId)
+                .Distinct()
+                .ToList();
+
+            regionsList.Sort();
+
+            return regionsList;
         }
 
         private async Task<EditUserModel> GetEditUserById(string userID, int regionId)
@@ -189,10 +202,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                 DB.UserUsers.RemoveRange(DB.UserUsers.Where(uu => uu.ChildUserId == user.Id).ToList());
                 await DB.SaveChangesAsync();
-                return View();
+               
             }
+            return View();
 
-            
+
         }
 
         // GET: Users/Edit/5

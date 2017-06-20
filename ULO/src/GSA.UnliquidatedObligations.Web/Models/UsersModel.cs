@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
@@ -39,6 +40,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
     }
     public class UserModel
     {
+        private AspNetUser u;
+        private List<AspnetUserApplicationPermissionClaim> applicationPermissionRegionPermissionClaims;
+        private List<AspnetUserSubjectCategoryClaim> subjectCategoryPermissionClaims;
+
         public string UserId { get; set; }
         public string UserName { get; set; }
         public List<string> Claims { get; set; }
@@ -64,6 +69,24 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Claims = regionApplicationPermissionClaimsStringList.Concat(subjectCategoryClaimsStringsList).ToList();
             Groups = user.UserUsers.Select(uu => uu.AspNetUser1.UserName).ToList();
             OtherRegions = otherRegions;
+        }
+
+    }
+
+    public class OtherRegionInfo
+    {
+        public string UserId { get; set; }
+        public int RegionId { get; set; }
+
+        public OtherRegionInfo()
+        {
+            
+        }
+
+        public OtherRegionInfo(string userId, int regionId)
+        {
+            UserId = userId;
+            RegionId = regionId;
         }
     }
 

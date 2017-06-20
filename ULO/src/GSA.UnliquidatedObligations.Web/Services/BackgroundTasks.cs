@@ -486,10 +486,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.Columns.Add("Holdbacks", typeof(string));
             dt.Columns.Add("TAFS", typeof(string));
             dt.Columns.Add("DUNS #", typeof(string));
-            dt.Columns.Add("Date of Last Activity", typeof(string));
+            dt.Columns.Add("Date of Last Activity", typeof(DateTime));
             dt.Columns.Add("Days Since First Activity", typeof(int));
             dt.Columns.Add("Days Since Last Activity", typeof(int));
-            dt.Columns.Add("Date of First Activity", typeof(string));
+            dt.Columns.Add("Date of First Activity", typeof(DateTime));
             dt.Columns.Add("Trading Partner Type", typeof(string));
             dt.Columns.Add("Vendor Agency Code", typeof(string));
             dt.Columns.Add("Vendor Bureau Code", typeof(string));
