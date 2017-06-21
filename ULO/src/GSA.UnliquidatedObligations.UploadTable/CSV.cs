@@ -11,7 +11,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
     {
         public const char FieldDelimComma = ',';
         public const char QuoteChar = '"';
-        //change
+
         private static readonly Regex Escapable = new Regex(
             string.Format(
                 @"(^\s)|(\s$)|([{0}])",

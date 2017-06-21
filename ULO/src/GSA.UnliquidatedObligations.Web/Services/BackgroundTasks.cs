@@ -63,7 +63,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         public void CreateULOsAndAssign(int reviewId, int workflowDefinitionId)
         {
-            DB.CreateULOAndAssignWf(reviewId, workflowDefinitionId);
+            DB.CreateULOAndAssignWf(reviewId, workflowDefinitionId, null);
 
         }
 

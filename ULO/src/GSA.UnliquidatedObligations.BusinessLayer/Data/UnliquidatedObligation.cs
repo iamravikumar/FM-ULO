@@ -23,7 +23,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
         public int UloId { get; set; }
         public Nullable<int> RegionId { get; set; }
-        public int PegasysObligationId { get; set; }
         public int ReviewId { get; set; }
         public string Organization { get; set; }
         public string Fund { get; set; }
@@ -77,7 +76,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }
-        public virtual PegasysObligation PegasysObligation { get; set; }
         public virtual Review Review { get; set; }
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

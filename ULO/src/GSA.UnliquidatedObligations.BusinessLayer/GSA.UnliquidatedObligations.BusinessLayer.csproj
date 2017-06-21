@@ -119,9 +119,6 @@
     <Compile Include="Data\Note.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
-    <Compile Include="Data\PegasysObligation.cs">
-      <DependentUpon>ULO.tt</DependentUpon>
-    </Compile>
     <Compile Include="Data\Region.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
