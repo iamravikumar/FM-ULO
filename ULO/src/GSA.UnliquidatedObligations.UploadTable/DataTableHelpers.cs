@@ -12,9 +12,9 @@ using System.Text.RegularExpressions;
 
 namespace GSA.UnliquidatedObligations.UploadTable
 {
-    public static class DataTableHelpers
+    public static partial class DataTableHelpers
     {
-        public static string GenerateCreateTableSQL(this DataTable dt, string schema = "dbo")
+        public static string GenerateCreateTableSQL(this DataTable dt, string schema = "dbo", IDictionary<Type, string> typeMap = null)
         {
             Requires.NonNull(dt, nameof(dt));
             Requires.Text(dt.TableName, nameof(dt.TableName));
@@ -26,7 +26,11 @@ namespace GSA.UnliquidatedObligations.UploadTable
             {
                 var dc = (DataColumn)dt.Columns[colNum];
                 string sqlType;
-                if (dc.DataType == typeof(int))
+                if (typeMap != null && typeMap.ContainsKey(dc.DataType))
+                {
+                    sqlType = typeMap[dc.DataType];
+                }
+                else if (dc.DataType == typeof(int))
                 {
                     sqlType = "int";
                 }
@@ -42,6 +46,10 @@ namespace GSA.UnliquidatedObligations.UploadTable
                 else if (dc.DataType == typeof(DateTime))
                 {
                     sqlType = "datetime";
+                }
+                else if (dc.DataType == typeof(Decimal))
+                {
+                    sqlType = "money";
                 }
                 else if (dc.DataType == typeof(Byte))
                 {
@@ -109,6 +117,41 @@ namespace GSA.UnliquidatedObligations.UploadTable
             }
             Trace.WriteLine(string.Format("Uploaded {0} rows", dt.Rows.Count));
         }
+
+        public static void MakeDateColumnsFitSqlServerBounds(this DataTable dt, DateTime? minDate = null, DateTime? maxDate = null)
+        {
+            Requires.NonNull(dt, nameof(dt));
+
+            var lower = minDate.GetValueOrDefault(SqlServerMinDateTime);
+            var upper = maxDate.GetValueOrDefault(SqlServerMaxDateTime);
+
+            for (int colNum = 0; colNum < dt.Columns.Count; ++colNum)
+            {
+                var dc = (DataColumn)dt.Columns[colNum];
+                if (dc.DataType != typeof(DateTime)) continue;
+                int changeCount = 0;
+                for (int rowNum = 0; rowNum < dt.Rows.Count; ++rowNum)
+                {
+                    var o = dt.Rows[rowNum][dc];
+                    if (o == DBNull.Value) continue;
+                    var val = (DateTime)o;
+                    if (val < lower)
+                    {
+                        ++changeCount;
+                        dt.Rows[rowNum][dc] = lower;
+                    }
+                    else if (val > upper)
+                    {
+                        ++changeCount;
+                        dt.Rows[rowNum][dc] = upper;
+                    }
+                }
+                Trace.WriteLine($"MakeDateColumnsFitSqlServerBounds table({dt.TableName}) column({dc.ColumnName}) {colNum}/{dt.Columns.Count} => {changeCount} changes");
+            }
+        }
+
+        private static readonly DateTime SqlServerMinDateTime = new DateTime(1753, 1, 1);
+        private static readonly DateTime SqlServerMaxDateTime = new DateTime(9999, 12, 31);
 
         public static void IdealizeStringColumns(this DataTable dt, bool trimAndNullifyStringData = false)
         {
@@ -180,9 +223,23 @@ namespace GSA.UnliquidatedObligations.UploadTable
             if (dt.Rows.Count > 0) throw new ArgumentException("dt must not already have any rows", nameof(dt));
         }
 
+        public static void RowAddErrorIgnore(Exception ex, int rowNum)
+        {
+            Trace.WriteLine(string.Format("Problem adding row {0} because [{1}]", rowNum, ex.Message));
+        }
+
         public static void RowAddErrorRethrow(Exception ex, int rowNum)
         {
             throw new Exception(string.Format("Problem adding row {0}", rowNum), ex);
+        }
+
+        public static bool DontAddEmptyRows(DataTable dt, object[] row)
+        {
+            foreach (var v in row)
+            {
+                if (v != DBNull.Value && v != null && v.ToString() != "") return true;
+            }
+            return false;
         }
 
         public static void RowAddErrorTraceAndIgnore(Exception ex, int rowNum)
@@ -194,6 +251,14 @@ namespace GSA.UnliquidatedObligations.UploadTable
         {
             try
             {
+                if (t == typeof(DateTime) && val is string)
+                {
+                    double d;
+                    if (double.TryParse((string)val, out d))
+                    {
+                        return DateTime.FromOADate(d);
+                    }
+                }
                 return Convert.ChangeType(val, t);
             }
             catch (Exception ex)
@@ -245,7 +310,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
 
             var rows = new List<IList<object>>();
 
-            var sharedStringPart = sd.WorkbookPart.SharedStringTablePart;
+            var sharedStringDictionary = ConvertSharedStringTableToDictionary(sd);
             var sheets = sd.WorkbookPart.Workbook.GetFirstChild<Sheets>().Elements<Sheet>();
             int sheetNumber = 0;
             foreach (var sheet in sheets)
@@ -262,7 +327,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
                     IEnumerable<Row> eRows = sheetData.Descendants<Row>();
                     foreach (Row erow in eRows)
                     {
-                    CreateRow:
+                        CreateRow:
                         var row = new List<object>();
                         rows.Add(row);
                         foreach (var cell in erow.Descendants<Cell>())
@@ -274,7 +339,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
                                 row.Add(null);
                             }
                             Debug.Assert(row.Count == cr.Item1);
-                            var val = GetCellValue(sd, cell, settings.TreatAllValuesAsText, sharedStringPart);
+                            var val = GetCellValue(sd, cell, settings.TreatAllValuesAsText, sharedStringDictionary);
                             row.Add(val);
                         }
                     }
@@ -303,7 +368,19 @@ namespace GSA.UnliquidatedObligations.UploadTable
             return new Tuple<int, int>(colNum - 1, int.Parse(m.Groups[2].Value) - 1);
         }
 
-        private static object GetCellValue(SpreadsheetDocument document, Cell cell, bool treatAllValuesAsText, SharedStringTablePart stringTablePart = null)
+        private static IDictionary<int, string> ConvertSharedStringTableToDictionary(SpreadsheetDocument document)
+        {
+            var d = new Dictionary<int, string>();
+            var stringTablePart = document.WorkbookPart.SharedStringTablePart;
+            var pos = 0;
+            foreach (DocumentFormat.OpenXml.OpenXmlElement el in stringTablePart.SharedStringTable.ChildElements)
+            {
+                d[pos++] = el.InnerText;
+            }
+            return d;
+        }
+
+        private static object GetCellValue(SpreadsheetDocument document, Cell cell, bool treatAllValuesAsText, IDictionary<int, string> sharedStringDictionary)
         {
             if (cell == null || cell.CellValue == null) return null;
             string value = cell.CellValue.InnerXml;
@@ -316,8 +393,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
             switch (t)
             {
                 case CellValues.SharedString:
-                    stringTablePart = stringTablePart ?? document.WorkbookPart.SharedStringTablePart;
-                    return stringTablePart.SharedStringTable.ChildElements[Int32.Parse(value)].InnerText;
+                    return sharedStringDictionary[Int32.Parse(value)];
                 case CellValues.Boolean:
                     return value == "1";
                 case CellValues.Number:
@@ -459,6 +535,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
             {
                 ++rowNum;
                 var row = e.Current;
+                if (row.Count == 0) continue;
                 var fields = new object[dt.Columns.Count];
                 try
                 {
@@ -481,7 +558,10 @@ namespace GSA.UnliquidatedObligations.UploadTable
                     {
                         fields[rowNumberColumn.Ordinal] = rowNum;
                     }
-                    dt.Rows.Add(fields);
+                    if (null == settings.ShouldAddRow || settings.ShouldAddRow(dt, fields))
+                    {
+                        dt.Rows.Add(fields);
+                    }
                 }
                 catch (Exception ex)
                 {

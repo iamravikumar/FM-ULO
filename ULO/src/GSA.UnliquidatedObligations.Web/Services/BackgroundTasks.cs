@@ -58,7 +58,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 Upload192Table(reviewId, One92File);
             }
         }
-        
+
 
 
         public void CreateULOsAndAssign(int reviewId, int workflowDefinitionId)
@@ -120,7 +120,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
 
                 dt = CreateRetaDataTable();
-               
+
                 for (int z = 0; z < ds.Tables.Count; ++z)
                 {
                     dt.Append(ds.Tables[z]);
@@ -142,15 +142,18 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         private void UploadEasiTable(int reviewId, string uploadPath)
         {
+            DataSet ds;
             DataTable dt;
             var connString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             using (var st = File.OpenRead(uploadPath))
             {
-                var ds = new DataSet();
-                ds.LoadSheetsFromExcel(st, new LoadSheetsFromExcelSettings()
+                ds = new DataSet();
+                var settings = new LoadSheetsFromExcelSettings()
                 {
-                    CreateDataTable = CreateEasiTable
-                });
+                    CreateDataTable = CreateEasiTable,
+
+                };
+                ds.LoadSheetsFromExcel(st, settings);
 
 
                 dt = CreateEasiTable();
@@ -163,6 +166,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
 
             dt.SetColumnWithValue("ReviewId", reviewId);
+            dt.MakeDateColumnsFitSqlServerBounds();
             dt.UploadIntoSqlServer(
                 delegate ()
                 {
@@ -171,120 +175,48 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 new UploadIntoSqlServerSettings
                 {
                     GenerateTable = false
-                });
+                }
+                );
         }
 
         private void Upload192Table(int reviewId, string uploadPath)
         {
-            DataTable dt;
             var connString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-
+            DataSet ds;
+            DataTable dt;
             using (var st = File.OpenRead(uploadPath))
             {
-                var ds = new DataSet();
-                ds.LoadSheetsFromExcel(st, new LoadSheetsFromExcelSettings()
+                ds = new DataSet();
+                var settings = new LoadSheetsFromExcelSettings()
                 {
-                    SheetSettings = new List<LoadRowsFromExcelSettings>
+                    SheetSettings = new List<LoadRowsFromExcelSettings>(),
+                    CreateDataTable = Create192Table,
+                };
+                foreach (var sheetName in new[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" })
+                {
+                    settings.SheetSettings.Add(
+                    new LoadRowsFromExcelSettings
                     {
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "00",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "01",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "02",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "03",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "04",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                         new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "05",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "06",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "07",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "08",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "09",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "10",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        },
-                        new LoadRowsFromExcelSettings
-                        {
-                            SkipRawRows = 3,
-                            SheetName = "11",
-                            TypeConverter = DataTableHelpers.ExcelTypeConverter,
-                            UseSheetNameForTableName = true
-                        }
-                    },
-                    CreateDataTable = Create192Table// CreatePegasysOpenObligationsDataTable,  <INSERT DATATABLE CREATOR HERE IF YOU WANT A TYPED ONE>
-                });
+                        SkipRawRows = 3,
+                        SheetName = sheetName,
+                        TypeConverter = DataTableHelpers.ExcelTypeConverter,
+                        UseSheetNameForTableName = true,
+                        RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore
+                    });
+                }
+                ds.LoadSheetsFromExcel(st, settings);
 
 
                 dt = Create192Table();
-                //dt.TableName = "All Regions";
+                //dt.TableName = "AllRegions";
                 for (int z = 0; z < ds.Tables.Count; ++z)
                 {
                     dt.Append(ds.Tables[z]);
                 }
-                //Stuff.Noop(ds);
             }
 
             dt.SetColumnWithValue("ReviewId", reviewId);
+            dt.MakeDateColumnsFitSqlServerBounds();
             dt.UploadIntoSqlServer(
                 delegate ()
                 {
@@ -294,7 +226,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 {
                     GenerateTable = false
                 });
+
         }
+
+
 
         private static DataTable CreatePegasysOpenObligationsDataTable()
         {
@@ -328,16 +263,16 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.Columns.Add("Lease Number", typeof(string));
             dt.Columns.Add("Vendor Name", typeof(string));
             dt.Columns.Add("Actg Pd", typeof(string));
-            dt.Columns.Add("Total Line", typeof(string));
-            dt.Columns.Add("Commitments", typeof(string));
-            dt.Columns.Add("Prepayments", typeof(string));
-            dt.Columns.Add("Undel Orders", typeof(string));
-            dt.Columns.Add("Rcpt", typeof(string));
-            dt.Columns.Add("Accrual", typeof(string));
-            dt.Columns.Add("Pend Payments", typeof(string));
-            dt.Columns.Add("Pymts(In Transit)", typeof(string));
-            dt.Columns.Add("Pymts(Confirmed)", typeof(string));
-            dt.Columns.Add("Holdbacks", typeof(string));
+            dt.Columns.Add("Total Line", typeof(decimal));
+            dt.Columns.Add("Commitments", typeof(decimal));
+            dt.Columns.Add("Prepayments", typeof(decimal));
+            dt.Columns.Add("Undel Orders", typeof(decimal));
+            dt.Columns.Add("Rcpt", typeof(decimal));
+            dt.Columns.Add("Accrual", typeof(decimal));
+            dt.Columns.Add("Pend Payments", typeof(decimal));
+            dt.Columns.Add("Pymts(In Transit)", typeof(decimal));
+            dt.Columns.Add("Pymts(Confirmed)", typeof(decimal));
+            dt.Columns.Add("Holdbacks", typeof(decimal));
             dt.Columns.Add("TAFS", typeof(string));
             dt.Columns.Add("DUNS #", typeof(string));
             dt.Columns.Add("Date of Last Activity", typeof(string));
@@ -387,16 +322,16 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.Columns.Add("Lease Number", typeof(string));
             dt.Columns.Add("Vendor Name", typeof(string));
             dt.Columns.Add("Actg Pd", typeof(string));
-            dt.Columns.Add("Total Line", typeof(string));
-            dt.Columns.Add("Commitments", typeof(string));
-            dt.Columns.Add("Prepayments", typeof(string));
-            dt.Columns.Add("Undel Orders", typeof(string));
-            dt.Columns.Add("Rcpt", typeof(string));
-            dt.Columns.Add("Accrual", typeof(string));
-            dt.Columns.Add("Pend Payments", typeof(string));
-            dt.Columns.Add("Pymts(In Transit)", typeof(string));
-            dt.Columns.Add("Pymts(Confirmed)", typeof(string));
-            dt.Columns.Add("Holdbacks", typeof(string));
+            dt.Columns.Add("Total Line", typeof(decimal));
+            dt.Columns.Add("Commitments", typeof(decimal));
+            dt.Columns.Add("Prepayments", typeof(decimal));
+            dt.Columns.Add("Undel Orders", typeof(decimal));
+            dt.Columns.Add("Rcpt", typeof(decimal));
+            dt.Columns.Add("Accrual", typeof(decimal));
+            dt.Columns.Add("Pend Payments", typeof(decimal));
+            dt.Columns.Add("Pymts(In Transit)", typeof(decimal));
+            dt.Columns.Add("Pymts(Confirmed)", typeof(decimal));
+            dt.Columns.Add("Holdbacks", typeof(decimal));
             dt.Columns.Add("TAFS", typeof(string));
             dt.Columns.Add("DUNS #", typeof(string));
             dt.Columns.Add("Date of Last Activity", typeof(DateTime));
@@ -432,13 +367,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.Columns.Add("Status Cd", typeof(string));
             dt.Columns.Add("Status Ds", typeof(string));
             dt.Columns.Add("Procurement Status", typeof(string));
-            dt.Columns.Add("Create Dt", typeof(string));
-            dt.Columns.Add("Signed On Date", typeof(string));
-            dt.Columns.Add("Awd Effective Dt", typeof(string));
-            dt.Columns.Add("Awd Expiration Dt", typeof(string));
+            dt.Columns.Add("Create Dt", typeof(DateTime));
+            dt.Columns.Add("Signed On Date", typeof(DateTime));
+            dt.Columns.Add("Awd Effective Dt", typeof(DateTime));
+            dt.Columns.Add("Awd Expiration Dt", typeof(DateTime));
             dt.Columns.Add("CLIN ADN", typeof(string));
             dt.Columns.Add("ACT/PDN", typeof(string));
-            dt.Columns.Add("DataSource", typeof(string));
+            dt.Columns.Add("Data Source", typeof(string));
             dt.Columns.Add("Region Cd", typeof(string));
             return dt;
         }
@@ -474,16 +409,16 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.Columns.Add("Lease Number", typeof(string));
             dt.Columns.Add("Vendor Name", typeof(string));
             dt.Columns.Add("Actg Pd", typeof(string));
-            dt.Columns.Add("Total Line", typeof(string));
-            dt.Columns.Add("Commitments", typeof(string));
-            dt.Columns.Add("Prepayments", typeof(string));
-            dt.Columns.Add("Undel Orders", typeof(string));
-            dt.Columns.Add("Rcpt", typeof(string));
-            dt.Columns.Add("Accrual", typeof(string));
-            dt.Columns.Add("Pend Payments", typeof(string));
-            dt.Columns.Add("Pymts(In Transit)", typeof(string));
-            dt.Columns.Add("Pymts(Confirmed)", typeof(string));
-            dt.Columns.Add("Holdbacks", typeof(string));
+            dt.Columns.Add("Total Line", typeof(decimal));
+            dt.Columns.Add("Commitments", typeof(decimal));
+            dt.Columns.Add("Prepayments", typeof(decimal));
+            dt.Columns.Add("Undel Orders", typeof(decimal));
+            dt.Columns.Add("Rcpt", typeof(decimal));
+            dt.Columns.Add("Accrual", typeof(decimal));
+            dt.Columns.Add("Pend Payments", typeof(decimal));
+            dt.Columns.Add("Pymts(In Transit)", typeof(decimal));
+            dt.Columns.Add("Pymts(Confirmed)", typeof(decimal));
+            dt.Columns.Add("Holdbacks", typeof(decimal));
             dt.Columns.Add("TAFS", typeof(string));
             dt.Columns.Add("DUNS #", typeof(string));
             dt.Columns.Add("Date of Last Activity", typeof(DateTime));

@@ -9,12 +9,13 @@ namespace GSA.UnliquidatedObligations.UploadTable
         public string RowNumberColumnName { get; set; }
         public Func<DataTable, string, string> DuplicateColumnRenamer { get; set; }
         public Func<string, string> ColumnMapper { get; set; }
-
         public Func<object, Type, object> TypeConverter { get; set; }
+        public Func<DataTable, object[], bool> ShouldAddRow { get; set; }
 
         public LoadRowsSettings()
         {
             TypeConverter = Convert.ChangeType;
+            ShouldAddRow = DataTableHelpers.DontAddEmptyRows;
         }
 
         public LoadRowsSettings(LoadRowsSettings other)
