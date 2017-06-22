@@ -13,11 +13,14 @@ using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Newtonsoft.Json;
 using System.Web.Mvc;
+using System.Configuration;
 
 namespace GSA.UnliquidatedObligations.Web
 {
     public static class PortalHelpers
     {
+        public static readonly string DefaultUloConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+
         public static bool HasPermission(this IPrincipal user, ApplicationPermissionNames permissionName)
         {
             var componentContext = (IComponentContext)HttpContext.Current.Items["ComponentContext"];

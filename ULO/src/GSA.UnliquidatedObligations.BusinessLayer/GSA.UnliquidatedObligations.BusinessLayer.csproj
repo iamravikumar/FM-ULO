@@ -122,6 +122,9 @@
     <Compile Include="Data\Region.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\Reporting\IReportItemDescription.cs" />
+    <Compile Include="Data\Reporting\ReportDescription.cs" />
+    <Compile Include="Data\Reporting\ReportParameterDescription.cs" />
     <Compile Include="Data\RequestForReassignment.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -169,6 +172,7 @@
     <Compile Include="Data\Zone.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="EnumValueDisplayNameAttribute.cs" />
     <Compile Include="Helpers\XmlHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\UloHelpers.cs" />
@@ -218,7 +222,12 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\GSA.UnliquidatedObligations.UploadTable\GSA.UnliquidatedObligations.UploadTable.csproj">
+      <Project>{15a9f264-48d6-4bd5-a787-93f01091a957}</Project>
+      <Name>GSA.UnliquidatedObligations.UploadTable</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

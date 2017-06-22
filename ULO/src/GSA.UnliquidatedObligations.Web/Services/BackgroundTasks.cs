@@ -5,7 +5,7 @@ using System.Linq;
 using System;
 using System.Data;
 using System.IO;
-using GSA.UnliquidatedObligations.UploadTable;
+using GSA.UnliquidatedObligations.Utility;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
@@ -82,7 +82,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         private void UploadCSVTable(int reviewId, string uploadPath)
         {
-            var connString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             var dt = CreatePegasysOpenObligationsDataTable();
             using (var st = File.OpenRead(uploadPath))
             {
@@ -95,7 +94,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     delegate ()
                     {
                         return
-                            new System.Data.SqlClient.SqlConnection(connString);
+                            new System.Data.SqlClient.SqlConnection(PortalHelpers.DefaultUloConnectionString);
                     },
                     new UploadIntoSqlServerSettings
                     {
@@ -109,7 +108,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private void UploadRetaTable(int reviewId, string uploadPath)
         {
             DataTable dt;
-            var connString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             using (var st = File.OpenRead(uploadPath))
             {
                 var ds = new DataSet();
@@ -132,7 +130,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.UploadIntoSqlServer(
                 delegate ()
                 {
-                    return new System.Data.SqlClient.SqlConnection(connString);
+                    return new System.Data.SqlClient.SqlConnection(PortalHelpers.DefaultUloConnectionString);
                 },
                 new UploadIntoSqlServerSettings
                 {
@@ -144,7 +142,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             DataSet ds;
             DataTable dt;
-            var connString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             using (var st = File.OpenRead(uploadPath))
             {
                 ds = new DataSet();
@@ -170,7 +167,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.UploadIntoSqlServer(
                 delegate ()
                 {
-                    return new System.Data.SqlClient.SqlConnection(connString);
+                    return new System.Data.SqlClient.SqlConnection(PortalHelpers.DefaultUloConnectionString);
                 },
                 new UploadIntoSqlServerSettings
                 {
@@ -181,7 +178,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         private void Upload192Table(int reviewId, string uploadPath)
         {
-            var connString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             DataSet ds;
             DataTable dt;
             using (var st = File.OpenRead(uploadPath))
@@ -220,7 +216,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.UploadIntoSqlServer(
                 delegate ()
                 {
-                    return new System.Data.SqlClient.SqlConnection(connString);
+                    return new System.Data.SqlClient.SqlConnection(PortalHelpers.DefaultUloConnectionString);
                 },
                 new UploadIntoSqlServerSettings
                 {
@@ -228,8 +224,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 });
 
         }
-
-
 
         private static DataTable CreatePegasysOpenObligationsDataTable()
         {

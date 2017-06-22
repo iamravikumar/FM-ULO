@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace GSA.UnliquidatedObligations.UploadTable
+namespace GSA.UnliquidatedObligations.Utility
 {
     public static class CSV
     {

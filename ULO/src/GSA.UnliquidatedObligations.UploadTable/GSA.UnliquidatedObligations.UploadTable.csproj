@@ -7,7 +7,7 @@
     <ProjectGuid>{15A9F264-48D6-4BD5-A787-93F01091A957}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GSA.UnliquidatedObligations.UploadTable</RootNamespace>
+    <RootNamespace>GSA.UnliquidatedObligations.Utility</RootNamespace>
     <AssemblyName>GSA.UnliquidatedObligations.UploadTable</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -28,6 +28,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>MimeType.cs</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DocumentFormat.OpenXml, Version=2.7.2.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
@@ -53,23 +56,35 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="CollectionHelpers.cs" />
+    <Compile Include="Collections\ReadonlyDictionary.cs" />
     <Compile Include="Comparers.cs" />
     <Compile Include="CSV.cs" />
     <Compile Include="DatabaseHelpers.cs" />
     <Compile Include="DataTableHelpers.cs" />
+    <Compile Include="DataTableHelpers.SpreadSheet.cs" />
     <Compile Include="Empty.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="LinqHelpers.cs" />
     <Compile Include="LoadRowsFromDelineatedTextSettings.cs" />
     <Compile Include="LoadRowsFromExcelSettings.cs" />
     <Compile Include="LoadRowsSettings.cs" />
+    <Compile Include="MimeType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegexHelpers.cs" />
     <Compile Include="Requires.cs" />
+    <Compile Include="ResourceHelpers.cs" />
+    <Compile Include="StringHelpers.cs" />
     <Compile Include="Stuff.cs" />
+    <Compile Include="TypeHelpers.cs" />
     <Compile Include="UnexpectedSwitchValueException.cs" />
     <Compile Include="UploadIntoSqlServerSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SpreadSheet\Styles.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

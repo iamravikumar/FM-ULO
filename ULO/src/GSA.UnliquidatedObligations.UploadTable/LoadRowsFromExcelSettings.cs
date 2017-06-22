@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace GSA.UnliquidatedObligations.UploadTable
+namespace GSA.UnliquidatedObligations.Utility
 {
     public class LoadRowsFromExcelSettings : LoadRowsSettings
     {

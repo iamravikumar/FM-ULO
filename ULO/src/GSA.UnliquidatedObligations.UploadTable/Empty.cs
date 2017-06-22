@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.Data.SqlTypes;
 using System.Text.RegularExpressions;
 
-namespace GSA.UnliquidatedObligations.UploadTable
+namespace GSA.UnliquidatedObligations.Utility
 {
     public static class Empty
     {

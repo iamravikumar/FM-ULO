@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 
-namespace GSA.UnliquidatedObligations.UploadTable
+namespace GSA.UnliquidatedObligations.Utility
 {
     public class UploadIntoSqlServerSettings
     {
