@@ -10,10 +10,11 @@
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     using System;
-
+    using System.Collections.Generic;
+    
     public partial class AspnetUserSubjectCategoryClaim
     {
-        public System.Guid Id { get; set; }
+        public Nullable<System.Guid> Id { get; set; }
         public string UserId { get; set; }
         public Nullable<int> Region { get; set; }
         public string BACode { get; set; }

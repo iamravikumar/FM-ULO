@@ -43,7 +43,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string Bldg { get; set; }
         public string SysLoc { get; set; }
         public string VehTag { get; set; }
-        public int WI { get; set; }
         public string LeaseNumber { get; set; }
         public string VendorName { get; set; }
         public string ActgPd { get; set; }
@@ -73,6 +72,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string AwardNbr { get; set; }
         public string ContractingOfficersName { get; set; }
         public string ReasonIncludedInReview { get; set; }
+        public Nullable<System.DateTime> RWA_Completion_Date { get; set; }
+        public string EASi_Base_Contract_Nbr { get; set; }
+        public string EASi_GSA_FSS_Other__ { get; set; }
+        public Nullable<System.DateTime> EASi_Awd_Expiration_Dt { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }

@@ -4,6 +4,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {
     public enum SubjectCatagoryNames
     {
+        [Display(Name ="*")]
+        aaa,
         [Display(Name = "UE")]
         UE,
         [Display(Name = "LR")]
@@ -18,7 +20,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
         EQ,
         [Display(Name = "GP")]
         GP,
-        [Display(Name = "UE")]
+        [Display(Name = "IX")]
         IX,
         [Display(Name = "LY")]
         LY,
@@ -37,6 +39,24 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
         [Display(Name = "1B")]
         OneB,
         [Display(Name = "LO")]
-        LO
+        LO,
+        [Display(Name = "AR")]
+        AR,
+        [Display(Name = "CT")]
+        CT,
+        [Display(Name = "EJ")]
+        EJ,
+        [Display(Name = "EK")]
+        EK,
+        [Display(Name = "GX")]
+        GX,
+        [Display(Name = "LU")]
+        LU,
+        [Display(Name = "PS")]
+        PS,
+        [Display(Name = "PY")]
+        PY,
+        [Display(Name = "S2")]
+        S2,
     }
 }

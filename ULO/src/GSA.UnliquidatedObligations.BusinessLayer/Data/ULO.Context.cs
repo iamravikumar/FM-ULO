@@ -13,7 +13,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     using System.Data.Entity.Core.Objects;
-
+    using System.Linq;
+    
     public partial class ULODBEntities : DbContext
     {
         public ULODBEntities()
@@ -80,6 +81,15 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
                 new ObjectParameter("nextActivityKey", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNextLevelOwnerId", proposedOwnerIdParameter, workflowIdParameter, nextActivityKeyParameter, nextOwnerId);
+        }
+    
+        public virtual int DoSomething(Nullable<int> regionId)
+        {
+            var regionIdParameter = regionId.HasValue ?
+                new ObjectParameter("regionId", regionId) :
+                new ObjectParameter("regionId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DoSomething", regionIdParameter);
         }
     }
 }

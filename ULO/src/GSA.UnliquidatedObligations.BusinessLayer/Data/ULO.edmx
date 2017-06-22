@@ -84,6 +84,34 @@
           <Property Name="DocumentTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULO B.dbo.EASI' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="EASI">
+          <Property Name="ReviewId" Type="int" />
+          <Property Name="Created by users Region" Type="nvarchar(max)" />
+          <Property Name="Office" Type="nvarchar(max)" />
+          <Property Name="Created By (User Full Name)" Type="nvarchar(max)" />
+          <Property Name="Contracting Officers Name" Type="nvarchar(max)" />
+          <Property Name="Contracting Userid" Type="nvarchar(max)" />
+          <Property Name="Awd Obligated Amt" Type="nvarchar(max)" />
+          <Property Name="Current Awd Amt" Type="nvarchar(max)" />
+          <Property Name="Document Nbr" Type="nvarchar(max)" />
+          <Property Name="Award Nbr" Type="nvarchar(max)" />
+          <Property Name="Base Contract Nbr" Type="nvarchar(max)" />
+          <Property Name="GSA FSS/Other #" Type="nvarchar(max)" />
+          <Property Name="Vendor Name" Type="nvarchar(max)" />
+          <Property Name="Status Cd" Type="nvarchar(max)" />
+          <Property Name="Status Ds" Type="nvarchar(max)" />
+          <Property Name="Procurement Status" Type="nvarchar(max)" />
+          <Property Name="Create Dt" Type="datetime" />
+          <Property Name="Signed On Date" Type="datetime" />
+          <Property Name="Awd Effective Dt" Type="datetime" />
+          <Property Name="Awd Expiration Dt" Type="datetime" />
+          <Property Name="CLIN ADN" Type="nvarchar(max)" />
+          <Property Name="ACT/PDN" Type="nvarchar(max)" />
+          <Property Name="Data Source" Type="nvarchar(max)" />
+          <Property Name="Region Cd" Type="nvarchar(max)" />
+        </EntityType>-->
         <EntityType Name="EmailTemplates">
           <Key>
             <PropertyRef Name="EmailTemplateId" />
@@ -102,6 +130,102 @@
           <Property Name="NoteContents" Type="varchar" MaxLength="1000" />
           <Property Name="UloId" Type="int" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULO B.dbo.PegasysObligations192' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="PegasysObligations192">
+          <Property Name="ReviewId" Type="int" />
+          <Property Name="Region" Type="int" />
+          <Property Name="Fund" Type="nvarchar(max)" />
+          <Property Name="Organization" Type="nvarchar(max)" />
+          <Property Name="Prog" Type="nvarchar(max)" />
+          <Property Name="Doc Type" Type="nvarchar(max)" />
+          <Property Name="Doc Num" Type="nvarchar(max)" />
+          <Property Name="Itmz Ln Num" Type="int" />
+          <Property Name="Actg Ln Num" Type="int" />
+          <Property Name="Title" Type="nvarchar(max)" />
+          <Property Name="BBFY" Type="nvarchar(max)" />
+          <Property Name="EBFY" Type="nvarchar(max)" />
+          <Property Name="Acty" Type="nvarchar(max)" />
+          <Property Name="O/C" Type="nvarchar(max)" />
+          <Property Name="SOC" Type="nvarchar(max)" />
+          <Property Name="Project" Type="nvarchar(max)" />
+          <Property Name="Agreement" Type="nvarchar(max)" />
+          <Property Name="Contract Num" Type="nvarchar(max)" />
+          <Property Name="Bldg" Type="nvarchar(max)" />
+          <Property Name="Sys/Loc" Type="nvarchar(max)" />
+          <Property Name="Veh Tag" Type="nvarchar(max)" />
+          <Property Name="WI" Type="nvarchar(max)" />
+          <Property Name="Lease Number" Type="nvarchar(max)" />
+          <Property Name="Vendor Name" Type="nvarchar(max)" />
+          <Property Name="Actg Pd" Type="nvarchar(max)" />
+          <Property Name="Total Line" Type="money" />
+          <Property Name="Commitments" Type="money" />
+          <Property Name="Prepayments" Type="money" />
+          <Property Name="Undel Orders" Type="money" />
+          <Property Name="Rcpt" Type="money" />
+          <Property Name="Accrual" Type="money" />
+          <Property Name="Pend Payments" Type="money" />
+          <Property Name="Pymts(In Transit)" Type="money" />
+          <Property Name="Pymts(Confirmed)" Type="money" />
+          <Property Name="Holdbacks" Type="money" />
+          <Property Name="TAFS" Type="nvarchar(max)" />
+          <Property Name="DUNS #" Type="nvarchar(max)" />
+          <Property Name="Date of Last Activity" Type="datetime" />
+          <Property Name="Days Since First Activity" Type="int" />
+          <Property Name="Days Since Last Activity" Type="int" />
+          <Property Name="Date of First Activity" Type="datetime" />
+          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
+          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
+          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
+        </EntityType>-->
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULO B.dbo.PegasysObligations442' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="PegasysObligations442">
+          <Property Name="ReviewId" Type="int" />
+          <Property Name="Region" Type="int" />
+          <Property Name="Fund" Type="nvarchar(max)" />
+          <Property Name="Organization" Type="nvarchar(max)" />
+          <Property Name="Prog" Type="nvarchar(max)" />
+          <Property Name="Doc Type" Type="nvarchar(max)" />
+          <Property Name="Doc Num" Type="nvarchar(max)" />
+          <Property Name="Itmz Ln Num" Type="int" />
+          <Property Name="Actg Ln Num" Type="int" />
+          <Property Name="Title" Type="nvarchar(max)" />
+          <Property Name="BBFY" Type="nvarchar(max)" />
+          <Property Name="EBFY" Type="nvarchar(max)" />
+          <Property Name="Acty" Type="nvarchar(max)" />
+          <Property Name="O/C" Type="nvarchar(max)" />
+          <Property Name="SOC" Type="nvarchar(max)" />
+          <Property Name="Project" Type="nvarchar(max)" />
+          <Property Name="Agreement" Type="nvarchar(max)" />
+          <Property Name="Contract Num" Type="nvarchar(max)" />
+          <Property Name="Bldg" Type="nvarchar(max)" />
+          <Property Name="Sys/Loc" Type="nvarchar(max)" />
+          <Property Name="Veh Tag" Type="nvarchar(max)" />
+          <Property Name="WI" Type="nvarchar(max)" />
+          <Property Name="Lease Number" Type="nvarchar(max)" />
+          <Property Name="Vendor Name" Type="nvarchar(max)" />
+          <Property Name="Actg Pd" Type="nvarchar(max)" />
+          <Property Name="Total Line" Type="money" />
+          <Property Name="Commitments" Type="money" />
+          <Property Name="Prepayments" Type="money" />
+          <Property Name="Undel Orders" Type="money" />
+          <Property Name="Rcpt" Type="money" />
+          <Property Name="Accrual" Type="money" />
+          <Property Name="Pend Payments" Type="money" />
+          <Property Name="Pymts(In Transit)" Type="money" />
+          <Property Name="Pymts(Confirmed)" Type="money" />
+          <Property Name="Holdbacks" Type="money" />
+          <Property Name="TAFS" Type="nvarchar(max)" />
+          <Property Name="DUNS #" Type="nvarchar(max)" />
+          <Property Name="Date of Last Activity" Type="nvarchar(max)" />
+          <Property Name="Days Since First Activity" Type="int" />
+          <Property Name="Days Since Last Activity" Type="int" />
+          <Property Name="Date of First Activity" Type="nvarchar(max)" />
+          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
+          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
+          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
+        </EntityType>-->
         <EntityType Name="RequestForReassignment">
           <Key>
             <PropertyRef Name="RequestForReassignmentID" />
@@ -112,6 +236,58 @@
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULO B.dbo.Reta' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="Reta">
+          <Property Name="ReviewId" Type="int" />
+          <Property Name="Agreement" Type="int" />
+          <Property Name="RWA Type" Type="nvarchar(max)" />
+          <Property Name="Completion Date" Type="nvarchar(max)" />
+          <Property Name="Agency Bureau Code" Type="nvarchar(max)" />
+          <Property Name="RETA POC" Type="nvarchar(max)" />
+          <Property Name="Region" Type="int" />
+          <Property Name="Fund" Type="nvarchar(max)" />
+          <Property Name="Organization" Type="nvarchar(max)" />
+          <Property Name="Prog" Type="nvarchar(max)" />
+          <Property Name="Doc Type" Type="nvarchar(max)" />
+          <Property Name="Doc Num" Type="nvarchar(max)" />
+          <Property Name="Itmz Ln Num" Type="int" />
+          <Property Name="Actg Ln Num" Type="int" />
+          <Property Name="Title" Type="nvarchar(max)" />
+          <Property Name="BBFY" Type="nvarchar(max)" />
+          <Property Name="EBFY" Type="nvarchar(max)" />
+          <Property Name="Acty" Type="nvarchar(max)" />
+          <Property Name="O/C" Type="nvarchar(max)" />
+          <Property Name="SOC" Type="nvarchar(max)" />
+          <Property Name="Project" Type="nvarchar(max)" />
+          <Property Name="Contract Num" Type="nvarchar(max)" />
+          <Property Name="Bldg" Type="nvarchar(max)" />
+          <Property Name="Sys/Loc" Type="nvarchar(max)" />
+          <Property Name="Veh Tag" Type="nvarchar(max)" />
+          <Property Name="WI" Type="nvarchar(max)" />
+          <Property Name="Lease Number" Type="nvarchar(max)" />
+          <Property Name="Vendor Name" Type="nvarchar(max)" />
+          <Property Name="Actg Pd" Type="nvarchar(max)" />
+          <Property Name="Total Line" Type="money" />
+          <Property Name="Commitments" Type="money" />
+          <Property Name="Prepayments" Type="money" />
+          <Property Name="Undel Orders" Type="money" />
+          <Property Name="Rcpt" Type="money" />
+          <Property Name="Accrual" Type="money" />
+          <Property Name="Pend Payments" Type="money" />
+          <Property Name="Pymts(In Transit)" Type="money" />
+          <Property Name="Pymts(Confirmed)" Type="money" />
+          <Property Name="Holdbacks" Type="money" />
+          <Property Name="TAFS" Type="nvarchar(max)" />
+          <Property Name="DUNS #" Type="nvarchar(max)" />
+          <Property Name="Date of Last Activity" Type="datetime" />
+          <Property Name="Days Since First Activity" Type="int" />
+          <Property Name="Days Since Last Activity" Type="int" />
+          <Property Name="Date of First Activity" Type="datetime" />
+          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
+          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
+          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
+        </EntityType>-->
         <EntityType Name="Reviews">
           <Key>
             <PropertyRef Name="ReviewId" />
@@ -166,7 +342,6 @@
           <Property Name="Bldg" Type="varchar" MaxLength="50" />
           <Property Name="SysLoc" Type="varchar" MaxLength="50" />
           <Property Name="VehTag" Type="varchar" MaxLength="50" />
-          <Property Name="WI" Type="int" Nullable="false" />
           <Property Name="LeaseNumber" Type="varchar" MaxLength="50" />
           <Property Name="VendorName" Type="varchar" MaxLength="100" />
           <Property Name="ActgPd" Type="varchar" MaxLength="50" />
@@ -195,7 +370,11 @@
           <Property Name="Status" Type="varchar" MaxLength="50" />
           <Property Name="AwardNbr" Type="varchar" MaxLength="50" />
           <Property Name="ContractingOfficersName" Type="varchar" MaxLength="50" />
-          <Property Name="ReasonIncludedInReview" Type="varchar" MaxLength="50" />
+          <Property Name="ReasonIncludedInReview" Type="nvarchar" MaxLength="500" />
+          <Property Name="RWA Completion Date" Type="datetime" />
+          <Property Name="EASi Base Contract Nbr" Type="varchar" MaxLength="50" />
+          <Property Name="EASi GSA FSS/Other #" Type="varchar" MaxLength="50" />
+          <Property Name="EASi Awd Expiration Dt" Type="datetime" />
         </EntityType>
         <EntityType Name="UserUsers">
           <Key>
@@ -266,9 +445,10 @@
 warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspnetUserApplicationPermissionClaims">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ClaimId" />
           </Key>
-          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Id" Type="uniqueidentifier" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="PermissionName" Type="nvarchar" MaxLength="50" />
@@ -278,9 +458,10 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' d
 warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspnetUserSubjectCategoryClaims">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ClaimId" />
           </Key>
-          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Id" Type="uniqueidentifier" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="BACode" Type="nvarchar" MaxLength="50" />
@@ -408,7 +589,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Regio__361203C5">
+        <Association Name="FK__Unliquida__Regio__67A95F59">
           <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
           <ReferentialConstraint>
@@ -420,7 +601,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Revie__370627FE">
+        <Association Name="FK__Unliquida__Revie__689D8392">
           <End Role="Reviews" Type="Self.Reviews" Multiplicity="1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
           <ReferentialConstraint>
@@ -643,6 +824,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Parameter Name="nextActivityKey" Type="varchar" Mode="In" />
           <Parameter Name="nextOwnerId" Type="varchar" Mode="InOut" />
         </Function>
+        <Function Name="DoSomething" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="Reports">
+          <Parameter Name="regionId" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="ModelStoreContainer">
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
@@ -724,11 +908,11 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="WorkflowDefinitions" EntitySet="WorkflowDefinitions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Regio__361203C5" Association="Self.FK__Unliquida__Regio__361203C5">
+          <AssociationSet Name="FK__Unliquida__Regio__67A95F59" Association="Self.FK__Unliquida__Regio__67A95F59">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__370627FE" Association="Self.FK__Unliquida__Revie__370627FE">
+          <AssociationSet Name="FK__Unliquida__Revie__689D8392" Association="Self.FK__Unliquida__Revie__689D8392">
             <End Role="Reviews" EntitySet="Reviews" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
@@ -944,7 +1128,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="ProjectDueDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Region" Relationship="Self.FK__Reviews__RegionI__093F5D4E" FromRole="Reviews" ToRole="Regions" />
           <NavigationProperty Name="WorkflowDefinition" Relationship="Self.FK__Reviews__Workflo__3BCADD1B" FromRole="Reviews" ToRole="WorkflowDefinitions" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Revie__370627FE" FromRole="Reviews" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Revie__689D8392" FromRole="Reviews" ToRole="UnliquidatedObligations" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestion">
           <Key>
@@ -988,7 +1172,6 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="Bldg" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="SysLoc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="VehTag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="WI" Type="Int32" Nullable="false" />
           <Property Name="LeaseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="VendorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="ActgPd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -1017,10 +1200,14 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="AwardNbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ContractingOfficersName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ReasonIncludedInReview" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ReasonIncludedInReview" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="RWA_Completion_Date" Type="DateTime" Precision="3" />
+          <Property Name="EASi_Base_Contract_Nbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EASi_GSA_FSS_Other__" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EASi_Awd_Expiration_Dt" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__38EE7070" FromRole="UnliquidatedObligations" ToRole="Notes" />
-          <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__370627FE" FromRole="UnliquidatedObligations" ToRole="Reviews" />
-          <NavigationProperty Name="Region" Relationship="Self.FK__Unliquida__Regio__361203C5" FromRole="UnliquidatedObligations" ToRole="Regions" />
+          <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__689D8392" FromRole="UnliquidatedObligations" ToRole="Reviews" />
+          <NavigationProperty Name="Region" Relationship="Self.FK__Unliquida__Regio__67A95F59" FromRole="UnliquidatedObligations" ToRole="Regions" />
           <NavigationProperty Name="Workflows" Relationship="Self.FK__Workflows__Targe__37FA4C37" FromRole="UnliquidatedObligations" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="UserUser">
@@ -1093,7 +1280,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="ZoneId" Type="Int32" Nullable="false" />
           <Property Name="RegionName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__RegionI__093F5D4E" FromRole="Regions" ToRole="Reviews" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Regio__361203C5" FromRole="Regions" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Regio__67A95F59" FromRole="Regions" ToRole="UnliquidatedObligations" />
           <NavigationProperty Name="UserUsers" Relationship="Self.FK__UserUsers__Regio__395884C4" FromRole="Regions" ToRole="UserUsers" />
           <NavigationProperty Name="Zone" Relationship="Self.FK__Regions__ZoneId__30C33EC3" FromRole="Regions" ToRole="Zones" />
         </EntityType>
@@ -1107,9 +1294,10 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
         </EntityType>
         <EntityType Name="AspnetUserApplicationPermissionClaim">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ClaimId" />
           </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Id" Type="Guid" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="PermissionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1117,9 +1305,10 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
         </EntityType>
         <EntityType Name="AspnetUserSubjectCategoryClaim">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ClaimId" />
           </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Id" Type="Guid" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="BACode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1359,7 +1548,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Revie__370627FE">
+        <Association Name="FK__Unliquida__Revie__689D8392">
           <End Role="Reviews" Type="Self.Review" Multiplicity="1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1383,7 +1572,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Regio__361203C5">
+        <Association Name="FK__Unliquida__Regio__67A95F59">
           <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1545,7 +1734,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="WorkflowDefinitions" EntitySet="WorkflowDefinitions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__370627FE" Association="Self.FK__Unliquida__Revie__370627FE">
+          <AssociationSet Name="FK__Unliquida__Revie__689D8392" Association="Self.FK__Unliquida__Revie__689D8392">
             <End Role="Reviews" EntitySet="Reviews" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
@@ -1553,7 +1742,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Regio__361203C5" Association="Self.FK__Unliquida__Regio__361203C5">
+          <AssociationSet Name="FK__Unliquida__Regio__67A95F59" Association="Self.FK__Unliquida__Regio__67A95F59">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
@@ -1587,6 +1776,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
             <Parameter Name="workflowId" Mode="In" Type="Int32" />
             <Parameter Name="nextActivityKey" Mode="In" Type="String" />
             <Parameter Name="nextOwnerId" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="DoSomething">
+            <Parameter Name="regionId" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
       </Schema>
@@ -1757,7 +1949,6 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
                 <ScalarProperty Name="Bldg" ColumnName="Bldg" />
                 <ScalarProperty Name="SysLoc" ColumnName="SysLoc" />
                 <ScalarProperty Name="VehTag" ColumnName="VehTag" />
-                <ScalarProperty Name="WI" ColumnName="WI" />
                 <ScalarProperty Name="LeaseNumber" ColumnName="LeaseNumber" />
                 <ScalarProperty Name="VendorName" ColumnName="VendorName" />
                 <ScalarProperty Name="ActgPd" ColumnName="ActgPd" />
@@ -1787,6 +1978,10 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
                 <ScalarProperty Name="AwardNbr" ColumnName="AwardNbr" />
                 <ScalarProperty Name="ContractingOfficersName" ColumnName="ContractingOfficersName" />
                 <ScalarProperty Name="ReasonIncludedInReview" ColumnName="ReasonIncludedInReview" />
+                <ScalarProperty Name="RWA_Completion_Date" ColumnName="RWA Completion Date" />
+                <ScalarProperty Name="EASi_Base_Contract_Nbr" ColumnName="EASi Base Contract Nbr" />
+                <ScalarProperty Name="EASi_GSA_FSS_Other__" ColumnName="EASi GSA FSS/Other #" />
+                <ScalarProperty Name="EASi_Awd_Expiration_Dt" ColumnName="EASi Awd Expiration Dt" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1895,6 +2090,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="CreateULOAndAssignWf" FunctionName="Model.Store.CreateULOAndAssignWf" />
           <FunctionImportMapping FunctionImportName="GetNextLevelOwnerId" FunctionName="Model.Store.GetNextLevelOwnerId" />
+          <FunctionImportMapping FunctionImportName="DoSomething" FunctionName="Model.Store.DoSomething" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -60,10 +60,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
 
 
-        public void CreateULOsAndAssign(int reviewId, int workflowDefinitionId)
+        public void CreateULOsAndAssign(int reviewId, int workflowDefinitionId, DateTime? reviewDate)
         {
-            DB.CreateULOAndAssignWf(reviewId, workflowDefinitionId, null);
-
+            using (ULODBEntities _db = DB)
+            {
+                _db.Database.CommandTimeout = 600;
+                _db.CreateULOAndAssignWf(reviewId, workflowDefinitionId, null);
+            }
         }
 
         public async Task AssignWorkFlows(int reviewId)
@@ -86,7 +89,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
             {
                 dt.LoadRowsFromDelineatedText(st, new LoadRowsFromDelineatedTextSettings
                 {
-                    SkipRawRows = 2
+                    SkipRawRows = 2,
+                    RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore
                 });
                 dt.SetColumnWithValue("ReviewId", reviewId);
                 dt.UploadIntoSqlServer(
@@ -110,10 +114,27 @@ namespace GSA.UnliquidatedObligations.Web.Services
             using (var st = File.OpenRead(uploadPath))
             {
                 var ds = new DataSet();
-                ds.LoadSheetsFromExcel(st, new LoadSheetsFromExcelSettings()
+                var settings = new LoadSheetsFromExcelSettings()
                 {
+                    SheetSettings = new List<LoadRowsFromExcelSettings>(),
                     CreateDataTable = CreateRetaDataTable
-                });
+                };
+
+                foreach (var sheetName in new[] { "R.00", "R.01", "R.02", "R.03", "R.04", "R.05", "R.06", "R.07", "R.08", "R.09", "R.10", "R.11" })
+                {
+                    settings.SheetSettings.Add(
+                    new LoadRowsFromExcelSettings
+                    {
+                        SheetName = sheetName,
+                        TypeConverter = DataTableHelpers.ExcelTypeConverter,
+                        UseSheetNameForTableName = true,
+                        RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore
+                    });
+                }
+
+                ds.LoadSheetsFromExcel(st, settings);
+
+
 
 
                 dt = CreateRetaDataTable();
