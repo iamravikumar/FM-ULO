@@ -352,7 +352,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\GSA - Web.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - Web Deploy.pubxml" />
     <None Include="Properties\Settings.settings">

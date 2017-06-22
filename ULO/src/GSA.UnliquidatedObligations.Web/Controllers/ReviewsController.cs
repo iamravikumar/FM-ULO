@@ -131,10 +131,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     var uploadFilesJobId = BackgroundJobClient.Enqueue<IBackgroundTasks>(
                             bt => bt.UploadFiles(uploadFiles));
 
-                    //var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>(jobId,
-                    //    bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId));
+                    var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>(uploadFilesJobId,
+                        bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, null));
 
-                    //BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
+                    BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
 
                     return RedirectToAction("Index");
                 }

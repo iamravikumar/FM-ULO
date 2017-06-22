@@ -14,7 +14,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         void UploadFiles(UploadFilesModel files);
 
-        void CreateULOsAndAssign(int reviewId, int WorkflowDefinitionId);
+        void CreateULOsAndAssign(int reviewId, int WorkflowDefinitionId, DateTime? reviewDate);
 
         Task AssignWorkFlows(int reviewId);
 
