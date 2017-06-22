@@ -3,7 +3,6 @@ using System.Linq;
 using FizzWare.NBuilder;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using Newtonsoft.Json;
 
 namespace GSA.UnliquidatedObligations.Web.Tests.TestData
 {

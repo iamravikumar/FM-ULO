@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
-using System.Diagnostics;
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Threading.Tasks;
@@ -13,7 +11,6 @@ using System.Web.Routing;
 using Autofac;
 using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
-using Microsoft.AspNet.Identity;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {

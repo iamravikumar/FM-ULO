@@ -1,6 +1,5 @@
 ﻿using System.Web.Mvc;
 using GSA.UnliquidatedObligations.Web.Controllers;
-using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSA.UnliquidatedObligations.Web.Tests.Controllers

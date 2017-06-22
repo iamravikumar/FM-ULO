@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace GSA.UnliquidatedObligations.BusinessLayer.Data
+﻿namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     public class Justification
     {

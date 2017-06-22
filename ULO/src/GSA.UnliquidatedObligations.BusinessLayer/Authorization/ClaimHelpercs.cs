@@ -1,9 +1,6 @@
-﻿using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
+﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 using System.Security.Claims;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
