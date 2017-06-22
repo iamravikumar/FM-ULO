@@ -1,7 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using GSA.UnliquidatedObligations.BusinessLayer.Helpers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {

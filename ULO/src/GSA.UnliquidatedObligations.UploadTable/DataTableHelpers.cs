@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace GSA.UnliquidatedObligations.UploadTable
+namespace GSA.UnliquidatedObligations.Utility
 {
     public static partial class DataTableHelpers
     {
@@ -176,7 +176,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
                     {
                         if (trimAndNullifyStringData)
                         {
-                            var ts = Stuff.StringTrimOrNull(s);
+                            var ts = StringHelpers.TrimOrNull(s);
                             if (ts != s)
                             {
                                 if (ts == null)
@@ -497,7 +497,7 @@ namespace GSA.UnliquidatedObligations.UploadTable
             var columnMap = new DataColumn[headerRow.Count];
             for (int z = 0; z < headerRow.Count(); ++z)
             {
-                var colName = Stuff.StringTrimOrNull(Stuff.Object2String(headerRow[z]));
+                var colName = StringHelpers.TrimOrNull(Stuff.Object2String(headerRow[z]));
                 if (colName == null)
                 {
                     continue;

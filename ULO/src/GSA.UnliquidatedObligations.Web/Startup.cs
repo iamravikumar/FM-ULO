@@ -1,8 +1,6 @@
-﻿using System;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Services;
@@ -10,8 +8,6 @@ using Microsoft.Owin;
 using Owin;
 using Autofac;
 using Autofac.Integration.Mvc;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;

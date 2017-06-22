@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Collections;
 
-namespace GSA.UnliquidatedObligations.UploadTable
+namespace GSA.UnliquidatedObligations.Utility
 {
     public static class Requires
     {

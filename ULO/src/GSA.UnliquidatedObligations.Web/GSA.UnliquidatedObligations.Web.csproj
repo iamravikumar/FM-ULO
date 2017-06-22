@@ -293,12 +293,14 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="AspHelpers.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AttachmentsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DocumentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RequestForReassignmentsController.cs" />
     <Compile Include="Controllers\ReviewsController.cs" />
     <Compile Include="Controllers\UloController.cs" />
@@ -352,6 +354,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\GSA - Web.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - Web Deploy.pubxml" />
     <None Include="Properties\Settings.settings">
@@ -397,6 +400,9 @@
     <Content Include="Views\Users\Create\Body\SubjectCategories\_Index.cshtml" />
     <Content Include="Views\Users\Create\Body\SubjectCategories\_SubjectCategory.cshtml" />
     <Content Include="Views\Users\Create\Body\_UserInfo.cshtml" />
+    <Content Include="Views\Reports\Index.cshtml" />
+    <Content Include="Views\Shared\_PaginationPartial.cshtml" />
+    <Content Include="Views\Reports\ConfigureReport.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

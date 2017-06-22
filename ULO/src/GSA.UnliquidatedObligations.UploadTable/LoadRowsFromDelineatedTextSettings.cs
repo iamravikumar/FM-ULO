@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-
-namespace GSA.UnliquidatedObligations.UploadTable
+﻿namespace GSA.UnliquidatedObligations.Utility
 {
     public enum LoadRowsFromDelineatedTextFormats
     {

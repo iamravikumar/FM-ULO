@@ -1,18 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
+﻿using System.Web.Mvc;
 using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Models;
-using GSA.UnliquidatedObligations.Web.Services;
-using GSA.UnliquidatedObligations.Web.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 
 namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
 {

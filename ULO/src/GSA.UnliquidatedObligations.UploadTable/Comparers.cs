@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GSA.UnliquidatedObligations.UploadTable
+namespace GSA.UnliquidatedObligations.Utility
 {
     public static class Comparers
     {
