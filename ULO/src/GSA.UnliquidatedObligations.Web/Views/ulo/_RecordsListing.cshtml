@@ -8,25 +8,25 @@
     <tr>
         <th></th>
         <th>
-            PDN
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
         </th>
         <th>
-            BA Code
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")            
         </th>
         <th>
-            Review Status
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Review Status")
         </th>
         <th>
-            Org Code
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org Code")            
         </th>
         <th>
-            Amount
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.TotalLine, overrideDisplayName: "Amount")
         </th>
         <th>
             Valid
         </th>
         <th>
-            Due Date
+            @Html.SortableHeaderFor(z => z.DueAtUtc, overrideDisplayName: "Due Date")
         </th>
         <th>Days left</th>
 
@@ -82,4 +82,5 @@
 
 </table>
 
+@Html.Partial("_PaginationPartial")
 

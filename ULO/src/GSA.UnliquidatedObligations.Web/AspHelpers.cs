@@ -47,14 +47,14 @@ namespace GSA.UnliquidatedObligations.Web
             return hh.DisplayNameFor(columnExpression).ToString();
         }
 
-        public static MvcHtmlString SortableHeaderFor<TModelItem, TResult>(this HtmlHelper<IEnumerable<TModelItem>> hh, Expression<Func<TModelItem, TResult>> columnExpression, string currentSortColName = null, string currentSortDir = null, string actionName = null)
+        public static MvcHtmlString SortableHeaderFor<TModelItem, TResult>(this HtmlHelper<IEnumerable<TModelItem>> hh, Expression<Func<TModelItem, TResult>> columnExpression, string currentSortColName = null, string currentSortDir = null, string actionName = null, string overrideDisplayName=null)
         {
             currentSortColName = currentSortColName ?? hh.ViewBag.SortCol as string;
             currentSortDir = currentSortDir ?? hh.ViewBag.SortDir as string;
 
             actionName = actionName ?? hh.ViewContext.RouteData.Values["action"] as string;
-            var colName = columnExpression.GetName();
-            var displayName = hh.FriendlyNameFor(columnExpression);
+            var colName = columnExpression.GetFullyQualifiedName();
+            var displayName = overrideDisplayName ?? hh.FriendlyNameFor(columnExpression);
             if (colName == currentSortColName)
             {
                 var h = hh.ActionLink(

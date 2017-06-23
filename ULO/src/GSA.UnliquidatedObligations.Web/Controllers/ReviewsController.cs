@@ -28,11 +28,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: Review
-        public ActionResult Index()
+        public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var reviews = DB.Reviews.ToList();
+            var reviews = ApplyBrowse(
+                DB.Reviews,
+                sortCol ?? nameof(Review.ReviewName), sortDir, page, pageSize);
             return View(reviews);
-            //return View("~/Views/Reviews/Index.cshtml");
         }
 
         // GET: Review/Details/5

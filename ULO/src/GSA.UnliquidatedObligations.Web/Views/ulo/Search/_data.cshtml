@@ -8,49 +8,48 @@
     <tr>
         <th></th>
         <th>
-            Zone
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.Zone.ZoneName, overrideDisplayName: "Zone")
         </th>
         <th>
-            Region
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
         </th>
         <th>
             Document Type
         </th>
         <th>
-            Pesasys Document Number
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "Pesasys Document Number")
         </th>
         <th>
-            Pegasys Title Number
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysTitleNumber, overrideDisplayName: "Pesasys Title Number")
         </th>
         <th>
-            Fund
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Fund, overrideDisplayName: "Fund")
         </th>
         <th>
-            Organization
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Organization")
         </th>
         <th>
-            BA Code
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
         </th>
         <th>
-            Pegasys Vendor Name
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.VendorName, overrideDisplayName: "Pegasys Vendor Name")            
         </th>
         <th>
-            Contracting Officer Name
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ContractingOfficersName, overrideDisplayName: "Contracting Officer Name")            
         </th>
         <th>
-            Award Number
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.AwardNbr, overrideDisplayName: "Award Number")            
         </th>
         <th>
-            Reason Included In Review
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReasonIncludedInReview, overrideDisplayName: "Reason Included In Review")            
         </th>
         <th>
             Valid
         </th>
         <th>
-            Status
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Status")
         </th>
         <th></th>
-
     </tr>
 
     @foreach (var item in Model)
@@ -60,10 +59,10 @@
                 @Html.ActionLink("View ULO", "RegionWorkflowDetails", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneId)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionId)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionName)
             </td>
             <td>
                 Data Not Present
@@ -112,6 +111,7 @@
 
 </table>
 
+@Html.Partial("_PaginationPartial")
 
 @foreach (var item in Model)
 {
@@ -123,7 +123,4 @@
     {
         Html.RenderAction("Details", "RequestForReassignments", new { id = item.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = item.WorkflowId, isAdmin = true });
     }
-
 }
-
-

@@ -9,24 +9,20 @@
             <ul class="nav navbar-nav">
                 @if (User.HasPermission(ApplicationPermissionNames.CanViewOtherWorkflows))
                 {
-                    <li>@Html.ActionLink("View Region Workflows", "RegionWorkflows", "Ulo")</li>
+                    <li>@Html.ActionLink("Search", "RegionWorkflows", "Ulo")</li>
                 }
-
-                @if (User.HasPermission(ApplicationPermissionNames.CanViewReviews))
-                {
-                    <li>@Html.ActionLink("View Reviews", "Index", "Reviews")</li>
-                }
-                
                 @if (User.HasPermission(ApplicationPermissionNames.CanExecuteReports))
                 {
                     <li>@Html.ActionLink("Reports", ReportsController.ActionNames.ListReports, ReportsController.Name)</li>
                 }
-
+                @if (User.HasPermission(ApplicationPermissionNames.CanViewReviews))
+                {
+                    <li>@Html.ActionLink("Manage Reviews", "Index", "Reviews")</li>
+                }                
                 @if (User.HasPermission(ApplicationPermissionNames.ManageUsers))
                 {
                     <li>@Html.ActionLink("Manage Users", "Index", "Users")</li>
                 }
-
             </ul>
             @Html.Partial("_LoginPartial")
         </div>

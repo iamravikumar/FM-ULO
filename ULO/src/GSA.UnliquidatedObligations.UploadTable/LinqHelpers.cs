@@ -78,5 +78,10 @@ namespace GSA.UnliquidatedObligations.Utility
         {
             return exp.GetMembers().Last().Name;
         }
+
+        public static string GetFullyQualifiedName<TModel, TResult>(this Expression<Func<TModel, TResult>> exp)
+        {
+            return exp.GetMembers().ConvertAll(z => z.Name).Format(".");
+        }
     }
 }

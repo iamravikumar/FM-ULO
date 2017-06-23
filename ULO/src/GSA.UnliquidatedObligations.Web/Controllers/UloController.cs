@@ -33,18 +33,18 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // GET: Ulo
 
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
             //TODO: wrire stored procedure for nested groups
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
             var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-            var workflowsAssignedtoCurrentUser = DB.Workflows.Where(wf => wf.OwnerUserId == currentUser.Id).Include(wf => wf.UnliquidatedObligation);
-            var groupsUserBelongsTo = await GetUsersGroups(currentUser.Id);
-            var workflowsAssignedToUsersGroups = DB.Workflows.Where(wf => groupsUserBelongsTo.Contains(wf.OwnerUserId));
-            var workflows = workflowsAssignedtoCurrentUser.Concat(workflowsAssignedToUsersGroups);
+            var userIds = await GetUsersGroupsAsync(currentUser.Id);
+            userIds.Add(currentUser.Id);
+            var workflows = ApplyBrowse(
+                DB.Workflows.Where(wf => userIds.Contains(wf.OwnerUserId)).Include(wf => wf.UnliquidatedObligation),
+                sortCol??nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             return View(workflows);
         }
-
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         public async Task<ActionResult> Search(string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string status)
@@ -70,11 +70,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return PartialView("~/Views/Ulo/Search/_Data.cshtml", workflows);
         }
 
-       
-
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulo/RegionWorkflows")]
-        public async Task<ActionResult> RegionWorkflows()
+        public async Task<ActionResult> RegionWorkflows(string sortCol, string sortDir, int? page, int? pageSize)
         {
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
@@ -85,8 +83,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     wf => claimRegionIds.Contains((int) wf.UnliquidatedObligation.RegionId)
                           && wf.OwnerUserId != user.Id);
 
-            var workflows =
-                await DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).ToListAsync();
+            var workflows = await ApplyBrowse(
+                DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region).Include(wf => wf.UnliquidatedObligation.Region.Zone),
+                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToListAsync();
 
             return View("~/Views/Ulo/Search/Index.cshtml", workflows);
         }
@@ -110,13 +109,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc));
         }
 
-
-
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
         {
             return await Manager.GetWorkflowDescription(wf);
         }
-
 
         //TODO: Move to Manager?
         private async Task<Workflow> FindWorkflowAsync(int workflowId, bool checkOwner = true)
@@ -126,7 +122,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 if (checkOwner == false) return wf;
                 var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-                var groupsUserBelongsTo = await GetUsersGroups(currentUser.Id);
+                var groupsUserBelongsTo = await GetUsersGroupsAsync(currentUser.Id);
                 if (currentUser != null)
                 {
                     if (wf.OwnerUserId == currentUser.Id || groupsUserBelongsTo.Contains(wf.OwnerUserId)) return wf;
@@ -205,7 +201,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return await Details(uloId, workflowId);
         }
 
-        private async Task<List<string>> GetUsersGroups(string userId)
+        private async Task<List<string>> GetUsersGroupsAsync(string userId)
         {
             return await DB.UserUsers.Where(uu => uu.ChildUserId == userId).Select(uu => uu.ParentUserId).ToListAsync();
         }

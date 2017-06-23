@@ -354,6 +354,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\fonts\BAUHS93.TTF" />
     <None Include="Properties\PublishProfiles\GSA - Web.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - Web Deploy.pubxml" />

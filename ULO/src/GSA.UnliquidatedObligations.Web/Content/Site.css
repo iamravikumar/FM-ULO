@@ -26,3 +26,28 @@ textarea {
 .row.header {
     font-weight: bold;
 }
+
+
+.fa-chevron-left, .fa-chevron-right, .fa-ellipsis-h {
+    cursor: pointer;
+}
+
+.fa-chevron-left, .fa-chevron-right {
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.fa-chevron-left.inactive, .fa-chevron-right.inactive {
+    color: #e8e8e8 !important;
+}
+
+.table-controls {
+    list-style-type: none;
+    margin-bottom: 0;
+    padding: 10px;
+}
+
+.table-controls li {
+    display: inline-block;
+    margin-right: 15px;
+}

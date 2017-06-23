@@ -2,7 +2,7 @@
 @using System.Text.RegularExpressions
 @if (ViewBag.PaginationSupported == true)
 {
-    var queryString = this.Context.Request.QueryString.ToString() ?? "";
+    var queryString = this.Context.Request.QueryString.ToString();
     var regexPattern = new Regex(@"\W(page=\d+&?)", RegexOptions.IgnoreCase);
     var match = regexPattern.Match(queryString);
     if (match.Success)
@@ -10,9 +10,9 @@
         var firstMatchGroup = match.Groups[1];
         queryString = queryString.Left(firstMatchGroup.Index) + queryString.Substring(firstMatchGroup.Length + firstMatchGroup.Index);
     }
-    if (queryString.Length == 0) { queryString = "?"; }
     if (queryString.Length > 1) { queryString = queryString + "&"; }
     queryString = queryString + "page";
+    if (queryString.Length == 0 || queryString[0] != '?') { queryString = "?" + queryString; }
     var pageNumber = (int)ViewBag.PageNum;
     var rowsPerPage = 10;
     if (ViewBag.PageSize != null)
@@ -47,7 +47,7 @@
                     }
                     else
                     {
-                        <a href="@queryString=@(pageNumber - 1)"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+                        <a href="@queryString=@(pageNumber - 1)"><i class="fa fa-chevron-left" aria-hidden="true">&lt;</i></a>
                     }
                     <span>@leftOfRange</span> - <span id="rightOfRange">@rightOfRange</span>
 
@@ -62,7 +62,7 @@
                     }
                     else
                     {
-                        <a href="@queryString=@(pageNumber + 1)"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                        <a href="@queryString=@(pageNumber + 1)"><i class="fa fa-chevron-right" aria-hidden="true">&gt;</i></a>
                     }
                 </li>
             }
