@@ -8,5 +8,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting
         public string Description { get; set; }
         public Type DataType { get; set; }
         public string SqlName { get; set; }
+        public bool IsHardcoded { get; set; }
+        public string HardCodedValue { get; set; }
     }
 }

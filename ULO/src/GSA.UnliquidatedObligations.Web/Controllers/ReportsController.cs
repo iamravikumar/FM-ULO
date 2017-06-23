@@ -17,8 +17,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanExecuteReports)]
     public class ReportsController : BaseController
     {
+        public const string Name = "Reports";
+
         public static class ActionNames
         {
+            public const string ListReports = "Index";
             public const string ConfigureReport = "ConfigureReport";
             public const string ExecuteReport = "ExecuteReport";
         }
@@ -31,6 +34,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             DB = db;
         }
 
+        [ActionName(ActionNames.ListReports)]
         [Route("Reports")]
         public async Task<ActionResult> Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -67,7 +71,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     foreach (var pd in report.ParameterDescriptions)
                     {
-                        var sval = Request.Form[pd.SqlName];
+                        var sval = pd.IsHardcoded ? pd.HardCodedValue : Request.Form[pd.SqlName];
                         var oval = Convert.ChangeType(sval, pd.DataType);
                         cmd.Parameters.Add(new SqlParameter(pd.SqlName, oval));
                     }
@@ -104,7 +108,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                                     {
                                         DataType = typeof(int),
                                         SqlName = "@regionId",
-                                        Title = "Region"
+                                        Title = "Region",
                                     }
                                 }
                             },
@@ -113,14 +117,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                                 SprocSchema = "Reports",
                                 SprocName = "DoSomething",
                                 Title = "Another 2 Tables of Stuff...",
-                                Description = "Actually, this does the same as the other report... I was lazy... ",
+                                Description = "Actually, this does the same as the other report... I was lazy... Region hardcoded to 5",
                                 ParameterDescriptions = new List<ReportParameterDescription>
                                 {
                                     new ReportParameterDescription
                                     {
                                         DataType = typeof(int),
                                         SqlName = "@regionId",
-                                        Title = "Region"
+                                        Title = "Region",
+                                        IsHardcoded = true,
+                                        HardCodedValue = "5"
                                     }
                                 }
                             }

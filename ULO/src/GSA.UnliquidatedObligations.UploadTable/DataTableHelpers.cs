@@ -344,7 +344,20 @@ namespace GSA.UnliquidatedObligations.Utility
                         }
                     }
                     GC.Collect();
-                    dt.LoadRows(rows.Skip(settings.SkipRawRows), settings);
+                    IEnumerable<IList<object>> positionnedRows;
+                    if (settings.SkipRawRows.HasValue)
+                    {
+                        positionnedRows = rows.Skip(settings.SkipRawRows.Value);
+                    }
+                    else if (settings.SkipWhileTester!=null)
+                    {
+                        positionnedRows = rows.SkipWhile(settings.SkipWhileTester);
+                    }
+                    else
+                    {
+                        positionnedRows = rows;
+                    }
+                    dt.LoadRows(positionnedRows, settings);
                     return;
                 }
                 ++sheetNumber;
@@ -383,7 +396,7 @@ namespace GSA.UnliquidatedObligations.Utility
         private static object GetCellValue(SpreadsheetDocument document, Cell cell, bool treatAllValuesAsText, IDictionary<int, string> sharedStringDictionary)
         {
             if (cell == null || cell.CellValue == null) return null;
-            string value = cell.CellValue.InnerXml;
+            string value = cell.CellValue.InnerText;
             if (cell.DataType == null) return value;
             var t = cell.DataType.Value;
             if (treatAllValuesAsText && t != CellValues.SharedString)
@@ -392,6 +405,8 @@ namespace GSA.UnliquidatedObligations.Utility
             }
             switch (t)
             {
+                case CellValues.String:
+                    return value;
                 case CellValues.SharedString:
                     return sharedStringDictionary[Int32.Parse(value)];
                 case CellValues.Boolean:

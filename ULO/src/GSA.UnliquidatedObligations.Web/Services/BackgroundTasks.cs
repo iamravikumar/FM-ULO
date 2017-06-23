@@ -27,6 +27,26 @@ namespace GSA.UnliquidatedObligations.Web.Services
             WorkflowManager = workflowManager;
         }
 
+        private System.Data.SqlClient.SqlConnection CreateSqlConnection()
+            => new System.Data.SqlClient.SqlConnection(PortalHelpers.DefaultUloConnectionString);
+
+        private static DataTable MergeIntoSingleTable(DataSet ds, Func<DataTable> creator = null)
+        {
+            var dt = creator == null ? new DataTable() : creator();
+            for (int z = 0; z < ds.Tables.Count; ++z)
+            {
+                dt.Append(ds.Tables[z], creator == null && z == 0 ? true : false);
+            }
+            return dt;
+        }
+
+        private void FinalizeAndUpload(DataTable dt, int reviewId)
+        {
+            dt.SetColumnWithValue("ReviewId", reviewId);
+            dt.MakeDateColumnsFitSqlServerBounds();
+            dt.UploadIntoSqlServer(CreateSqlConnection);
+        }
+
         public void Email(string subject, string recipient, string template, object model)
         {
             var compiledEmailBody = Engine.Razor.RunCompile(template, "email", null, model);
@@ -34,7 +54,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
         }
 
         //TODO: Email on exception or let user know what happened
-        [AutomaticRetry(Attempts = 0)]
         public void UploadFiles(UploadFilesModel files)
         {
             var reviewId = files.ReviewId;
@@ -62,18 +81,16 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
 
         //TODO: Email on exception or let user know what happened
-        [AutomaticRetry(Attempts = 0)]
         public void CreateULOsAndAssign(int reviewId, int workflowDefinitionId, DateTime? reviewDate)
         {
             using (ULODBEntities _db = DB)
             {
-                _db.Database.CommandTimeout = 600;
+                _db.Database.CommandTimeout = 60*15;
                 _db.CreateULOAndAssignWf(reviewId, workflowDefinitionId, null);
             }
         }
 
         //TODO: Email on exception or let user know what happened.
-        [AutomaticRetry(Attempts = 0)]
         public async Task AssignWorkFlows(int reviewId)
         {
             var workflows = DB.Workflows.Where(wf => wf.UnliquidatedObligation.ReviewId == reviewId).ToList();
@@ -83,7 +100,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 await WorkflowManager.AdvanceAsync(workflow, null, true);
                 await DB.SaveChangesAsync();
             }
-
         }
 
         private void UploadCSVTable(int reviewId, string uploadPath)
@@ -97,18 +113,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore
                 });
                 dt.SetColumnWithValue("ReviewId", reviewId);
-                dt.UploadIntoSqlServer(
-                    delegate ()
-                    {
-                        return
-                            new System.Data.SqlClient.SqlConnection(PortalHelpers.DefaultUloConnectionString);
-                    },
-                    new UploadIntoSqlServerSettings
-                    {
-                        GenerateTable = false,
-                        RowsCopiedNotifyIncrement = 1
-
-                    });
+                dt.UploadIntoSqlServer(CreateSqlConnection);
             }
         }
 
@@ -137,76 +142,34 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 }
 
                 ds.LoadSheetsFromExcel(st, settings);
-
-
-
-
-                dt = CreateRetaDataTable();
-
-                for (int z = 0; z < ds.Tables.Count; ++z)
-                {
-                    dt.Append(ds.Tables[z]);
-                }
-                //Stuff.Noop(ds);
+                dt = MergeIntoSingleTable(ds, CreateRetaDataTable);
             }
-
-            dt.SetColumnWithValue("ReviewId", reviewId);
-            dt.UploadIntoSqlServer(
-                delegate ()
-                {
-                    return new System.Data.SqlClient.SqlConnection(PortalHelpers.DefaultUloConnectionString);
-                },
-                new UploadIntoSqlServerSettings
-                {
-                    GenerateTable = false
-                });
+            FinalizeAndUpload(dt, reviewId);
         }
 
         private void UploadEasiTable(int reviewId, string uploadPath)
         {
-            DataSet ds;
             DataTable dt;
             using (var st = File.OpenRead(uploadPath))
             {
-                ds = new DataSet();
+                var ds = new DataSet();
                 var settings = new LoadSheetsFromExcelSettings()
                 {
                     CreateDataTable = CreateEasiTable,
 
                 };
                 ds.LoadSheetsFromExcel(st, settings);
-
-
-                dt = CreateEasiTable();
-                //dt.TableName = "All Regions";
-                for (int z = 0; z < ds.Tables.Count; ++z)
-                {
-                    dt.Append(ds.Tables[z]);
-                }
-                //Stuff.Noop(ds);
+                dt = MergeIntoSingleTable(ds, CreateEasiTable);
             }
-
-            dt.SetColumnWithValue("ReviewId", reviewId);
-            dt.MakeDateColumnsFitSqlServerBounds();
-            dt.UploadIntoSqlServer(
-                delegate ()
-                {
-                    return new System.Data.SqlClient.SqlConnection(PortalHelpers.DefaultUloConnectionString);
-                },
-                new UploadIntoSqlServerSettings
-                {
-                    GenerateTable = false
-                }
-                );
+            FinalizeAndUpload(dt, reviewId);
         }
 
         private void Upload192Table(int reviewId, string uploadPath)
         {
-            DataSet ds;
             DataTable dt;
             using (var st = File.OpenRead(uploadPath))
             {
-                ds = new DataSet();
+                var ds = new DataSet();
                 var settings = new LoadSheetsFromExcelSettings()
                 {
                     SheetSettings = new List<LoadRowsFromExcelSettings>(),
@@ -217,7 +180,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     settings.SheetSettings.Add(
                     new LoadRowsFromExcelSettings
                     {
-                        SkipRawRows = 3,
+                        SkipWhileTester = r=>r.Count<43,
                         SheetName = sheetName,
                         TypeConverter = DataTableHelpers.ExcelTypeConverter,
                         UseSheetNameForTableName = true,
@@ -225,28 +188,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     });
                 }
                 ds.LoadSheetsFromExcel(st, settings);
-
-
-                dt = Create192Table();
-                //dt.TableName = "AllRegions";
-                for (int z = 0; z < ds.Tables.Count; ++z)
-                {
-                    dt.Append(ds.Tables[z]);
-                }
+                dt = MergeIntoSingleTable(ds, Create192Table);
             }
-
-            dt.SetColumnWithValue("ReviewId", reviewId);
-            dt.MakeDateColumnsFitSqlServerBounds();
-            dt.UploadIntoSqlServer(
-                delegate ()
-                {
-                    return new System.Data.SqlClient.SqlConnection(PortalHelpers.DefaultUloConnectionString);
-                },
-                new UploadIntoSqlServerSettings
-                {
-                    GenerateTable = false
-                });
-
+            FinalizeAndUpload(dt, reviewId);
         }
 
         private static DataTable CreatePegasysOpenObligationsDataTable()

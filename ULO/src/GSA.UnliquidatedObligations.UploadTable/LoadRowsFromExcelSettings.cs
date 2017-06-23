@@ -9,7 +9,8 @@ namespace GSA.UnliquidatedObligations.Utility
         public bool UseSheetNameForTableName { get; set; }
         public int? SheetNumber { get; set; }
         public string SheetName { get; set; }
-        public int SkipRawRows { get; set; }
+        public int? SkipRawRows { get; set; }
+        public Func<IList<object>, bool> SkipWhileTester { get; set; }
         public bool TreatAllValuesAsText { get; set; }
 
         public LoadRowsFromExcelSettings() { }
@@ -26,6 +27,7 @@ namespace GSA.UnliquidatedObligations.Utility
             this.SheetNumber = other.SheetNumber;
             this.SheetName = other.SheetName;
             this.SkipRawRows = other.SkipRawRows;
+            this.SkipWhileTester = other.SkipWhileTester;
             this.TreatAllValuesAsText = other.TreatAllValuesAsText;
         }
     }

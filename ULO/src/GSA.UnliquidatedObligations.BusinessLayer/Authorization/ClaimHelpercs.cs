@@ -1,6 +1,7 @@
 ﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
@@ -9,6 +10,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
     {
         public static HashSet<int> GetApplicationPerimissionRegions(string claimType, string claimValue, ApplicationPermissionNames? applicationPermission)
         {
+            HashSet<int> regions = null;
             if (claimType == ApplicationPermissionClaimValue.ClaimType)
             {
                 try
@@ -20,22 +22,24 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
                         {
                             if (ap.ApplicationPermissionName == applicationPermission)
                             {
-                                return ap.Regions;
+                                regions = ap.Regions;
+                                goto Cleanup;
                             }
                         }
                         else
                         {
-                            return ap.Regions;
+                            regions = ap.Regions;
+                            goto Cleanup;
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    
+                    Trace.WriteLine(ex);
                 }
-
             }
-            return new HashSet<int>();
+Cleanup:
+            return regions ?? new HashSet<int>();
         }
 
         public static HashSet<int> GetSubjectCategoryRegions(string claimType, string claimValue, string docType, string baCode, string orgCode)
@@ -62,7 +66,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 
         public static HashSet<int> GetApplicationPerimissionRegions(this IEnumerable<Claim> claims, ApplicationPermissionNames? permission)
         {
-            HashSet<int> regionIds = new HashSet<int>();
+            var regionIds = new HashSet<int>();
             foreach (var c in claims)
             {
                 regionIds.UnionWith(GetApplicationPerimissionRegions(c.Type, c.Value, permission));
@@ -72,7 +76,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 
         public static HashSet<int> GetSubjectCategoryRegions(this IEnumerable<Claim> claims, string docType, string baCode, string orgCode)
         {
-            HashSet<int> regionIds = new HashSet<int>();
+            var regionIds = new HashSet<int>();
             foreach (var c in claims)
             {
                 regionIds.UnionWith(GetSubjectCategoryRegions(c.Type, c.Value, docType, orgCode, baCode));
@@ -87,7 +91,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
             {
                 claims.Add(new Claim(c.ClaimType, c.ClaimValue, c.ClaimType));
             }
-
             return claims;
         }
 
@@ -100,12 +103,5 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
         {
             return user.GetClaims().GetSubjectCategoryRegions(docType, baCode, orgCode);
         }
-
-
-        //public static ICollection<AspNetUserClaim> GetClaimsByRegion(this DbSet<AspNetUser> userClaims, int regionId)
-        //{
-        //    var region
-        //    var applicationClaims = userClaims.Where(uc => uc.GetApplicationPerimissionRegions(null).Contains(re)).;
-        //}
     }
 }
