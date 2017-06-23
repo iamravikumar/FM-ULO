@@ -12,6 +12,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
+using System.Net.Http;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -37,7 +38,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // GET: Review/Details/5
         public ActionResult Details(int id)
         {
-           
+
             return View();
         }
 
@@ -58,13 +59,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Review/Create
         [HttpPost]
-        public async Task<ActionResult> Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId")] ReviewModel reviewModel)
+        public ActionResult Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId")] ReviewModel reviewModel)
         {
+            //var content = "inside create<br />";
             try
             {
-                Dictionary<string, List<string>> fileDictionary = new Dictionary<string, List<string>>();
                 if (ModelState.IsValid)
                 {
+                    //content += "before review object create<br />";
                     var review = new Review
                     {
                         RegionId = reviewModel.RegionId.Value,
@@ -79,11 +81,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     };
                     DB.Reviews.Add(review);
                     DB.SaveChanges();
+                    //content += "after review save<br />";
 
                     var uploadFiles = new UploadFilesModel(review.ReviewId);
                     foreach (string file in Request.Files)
                     {
-
+                        //content += "staring " + file + "upload <br />";
                         var fileContent = Request.Files[file];
                         if (fileContent != null && fileContent.ContentLength > 0)
                         {
@@ -125,7 +128,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                         }
                     }
-
                     var uploadFilesJobId = BackgroundJobClient.Enqueue<IBackgroundTasks>(
                             bt => bt.UploadFiles(uploadFiles));
 
@@ -133,10 +135,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, null));
 
                     BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
-
-                    return RedirectToAction("Index");
                 }
-                return await Create();
+                return Create().Result;
             }
             catch (Exception ex)
             {
@@ -146,61 +146,52 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     Exception = ex.Message
                 });
             }
-            //try
-            //{
-            //    // TODO: Add insert logic here
-
-            //    return RedirectToAction("Index");
-            //}
-            //catch
-            //{
-            //    return View();
-            //}
         }
+ 
 
-        // GET: Review/Edit/5
-        public ActionResult Edit(int id)
+    // GET: Review/Edit/5
+    public ActionResult Edit(int id)
+    {
+        var review = DB.Reviews.Find(id);
+        return View(review);
+    }
+
+    // POST: Review/Edit/5
+    [HttpPost]
+    public ActionResult Edit(int id, FormCollection collection)
+    {
+        try
         {
-            var review = DB.Reviews.Find(id);
-            return View(review);
+            // TODO: Add update logic here
+
+            return RedirectToAction("Index");
         }
-
-        // POST: Review/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Review/Delete/5
-        public ActionResult Delete(int id)
+        catch
         {
             return View();
         }
+    }
 
-        // POST: Review/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+    // GET: Review/Delete/5
+    public ActionResult Delete(int id)
+    {
+        return View();
+    }
+
+    // POST: Review/Delete/5
+    [HttpPost]
+    public ActionResult Delete(int id, FormCollection collection)
+    {
+        try
         {
-            try
-            {
-                // TODO: Add delete logic here
+            // TODO: Add delete logic here
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index");
+        }
+        catch
+        {
+            return View();
         }
     }
+}
 }

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
 using GSA.UnliquidatedObligations.Web.Models;
+using Hangfire;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
@@ -32,7 +33,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
             EmailServer.SendEmail(subject, compiledEmailBody, recipient);
         }
 
-
+        //TODO: Email on exception or let user know what happened
+        [AutomaticRetry(Attempts = 0)]
         public void UploadFiles(UploadFilesModel files)
         {
             var reviewId = files.ReviewId;
@@ -59,7 +61,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
         }
 
 
-
+        //TODO: Email on exception or let user know what happened
+        [AutomaticRetry(Attempts = 0)]
         public void CreateULOsAndAssign(int reviewId, int workflowDefinitionId, DateTime? reviewDate)
         {
             using (ULODBEntities _db = DB)
@@ -69,6 +72,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
+        //TODO: Email on exception or let user know what happened.
+        [AutomaticRetry(Attempts = 0)]
         public async Task AssignWorkFlows(int reviewId)
         {
             var workflows = DB.Workflows.Where(wf => wf.UnliquidatedObligation.ReviewId == reviewId).ToList();
@@ -77,7 +82,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
             {
                 await WorkflowManager.AdvanceAsync(workflow, null, true);
                 await DB.SaveChangesAsync();
-
             }
 
         }

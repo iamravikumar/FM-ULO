@@ -181,11 +181,11 @@ function addCreateClick() {
 
 function loading(isLoading) {
     if (isLoading) {
-        $("#loadingUser").hide();
-        $("#userBodyData").show();
-    } else {
         $("#loadingUser").show();
         $("#userBodyData").hide();
+    } else {
+        $("#loadingUser").hide();
+        $("#userBodyData").show();
     }
 }
 
@@ -198,9 +198,10 @@ function addEditClick() {
         loading(true)
         $("#editUserModal").modal("show");
 
-        $("#editUserModalBody").load(url, function () {
+        $("#editUserModalOuterContainer").load(url, function () {
             addAddSubjectCategoryClick();
             addDeleteSubjectCategoryDeleteClick();
+           
             loading(false);
         });
         return false;

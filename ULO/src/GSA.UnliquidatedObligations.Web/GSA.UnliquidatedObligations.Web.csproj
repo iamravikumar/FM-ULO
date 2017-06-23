@@ -403,6 +403,7 @@
     <Content Include="Views\Reports\Index.cshtml" />
     <Content Include="Views\Shared\_PaginationPartial.cshtml" />
     <Content Include="Views\Reports\ConfigureReport.cshtml" />
+    <Content Include="Views\Users\Edit\Body\_Body.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

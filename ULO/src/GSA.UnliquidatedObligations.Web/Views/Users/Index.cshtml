@@ -1,4 +1,5 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.UsersModel
+﻿@using GSA.UnliquidatedObligations.Web.Models;
+@model GSA.UnliquidatedObligations.Web.Models.UsersModel
 
 @{
     ViewBag.Title = "Users";
@@ -17,5 +18,5 @@
 </div>
 @Html.Partial("_Data", Model.Users)
 
-@Html.Partial("Edit/_Index")
-@Html.Partial("Create/_Index")
+@Html.Partial("Edit/_Index", new EditUserModel())
+@*@Html.Partial("Create/_Index")*@

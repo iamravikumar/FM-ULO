@@ -32,7 +32,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             return regionsSelect;
 
         }
- 
+
     }
     public class UserModel
     {
@@ -76,7 +76,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public OtherRegionInfo()
         {
-            
+
         }
 
         public OtherRegionInfo(string userId, int regionId)
@@ -86,18 +86,18 @@ namespace GSA.UnliquidatedObligations.Web.Models
         }
     }
 
-    public class EditUserModel
+    public class EditUserBodyModel
     {
         public string UserId { get; set; }
         public List<EditApplicationPermissionClaimModel> ApplicationPermissionClaims { get; set; }
         public List<EditSubjectPermissionClaimModel> SubjectCategoryClaims { get; set; }
         public List<EditGroupsModel> Groups { get; set; }
 
-        public EditUserModel()
+        public EditUserBodyModel()
         {
 
         }
-        public EditUserModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> applicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<AspNetUser> groups)
+        public EditUserBodyModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> applicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<AspNetUser> groups)
         {
             UserId = user.Id;
             var usersApplicationPermissions = applicationPermissionClaims.Select(ac => ac.PermissionName);
@@ -106,6 +106,27 @@ namespace GSA.UnliquidatedObligations.Web.Models
             SubjectCategoryClaims = subjectCategoryClaims.Select(scc => new EditSubjectPermissionClaimModel(scc, subjectCategorySelectList)).ToList();
             var usersGroups = user.UserUsers.Select(uu => uu.AspNetUser1.UserName).ToList();
             Groups = groups.Select(g => new EditGroupsModel(g.UserName, g.Id, usersGroups.Contains(g.UserName))).ToList();
+        }
+
+    }
+
+
+    public class EditUserModel {
+
+        public string UserName { get;  set;}
+
+        public EditUserBodyModel Body { get; set; }
+
+        public EditUserModel()
+        {
+            UserName = "";
+            Body = new EditUserBodyModel();
+        }
+
+        public EditUserModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> applicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<AspNetUser> groups)
+        {
+            UserName = user.UserName;
+            Body = new EditUserBodyModel(user, applicationPermissionClaims, subjectCategoryClaims, applicationPermissionClaimNames, subjectCategoryPermissionClaimNames, groups);
         }
 
     }
