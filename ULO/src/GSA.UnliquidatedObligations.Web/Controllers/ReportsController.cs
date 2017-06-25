@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
             var reports = await GetAllReportsAsync();
+
             reports = ApplyBrowse(reports, sortCol, sortDir, page, pageSize);
             return View(reports);
         }
@@ -69,11 +71,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     CommandTimeout = 60 * 60
                 })
                 {
-                    foreach (var pd in report.ParameterDescriptions)
+                    foreach (var pd in report.Parameters)
                     {
-                        var sval = pd.IsHardcoded ? pd.HardCodedValue : Request.Form[pd.SqlName];
-                        var oval = Convert.ChangeType(sval, pd.DataType);
-                        cmd.Parameters.Add(new SqlParameter(pd.SqlName, oval));
+                        var sval = pd.IsHardcoded ? pd.HardCodedValue : Request.Form[pd.SqlParameterName];
+                        var oval = Convert.ChangeType(sval, pd.ClrType);
+                        cmd.Parameters.Add(new SqlParameter("@"+pd.SqlParameterName, oval));
                     }
                     var ds = cmd.ExecuteReadDataSet();
                     var st = new MemoryStream();
@@ -90,48 +92,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
         }
 
-        ///TODO: Replace with call to DB to fetch the metadata
         private Task<IQueryable<ReportDescription>> GetAllReportsAsync()
         {
             return Task.FromResult(
-                new[]
-                        {
-                            new ReportDescription()
-                            {
-                                SprocSchema = "Reports",
-                                SprocName = "DoSomething",
-                                Title = "2 Tables of Stuff...",
-                                Description = "This is here for testing, but will generate a report that simply returns 2 tables of... not much...",
-                                ParameterDescriptions = new List<ReportParameterDescription>
-                                {
-                                    new ReportParameterDescription
-                                    {
-                                        DataType = typeof(int),
-                                        SqlName = "@regionId",
-                                        Title = "Region",
-                                    }
-                                }
-                            },
-                            new ReportDescription()
-                            {
-                                SprocSchema = "Reports",
-                                SprocName = "DoSomething",
-                                Title = "Another 2 Tables of Stuff...",
-                                Description = "Actually, this does the same as the other report... I was lazy... Region hardcoded to 5",
-                                ParameterDescriptions = new List<ReportParameterDescription>
-                                {
-                                    new ReportParameterDescription
-                                    {
-                                        DataType = typeof(int),
-                                        SqlName = "@regionId",
-                                        Title = "Region",
-                                        IsHardcoded = true,
-                                        HardCodedValue = "5"
-                                    }
-                                }
-                            }
-                        }.AsQueryable()                
-                );
+                DB.ReportDefinitions.Where(rd => rd.IsActive == true).ConvertAll(rd => rd.Description).ToList().AsQueryable()
+            );
         }
     }
 }

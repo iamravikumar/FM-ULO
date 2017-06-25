@@ -124,6 +124,10 @@
     <Compile Include="Data\Region.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\ReportDefinition.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ReportDefinition_.cs" />
     <Compile Include="Data\Reporting\IReportItemDescription.cs" />
     <Compile Include="Data\Reporting\ReportDescription.cs" />
     <Compile Include="Data\Reporting\ReportParameterDescription.cs" />

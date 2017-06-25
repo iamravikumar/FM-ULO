@@ -48,6 +48,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<Zone> Zones { get; set; }
         public virtual DbSet<AspnetUserApplicationPermissionClaim> AspnetUserApplicationPermissionClaims { get; set; }
         public virtual DbSet<AspnetUserSubjectCategoryClaim> AspnetUserSubjectCategoryClaims { get; set; }
+        public virtual DbSet<ReportDefinition> ReportDefinitions { get; set; }
     
         public virtual int CreateULOAndAssignWf(Nullable<int> reviewId, Nullable<int> workflowDefinitionId, Nullable<System.DateTime> reviewDate)
         {

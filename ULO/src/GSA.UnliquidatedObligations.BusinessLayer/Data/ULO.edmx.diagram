@@ -53,6 +53,7 @@
         <AssociationConnector Association="Model.FK__WorkflowH__Workf__477199F1" ManuallyRouted="false" />
         <AssociationConnector Association="Model.FK__Regions__ZoneId__30C33EC3" ManuallyRouted="false" />
         <AssociationConnector Association="Model.AspNetUserRoles" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="Model.ReportDefinition" Width="1.5" PointX="0.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
