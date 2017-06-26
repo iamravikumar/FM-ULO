@@ -8,10 +8,12 @@ $(document).ready(function() {
 });
 
 function ChoiceChange(value, model) {
-    
-    var justifications = model.QuestionChoices.filter(function(qc) {
-        return qc.Value === value;
-    })[0].Justifications;
+    var justifications = [];
+    if (value != "") {
+        justifications = model.QuestionChoices.filter(function (qc) {
+            return qc.Value === value;
+        })[0].Justifications;
+    }
 
     if (justifications.length > 0) {
         select.options.length = 0;

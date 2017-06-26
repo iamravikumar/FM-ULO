@@ -61,6 +61,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         }
 
 
+
         public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId)
         {
 
@@ -78,7 +79,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             JustificationId = question  != null ? Convert.ToInt32(question.JustificationId) : 0;
             WorkflowId = workflowId;
             DefaultJustifications = new List<Justification>();
-            if (Answer != "")
+            if (Answer != "" && question.Pending == true)
             {
                 var justificationEnums = workflowQuestionChoices.Choices.First(c => c.Value == Answer).JustificationsEnums;
                 foreach (var justificationsEnum in justificationEnums)
@@ -153,8 +154,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public WorkflowViewModel(Workflow workflow, IWorkflowDescription workflowDecription = null)
         {
             Workflow = workflow;
-
-            QuestionsViewModel = new UloWfQuestionsViewModel(workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList());
+            var questions = workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList();
+            QuestionsViewModel = new UloWfQuestionsViewModel(questions);
 
             if (workflowDecription != null)
             {
@@ -162,8 +163,15 @@ namespace GSA.UnliquidatedObligations.Web.Models
                     new WorkflowDescriptionViewModel(workflowDecription.WebActionWorkflowActivities.ToList(),
                         workflow.CurrentWorkflowActivityKey);
 
-                var unliqudatedObjectsWorkflowQuestion = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
-                AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestion, workflow.WorkflowId);
+                var unliqudatedObjectsWorkflowQuestionPending = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
+                if (unliqudatedObjectsWorkflowQuestionPending == null)
+                {
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow.WorkflowId);
+                }
+                else
+                {
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow.WorkflowId);
+                }
             }
             RequestForReassignmentsActive = workflow.RequestForReassignments.ToList().Count > 0 &&
                                                          Workflow.RequestForReassignments.FirstOrDefault() != null &&
