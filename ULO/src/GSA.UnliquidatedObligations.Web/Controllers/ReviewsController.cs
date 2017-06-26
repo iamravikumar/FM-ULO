@@ -32,7 +32,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var reviews = ApplyBrowse(
                 DB.Reviews,
-                sortCol ?? nameof(Review.ReviewName), sortDir, page, pageSize);
+                sortCol ?? nameof(Review.CreatedAt), sortDir??AspHelpers.SortDirDescending, page, pageSize);
             return View(reviews);
         }
 
@@ -77,7 +77,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         Comments = reviewModel.Comments,
                         ReviewScopeId = reviewModel.ReviewScopeId.Value,
                         WorkflowDefinitionId = reviewModel.WorkflowDefinitionId.Value,
-                        CreatedAtUtc = DateTime.Now
                         //ProjectDueDate = reviewModel.ProjectDueDate.Value
                     };
                     DB.Reviews.Add(review);

@@ -17,7 +17,7 @@
 @using (Html.BeginForm("", "Ulo", new { uloId = @currentUloId, workflowId = @currentworkflowId }, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    @Html.Partial("Details/_Ulo", Model)
+    @Html.Partial("Details/_Ulo", Model.CurretUnliquidatedObligation)
     @Html.Partial("Details/Documents/_Index", Model.WorkflowViewModel.DocumentsViewModel)
     @*@Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)*@
 

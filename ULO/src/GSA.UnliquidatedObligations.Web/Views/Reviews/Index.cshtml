@@ -13,6 +13,9 @@
     {
         <tr>
             <th>
+                @Html.SortableHeaderFor(z => z.CreatedAt, overrideDisplayName: "Created At")
+            </th>
+            <th>
                 @Html.SortableHeaderFor(z => z.ReviewName, overrideDisplayName: "Review Name")
             </th>
             <th>
@@ -28,7 +31,7 @@
                 @Html.SortableHeaderFor(model => model.Comments)
             </th>
             <th>
-                @Html.SortableHeaderFor(model => model.Region.RegionName, overrideDisplayName: "Region Name")
+                @Html.SortableHeaderFor(model => model.Region.RegionName, overrideDisplayName: "Region")
             </th>
             @*<th></th>*@
         </tr>
@@ -37,6 +40,9 @@
     @foreach (var item in Model)
     {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ReviewName)
             </td>

@@ -141,6 +141,7 @@
     <Compile Include="Data\ReviewTypeEnum.cs" />
     <Compile Include="Data\JustificationEnum.cs" />
     <Compile Include="Data\Justification.cs" />
+    <Compile Include="Data\Review_.cs" />
     <Compile Include="Data\ULO.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -179,7 +180,6 @@
     <Compile Include="Data\Zone.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
-    <Compile Include="EnumValueDisplayNameAttribute.cs" />
     <Compile Include="Helpers\XmlHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\UloHelpers.cs" />
