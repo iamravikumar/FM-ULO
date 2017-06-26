@@ -7,11 +7,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
 {
     public interface IWorkflowManager
     {
-        Task<ActionResult> AdvanceAsync(BusinessLayer.Data.Workflow wf, BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance = false);
-        Task<ActionResult> RequestReassign(BusinessLayer.Data.Workflow wf);
-        Task<ActionResult> Reassign(BusinessLayer.Data.Workflow wf, string userId, string actionName);
-        Task SaveQuestion(Workflow wf, UnliqudatedObjectsWorkflowQuestion question);
-
-        Task<IWorkflowDescription> GetWorkflowDescription(BusinessLayer.Data.Workflow wf);
+        Task<ActionResult> AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance = false);
+        Task<ActionResult> RequestReassignAsync(Workflow wf);
+        Task<ActionResult> ReassignAsync(Workflow wf, string userId, string actionName);
+        Task SaveQuestionAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question);
+        Task<IWorkflowDescription> GetWorkflowDescriptionAsync(Workflow wf);
     }
 }

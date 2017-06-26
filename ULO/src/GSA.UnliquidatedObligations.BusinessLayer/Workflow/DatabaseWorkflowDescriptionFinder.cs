@@ -15,28 +15,23 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
             DB = db;
         }
 
-        private readonly IDictionary<string, IWorkflowDescription> FinderCache = new Dictionary<string, IWorkflowDescription>();
-
         Task<IWorkflowDescription> IWorkflowDescriptionFinder.FindAsync(string workflowDefinitionKey, int minVersion)
         {
-            IWorkflowDescription ret = null;
-            var cacheKey = Cache.CreateKey(workflowDefinitionKey, minVersion);
-            if (!FinderCache.TryGetValue(cacheKey, out ret))
-            {
-                var z =
-                    (
-                    from wd in DB.WorkflowDefinitions
-                    where wd.WorkflowKey == workflowDefinitionKey && wd.Version >= minVersion
-                    orderby wd.Version descending
-                    select wd
-                    ).FirstOrDefault();
+            var z =
+                (
+                from wd in DB.WorkflowDefinitions
+                where wd.WorkflowKey == workflowDefinitionKey && wd.Version >= minVersion
+                orderby wd.Version descending
+                select wd
+                ).FirstOrDefault();
 
-                if (z != null)
-                {
-                    ret = (IWorkflowDescription)WorkflowDescription.DeserializeFromXml(z.DescriptionXml);
-                }
-                FinderCache[cacheKey] = ret;
+            IWorkflowDescription ret = null;
+
+            if (z != null)
+            {
+                ret = (IWorkflowDescription)WorkflowDescription.DeserializeFromXml(z.DescriptionXml);
             }
+
             return Task.FromResult(ret);
         }
     }

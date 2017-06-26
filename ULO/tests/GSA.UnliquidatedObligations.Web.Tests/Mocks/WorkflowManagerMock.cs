@@ -15,7 +15,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Mocks
 
             var d = (IWorkflowDescription)JsonConvert.DeserializeObject<WorkflowDescription>(WorkflowDescriptionData.GenerateData(currentActivityMock));
 
-            wfManager.Setup(wfm => wfm.GetWorkflowDescription(It.IsAny<Workflow>()))
+            wfManager.Setup(wfm => wfm.GetWorkflowDescriptionAsync(It.IsAny<Workflow>()))
                .ReturnsAsync(d);
 
             return wfManager.Object;

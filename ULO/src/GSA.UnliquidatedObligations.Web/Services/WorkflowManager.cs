@@ -11,9 +11,16 @@ using System.Web.Routing;
 using Autofac;
 using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
+using GSA.UnliquidatedObligations.Utility.Caching;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
+    /// <remarks>
+    /// Caching in here is present because when we're being called from Background.AssignWorkFlows thousands of times,
+    /// we need to prevent unnecesary database calls and slow EntityFramework in memory Find commands.
+    /// The caching is local only, as opposed to being injected as we're not worried about being called from different user threads, 
+    /// just background ones, AND we're caching EF objects, so at most, this would have had to have been injected with caller scope
+    /// </remarks>
     public class WorkflowManager : IWorkflowManager
     {
         public const string WorkflowIdRouteValueName = "workflowId";
@@ -22,6 +29,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IWorkflowDescriptionFinder Finder;
         private readonly IBackgroundJobClient BackgroundJobClient;
         protected readonly ULODBEntities DB;
+        private readonly ICacher Cacher = new Cache.BasicCacher();
 
         public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, ULODBEntities db)
         {
@@ -43,7 +51,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance = false)
         {
             string nextOwnerId = "";
-            var desc = await (this as IWorkflowManager).GetWorkflowDescription(wf);
+            var desc = await (this as IWorkflowManager).GetWorkflowDescriptionAsync(wf);
             var currentActivity = desc.WebActionWorkflowActivities.FirstOrDefault(z => z.WorkflowActivityKey == wf.CurrentWorkflowActivityKey);
 
             //if question is null stays in current activity
@@ -67,55 +75,59 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
             //TODO: Updata other info like the owner, date
             //TODO: Add logic for handling groups of users.
-                if (nextActivity is WebActionWorkflowActivity)
+            if (nextActivity is WebActionWorkflowActivity)
+            {
+                if (wf.OwnerUserId != nextActivity.OwnerUserId || forceAdvance == true)
                 {
-                    if (wf.OwnerUserId != nextActivity.OwnerUserId || forceAdvance == true)
+                    nextOwnerId = await GetNextOwnerAsync(nextActivity.OwnerUserId, wf,
+                        nextActivity.WorkflowActivityKey);
+                    wf.OwnerUserId = nextOwnerId;
+                    var nextUser = Cacher.FindOrCreateValWithSimpleKey(
+                        wf.OwnerUserId,
+                        () => DB.AspNetUsers.Find(wf.OwnerUserId));
+                    var emailTemplate = Cacher.FindOrCreateValWithSimpleKey(
+                        nextActivity.EmailTemplateId,
+                        () => DB.EmailTemplates.Find(nextActivity.EmailTemplateId));
+                    var emailModel = new EmailViewModel
                     {
-                        nextOwnerId = await GetNextOwnerAsync(nextActivity.OwnerUserId, wf,
-                            nextActivity.WorkflowActivityKey);
-                        wf.OwnerUserId = nextOwnerId;
-                        var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId);
-                        var emailTemplate = await DB.EmailTemplates.FindAsync(nextActivity.EmailTemplateId);
-                        var emailModel = new EmailViewModel
-                        {
-                            UserName = nextUser.UserName,
-                            PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
-                        };
-                        //TODO: What happens if it crashes?
-                        //BackgroundJobClient.Enqueue<IBackgroundTasks>(
-                           // bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
-                    }
-                    wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
-
-                    if (nextActivity.DueIn != null)
-                        wf.ExpectedDurationInSeconds = (long?)nextActivity.DueIn.Value.TotalSeconds;
-
-                    if (question != null && question.Answer == "Valid")
-                    {
-                        wf.UnliquidatedObligation.Valid = true;
-                    }
-                    else if (question != null && question.Answer == "Invalid")
-                    {
-                        wf.UnliquidatedObligation.Valid = false;
-                    }
-
-                    //TODO: if owner changes, look at other ways of redirecting.
-
-                    var next = (WebActionWorkflowActivity)nextActivity;
-                    var c = new RedirectingController();
-
-                    var routeValues = new RouteValueDictionary(next.RouteValueByName);
-                    //routeValues[WorkflowIdRouteValueName] = wf.WorkflowId;
-                    return c.RedirectToAction(next.ActionName, next.ControllerName, routeValues);
+                        UserName = nextUser.UserName,
+                        PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
+                    };
+                    //TODO: What happens if it crashes?
+                    //BackgroundJobClient.Enqueue<IBackgroundTasks>(
+                    // bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
                 }
-                else
+                wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
+
+                if (nextActivity.DueIn != null)
+                    wf.ExpectedDurationInSeconds = (long?)nextActivity.DueIn.Value.TotalSeconds;
+
+                if (question != null && question.Answer == "Valid")
                 {
-                    //TODO: handle background hangfire.
-                    throw new NotImplementedException();
+                    wf.UnliquidatedObligation.Valid = true;
                 }
+                else if (question != null && question.Answer == "Invalid")
+                {
+                    wf.UnliquidatedObligation.Valid = false;
+                }
+
+                //TODO: if owner changes, look at other ways of redirecting.
+
+                var next = (WebActionWorkflowActivity)nextActivity;
+                var c = new RedirectingController();
+
+                var routeValues = new RouteValueDictionary(next.RouteValueByName);
+                //routeValues[WorkflowIdRouteValueName] = wf.WorkflowId;
+                return c.RedirectToAction(next.ActionName, next.ControllerName, routeValues);
+            }
+            else
+            {
+                //TODO: handle background hangfire.
+                throw new NotImplementedException();
+            }
         }
 
-        async Task<ActionResult> IWorkflowManager.RequestReassign(Workflow wf)
+        async Task<ActionResult> IWorkflowManager.RequestReassignAsync(Workflow wf)
         {
             //TODO: Get programatically based on user's region
             var reassignGroupId = await GetNextOwnerAsync("ab9684e5-a277-41df-a268-f861416a3f0e", wf, "");
@@ -125,7 +137,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return await Task.FromResult(c.RedirectToAction("Index", "Ulo", routeValues));
         }
 
-        async Task IWorkflowManager.SaveQuestion(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
+        async Task IWorkflowManager.SaveQuestionAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
         {
             var questionFromDB = await DB.UnliqudatedObjectsWorkflowQuestions.FirstOrDefaultAsync(q => q.WorkflowId == wf.WorkflowId && q.Pending == true);
             if (questionFromDB == null)
@@ -143,7 +155,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        async Task<ActionResult> IWorkflowManager.Reassign(Workflow wf, string userId, string actionName)
+        async Task<ActionResult> IWorkflowManager.ReassignAsync(Workflow wf, string userId, string actionName)
         {
             //TODO: Get programatically based on user's region
             //TODO: split up into two for redirect and reassign.
@@ -174,12 +186,12 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 return await Task.FromResult(proposedOwnerId);
             }
             return await Task.FromResult(output.Value.ToString());
-
         }
 
-        async Task<IWorkflowDescription> IWorkflowManager.GetWorkflowDescription(Workflow wf)
-        {
-            return await Finder.FindAsync(wf.WorkflowKey, wf.Version);
-        }
+        Task<IWorkflowDescription> IWorkflowManager.GetWorkflowDescriptionAsync(Workflow wf)
+            => Cacher.FindOrCreateValWithSimpleKeyAsync(
+                Cache.CreateKey(wf.WorkflowKey, wf.Version),
+                () => Finder.FindAsync(wf.WorkflowKey, wf.Version)
+                );        
     }
 }

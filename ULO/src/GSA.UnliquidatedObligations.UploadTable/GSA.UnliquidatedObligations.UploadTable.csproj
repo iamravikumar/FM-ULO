@@ -57,6 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Caching\Cache.cs" />
+    <Compile Include="Caching\CacheEntry.cs" />
+    <Compile Include="Caching\ICacheEntry.cs" />
+    <Compile Include="Caching\ICacher.cs" />
     <Compile Include="CollectionHelpers.cs" />
     <Compile Include="Collections\ReadonlyDictionary.cs" />
     <Compile Include="Comparers.cs" />

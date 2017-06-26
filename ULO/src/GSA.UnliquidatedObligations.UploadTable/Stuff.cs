@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Utility
 {
@@ -22,5 +23,21 @@ namespace GSA.UnliquidatedObligations.Utility
         {
             return o == null ? nullValue : o.ToString();
         }
+
+        public static TResult ExecuteSynchronously<TResult>(this Task<TResult> task)
+        {
+            var t = Task.Run(async () => await task);
+            t.Wait();
+            if (t.IsFaulted) throw task.Exception;
+            return t.Result;
+        }
+
+        public static void ExecuteSynchronously(this Task task)
+        {
+            var t = Task.Run(async () => await task);
+            t.Wait();
+            if (t.IsFaulted) throw task.Exception;
+        }
+
     }
 }

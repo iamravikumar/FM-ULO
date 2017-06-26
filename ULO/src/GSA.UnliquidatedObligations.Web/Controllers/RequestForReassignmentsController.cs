@@ -75,7 +75,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     WorkflowId = workflowId,
                     Comments = requestForReassignmentViewModel.Comments
                 };
-                var ret = await Manager.Reassign(wf, requestForReassignmentViewModel.SuggestedReviewerId, "RegionWorkflows");
+                var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, "RegionWorkflows");
                 await DB.SaveChangesAsync();
                 return ret;
             }
@@ -199,7 +199,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             };
             DB.RequestForReassignments.Add(requestForReassignment);
-            var ret = await Manager.RequestReassign(wf);
+            var ret = await Manager.RequestReassignAsync(wf);
             await DB.SaveChangesAsync();
             return ret;
         }
@@ -210,7 +210,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             requestForReassignment.UnliqudatedWorkflowQuestionsId = question.UnliqudatedWorkflowQuestionsId;
             requestForReassignment.WorkflowId = wf.WorkflowId;
             requestForReassignment.IsActive = false;
-            var ret = await Manager.Reassign(wf, suggestedReviewerId, "Index");
+            var ret = await Manager.ReassignAsync(wf, suggestedReviewerId, "Index");
             //TODO: add redirect method here.
             await DB.SaveChangesAsync();
             return ret;

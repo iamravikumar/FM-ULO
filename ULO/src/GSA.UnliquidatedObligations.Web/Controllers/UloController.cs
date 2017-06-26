@@ -110,9 +110,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
-        {
-            return await Manager.GetWorkflowDescription(wf);
-        }
+            => await Manager.GetWorkflowDescriptionAsync(wf);
 
         //TODO: Move to Manager?
         private async Task<Workflow> FindWorkflowAsync(int workflowId, bool checkOwner = true)
@@ -196,7 +194,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 Pending = true,
                 UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId
             };
-            await Manager.SaveQuestion(wf, question);
+            await Manager.SaveQuestionAsync(wf, question);
             await DB.SaveChangesAsync();
             return await Details(uloId, workflowId);
         }
@@ -208,7 +206,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private async Task<ActionResult> AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
         {
-            await Manager.SaveQuestion(wf, question);
+            await Manager.SaveQuestionAsync(wf, question);
             var ret = await Manager.AdvanceAsync(wf, question);
             await DB.SaveChangesAsync();
             return ret;
