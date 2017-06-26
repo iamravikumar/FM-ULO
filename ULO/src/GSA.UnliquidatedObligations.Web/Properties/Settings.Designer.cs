@@ -40,5 +40,14 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((bool)(this["UseDevAuthentication"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DocPath {
+            get {
+                return ((string)(this["DocPath"]));
+            }
+        }
     }
 }
