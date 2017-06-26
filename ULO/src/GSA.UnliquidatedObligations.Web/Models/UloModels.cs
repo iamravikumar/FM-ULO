@@ -79,12 +79,23 @@ namespace GSA.UnliquidatedObligations.Web.Models
             JustificationId = question  != null ? Convert.ToInt32(question.JustificationId) : 0;
             WorkflowId = workflowId;
             DefaultJustifications = new List<Justification>();
+            //TODO: I know.  A little messy.
             if (Answer != "" && question.Pending == true)
             {
                 var justificationEnums = workflowQuestionChoices.Choices.First(c => c.Value == Answer).JustificationsEnums;
-                foreach (var justificationsEnum in justificationEnums)
+                if (justificationEnums != null)
                 {
-                    DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
+                    foreach (var justificationsEnum in justificationEnums)
+                    {
+                        DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
+                    }
+                }
+                else if (workflowQuestionChoices.DefaultJustificationEnums != null)
+                {
+                    foreach (var justificationsEnum in workflowQuestionChoices.DefaultJustificationEnums)
+                    {
+                        DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
+                    }
                 }
             }
             else if (workflowQuestionChoices.DefaultJustificationEnums != null)
