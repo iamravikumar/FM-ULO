@@ -13,6 +13,9 @@
     {
         <tr>
             <th>
+                @Html.SortableHeaderFor(z => z.ReviewId, overrideDisplayName: "Review ID")
+            </th>
+            <th>
                 @Html.SortableHeaderFor(z => z.CreatedAt, overrideDisplayName: "Created At")
             </th>
             <th>
@@ -40,6 +43,9 @@
     @foreach (var item in Model)
     {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReviewId)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)
             </td>
