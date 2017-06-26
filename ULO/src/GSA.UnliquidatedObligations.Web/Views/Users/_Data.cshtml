@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<GSA.UnliquidatedObligations.Web.Models.UserModel>
+@using GSA.UnliquidatedObligations.Utility
 
 <table class="table table-responsive users-data">
     <tr>
@@ -22,7 +23,12 @@
                 <ul>
                     @foreach (var claim in user.Claims)
                     {
-                        <li>@claim</li>
+                        var c = claim;
+                        if (!RegexHelpers.Common.Whitespace.IsMatch(c))
+                        {
+                            c = StringHelpers.ToTitleFriendlyString(c);
+                        }
+                        <li>@c</li>
                     }
                 </ul>
 
@@ -35,17 +41,17 @@
                     }
                 </ul>
             </td>
-            <td><ul>
+            <td>
+                <ul>
                     @foreach (var otherRegion in user.OtherRegions)
                     {
                         <li>@otherRegion</li>
                     }
-</ul></td>
+                </ul>
+            </td>
             <td>
                 <a data-id="@user.UserId" class="edit-user" href="#editUserModal">Edit</a>
             </td>
         </tr>
     }
-
 </table>
-

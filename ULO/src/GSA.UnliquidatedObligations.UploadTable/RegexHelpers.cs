@@ -6,6 +6,8 @@ namespace GSA.UnliquidatedObligations.Utility
     {
         public static class Common
         {
+            public static readonly Regex Whitespace = new Regex(@"\s", RegexOptions.Compiled | RegexOptions.Singleline);
+
             public static readonly Regex CSharpIdentifier = new Regex(@"^[a-z][a-z0-9_]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             /// <remarks>

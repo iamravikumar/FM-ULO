@@ -1,4 +1,5 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Models
+@using GSA.UnliquidatedObligations.Utility
 @model EditUserBodyModel
 
 <div class="panel panel-default">
@@ -11,7 +12,7 @@
             {
                 <div class="checkbox">
                     <input name="ApplicationPermission" type="checkbox" checked="@claim.Selected" value="@claim.ApplicationPermission" id="@claim.ApplicationPermission"/>
-                    <label for="@claim.ApplicationPermission">@claim.ApplicationPermission</label>
+                    <label for="@claim.ApplicationPermission">@claim.ApplicationPermission.ToTitleFriendlyString()</label>
                 </div>
             }
         </div>
