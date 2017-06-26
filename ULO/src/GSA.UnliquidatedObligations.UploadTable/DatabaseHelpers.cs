@@ -37,8 +37,9 @@ namespace GSA.UnliquidatedObligations.Utility
                 {
                     ReadTable:
                     DataTable dt = null;
-                    while (reader.Read())
+                    for (;;)
                     {
+                        bool hasRow = reader.Read();
                         if (dt == null)
                         {
                             var tableName = string.Format("Table{0}", ds.Tables.Count);
@@ -66,6 +67,7 @@ namespace GSA.UnliquidatedObligations.Utility
                                 dt.Columns.Add(c);
                             }
                         }
+                        if (!hasRow) break;
                         var vals = new object[reader.FieldCount];
                         reader.GetValues(vals);
                         dt.Rows.Add(vals);
