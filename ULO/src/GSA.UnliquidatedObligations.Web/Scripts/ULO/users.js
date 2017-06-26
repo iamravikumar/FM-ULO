@@ -3,9 +3,20 @@ $(document).ready(function () {
     $("#RegionId").change(function () {
         UsersRegionChanged(this.value);
     });
+   
+    
+    addEditClick();
+    addCreateClick();
+});
+
+function addSaveClick() {
+    $(".save-user").unbind("click");
     $(".save-user").click(function () {
+        $(this).prop("disabled", true);
+        $(".close-save-user").prop("disabled", true);
+        $(this).text("Saving...");
         var data = $("form[name=editUserForm]").serializeArray();
-        
+
         var postData = new FormPostData(data, $("#RegionId").val());
         //console.log(postData);
         $.ajax({
@@ -16,6 +27,9 @@ $(document).ready(function () {
                 $(".users-data").html(result);
                 addEditClick();
                 $("#editUserModal").modal("hide");
+                $(this).prop("disabled", false);
+                $(".close-save-user").prop("disabled", true);
+                $(this).text("Save");
             },
             error: function (xhr, status, p3, p4) {
                 var err = "Error " + " " + status + " " + p3 + " " + p4;
@@ -25,33 +39,7 @@ $(document).ready(function () {
             }
         });
     });
-
-    $(".save-new-user").click(function () {
-        var data = $("form[name=createUserForm]").serializeArray();
-
-        var postData = new CreateUserFormData(data, $("#RegionId").val());
-       // console.log(postData);
-        $.ajax({
-            type: "POST",
-            url: "/Users/CreateUser",
-            data: JSON.stringify(postData),
-            success: function (result) {
-               // $(".users-data").html(result);
-                //addEditClick();
-                $("#createUserModal").modal("hide");
-            },
-            error: function (xhr, status, p3, p4) {
-                var err = "Error " + " " + status + " " + p3 + " " + p4;
-                if (xhr.responseText && xhr.responseText[0] == "{")
-                    err = JSON.parse(xhr.responseText).Message;
-                console.log(err);
-            }
-        });
-    });
-
-    addEditClick();
-    addCreateClick();
-});
+}
 
 function addDeleteSubjectCategoryDeleteClick() {
     $(".delete-action").unbind("click");
@@ -201,6 +189,7 @@ function addEditClick() {
         $("#editUserModalOuterContainer").load(url, function () {
             addAddSubjectCategoryClick();
             addDeleteSubjectCategoryDeleteClick();
+            addSaveClick();
            
             loading(false);
         });
