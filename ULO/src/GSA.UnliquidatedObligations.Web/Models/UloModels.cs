@@ -164,7 +164,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                         workflow.CurrentWorkflowActivityKey);
 
                 var unliqudatedObjectsWorkflowQuestionPending = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
-                if (unliqudatedObjectsWorkflowQuestionPending == null)
+                if (unliqudatedObjectsWorkflowQuestionPending == null && questions.Count > 0)
                 {
                     AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow.WorkflowId);
                 }
