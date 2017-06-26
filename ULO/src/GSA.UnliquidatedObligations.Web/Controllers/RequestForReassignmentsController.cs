@@ -16,14 +16,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     public class RequestForReassignmentsController : BaseController
     {
         protected readonly IWorkflowManager Manager;
-        protected readonly ULODBEntities DB;
         private readonly ApplicationUserManager UserManager;
 
-        public RequestForReassignmentsController(IWorkflowManager manager, ULODBEntities db, ApplicationUserManager userManager, IComponentContext componentContext)
-            : base(componentContext)
+        public RequestForReassignmentsController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext)
+            : base(db, componentContext)
         {
             Manager = manager;
-            DB = db;
             UserManager = userManager;
         }
 

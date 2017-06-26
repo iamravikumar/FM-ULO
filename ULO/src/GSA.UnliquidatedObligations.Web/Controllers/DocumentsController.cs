@@ -11,18 +11,17 @@ using System.Web.Mvc;
 using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
+using GSA.UnliquidatedObligations.Utility;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class DocumentsController : BaseController
     {
-        private readonly ULODBEntities DB;
         private readonly ApplicationUserManager UserManager;
 
-        public DocumentsController(ULODBEntities db, ApplicationUserManager userManager, IComponentContext componentContext)
-            : base(componentContext)
+        public DocumentsController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext)
+            : base(db, componentContext)
         {
-            DB = db;
             UserManager = userManager;
         }
 
@@ -95,21 +94,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 await DB.SaveChangesAsync();
                 if (TempData["attachments"] != null)
                 {
-                    List<Attachment> attachmentsTempData = (List<Attachment>)TempData["attachments"];
+                    var attachmentsTempData = (List<Attachment>)TempData["attachments"];
                     foreach (var tempAttachment in attachmentsTempData)
                     {
-                        var newWebPath = tempAttachment.FilePath.Replace("Temp/", "");
-                        var fileName = Path.GetFileName(tempAttachment.FilePath);
-                        var tempPath = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage/Temp"), fileName);
-                        var newPhysicalPath = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage"), fileName);
-                        System.IO.File.Copy(tempPath, newPhysicalPath);
+                        var path = PortalHelpers.GetStorageFolderPath($"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat");
+                        System.IO.File.Copy(tempAttachment.FilePath, path);
                         var attachment = new Attachment
                         {
                             FileName = tempAttachment.FileName,
-                            FilePath = newWebPath,
+                            FilePath = path,
                             DocumentId = document.DocumentId
                         };
                         DB.Attachments.Add(attachment);
+                        Stuff.FileTryDelete(tempAttachment.FileName);
                     }
                     await DB.SaveChangesAsync();
                     TempData["attachments"] = null;

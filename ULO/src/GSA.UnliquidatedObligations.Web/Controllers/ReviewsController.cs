@@ -16,12 +16,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class ReviewsController : BaseController
     {
-        private readonly ULODBEntities DB;
         private readonly IBackgroundJobClient BackgroundJobClient;
-        public ReviewsController(ULODBEntities db, IBackgroundJobClient backgroundJobClient, IComponentContext componentContext)
-            : base(componentContext)
+
+        public ReviewsController(IBackgroundJobClient backgroundJobClient, ULODBEntities db, IComponentContext componentContext)
+            : base(db, componentContext)
         {
-            DB = db;
             BackgroundJobClient = backgroundJobClient;
         }
 
@@ -58,7 +57,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Review/Create
         [HttpPost]
-        public ActionResult Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId,ReviewDateInitiated")] ReviewModel reviewModel)
+        public async Task<ActionResult> Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId,ReviewDateInitiated")] ReviewModel reviewModel)
         {
             //var content = "inside create<br />";
             try
@@ -81,7 +80,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         
                     };
                     DB.Reviews.Add(review);
-                    DB.SaveChanges();
+                    await DB.SaveChangesAsync();
                     //content += "after review save<br />";
 
                     var uploadFiles = new UploadFilesModel(review.ReviewId);
@@ -91,49 +90,35 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         var fileContent = Request.Files[file];
                         if (fileContent != null && fileContent.ContentLength > 0)
                         {
-
-                            var stream = fileContent.InputStream;
-                            var storageName = Guid.NewGuid() + ".dat";
-                            var reviewFolder = review.ReviewId / 1024;
-                            var path =
-                                HostingEnvironment.MapPath("~/Content/DocStorage/ReviewUploads/" + reviewFolder + "/" +
-                                                           review.ReviewId);
-                            if (!Directory.Exists(path))
+                            var path = PortalHelpers.GetStorageFolderPath($"ReviewUploads/{review.ReviewId / 1024}/{review.ReviewId}/{Guid.NewGuid()}.dat");
+                            using (var fileStream = System.IO.File.Create(path))
                             {
-                                DirectoryInfo di = Directory.CreateDirectory(path);
+                                await fileContent.InputStream.CopyToAsync(fileStream);
                             }
-                            var storagePath = Path.Combine(path, storageName);
-                            using (var fileStream = System.IO.File.Create(storagePath))
-                            {
-                                stream.CopyTo(fileStream);
-                            }
-
                             switch (file)
                             {
                                 case "pegasysFiles":
-                                    uploadFiles.PegasysFilePathsList.Add(storagePath);
+                                    uploadFiles.PegasysFilePathsList.Add(path);
                                     break;
                                 case "retaFiles":
-                                    uploadFiles.RetaFileList.Add(storagePath);
+                                    uploadFiles.RetaFileList.Add(path);
                                     break;
                                 case "easiFiles":
-                                    uploadFiles.EasiFileList.Add(storagePath);
+                                    uploadFiles.EasiFileList.Add(path);
                                     break;
                                 case "One92Files":
-                                    uploadFiles.One92FileList.Add(storagePath);
+                                    uploadFiles.One92FileList.Add(path);
                                     break;
                                 default:
                                     break;
                             }
-
-
                         }
                     }
                     var uploadFilesJobId = BackgroundJobClient.Enqueue<IBackgroundTasks>(
                             bt => bt.UploadFiles(uploadFiles));
 
                     var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>(uploadFilesJobId,
-                        bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, review.ReviewDateInitiated));
+                        bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, review.ReviewDateInitiated.Value));
 
                     BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
                 }

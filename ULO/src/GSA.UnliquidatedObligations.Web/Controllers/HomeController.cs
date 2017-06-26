@@ -6,22 +6,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class HomeController : BaseController
     {
-        protected readonly ULODBEntities DB;
-
-        public HomeController(ULODBEntities db, IComponentContext componentContext) 
-            : base(componentContext)
-        {
-            DB = db;
-        }
-
-
+        public HomeController(ULODBEntities db, IComponentContext componentContext)
+            : base(db, componentContext)
+        { }
 
         public ActionResult Index()
         {
             return View();
         }
-
-
-
     }
 }

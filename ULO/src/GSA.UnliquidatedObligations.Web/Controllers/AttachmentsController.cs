@@ -1,34 +1,23 @@
-﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
+﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.Hosting;
 using System.Web.Mvc;
-using Autofac;
-using GSA.UnliquidatedObligations.Web.Properties;
-using System.Net.Http;
-using System.Net.Http.Headers;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class AttachmentsController : BaseController
     {
-
-        private readonly ULODBEntities DB;
         public AttachmentsController(ULODBEntities db, IComponentContext componentContext)
-            : base(componentContext)
-        {
-            DB = db;
-        }
+            : base(db, componentContext)
+        { }
 
         [HttpPost]
         public async Task<JsonResult> FileUpload(int documentId)
         {
             var attachmentsAdded = new List<Attachment>();
-            var docPath = Properties.Settings.Default.DocPath;
             List<Attachment> attachmentsTempData;
             if (TempData["attachments"] != null)
             {
@@ -39,39 +28,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 attachmentsTempData = new List<Attachment>();
             }
             try
-            {
-                
+            {                
                 foreach (string file in Request.Files)
                 {
                     var fileContent = Request.Files[file];
                     if (fileContent != null && fileContent.ContentLength > 0)
                     {
-                        // get a stream
-                        var stream = fileContent.InputStream;
-                        // and optionally write the file to disk
-                        var fileName = Path.GetFileName(fileContent.FileName);
-                        var storageName = Guid.NewGuid() + Path.GetExtension(fileName);
-
-                        //var path = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage/Temp"), storageName);
-                        var path = docPath + "/Temp";
-                        if (!Directory.Exists(path))
+                        var path = PortalHelpers.GetStorageFolderPath($"Temp/{Guid.NewGuid()}.dat");
+                        using (var fileStream = System.IO.File.Create(path))
                         {
-                            DirectoryInfo di = Directory.CreateDirectory(path);
-                        }
-                        var storagePath = Path.Combine(path, storageName);
-                        var webPath = Settings.Default.SiteUrl + "/Content/DocStorage/Temp/" + storageName;
-                        using (var fileStream = System.IO.File.Create(storagePath))
-                        {
-                            stream.CopyTo(fileStream);
+                            await fileContent.InputStream.CopyToAsync(fileStream);
                         }
                         var attachment = new Attachment
                         {
-                            FileName = fileName,
-                            FilePath = webPath,
+                            FileName = fileContent.FileName,
+                            FilePath = path,
                             DocumentId = documentId,
                         };
-                        attachmentsAdded.Add(attachment);
-                        
+                        attachmentsAdded.Add(attachment);                        
                         //DB.Attachments.Add(attachment);
                     }
                 }
@@ -94,24 +68,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [HttpGet]
         public async Task<FileResult> Download(int attachmentId)
         {
-            try
-            {
-                var attachment = await DB.Attachments.FindAsync(attachmentId);
-
-                var path = attachment.FilePath;
-                HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
-                var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-                
-                result.Content = new StreamContent(stream);
-                result.Content.Headers.ContentType =
-                    new MediaTypeHeaderValue("application/octet-stream");
-                return File(stream, System.Net.Mime.MediaTypeNames.Application.Octet, attachment.FileName);
- 
-            }
-            catch (Exception)
-            {
-                throw new HttpException(404, "Error Downloading file");
-            }
+            var attachment = await DB.Attachments.FindAsync(attachmentId);
+            return File(System.IO.File.OpenRead(attachment.FilePath), System.Net.Mime.MediaTypeNames.Application.Octet, attachment.FileName);
         }
 
 

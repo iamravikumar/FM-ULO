@@ -25,13 +25,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string ExecuteReport = "ExecuteReport";
         }
 
-        protected readonly ULODBEntities DB;
-
         public ReportsController(ULODBEntities db, IComponentContext componentContext)
-            : base(componentContext)
-        {
-            DB = db;
-        }
+            : base(db, componentContext)
+        { }
 
         [ActionName(ActionNames.ListReports)]
         [Route("Reports")]

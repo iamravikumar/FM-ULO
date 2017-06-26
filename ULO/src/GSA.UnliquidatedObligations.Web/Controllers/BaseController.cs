@@ -3,14 +3,18 @@ using System.Linq;
 using System.Web.Mvc;
 using Autofac;
 using GSA.UnliquidatedObligations.Utility;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public abstract class BaseController : Controller
     {
+        protected readonly ULODBEntities DB;
         protected readonly IComponentContext ComponentContext;
-        public BaseController(IComponentContext componentContext)
+
+        public BaseController(ULODBEntities db, IComponentContext componentContext)
         {
+            DB = db;
             ComponentContext = componentContext;
             System.Web.HttpContext.Current.Items["ComponentContext"] = ComponentContext;
         }

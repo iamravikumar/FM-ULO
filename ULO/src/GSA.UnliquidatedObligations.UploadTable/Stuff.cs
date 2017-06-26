@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Utility
@@ -22,6 +24,16 @@ namespace GSA.UnliquidatedObligations.Utility
         public static string Object2String(object o, string nullValue=null)
         {
             return o == null ? nullValue : o.ToString();
+        }
+
+        public static void FileTryDelete(string fn)
+        {
+            if (string.IsNullOrEmpty(fn)) return;
+            try
+            {
+                File.Delete(fn);
+            }
+            catch (Exception) { }
         }
 
         public static TResult ExecuteSynchronously<TResult>(this Task<TResult> task)

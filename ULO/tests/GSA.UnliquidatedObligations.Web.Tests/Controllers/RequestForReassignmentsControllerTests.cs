@@ -15,11 +15,10 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         public override void Initialize()
         {
             base.Initialize();
-            Controller = new RequestForReassignmentsController(WorkflowManager, DbContext, ApplicationUserManager, ComponentContext)
+            Controller = new RequestForReassignmentsController(WorkflowManager, ApplicationUserManager, DbContext, ComponentContext)
             {
                 ControllerContext = ControllerContext
             };
-
         }
 
         [TestMethod]

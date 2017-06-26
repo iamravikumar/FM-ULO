@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.Owin;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -21,8 +22,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly IAuthenticationManager AuthenticationManager;
 
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, IComponentContext componentContext)
-            : base(componentContext)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, ULODBEntities db, IComponentContext componentContext)
+            : base(db, componentContext)
         {
             UserManager = userManager;
             SignInManager = signInManager;

@@ -8,14 +8,13 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
     [TestClass]
     public class DocumentControllerTests : ControllerTests
     {
-
         private DocumentsController Controller;
+
         [TestInitialize]
         public override void Initialize()
         {
             base.Initialize();
-            Controller = new DocumentsController(DbContext, ApplicationUserManager, ComponentContext);
-
+            Controller = new DocumentsController(ApplicationUserManager, DbContext, ComponentContext);
         }
 
         [TestMethod]
@@ -26,8 +25,5 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             Assert.AreEqual(returnedModel.DocumentTypeId, DocumentTypeId);
             Assert.AreEqual(returnedModel.DocumentTypes.Count, 5);
         }
-
-
-
     }
 }

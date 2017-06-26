@@ -5,6 +5,7 @@ using Autofac;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using GSA.UnliquidatedObligations.Web.Models;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -12,11 +13,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     public class ManageController : BaseController
     {
         private readonly ApplicationSignInManager SignInManager;
-        private ApplicationUserManager UserManager;
+        private readonly ApplicationUserManager UserManager;
         private readonly IAuthenticationManager AuthenticationManager;
 
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, IComponentContext componentContext)
-            : base(componentContext) 
+        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, ULODBEntities db, IComponentContext componentContext)
+            : base(db, componentContext) 
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -300,9 +301,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (disposing && UserManager != null)
             {
                 UserManager.Dispose();
-                UserManager = null;
             }
-
             base.Dispose(disposing);
         }
 

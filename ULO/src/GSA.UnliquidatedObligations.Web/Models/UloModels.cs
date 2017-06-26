@@ -82,7 +82,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             //TODO: I know.  A little messy.
             if (Answer != "" && question.Pending == true)
             {
-                var justificationEnums = workflowQuestionChoices.Choices.First(c => c.Value == Answer).JustificationsEnums;
+                var justificationEnums = workflowQuestionChoices.Choices.FirstOrDefault(c => c.Value == Answer)?.JustificationsEnums;
                 if (justificationEnums != null)
                 {
                     foreach (var justificationsEnum in justificationEnums)

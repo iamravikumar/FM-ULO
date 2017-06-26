@@ -12,12 +12,51 @@ using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Web.Mvc;
 using System.Configuration;
+using System.Web.Hosting;
 
 namespace GSA.UnliquidatedObligations.Web
 {
     public static class PortalHelpers
     {
         public static readonly string DefaultUloConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+
+        public static string GetStorageFolderPath(string relativePath, bool createFolderInNotExists=true)
+        {
+            var dir = Properties.Settings.Default.DocPath;
+            if (dir.ToLower() == "temp")
+            {
+                dir = Path.GetTempPath();
+            }
+            else if (dir.StartsWith("~"))
+            {
+                dir = HostingEnvironment.MapPath(dir);
+            }
+            var forwardSlash = dir.Contains("/");
+            dir = dir.Replace("\\", "/");
+            if (!dir.EndsWith("/"))
+            {
+                dir += "/";
+            }
+            relativePath = relativePath.Replace("\\", "/");
+            if (relativePath.StartsWith("/"))
+            {
+                relativePath = relativePath.Substring(1);
+            }
+            var path = dir + relativePath;
+            if (!forwardSlash)
+            {
+                path = path.Replace("/", "\\");
+            }
+            if (createFolderInNotExists)
+            {
+                dir = Path.GetDirectoryName(path);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+            }
+            return path;
+        }
 
         public static bool HasPermission(this IPrincipal user, ApplicationPermissionNames permissionName)
         {

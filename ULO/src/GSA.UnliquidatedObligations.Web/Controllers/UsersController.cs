@@ -14,17 +14,15 @@ using Microsoft.AspNet.Identity;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-
     [Authorize]
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
     public class UsersController : BaseController
     {
-        private readonly ULODBEntities DB;
         private readonly ApplicationUserManager UserManager;
 
-        public UsersController(ULODBEntities db, ApplicationUserManager userManager, IComponentContext context) : base(context)
+        public UsersController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext context)
+            : base(db, context)
         {
-            DB = db;
             UserManager = userManager;
         }
 
