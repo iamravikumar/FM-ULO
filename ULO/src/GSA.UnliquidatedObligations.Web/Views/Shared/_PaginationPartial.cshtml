@@ -35,9 +35,9 @@
                     Rows per page:
                     <select id="rows-per-page">
                         <option value="10">10</option>
-                        <option value="25">25</option>
                         <option value="50">50</option>
-                        <option value="75">75</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
                     </select>
                 </li>
                 <li>
@@ -71,34 +71,26 @@
 }
 
 <script type="text/javascript">
-    try {
-        var rowsPerPageCookieName = "rowsPerPage";
+    var rowsPerPageCookieName = "rowsPerPage";
 
-        function setExistingRowsPerPage() {
-            var rowsPerPageValue = 10;
-            var existingRowsPerPageValue = '@ViewBag.PageSize';
-            if (existingRowsPerPageValue) {
-                rowsPerPageValue = existingRowsPerPageValue;
-            }
-            $('#rows-per-page').val(rowsPerPageValue);
-        }
+    function onRowsPerPageChange() {
+        var selectedRowsPerPage = parseInt($('#rows-per-page').find(":selected").val());
+        setRootCookie(rowsPerPageCookieName, selectedRowsPerPage, 7);
+    }
 
-        function onRowsPerPageChange() {
-            var selectedRowsPerPage = parseInt($('#rows-per-page').find(":selected").val());
-            setRootCookie(rowsPerPageCookieName, selectedRowsPerPage, 7);
+    $(document).ready(function () {
+        var rowsPerPageValue = 10;
+        var existingRowsPerPageValue = '@ViewBag.PageSize';
+        if (existingRowsPerPageValue) {
+            rowsPerPageValue = existingRowsPerPageValue;
         }
+        $('#rows-per-page').val(rowsPerPageValue);
 
-        window.onload = function () {
-            setExistingRowsPerPage();
-
-            $('#rows-per-page').change(function () {
-                onRowsPerPageChange();
-                location.reload();
-            });
-        }
-        } catch (e) {
-            console.log('Error, setting rows per page.');
-        }
+        $('#rows-per-page').change(function () {
+            onRowsPerPageChange();
+            location.reload();
+        });
+    });
 </script>
 
 

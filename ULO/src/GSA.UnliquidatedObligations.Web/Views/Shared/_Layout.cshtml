@@ -7,23 +7,22 @@
     @Styles.Render("~/Content/css")
     @Styles.Render("~/ULO/css")
     @Scripts.Render("~/bundles/modernizr")
-
+    @Scripts.Render("~/bundles/jquery")
 </head>
 <body>
     @Html.Partial("_Navigation");
 
-<div class="container body-content">
-    @RenderBody()
-    <hr/>
-    <footer class="row">
-        <div class="col-md-6">&copy; @DateTime.Now.Year - ULO</div>
-        <div class="col-md-6 text-right">Pistons</div>
-    </footer>
-</div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer class="row">
+            <div class="col-md-6">&copy; @DateTime.Now.Year - ULO</div>
+            <div class="col-md-6 text-right">Pistons</div>
+        </footer>
+    </div>
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/bootstrap");
-@Scripts.Render("~/bundles/ULO");
-@RenderSection("scripts", required: false)
+    @Scripts.Render("~/bundles/bootstrap");
+    @Scripts.Render("~/bundles/ULO");
+    @RenderSection("scripts", required: false)
 </body>
 </html>
