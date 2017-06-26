@@ -72,7 +72,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulo/RegionWorkflows")]
-        public async Task<ActionResult> RegionWorkflows(string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<ActionResult> RegionWorkflows(string sortCol=null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);

@@ -5,12 +5,12 @@ using System.Linq;
 using System;
 using System.Data;
 using System.IO;
+using System.Data.Entity;
 using GSA.UnliquidatedObligations.Utility;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
 using GSA.UnliquidatedObligations.Web.Models;
-using Hangfire;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
@@ -93,13 +93,18 @@ namespace GSA.UnliquidatedObligations.Web.Services
         //TODO: Email on exception or let user know what happened.
         public async Task AssignWorkFlows(int reviewId)
         {
-            var workflows = DB.Workflows.Where(wf => wf.UnliquidatedObligation.ReviewId == reviewId).ToList();
+            var workflows = DB.Workflows.Include(wf => wf.UnliquidatedObligation).Where(wf => wf.UnliquidatedObligation.ReviewId == reviewId).ToList();
 
+            int z = 0;
             foreach (var workflow in workflows)
             {
                 await WorkflowManager.AdvanceAsync(workflow, null, true);
-                await DB.SaveChangesAsync();
+                if (++z % 10 == 0)
+                {
+                    await DB.SaveChangesAsync();
+                }
             }
+            await DB.SaveChangesAsync();
         }
 
         private void UploadCSVTable(int reviewId, string uploadPath)

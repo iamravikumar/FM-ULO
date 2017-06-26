@@ -56,9 +56,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\Cache.cs" />
     <Compile Include="CollectionHelpers.cs" />
     <Compile Include="Collections\ReadonlyDictionary.cs" />
     <Compile Include="Comparers.cs" />
+    <Compile Include="Crypto\CRC32Checksum.cs" />
+    <Compile Include="Crypto\IChecksum.cs" />
     <Compile Include="CSV.cs" />
     <Compile Include="DatabaseHelpers.cs" />
     <Compile Include="DataTableHelpers.cs" />

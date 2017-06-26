@@ -6,7 +6,9 @@
 
 <table class="table table-responsive active-workflows">
     <tr>
-        <th></th>
+        <th>
+            @Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")
+        </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
         </th>
@@ -36,7 +38,7 @@
     {
         <tr class="active-workflows-record" data-id="@item.WorkflowId">
             <td>
-                @Html.ActionLink("View ULO", "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+                @Html.ActionLink("View ULO "+ item.TargetUloId.ToString(), "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)

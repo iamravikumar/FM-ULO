@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -12,7 +11,6 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
-using System.Net.Http;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -77,6 +75,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         Comments = reviewModel.Comments,
                         ReviewScopeId = reviewModel.ReviewScopeId.Value,
                         WorkflowDefinitionId = reviewModel.WorkflowDefinitionId.Value,
+                        CreatedAtUtc = DateTime.UtcNow
                         //ProjectDueDate = reviewModel.ProjectDueDate.Value
                     };
                     DB.Reviews.Add(review);

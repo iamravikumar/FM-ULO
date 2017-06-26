@@ -163,8 +163,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return await Task.FromResult(c.RedirectToAction(actionName, "Ulo", routeValues));
         }
 
-
-
         private async Task<string> GetNextOwnerAsync(string proposedOwnerId, Workflow wf, string nextActivityKey)
         {
             //TODO: check if null, return proposedOwnserId
@@ -178,8 +176,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return await Task.FromResult(output.Value.ToString());
 
         }
-
-
 
         async Task<IWorkflowDescription> IWorkflowManager.GetWorkflowDescription(Workflow wf)
         {
