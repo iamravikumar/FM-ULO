@@ -13,7 +13,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     using System.Data.Entity.Core.Objects;
-
+    using System.Linq;
+    
     public partial class ULODBEntities : DbContext
     {
         public ULODBEntities()
@@ -35,6 +36,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<DocumentType> DocumentTypes { get; set; }
         public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
         public virtual DbSet<Note> Notes { get; set; }
+        public virtual DbSet<ReportDefinition> ReportDefinitions { get; set; }
         public virtual DbSet<RequestForReassignment> RequestForReassignments { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
@@ -47,7 +49,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<Zone> Zones { get; set; }
         public virtual DbSet<AspnetUserApplicationPermissionClaim> AspnetUserApplicationPermissionClaims { get; set; }
         public virtual DbSet<AspnetUserSubjectCategoryClaim> AspnetUserSubjectCategoryClaims { get; set; }
-        public virtual DbSet<ReportDefinition> ReportDefinitions { get; set; }
     
         public virtual int CreateULOAndAssignWf(Nullable<int> reviewId, Nullable<int> workflowDefinitionId, Nullable<System.DateTime> reviewDate)
         {
@@ -81,15 +82,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
                 new ObjectParameter("nextActivityKey", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNextLevelOwnerId", proposedOwnerIdParameter, workflowIdParameter, nextActivityKeyParameter, nextOwnerId);
-        }
-    
-        public virtual int DoSomething(Nullable<int> regionId)
-        {
-            var regionIdParameter = regionId.HasValue ?
-                new ObjectParameter("regionId", regionId) :
-                new ObjectParameter("regionId", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("DoSomething", regionIdParameter);
         }
     }
 }

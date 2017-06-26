@@ -58,7 +58,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Review/Create
         [HttpPost]
-        public ActionResult Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId")] ReviewModel reviewModel)
+        public ActionResult Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId,ReviewDateInitiated")] ReviewModel reviewModel)
         {
             //var content = "inside create<br />";
             try
@@ -75,8 +75,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         Comments = reviewModel.Comments,
                         ReviewScopeId = reviewModel.ReviewScopeId.Value,
                         WorkflowDefinitionId = reviewModel.WorkflowDefinitionId.Value,
-                        CreatedAtUtc = DateTime.UtcNow
-                        //ProjectDueDate = reviewModel.ProjectDueDate.Value
+                        CreatedAtUtc = DateTime.UtcNow,
+                        ReviewDateInitiated = reviewModel.ReviewDateInitiated
+                        //ProjectDueDate = reviewModel.ProjectDueDate.Value,
+                        
                     };
                     DB.Reviews.Add(review);
                     DB.SaveChanges();
@@ -131,7 +133,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             bt => bt.UploadFiles(uploadFiles));
 
                     var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>(uploadFilesJobId,
-                        bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, null));
+                        bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, review.ReviewDateInitiated));
 
                     BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
                 }

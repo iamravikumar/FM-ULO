@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using System;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
@@ -26,6 +27,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public List<SelectListItem> WorkflowDefinitions { get; set; }
         [Required(ErrorMessage = "Review Name is required")]
         public string ReviewName { get; set; }
+
+        [Required(ErrorMessage = "Review Date is required")]
+        public DateTime ReviewDateInitiated { get; set; }
         public string Comments { get; set; }
 
         //[Required(ErrorMessage = "Project Due Date is required")]
@@ -38,6 +42,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             ReviewTypes = reviewTypeEnums.ConvertToSelectList();
             ReviewScopes = reviewScopeEnums.ConvertToSelectList();
             WorkflowDefinitions = workflowDefinitions.ConvertToSelectList();
+            ReviewDateInitiated = DateTime.Now;
         }
 
         public ReviewModel()

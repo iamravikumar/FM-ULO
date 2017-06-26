@@ -86,7 +86,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             using (ULODBEntities _db = DB)
             {
                 _db.Database.CommandTimeout = 60*15;
-                _db.CreateULOAndAssignWf(reviewId, workflowDefinitionId, null);
+                _db.CreateULOAndAssignWf(reviewId, workflowDefinitionId, reviewDate);
             }
         }
 
