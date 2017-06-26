@@ -83,7 +83,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     //content += "after review save<br />";
 
                     var uploadFiles = new UploadFilesModel(review.ReviewId);
-                    var docPath = Properties.Settings.Default.DocPath;
                     foreach (string file in Request.Files)
                     {
                         //content += "staring " + file + "upload <br />";
@@ -94,7 +93,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             var stream = fileContent.InputStream;
                             var storageName = Guid.NewGuid() + ".dat";
                             var reviewFolder = review.ReviewId / 1024;
-                            var path = docPath + "/" + reviewFolder + "/" + review.ReviewId;
+                            var path =
+                                HostingEnvironment.MapPath("~/Content/DocStorage/ReviewUploads/" + reviewFolder + "/" +
+                                                           review.ReviewId);
                             if (!Directory.Exists(path))
                             {
                                 DirectoryInfo di = Directory.CreateDirectory(path);

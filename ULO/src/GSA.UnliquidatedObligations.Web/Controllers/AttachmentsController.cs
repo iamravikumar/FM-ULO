@@ -9,6 +9,8 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using Autofac;
 using GSA.UnliquidatedObligations.Web.Properties;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -26,6 +28,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<JsonResult> FileUpload(int documentId)
         {
             var attachmentsAdded = new List<Attachment>();
+            var docPath = Properties.Settings.Default.DocPath;
             List<Attachment> attachmentsTempData;
             if (TempData["attachments"] != null)
             {
@@ -37,6 +40,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             try
             {
+                
                 foreach (string file in Request.Files)
                 {
                     var fileContent = Request.Files[file];
@@ -47,9 +51,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         // and optionally write the file to disk
                         var fileName = Path.GetFileName(fileContent.FileName);
                         var storageName = Guid.NewGuid() + Path.GetExtension(fileName);
-                        var path = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage/Temp"), storageName);
+
+                        //var path = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage/Temp"), storageName);
+                        var path = docPath + "/Temp";
+                        if (!Directory.Exists(path))
+                        {
+                            DirectoryInfo di = Directory.CreateDirectory(path);
+                        }
+                        var storagePath = Path.Combine(path, storageName);
                         var webPath = Settings.Default.SiteUrl + "/Content/DocStorage/Temp/" + storageName;
-                        using (var fileStream = System.IO.File.Create(path))
+                        using (var fileStream = System.IO.File.Create(storagePath))
                         {
                             stream.CopyTo(fileStream);
                         }
@@ -86,7 +97,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             try
             {
                 var attachment = await DB.Attachments.FindAsync(attachmentId);
-                return File(attachment.FilePath, System.Net.Mime.MediaTypeNames.Application.Octet);
+
+                var path = attachment.FilePath;
+                HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+                var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                
+                result.Content = new StreamContent(stream);
+                result.Content.Headers.ContentType =
+                    new MediaTypeHeaderValue("application/octet-stream");
+                return File(stream, System.Net.Mime.MediaTypeNames.Application.Octet, attachment.FileName);
+ 
             }
             catch (Exception)
             {

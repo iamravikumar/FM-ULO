@@ -6,6 +6,9 @@ $(document).ready(function () {
     $("#attachment-file-upload").change(function (e) {
         uploadAttachment(parentDocumentId, e.target.files);
     });
+    $(".attachments-view").click(function () {
+        downloadAttachment($(this).data("target"));
+    })
 });
 
 function addAddAttachmentClick() {
@@ -96,9 +99,9 @@ function downloadAttachment(attachmentId) {
     $.ajax({
         type: "GET",
         url: "/Attachments/Download?attachmentId=" + attachmentId,
-        //success: function (result) {
-
-        //},
+        success: function (result) {
+            console.log(result);
+        },
         error: function (xhr, status, p3, p4) {
             var err = "Error " + " " + status + " " + p3 + " " + p4;
             if (xhr.responseText && xhr.responseText[0] == "{")
@@ -106,6 +109,7 @@ function downloadAttachment(attachmentId) {
             console.log(err);
         }
     });
+    return false;
 }
 
 function showAttachmentErrMsg(msg) {
