@@ -93,7 +93,19 @@ namespace GSA.UnliquidatedObligations.Web.Services
         //TODO: Email on exception or let user know what happened.
         public async Task AssignWorkFlows(int reviewId)
         {
-            var workflows = DB.Workflows.Include(wf => wf.UnliquidatedObligation).Where(wf => wf.UnliquidatedObligation.ReviewId == reviewId).ToList();
+            var systemUserType = UserTypes.System.ToString();
+
+            var systemUser =
+                DB.AspNetUsers.
+                FirstOrDefault(u => u.UserType == systemUserType);
+
+            var systemUserId = systemUser.Id;
+
+            var workflows = 
+                DB.Workflows.Include(wf => wf.UnliquidatedObligation).
+                Where(wf => wf.OwnerUserId== systemUserId).
+                OrderBy(wf => wf.UnliquidatedObligation.ReviewId == reviewId ? 0 : 1).
+                ToList();
 
             int z = 0;
             foreach (var workflow in workflows)

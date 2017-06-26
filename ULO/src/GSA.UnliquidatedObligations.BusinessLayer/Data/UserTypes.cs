@@ -4,5 +4,6 @@
     {
         Person,
         Group,
+        System,
     }
 }
