@@ -1,10 +1,39 @@
-﻿var select;
+﻿var select, submitActor;
 
 
 $(document).ready(function() {
 
     select = document.getElementById("justifications");
-    if (select && select.length === 1) {select.selectedIndex = 0;}
+    if (select && select.length === 1) { select.selectedIndex = 0; }
+
+    $("#validateAnswerMessage").hide();
+    $("#validateJustificationMessage").hide();
+
+    var $form = $('#uloDetailsForm');
+    var $submitActors = $form.find('input[type=submit]');
+
+
+    $submitActors.click(function () {
+        submitActor = this;
+    });
+
+    $form.submit(function () {
+        if (submitActor.name === "Advance") {
+            if ($("#Answer").val() === "") {
+                $("#validateAnswerMessage").show();
+                return false;
+            }
+            if ($("#justifications").val() === "") {
+                $("#validateJustificationMessage").show();
+                return false;
+            }
+           
+        }
+
+        $("#validateAnswerMessage").hide();
+        $("#validateJustificationMessage").hide();
+        return true;
+    })
 });
 
 function ChoiceChange(value, model) {

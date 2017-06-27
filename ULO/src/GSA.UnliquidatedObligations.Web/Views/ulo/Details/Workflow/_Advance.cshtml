@@ -13,13 +13,13 @@
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     <div class="col-md-3">
                         @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.Answer, new SelectList(Model.QuestionChoices, "Value", "Text"), "Select...", htmlAttributes: new { @onchange = "ChoiceChange(this.value," + @Html.Raw(Json.Encode(Model)) + ")" })
-                        @Html.ValidationMessageFor(model => model.Answer, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.Answer, new SelectList(Model.QuestionChoices, "Value", "Text"), "Select...", htmlAttributes: new { @onchange = "ChoiceChange(this.value," + @Html.Raw(Json.Encode(Model)) + ")" })<br />
+                        @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id="validateAnswerMessage", @class = "text-danger" })
                     </div>
                     <div class="col-md-9">
                         @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.JustificationId, new SelectList(Model.DefaultJustifications, "JustificationId", "JustificationText"), "Select....", htmlAttributes: new { id = "justifications" })
-                        @Html.ValidationMessageFor(model => model.JustificationId, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => model.JustificationId, new SelectList(Model.DefaultJustifications, "JustificationId", "JustificationText"), "Select....", htmlAttributes: new { id = "justifications" })<br />
+                        @Html.ValidationMessageFor(model => model.JustificationId, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
                     </div>
                 </div>
                 <div class="row other-comments row-space-top">

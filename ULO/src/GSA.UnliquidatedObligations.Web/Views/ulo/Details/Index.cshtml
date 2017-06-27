@@ -14,7 +14,7 @@
 <br />
 @Html.Partial("Details/Workflow/Assignment/_AssignedTo", Model.WorkflowViewModel)
 
-@using (Html.BeginForm("", "Ulo", new { uloId = @currentUloId, workflowId = @currentworkflowId }, FormMethod.Post))
+@using (Html.BeginForm("", "Ulo", new { uloId = @currentUloId, workflowId = @currentworkflowId }, FormMethod.Post, new { id = "uloDetailsForm"}))
 {
     @Html.AntiForgeryToken()
     @Html.Partial("Details/_Ulo", Model.CurretUnliquidatedObligation)
