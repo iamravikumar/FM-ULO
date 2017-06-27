@@ -1,6 +1,6 @@
-﻿$(document).ready(function () {
-    $("#filterRegions").hide();
-
+﻿$(document).ready(function () { 
+    setValid();
+    showHideFiltersInit();
     $("#clearFilters").click(function() {
         $("#pegasysDocumentNumber").val("");
         $("#organization").val("");
@@ -9,8 +9,8 @@
         $("#fund").val("");
         $("#baCode").val("");
         $("#docType").val("");
-        $("#ptn").val("");
-        $("#pvn").val("");
+        $("#pegasysTitleNumber").val("");
+        $("#pegasysVendorName").val("");
         $("#contractingOfficersName").val("");
         $("#awardNumber").val("");
         $("#reasonIncludedInReview").val("");
@@ -47,4 +47,44 @@ function filter(pdn, org, region, zone, fund, baCode, docType, ptn, pvn, contrac
     url += "&valid=" + (valid ? valid : "");
     url += "&status=" + (status ? status : "");
     $("#masterRecordsListing").load(url);
+}
+
+function showHideFiltersInit() {
+    if ($("#pegasysDocumentNumber").val() !="" ||
+        $("#organization").val() !="" ||
+        $("#region").val() !="" ||
+        $("#zone").val() !="" ||
+        $("#fund").val() !="" ||
+        $("#baCode").val() !="" ||
+        $("#docType").val() !="" ||
+        $("#pegasysTitleNumber").val() !="" ||
+        $("#pegasysVendorName").val() !="" ||
+        $("#contractingOfficersName").val() !="" ||
+        $("#awardNumber").val() !="" ||
+        $("#reasonIncludedInReview").val() !="" ||
+        $("#valid").val() !="" ||
+        $("#status").val() != "") {
+            $("#filterRegions").show();
+            $("#showFilters").html("Hide Filters");
+    }
+    else {
+        $("#filterRegions").hide();
+        $("#showFilters").html("Show Filters");
+    }
+}
+
+function setValid() {
+    var valid = getParameterByName("valid");
+    if (valid != "") {
+        $("#valid").val(valid);
+    }
+}
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return "";
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }

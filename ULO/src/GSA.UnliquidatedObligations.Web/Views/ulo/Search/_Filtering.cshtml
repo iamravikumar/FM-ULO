@@ -2,7 +2,6 @@
     Show Filters
 </button>
 
-
 @using (Html.BeginForm("RegionWorkflows", "Ulo", FormMethod.Get))
 {
     <table class="table filter-region-workflows table" id="filterRegions">
@@ -26,7 +25,7 @@
         <tr>
             <td class="label-container"><label for="organization">Organization:</label></td>
             <td><input type="text" name="organization" id="organization" value="@Context.Request["organization"]" /></td>
-            <td class="label-container"><label for="pdn">BA Code:</label></td>
+            <td class="label-container"><label for="baCode">BA Code:</label></td>
             <td><input type="text" name="baCode" id="baCode" value="@Context.Request["baCode"]" /></td>
             <td class="label-container"><label for="pegasysVendorName">Pegasys Vendor Name:</label></td>
             <td><input type="text" name="pegasysVendorName" id="pegasysVendorName" value="@Context.Request["pegasysVendorName"]" /></td>
@@ -49,7 +48,7 @@
                 </select>
             </td>
             <td class="label-container"><label for="status">Status:</label></td>
-            <td><input type="text" name="status" id="status" /></td>
+            <td><input type="text" name="status" id="status" alue="@Context.Request["status"]" /></td>
         </tr>
         <tr>
             <td colspan="4">
