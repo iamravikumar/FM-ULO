@@ -18,6 +18,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public Nullable<int> DocumentId { get; set; }
+        public long FileSize { get; set; }
+        public string ContentType { get; set; }
     
         public virtual Document Document { get; set; }
     }

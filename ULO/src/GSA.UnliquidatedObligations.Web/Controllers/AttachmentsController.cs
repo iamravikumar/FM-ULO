@@ -60,6 +60,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             FileName = fileContent.FileName,
                             FilePath = path,
                             DocumentId = documentId,
+                            FileSize = fileContent.ContentLength,
+                            ContentType = fileContent.ContentType ?? System.Net.Mime.MediaTypeNames.Application.Octet
                         };
                         attachmentsAdded.Add(attachment);                        
                         //DB.Attachments.Add(attachment);
@@ -86,7 +88,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var attachment = await DB.Attachments.FindAsync(attachmentId);
             var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath, false);
-            return File(System.IO.File.OpenRead(path), System.Net.Mime.MediaTypeNames.Application.Octet, attachment.FileName);
+            return File(System.IO.File.OpenRead(path), attachment.ContentType, attachment.FileName);
         }
 
         // POST: Attachments/Delete/5

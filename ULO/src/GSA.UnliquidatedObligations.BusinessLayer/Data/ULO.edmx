@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -65,6 +65,8 @@
           <Property Name="FileName" Type="varchar" MaxLength="500" />
           <Property Name="FilePath" Type="varchar" MaxLength="300" />
           <Property Name="DocumentId" Type="int" />
+          <Property Name="FileSize" Type="bigint" Nullable="false" />
+          <Property Name="ContentType" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="Documents">
           <Key>
@@ -84,34 +86,6 @@
           <Property Name="DocumentTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6013: The table/view 'ULO B.dbo.EASI' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-        <EntityType Name="EASI">
-          <Property Name="ReviewId" Type="int" />
-          <Property Name="Created by users Region" Type="nvarchar(max)" />
-          <Property Name="Office" Type="nvarchar(max)" />
-          <Property Name="Created By (User Full Name)" Type="nvarchar(max)" />
-          <Property Name="Contracting Officers Name" Type="nvarchar(max)" />
-          <Property Name="Contracting Userid" Type="nvarchar(max)" />
-          <Property Name="Awd Obligated Amt" Type="nvarchar(max)" />
-          <Property Name="Current Awd Amt" Type="nvarchar(max)" />
-          <Property Name="Document Nbr" Type="nvarchar(max)" />
-          <Property Name="Award Nbr" Type="nvarchar(max)" />
-          <Property Name="Base Contract Nbr" Type="nvarchar(max)" />
-          <Property Name="GSA FSS/Other #" Type="nvarchar(max)" />
-          <Property Name="Vendor Name" Type="nvarchar(max)" />
-          <Property Name="Status Cd" Type="nvarchar(max)" />
-          <Property Name="Status Ds" Type="nvarchar(max)" />
-          <Property Name="Procurement Status" Type="nvarchar(max)" />
-          <Property Name="Create Dt" Type="datetime" />
-          <Property Name="Signed On Date" Type="datetime" />
-          <Property Name="Awd Effective Dt" Type="datetime" />
-          <Property Name="Awd Expiration Dt" Type="datetime" />
-          <Property Name="CLIN ADN" Type="nvarchar(max)" />
-          <Property Name="ACT/PDN" Type="nvarchar(max)" />
-          <Property Name="Data Source" Type="nvarchar(max)" />
-          <Property Name="Region Cd" Type="nvarchar(max)" />
-        </EntityType>-->
         <EntityType Name="EmailTemplates">
           <Key>
             <PropertyRef Name="EmailTemplateId" />
@@ -130,102 +104,6 @@ warning 6013: The table/view 'ULO B.dbo.EASI' does not have a primary key define
           <Property Name="NoteContents" Type="varchar" MaxLength="1000" />
           <Property Name="UloId" Type="int" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6013: The table/view 'ULO B.dbo.PegasysObligations192' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-        <EntityType Name="PegasysObligations192">
-          <Property Name="ReviewId" Type="int" />
-          <Property Name="Region" Type="int" />
-          <Property Name="Fund" Type="nvarchar(max)" />
-          <Property Name="Organization" Type="nvarchar(max)" />
-          <Property Name="Prog" Type="nvarchar(max)" />
-          <Property Name="Doc Type" Type="nvarchar(max)" />
-          <Property Name="Doc Num" Type="nvarchar(max)" />
-          <Property Name="Itmz Ln Num" Type="int" />
-          <Property Name="Actg Ln Num" Type="int" />
-          <Property Name="Title" Type="nvarchar(max)" />
-          <Property Name="BBFY" Type="nvarchar(max)" />
-          <Property Name="EBFY" Type="nvarchar(max)" />
-          <Property Name="Acty" Type="nvarchar(max)" />
-          <Property Name="O/C" Type="nvarchar(max)" />
-          <Property Name="SOC" Type="nvarchar(max)" />
-          <Property Name="Project" Type="nvarchar(max)" />
-          <Property Name="Agreement" Type="nvarchar(max)" />
-          <Property Name="Contract Num" Type="nvarchar(max)" />
-          <Property Name="Bldg" Type="nvarchar(max)" />
-          <Property Name="Sys/Loc" Type="nvarchar(max)" />
-          <Property Name="Veh Tag" Type="nvarchar(max)" />
-          <Property Name="WI" Type="nvarchar(max)" />
-          <Property Name="Lease Number" Type="nvarchar(max)" />
-          <Property Name="Vendor Name" Type="nvarchar(max)" />
-          <Property Name="Actg Pd" Type="nvarchar(max)" />
-          <Property Name="Total Line" Type="money" />
-          <Property Name="Commitments" Type="money" />
-          <Property Name="Prepayments" Type="money" />
-          <Property Name="Undel Orders" Type="money" />
-          <Property Name="Rcpt" Type="money" />
-          <Property Name="Accrual" Type="money" />
-          <Property Name="Pend Payments" Type="money" />
-          <Property Name="Pymts(In Transit)" Type="money" />
-          <Property Name="Pymts(Confirmed)" Type="money" />
-          <Property Name="Holdbacks" Type="money" />
-          <Property Name="TAFS" Type="nvarchar(max)" />
-          <Property Name="DUNS #" Type="nvarchar(max)" />
-          <Property Name="Date of Last Activity" Type="datetime" />
-          <Property Name="Days Since First Activity" Type="int" />
-          <Property Name="Days Since Last Activity" Type="int" />
-          <Property Name="Date of First Activity" Type="datetime" />
-          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
-          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
-          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
-        </EntityType>-->
-        <!--Errors Found During Generation:
-warning 6013: The table/view 'ULO B.dbo.PegasysObligations442' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-        <EntityType Name="PegasysObligations442">
-          <Property Name="ReviewId" Type="int" />
-          <Property Name="Region" Type="int" />
-          <Property Name="Fund" Type="nvarchar(max)" />
-          <Property Name="Organization" Type="nvarchar(max)" />
-          <Property Name="Prog" Type="nvarchar(max)" />
-          <Property Name="Doc Type" Type="nvarchar(max)" />
-          <Property Name="Doc Num" Type="nvarchar(max)" />
-          <Property Name="Itmz Ln Num" Type="int" />
-          <Property Name="Actg Ln Num" Type="int" />
-          <Property Name="Title" Type="nvarchar(max)" />
-          <Property Name="BBFY" Type="nvarchar(max)" />
-          <Property Name="EBFY" Type="nvarchar(max)" />
-          <Property Name="Acty" Type="nvarchar(max)" />
-          <Property Name="O/C" Type="nvarchar(max)" />
-          <Property Name="SOC" Type="nvarchar(max)" />
-          <Property Name="Project" Type="nvarchar(max)" />
-          <Property Name="Agreement" Type="nvarchar(max)" />
-          <Property Name="Contract Num" Type="nvarchar(max)" />
-          <Property Name="Bldg" Type="nvarchar(max)" />
-          <Property Name="Sys/Loc" Type="nvarchar(max)" />
-          <Property Name="Veh Tag" Type="nvarchar(max)" />
-          <Property Name="WI" Type="nvarchar(max)" />
-          <Property Name="Lease Number" Type="nvarchar(max)" />
-          <Property Name="Vendor Name" Type="nvarchar(max)" />
-          <Property Name="Actg Pd" Type="nvarchar(max)" />
-          <Property Name="Total Line" Type="money" />
-          <Property Name="Commitments" Type="money" />
-          <Property Name="Prepayments" Type="money" />
-          <Property Name="Undel Orders" Type="money" />
-          <Property Name="Rcpt" Type="money" />
-          <Property Name="Accrual" Type="money" />
-          <Property Name="Pend Payments" Type="money" />
-          <Property Name="Pymts(In Transit)" Type="money" />
-          <Property Name="Pymts(Confirmed)" Type="money" />
-          <Property Name="Holdbacks" Type="money" />
-          <Property Name="TAFS" Type="nvarchar(max)" />
-          <Property Name="DUNS #" Type="nvarchar(max)" />
-          <Property Name="Date of Last Activity" Type="nvarchar(max)" />
-          <Property Name="Days Since First Activity" Type="int" />
-          <Property Name="Days Since Last Activity" Type="int" />
-          <Property Name="Date of First Activity" Type="nvarchar(max)" />
-          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
-          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
-          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
-        </EntityType>-->
         <EntityType Name="ReportDefinitions">
           <Key>
             <PropertyRef Name="ReportDefinitionId" />
@@ -244,58 +122,6 @@ warning 6013: The table/view 'ULO B.dbo.PegasysObligations442' does not have a p
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6013: The table/view 'ULO B.dbo.Reta' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-        <EntityType Name="Reta">
-          <Property Name="ReviewId" Type="int" />
-          <Property Name="Agreement" Type="int" />
-          <Property Name="RWA Type" Type="nvarchar(max)" />
-          <Property Name="Completion Date" Type="nvarchar(max)" />
-          <Property Name="Agency Bureau Code" Type="nvarchar(max)" />
-          <Property Name="RETA POC" Type="nvarchar(max)" />
-          <Property Name="Region" Type="int" />
-          <Property Name="Fund" Type="nvarchar(max)" />
-          <Property Name="Organization" Type="nvarchar(max)" />
-          <Property Name="Prog" Type="nvarchar(max)" />
-          <Property Name="Doc Type" Type="nvarchar(max)" />
-          <Property Name="Doc Num" Type="nvarchar(max)" />
-          <Property Name="Itmz Ln Num" Type="int" />
-          <Property Name="Actg Ln Num" Type="int" />
-          <Property Name="Title" Type="nvarchar(max)" />
-          <Property Name="BBFY" Type="nvarchar(max)" />
-          <Property Name="EBFY" Type="nvarchar(max)" />
-          <Property Name="Acty" Type="nvarchar(max)" />
-          <Property Name="O/C" Type="nvarchar(max)" />
-          <Property Name="SOC" Type="nvarchar(max)" />
-          <Property Name="Project" Type="nvarchar(max)" />
-          <Property Name="Contract Num" Type="nvarchar(max)" />
-          <Property Name="Bldg" Type="nvarchar(max)" />
-          <Property Name="Sys/Loc" Type="nvarchar(max)" />
-          <Property Name="Veh Tag" Type="nvarchar(max)" />
-          <Property Name="WI" Type="nvarchar(max)" />
-          <Property Name="Lease Number" Type="nvarchar(max)" />
-          <Property Name="Vendor Name" Type="nvarchar(max)" />
-          <Property Name="Actg Pd" Type="nvarchar(max)" />
-          <Property Name="Total Line" Type="money" />
-          <Property Name="Commitments" Type="money" />
-          <Property Name="Prepayments" Type="money" />
-          <Property Name="Undel Orders" Type="money" />
-          <Property Name="Rcpt" Type="money" />
-          <Property Name="Accrual" Type="money" />
-          <Property Name="Pend Payments" Type="money" />
-          <Property Name="Pymts(In Transit)" Type="money" />
-          <Property Name="Pymts(Confirmed)" Type="money" />
-          <Property Name="Holdbacks" Type="money" />
-          <Property Name="TAFS" Type="nvarchar(max)" />
-          <Property Name="DUNS #" Type="nvarchar(max)" />
-          <Property Name="Date of Last Activity" Type="datetime" />
-          <Property Name="Days Since First Activity" Type="int" />
-          <Property Name="Days Since Last Activity" Type="int" />
-          <Property Name="Date of First Activity" Type="datetime" />
-          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
-          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
-          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
-        </EntityType>-->
         <EntityType Name="Reviews">
           <Key>
             <PropertyRef Name="ReviewId" />
@@ -402,7 +228,6 @@ warning 6013: The table/view 'ULO B.dbo.Reta' does not have a primary key define
           <Property Name="WorkflowDefinitionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="WorkflowKey" Type="varchar" MaxLength="80" Nullable="false" />
           <Property Name="Version" Type="int" Nullable="false" />
-          <Property Name="DescriptionJson" Type="nvarchar(max)" />
           <Property Name="DescriptionXml" Type="xml" />
           <Property Name="WorkflowDefinitionName" Type="varchar" MaxLength="50" />
         </EntityType>
@@ -454,6 +279,8 @@ warning 6013: The table/view 'ULO B.dbo.Reta' does not have a primary key define
 warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspnetUserApplicationPermissionClaims">
           <Key>
+            
+            
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
@@ -466,6 +293,8 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' d
 warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspnetUserSubjectCategoryClaims">
           <Key>
+            
+            
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
@@ -476,8 +305,6 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="OrgCode" Type="nvarchar" MaxLength="50" />
           <Property Name="ClaimId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ULO B.dbo.WorkflowActivities' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <Association Name="FK__Document__Upload__7720AD13">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
@@ -988,8 +815,7 @@ warning 6002: The table/view 'ULO B.dbo.WorkflowActivities' does not have a prim
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1060,6 +886,8 @@ warning 6002: The table/view 'ULO B.dbo.WorkflowActivities' does not have a prim
           <Property Name="FilePath" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Name="DocumentId" Type="Int32" />
           <NavigationProperty Name="Document" Relationship="Self.FK_Attachments_ToDocument" FromRole="Attachments" ToRole="Documents" />
+          <Property Name="FileSize" Type="Int64" Nullable="false" />
+          <Property Name="ContentType" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Document">
           <Key>
@@ -1246,7 +1074,6 @@ warning 6002: The table/view 'ULO B.dbo.WorkflowActivities' does not have a prim
           <Property Name="WorkflowDefinitionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="WorkflowKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
-          <Property Name="DescriptionJson" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DescriptionXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="WorkflowDefinitionName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__Workflo__3BCADD1B" FromRole="WorkflowDefinitions" ToRole="Reviews" />
@@ -1848,6 +1675,8 @@ warning 6002: The table/view 'ULO B.dbo.WorkflowActivities' does not have a prim
           <EntitySetMapping Name="Attachments">
             <EntityTypeMapping TypeName="Model.Attachment">
               <MappingFragment StoreEntitySet="Attachments">
+                <ScalarProperty Name="ContentType" ColumnName="ContentType" />
+                <ScalarProperty Name="FileSize" ColumnName="FileSize" />
                 <ScalarProperty Name="AttachmentsId" ColumnName="AttachmentsId" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="FilePath" ColumnName="FilePath" />
@@ -2024,7 +1853,6 @@ warning 6002: The table/view 'ULO B.dbo.WorkflowActivities' does not have a prim
                 <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />
                 <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
-                <ScalarProperty Name="DescriptionJson" ColumnName="DescriptionJson" />
                 <ScalarProperty Name="DescriptionXml" ColumnName="DescriptionXml" />
                 <ScalarProperty Name="WorkflowDefinitionName" ColumnName="WorkflowDefinitionName" />
               </MappingFragment>

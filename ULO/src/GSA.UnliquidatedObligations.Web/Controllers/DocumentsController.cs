@@ -101,7 +101,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         {
                             FileName = tempAttachment.FileName,
                             FilePath = $"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat",
-                            DocumentId = document.DocumentId
+                            DocumentId = document.DocumentId,
+                            FileSize = tempAttachment.FileSize,
+                            ContentType = tempAttachment.ContentType
                         };
                         var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
                         System.IO.File.Copy(tempAttachment.FilePath, path);
@@ -138,7 +140,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 TempData["attachments"] = null;
             }
-
         }
 
         // GET: Documents/Delete/5

@@ -23,7 +23,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int WorkflowDefinitionId { get; set; }
         public string WorkflowKey { get; set; }
         public int Version { get; set; }
-        public string DescriptionJson { get; set; }
         public string DescriptionXml { get; set; }
         public string WorkflowDefinitionName { get; set; }
     
