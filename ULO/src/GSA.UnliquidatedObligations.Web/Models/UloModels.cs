@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using System.ComponentModel.DataAnnotations;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
@@ -48,6 +49,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string QuestionLabel { get; set; }
 
+        [Required(ErrorMessage = "Answer is required")]
         public string Answer { get; set; }
 
         public int JustificationId { get; set; }

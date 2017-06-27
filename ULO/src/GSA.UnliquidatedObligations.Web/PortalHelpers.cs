@@ -78,37 +78,28 @@ namespace GSA.UnliquidatedObligations.Web
         {
 
             var predicate = originalPredicate;
-            var pdnDecoded = HttpUtility.HtmlDecode(pegasysDocumentNumber).Trim().ToLower();
-            var orgDecoded = HttpUtility.HtmlDecode(organization).Trim().ToLower();
-            var fundDecoded = HttpUtility.HtmlDecode(fund).Trim().ToLower();
-            var baCodeDecoded = HttpUtility.HtmlDecode(baCode).Trim().ToLower();
-            var pegasysTitleNumberDecoded = HttpUtility.HtmlDecode(pegasysTitleNumber).Trim().ToLower();
-            var pegasysVendorNameDecoded = HttpUtility.HtmlDecode(pegasysVendorName).Trim().ToLower();
-            var docTypeDecoded = HttpUtility.HtmlDecode(docType).Trim().ToLower();
-            var contractingOfficersNameDecoded = HttpUtility.HtmlDecode(contractingOfficersName).Trim().ToLower();
-            var awardNumberDecoded = HttpUtility.HtmlDecode(awardNumber).Trim().ToLower();
-            var reasonIncludedInReviewDecoded = HttpUtility.HtmlDecode(reasonIncludedInReview).Trim().ToLower();
-            var statusDecoded = HttpUtility.HtmlDecode(status).Trim().ToLower();
+        
 
-            if (!String.IsNullOrEmpty(pdnDecoded))
+            if (!String.IsNullOrEmpty(pegasysDocumentNumber))
             {
-                if (pdnDecoded.StartsWith("%") && pdnDecoded.EndsWith("%"))
+                pegasysDocumentNumber = pegasysDocumentNumber.Trim().ToLower();
+                if (pegasysDocumentNumber.StartsWith("%") && pegasysDocumentNumber.EndsWith("%"))
                 {
-                    var pdn = pdnDecoded.Replace("%", "");
+                    var pdn = pegasysDocumentNumber.Trim().ToLower().Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.PegasysDocumentNumber.Trim().ToLower().Contains(pdn));
                 }
-                else if (pdnDecoded.StartsWith("%"))
+                else if (pegasysDocumentNumber.StartsWith("%"))
                 {
-                    var pdn = pdnDecoded.Replace("%", "");
+                    var pdn = pegasysDocumentNumber.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.PegasysDocumentNumber.Trim().ToLower().EndsWith(pdn));
                 }
-                else if (pdnDecoded.EndsWith("%"))
+                else if (pegasysDocumentNumber.EndsWith("%"))
                 {
-                    var pdn = pdnDecoded.Replace("%", "");
+                    var pdn = pegasysDocumentNumber.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.PegasysDocumentNumber.Trim().ToLower().StartsWith(pdn));
@@ -117,29 +108,30 @@ namespace GSA.UnliquidatedObligations.Web
                 {
                     predicate =
                         predicate.And(
-                            wf => wf.UnliquidatedObligation.PegasysDocumentNumber.Trim().ToLower() == pdnDecoded);
+                            wf => wf.UnliquidatedObligation.PegasysDocumentNumber.Trim().ToLower() == pegasysDocumentNumber);
                 }
             }
 
-            if (!String.IsNullOrEmpty(orgDecoded))
+            if (!String.IsNullOrEmpty(organization))
             {
-                if (orgDecoded.StartsWith("%") && orgDecoded.EndsWith("%"))
+                organization = organization.Trim().ToLower();
+                if (organization.StartsWith("%") && organization.EndsWith("%"))
                 {
-                    var orgCode = orgDecoded.Replace("%", "");
+                    var orgCode = organization.Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.Organization.Trim().ToLower().Contains(orgCode));
                 }
-                else if (orgDecoded.StartsWith("%"))
+                else if (organization.StartsWith("%"))
                 {
-                    var orgCode = orgDecoded.Replace("%", "");
+                    var orgCode = organization.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.Organization.Trim().ToLower().EndsWith(orgCode));
                 }
-                else if (orgDecoded.EndsWith("%"))
+                else if (organization.EndsWith("%"))
                 {
-                    var orgCode = orgDecoded.Replace("%", "");
+                    var orgCode = organization.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.Organization.Trim().ToLower().StartsWith(orgCode));
@@ -147,7 +139,7 @@ namespace GSA.UnliquidatedObligations.Web
                 else
                 {
                     predicate =
-                        predicate.And(wf => wf.UnliquidatedObligation.Organization.Trim().ToLower() == orgDecoded);
+                        predicate.And(wf => wf.UnliquidatedObligation.Organization.Trim().ToLower() == organization);
                 }
             }
 
@@ -161,84 +153,87 @@ namespace GSA.UnliquidatedObligations.Web
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Region.ZoneId == zone);
             }
 
-            if (!String.IsNullOrEmpty(fundDecoded))
+            if (!String.IsNullOrEmpty(fund))
             {
-                if (fundDecoded.StartsWith("%") && fundDecoded.Trim().ToLower().EndsWith("%"))
+                fund = fund.Trim().ToLower();
+                if (fund.StartsWith("%") && fund.EndsWith("%"))
                 {
-                    var fund1 = fundDecoded.Replace("%", "");
+                    var fund1 = fund.Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.Fund.Trim().ToLower().Contains(fund1));
                 }
-                else if (fundDecoded.StartsWith("%"))
+                else if (fund.StartsWith("%"))
                 {
-                    var fund1 = fundDecoded.Replace("%", "");
+                    var fund1 = fund.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.Fund.Trim().ToLower().EndsWith(fund1));
                 }
-                else if (fundDecoded.EndsWith("%"))
+                else if (fund.EndsWith("%"))
                 {
-                    var fund1 = fundDecoded.Replace("%", "");
+                    var fund1 = fund.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.Fund.StartsWith(fund1));
                 }
                 else
                 {
-                    predicate = predicate.And(wf => wf.UnliquidatedObligation.Fund.Trim().ToLower() == fundDecoded);
+                    predicate = predicate.And(wf => wf.UnliquidatedObligation.Fund.Trim().ToLower() == fund);
                 }
             }
 
-            if (!String.IsNullOrEmpty(baCodeDecoded))
+            if (!String.IsNullOrEmpty(baCode))
             {
-                if (baCodeDecoded.StartsWith("%") && baCodeDecoded.EndsWith("%"))
+                baCode = baCode.Trim().ToLower();
+                if (baCode.StartsWith("%") && baCode.EndsWith("%"))
                 {
-                    var prog = baCodeDecoded.Replace("%", "");
+                    var prog = baCode.Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.Prog.Trim().ToLower().Contains(prog));
                 }
-                else if (baCodeDecoded.StartsWith("%"))
+                else if (baCode.StartsWith("%"))
                 {
-                    var prog = baCodeDecoded.Replace("%", "");
+                    var prog = baCode.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.Prog.Trim().ToLower().EndsWith(prog));
                 }
-                else if (baCodeDecoded.EndsWith("%"))
+                else if (baCode.EndsWith("%"))
                 {
-                    var prog = baCodeDecoded.Replace("%", "");
+                    var prog = baCode.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.Prog.Trim().ToLower().StartsWith(prog));
                 }
                 else
                 {
-                    predicate = predicate.And(wf => wf.UnliquidatedObligation.Prog.Trim().ToLower() == baCodeDecoded);
+                    predicate = predicate.And(wf => wf.UnliquidatedObligation.Prog.Trim().ToLower() == baCode);
                 }
                 
             }
 
-            if (!String.IsNullOrEmpty(pegasysTitleNumberDecoded))
+            if (!String.IsNullOrEmpty(pegasysTitleNumber))
             {
-                if (pegasysTitleNumberDecoded.StartsWith("%") && pegasysTitleNumberDecoded.EndsWith("%"))
+                pegasysTitleNumber = pegasysTitleNumber.Trim().ToLower();
+                if (pegasysTitleNumber.StartsWith("%") && pegasysTitleNumber.EndsWith("%"))
                 {
-                    var ptn = pegasysTitleNumberDecoded.Replace("%", "");
+                    var ptn = pegasysTitleNumber.Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.PegasysTitleNumber.Trim().ToLower().Contains(ptn));
                 }
-                else if (pegasysTitleNumberDecoded.StartsWith("%"))
+                else if (pegasysTitleNumber.StartsWith("%"))
                 {
-                    var ptn = pegasysTitleNumberDecoded.Replace("%", "");
+                    var ptn = pegasysTitleNumber.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.PegasysTitleNumber.Trim().ToLower().EndsWith(ptn));
                 }
-                else if (pegasysTitleNumberDecoded.EndsWith("%"))
+                else if (pegasysTitleNumber.EndsWith("%"))
                 {
-                    var ptn = pegasysTitleNumberDecoded.Replace("%", "");
+                    var ptn = pegasysTitleNumber.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.PegasysTitleNumber.Trim().ToLower().StartsWith(ptn));
@@ -249,29 +244,30 @@ namespace GSA.UnliquidatedObligations.Web
                         predicate.And(
                             wf =>
                                 wf.UnliquidatedObligation.PegasysTitleNumber.Trim().ToLower() ==
-                                pegasysTitleNumberDecoded);
+                                pegasysTitleNumber);
                 }
             }
 
-            if (!String.IsNullOrEmpty(pegasysVendorNameDecoded))
+            if (!String.IsNullOrEmpty(pegasysVendorName))
             {
-                if (pegasysVendorNameDecoded.StartsWith("%") && pegasysVendorNameDecoded.EndsWith("%"))
+                pegasysVendorName = pegasysVendorName.Trim().ToLower();
+                if (pegasysVendorName.StartsWith("%") && pegasysVendorName.EndsWith("%"))
                 {
-                    var pgVendorName = pegasysVendorNameDecoded.Replace("%", "");
+                    var pgVendorName = pegasysVendorName.Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.VendorName.Trim().ToLower().Contains(pgVendorName));
                 }
-                else if (pegasysVendorNameDecoded.StartsWith("%"))
+                else if (pegasysVendorName.StartsWith("%"))
                 {
-                    var pgVendorName = pegasysVendorNameDecoded.Replace("%", "");
+                    var pgVendorName = pegasysVendorName.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.VendorName.Trim().ToLower().EndsWith(pgVendorName));
                 }
-                else if (pegasysVendorNameDecoded.EndsWith("%"))
+                else if (pegasysVendorName.EndsWith("%"))
                 {
-                    var pgVendorName = pegasysVendorNameDecoded.Replace("%", "");
+                    var pgVendorName = pegasysVendorName.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.VendorName.Trim().ToLower().StartsWith(pgVendorName));
@@ -280,35 +276,36 @@ namespace GSA.UnliquidatedObligations.Web
                 {
                     predicate =
                         predicate.And(wf =>
-                            wf.UnliquidatedObligation.VendorName.Trim().ToLower() == pegasysVendorNameDecoded);
+                            wf.UnliquidatedObligation.VendorName.Trim().ToLower() == pegasysVendorName);
                 }
             }
 
-            if (!String.IsNullOrEmpty(docTypeDecoded))
+            if (!String.IsNullOrEmpty(docType))
             {
                 //TODO: Add Doctype comparison code
                 //predicate = predicate.And(wf => wf.UnliquidatedObligation.PegasysVendorName == pegasysVendorNameDecoded);
             }
 
-            if (!String.IsNullOrEmpty(contractingOfficersNameDecoded))
+            if (!String.IsNullOrEmpty(contractingOfficersName))
             {
-                if (contractingOfficersNameDecoded.StartsWith("%") && contractingOfficersNameDecoded.EndsWith("%"))
+                contractingOfficersName = contractingOfficersName.Trim().ToLower();
+                if (contractingOfficersName.StartsWith("%") && contractingOfficersName.EndsWith("%"))
                 {
-                    var ctoName = contractingOfficersNameDecoded.Replace("%", "");
+                    var ctoName = contractingOfficersName.Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.ContractingOfficersName.Trim().ToLower().Contains(ctoName));
                 }
-                else if (contractingOfficersNameDecoded.StartsWith("%"))
+                else if (contractingOfficersName.StartsWith("%"))
                 {
-                    var ctoName = contractingOfficersNameDecoded.Replace("%", "");
+                    var ctoName = contractingOfficersName.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.ContractingOfficersName.Trim().ToLower().EndsWith(ctoName));
                 }
-                else if (contractingOfficersNameDecoded.EndsWith("%"))
+                else if (contractingOfficersName.EndsWith("%"))
                 {
-                    var ctoName = contractingOfficersNameDecoded.Replace("%", "");
+                    var ctoName = contractingOfficersName.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.ContractingOfficersName.StartsWith(ctoName));
@@ -319,59 +316,61 @@ namespace GSA.UnliquidatedObligations.Web
                         predicate.And(
                             wf =>
                                 wf.UnliquidatedObligation.ContractingOfficersName.Trim().ToLower() ==
-                                contractingOfficersNameDecoded);
+                                contractingOfficersName);
                 }
             }
 
-            if (!String.IsNullOrEmpty(awardNumberDecoded))
+            if (!String.IsNullOrEmpty(awardNumber))
             {
-                if (awardNumberDecoded.StartsWith("%") && awardNumberDecoded.EndsWith("%"))
+                awardNumber = awardNumber.Trim().ToLower();
+                if (awardNumber.StartsWith("%") && awardNumber.EndsWith("%"))
                 {
-                    var awdNumber = awardNumberDecoded.Replace("%", "");
+                    var awdNumber = awardNumber.Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.AwardNbr.Trim().ToLower().Contains(awdNumber));
                 }
-                else if (awardNumberDecoded.StartsWith("%"))
+                else if (awardNumber.StartsWith("%"))
                 {
-                    var awdNumber = awardNumberDecoded.Replace("%", "");
+                    var awdNumber = awardNumber.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.AwardNbr.Trim().ToLower().EndsWith(awdNumber));
                 }
-                else if (awardNumberDecoded.EndsWith("%"))
+                else if (awardNumber.EndsWith("%"))
                 {
-                    var awdNumber = awardNumberDecoded.Replace("%", "");
+                    var awdNumber = awardNumber.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.AwardNbr.Trim().ToLower().StartsWith(awdNumber));
                 }
                 else
                 {
-                    predicate = predicate.And(wf => wf.UnliquidatedObligation.AwardNbr.Trim().ToLower() == awardNumberDecoded);
+                    predicate = predicate.And(wf => wf.UnliquidatedObligation.AwardNbr.Trim().ToLower() == awardNumber);
                 }
                
             }
 
-            if (!String.IsNullOrEmpty(reasonIncludedInReviewDecoded))
+            if (!String.IsNullOrEmpty(reasonIncludedInReview))
             {
-                if (reasonIncludedInReviewDecoded.StartsWith("%") && reasonIncludedInReviewDecoded.EndsWith("%"))
+                reasonIncludedInReview = reasonIncludedInReview.Trim().ToLower();
+                if (reasonIncludedInReview.StartsWith("%") && reasonIncludedInReview.EndsWith("%"))
                 {
-                    var reason = reasonIncludedInReviewDecoded.Replace("%", "");
+                    var reason = reasonIncludedInReview.Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.ReasonIncludedInReview.Trim().ToLower().Contains(reason));
                 }
-                else if (reasonIncludedInReviewDecoded.StartsWith("%"))
+                else if (reasonIncludedInReview.StartsWith("%"))
                 {
-                    var reason = reasonIncludedInReviewDecoded.Replace("%", "");
+                    var reason = reasonIncludedInReview.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.ReasonIncludedInReview.Trim().ToLower().EndsWith(reason));
                 }
-                else if (reasonIncludedInReviewDecoded.EndsWith("%"))
+                else if (reasonIncludedInReview.EndsWith("%"))
                 {
-                    var reason = reasonIncludedInReviewDecoded.Replace("%", "");
+                    var reason = reasonIncludedInReview.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.ReasonIncludedInReview.Trim().ToLower().StartsWith(reason));
@@ -391,32 +390,33 @@ namespace GSA.UnliquidatedObligations.Web
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Valid == valid);
             }
 
-            if (!String.IsNullOrEmpty(statusDecoded))
+            if (!String.IsNullOrEmpty(status))
             {
-                if (statusDecoded.StartsWith("%") && statusDecoded.EndsWith("%"))
+                status = status.Trim().ToLower();
+                if (status.StartsWith("%") && status.EndsWith("%"))
                 {
-                    var stat = statusDecoded.Replace("%", "");
+                    var stat = status.Replace("%", "");
                     predicate =
                        predicate.And(
                            wf => wf.UnliquidatedObligation.Status.Trim().ToLower().Contains(stat));
                 }
-                else if (statusDecoded.StartsWith("%"))
+                else if (status.StartsWith("%"))
                 {
-                    var stat = statusDecoded.Replace("%", "");
+                    var stat = status.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.Status.Trim().ToLower().EndsWith(stat));
                 }
-                else if (statusDecoded.EndsWith("%"))
+                else if (status.EndsWith("%"))
                 {
-                    var stat = statusDecoded.Replace("%", "");
+                    var stat = status.Replace("%", "");
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.Status.Trim().ToLower().StartsWith(stat));
                 }
                 else
                 {
-                    predicate = predicate.And(wf => wf.UnliquidatedObligation.Status.Trim().ToLower() == statusDecoded);
+                    predicate = predicate.And(wf => wf.UnliquidatedObligation.Status.Trim().ToLower() == status);
                 }
             }
 
