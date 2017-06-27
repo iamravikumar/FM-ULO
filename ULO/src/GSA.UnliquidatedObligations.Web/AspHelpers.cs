@@ -55,18 +55,32 @@ namespace GSA.UnliquidatedObligations.Web
             actionName = actionName ?? hh.ViewContext.RouteData.Values["action"] as string;
             var colName = columnExpression.GetFullyQualifiedName();
             var displayName = overrideDisplayName ?? hh.FriendlyNameFor(columnExpression);
+
+            var routeValues = new System.Web.Routing.RouteValueDictionary();
+            foreach (string key in hh.ViewContext.HttpContext.Request.QueryString.Keys)
+            {
+                if (key == null) continue;
+                var val = hh.ViewContext.HttpContext.Request.QueryString[key];
+                if (val != null)
+                {
+                    routeValues[key] = val;
+                }
+            }
+            routeValues["sortCol"] = colName;
             if (colName == currentSortColName)
             {
+                routeValues["sortDir"] = IsSortDirAscending(currentSortDir) ? SortDirDescending : SortDirAscending;
                 var h = hh.ActionLink(
                     displayName,
                     actionName,
-                    new { sortCol = colName, sortDir = IsSortDirAscending(currentSortDir) ? SortDirDescending : SortDirAscending });
+                    routeValues);
                 h = h.AppendChildHtml(currentSortDir == SortDirAscending ? " <span class='caret-up'>^</span>" : " <span class='caret-down'>v</span>");
                 return h;
             }
             else
             {
-                return hh.ActionLink(displayName, actionName, new { sortCol = colName, sortDir = SortDirAscending });
+                routeValues["sortDir"] = SortDirAscending;
+                return hh.ActionLink(displayName, actionName, routeValues);
             }
         }
 
