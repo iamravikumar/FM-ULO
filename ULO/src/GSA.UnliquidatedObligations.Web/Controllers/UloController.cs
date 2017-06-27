@@ -70,7 +70,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulo/RegionWorkflows")]
-        public async Task<ActionResult> RegionWorkflows(string sortCol=null, string sortDir = null, int? page = null, int? pageSize = null)
+        public async Task<ActionResult> RegionWorkflows(string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string status, 
+            string sortCol=null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
@@ -80,6 +81,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 PredicateBuilder.Create<Workflow>(
                     wf => claimRegionIds.Contains((int) wf.UnliquidatedObligation.RegionId)
                           && wf.OwnerUserId != user.Id);
+
+
+            wfPredicate = wfPredicate.GenerateWorkflowPredicate(pegasysDocumentNumber, organization, region, zone, fund,
+              baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, awardNumber, reasonIncludedInReview, valid, status);
+
 
             var workflows = await ApplyBrowse(
                 DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region).Include(wf => wf.UnliquidatedObligation.Region.Zone),
