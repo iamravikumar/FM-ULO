@@ -77,9 +77,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
             //TODO: Add logic for handling groups of users.
             if (nextActivity is WebActionWorkflowActivity)
             {
-                if (wf.OwnerUserId != nextActivity.OwnerUserId || forceAdvance == true)
+                if (wf.AspNetUser.UserName != nextActivity.OwnerUserName || forceAdvance == true)
                 {
-                    nextOwnerId = await GetNextOwnerAsync(nextActivity.OwnerUserId, wf,
+                    nextOwnerId = await GetNextOwnerUserIdAsync(nextActivity.OwnerUserName, wf,
                         nextActivity.WorkflowActivityKey);
                     wf.OwnerUserId = nextOwnerId;
                     var nextUser = Cacher.FindOrCreateValWithSimpleKey(
@@ -130,7 +130,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         async Task<ActionResult> IWorkflowManager.RequestReassignAsync(Workflow wf)
         {
             //TODO: Get programatically based on user's region
-            var reassignGroupId = await GetNextOwnerAsync("ab9684e5-a277-41df-a268-f861416a3f0e", wf, "");
+            var reassignGroupId = await GetNextOwnerUserIdAsync(Properties.Settings.Default.ReassignGroupUserName, wf, "");
             wf.OwnerUserId = reassignGroupId;
             var c = new RedirectingController();
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
@@ -175,15 +175,16 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return await Task.FromResult(c.RedirectToAction(actionName, "Ulo", routeValues));
         }
 
-        private async Task<string> GetNextOwnerAsync(string proposedOwnerId, Workflow wf, string nextActivityKey)
+        private async Task<string> GetNextOwnerUserIdAsync(string proposedOwnerUserName, Workflow wf, string nextActivityKey)
         {
+            var u = await Cacher.FindOrCreateValWithSimpleKeyAsync(proposedOwnerUserName, () => DB.AspNetUsers.FirstOrDefaultAsync(z => z.UserName == proposedOwnerUserName));
             //TODO: check if null, return proposedOwnserId
             var output = new ObjectParameter("nextOwnerId", typeof(string));
             //DB.Database.Log = s => Trace.WriteLine(s);
-            DB.GetNextLevelOwnerId(proposedOwnerId, wf.WorkflowId, nextActivityKey, output);
+            DB.GetNextLevelOwnerId(u.Id, wf.WorkflowId, nextActivityKey, output);
             if (output.Value == DBNull.Value)
             {
-                return await Task.FromResult(proposedOwnerId);
+                return await Task.FromResult(u.Id);
             }
             return await Task.FromResult(output.Value.ToString());
         }

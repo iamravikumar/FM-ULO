@@ -99,7 +99,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             var systemUserId = systemUser.Id;
 
             var workflows = 
-                DB.Workflows.Include(wf => wf.UnliquidatedObligation).
+                DB.Workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.AspNetUser).
                 Where(wf => wf.OwnerUserId== systemUserId).
                 OrderBy(wf => wf.UnliquidatedObligation.ReviewId == reviewId ? 0 : 1).
                 ToList();

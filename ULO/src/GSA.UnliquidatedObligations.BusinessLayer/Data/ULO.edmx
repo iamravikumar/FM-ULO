@@ -230,6 +230,7 @@
           <Property Name="Version" Type="int" Nullable="false" />
           <Property Name="DescriptionXml" Type="xml" />
           <Property Name="WorkflowDefinitionName" Type="varchar" MaxLength="50" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="WorkflowHistory">
           <Key>
@@ -1077,6 +1078,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="DescriptionXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="WorkflowDefinitionName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__Workflo__3BCADD1B" FromRole="WorkflowDefinitions" ToRole="Reviews" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="WorkflowHistory">
           <Key>
@@ -1850,6 +1852,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <EntitySetMapping Name="WorkflowDefinitions">
             <EntityTypeMapping TypeName="Model.WorkflowDefinition">
               <MappingFragment StoreEntitySet="WorkflowDefinitions">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />
                 <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
                 <ScalarProperty Name="Version" ColumnName="Version" />

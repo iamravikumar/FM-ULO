@@ -254,8 +254,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                 WebActionWorkflowActivities = wfDActivities
             };
 
-            var serialized = JsonConvert.SerializeObject(d);
-            var deserialized = WorkflowDescription.Deserialize(serialized);
+            var serialized = d.ToXml();
+            var deserialized = WorkflowDescription.DeserializeFromXml(serialized);
             var xml = d.ToXml();
             Trace.WriteLine(xml);
             Assert.IsInstanceOfType(deserialized, typeof(WorkflowDescription));

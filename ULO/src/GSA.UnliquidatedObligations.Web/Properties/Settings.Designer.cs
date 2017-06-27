@@ -58,5 +58,14 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((bool)(this["AllowFileShareInfo"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("reassignGroup")]
+        public string ReassignGroupUserName {
+            get {
+                return ((string)(this["ReassignGroupUserName"]));
+            }
+        }
     }
 }
