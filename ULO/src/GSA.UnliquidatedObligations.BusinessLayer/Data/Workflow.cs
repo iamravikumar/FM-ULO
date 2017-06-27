@@ -33,6 +33,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int TargetUloId { get; set; }
         public Nullable<long> ExpectedDurationInSeconds { get; set; }
         public Nullable<System.DateTime> DueAtUtc { get; set; }
+        public byte[] WorkflowRowVersion { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

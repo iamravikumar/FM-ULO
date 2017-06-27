@@ -22,12 +22,13 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
         public int UnliqudatedWorkflowQuestionsId { get; set; }
         public int WorkflowId { get; set; }
-        public Nullable<System.DateTime> Date { get; set; }
         public string UserId { get; set; }
         public string Answer { get; set; }
         public Nullable<int> JustificationId { get; set; }
         public string Comments { get; set; }
         public bool Pending { get; set; }
+        public byte[] WorkflowRowVersion { get; set; }
+        public System.DateTime CreatedAtUtc { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

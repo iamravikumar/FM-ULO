@@ -159,14 +159,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
-                    Date = DateTime.Now,
                     JustificationId = advanceModel.JustificationId,
                     UserId = user.Id,
                     Answer = advanceModel.Answer,
                     WorkflowId = workflowId,
                     Comments = advanceModel.Comments,
                     Pending = false,
-                    UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId
+                    UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId,
+                    WorkflowRowVersion = wf.WorkflowRowVersion,
+                    CreatedAtUtc = DateTime.UtcNow
                 };
                 return await AdvanceAsync(wf, question);
             }
@@ -183,14 +184,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
             var question = new UnliqudatedObjectsWorkflowQuestion
             {
-                Date = DateTime.Now,
                 JustificationId = advanceModel.JustificationId,
                 UserId = user.Id,
                 Answer = advanceModel.Answer,
                 WorkflowId = workflowId,
                 Comments = advanceModel.Comments,
                 Pending = true,
-                UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId
+                UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId,
+                WorkflowRowVersion = wf.WorkflowRowVersion,
+                CreatedAtUtc = DateTime.UtcNow
             };
             await Manager.SaveQuestionAsync(wf, question);
             await DB.SaveChangesAsync();

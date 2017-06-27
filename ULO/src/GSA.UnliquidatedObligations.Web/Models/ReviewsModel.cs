@@ -42,7 +42,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             ReviewTypes = reviewTypeEnums.ConvertToSelectList();
             ReviewScopes = reviewScopeEnums.ConvertToSelectList();
             WorkflowDefinitions = workflowDefinitions.ConvertToSelectList();
-            ReviewDateInitiated = DateTime.Now;
+            ReviewDateInitiated = DateTime.UtcNow;
         }
 
         public ReviewModel()

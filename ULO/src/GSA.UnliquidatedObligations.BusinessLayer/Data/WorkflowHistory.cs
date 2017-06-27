@@ -23,6 +23,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public System.DateTime CreatedAtUtc { get; set; }
         public System.DateTime CurrentActivityEnteredAtUtc { get; set; }
         public int TargetUloId { get; set; }
+        public byte[] WorkflowRowVersion { get; set; }
+        public System.DateTime CurrentActivityExitedAtUtc { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual Workflow Workflow { get; set; }

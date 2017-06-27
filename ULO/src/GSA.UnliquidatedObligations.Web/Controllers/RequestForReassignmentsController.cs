@@ -66,12 +66,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 if (wf == null) return HttpNotFound();
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
-                    Date = DateTime.Now,
                     JustificationId = requestForReassignmentViewModel.JustificationId,
                     UserId = user.Id,
                     Answer = "Reassigned",
                     WorkflowId = workflowId,
-                    Comments = requestForReassignmentViewModel.Comments
+                    Comments = requestForReassignmentViewModel.Comments,
+                    WorkflowRowVersion = wf.WorkflowRowVersion,
+                    CreatedAtUtc = DateTime.UtcNow
                 };
                 var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, "RegionWorkflows");
                 await DB.SaveChangesAsync();
@@ -95,12 +96,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         rr => rr.WorkflowId == workflowId);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
-                    Date = DateTime.Now,
                     JustificationId = requestForReassignmentViewModel.JustificationId,
                     UserId = user.Id,
                     Answer = "Reassigned",
                     WorkflowId = workflowId,
-                    Comments = requestForReassignmentViewModel.Comments
+                    Comments = requestForReassignmentViewModel.Comments,
+                    WorkflowRowVersion = wf.WorkflowRowVersion,
+                    CreatedAtUtc = DateTime.UtcNow
                 };
                 DB.UnliqudatedObjectsWorkflowQuestions.Add(question);
                 await DB.SaveChangesAsync();
@@ -122,12 +124,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
-                    Date = DateTime.Now,
                     JustificationId = requestForReassignmentViewModel.JustificationId,
                     UserId = user.Id,
                     Answer = "Request for Reasssignment",
                     WorkflowId = workflowId,
-                    Comments = requestForReassignmentViewModel.Comments
+                    Comments = requestForReassignmentViewModel.Comments,
+                    WorkflowRowVersion = wf.WorkflowRowVersion,
+                    CreatedAtUtc = DateTime.UtcNow
                 };
                 DB.UnliqudatedObjectsWorkflowQuestions.Add(question);
                 await DB.SaveChangesAsync();

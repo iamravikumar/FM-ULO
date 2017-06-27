@@ -60,7 +60,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             if (question != null)
             {
                 var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
-                nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig);
+                nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig) ?? wf.CurrentWorkflowActivityKey;
                 nextActivity = desc.Activities.First(z => z.WorkflowActivityKey == nextActivityKey) ?? currentActivity;
             }
             else
@@ -149,9 +149,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 questionFromDB.Answer = questionFromDB.Answer;
                 questionFromDB.Comments = question.Comments;
                 questionFromDB.JustificationId = question.JustificationId;
-                questionFromDB.Date = DateTime.Now;
                 questionFromDB.UserId = question.UserId;
                 questionFromDB.Pending = question.Pending;
+                questionFromDB.CreatedAtUtc = question.CreatedAtUtc;
             }
         }
 
@@ -177,7 +177,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         private async Task<string> GetNextOwnerUserIdAsync(string proposedOwnerUserName, Workflow wf, string nextActivityKey)
         {
-            var u = await Cacher.FindOrCreateValWithSimpleKeyAsync(proposedOwnerUserName, () => DB.AspNetUsers.FirstOrDefaultAsync(z => z.UserName == proposedOwnerUserName));
+            var u = Cacher.FindOrCreateValWithSimpleKey(proposedOwnerUserName, () => DB.AspNetUsers.FirstOrDefault(z => z.UserName == proposedOwnerUserName));
             //TODO: check if null, return proposedOwnserId
             var output = new ObjectParameter("nextOwnerId", typeof(string));
             //DB.Database.Log = s => Trace.WriteLine(s);
