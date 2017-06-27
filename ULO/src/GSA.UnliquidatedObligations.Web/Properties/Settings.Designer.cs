@@ -49,5 +49,14 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((string)(this["DocPath"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AllowFileShareInfo {
+            get {
+                return ((bool)(this["AllowFileShareInfo"]));
+            }
+        }
     }
 }

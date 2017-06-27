@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
@@ -13,6 +14,21 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public AttachmentsController(ULODBEntities db, IComponentContext componentContext)
             : base(db, componentContext)
         { }
+
+        public JsonResult FileShareInfo(string relativePath, bool create=false)
+        {
+            if (!Properties.Settings.Default.AllowFileShareInfo)
+            {
+                throw new HttpException((int)HttpStatusCode.Forbidden, "This functionality has been disabled via configuration");
+            }
+            return Json(new
+            {
+                docPath = Properties.Settings.Default.DocPath,
+                relativePath = relativePath,
+                fullPath = PortalHelpers.GetStorageFolderPath(relativePath, create),
+                create = create
+            }, JsonRequestBehavior.AllowGet);
+        }
 
         [HttpPost]
         public async Task<JsonResult> FileUpload(int documentId)

@@ -22,8 +22,9 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static string GetStorageFolderPath(string relativePath, bool createFolderInNotExists=true)
         {
+            relativePath = relativePath ?? "";
             var dir = Properties.Settings.Default.DocPath;
-            if (dir.ToLower() == "%temp%")
+            if (0==string.Compare(dir, "%temp%", true))
             {
                 dir = Path.GetTempPath();
             }

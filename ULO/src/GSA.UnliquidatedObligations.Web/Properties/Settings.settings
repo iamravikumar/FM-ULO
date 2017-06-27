@@ -11,5 +11,8 @@
     <Setting Name="DocPath" Type="System.String" Scope="Application">
       <Value Profile="(Default)">%temp%</Value>
     </Setting>
+    <Setting Name="AllowFileShareInfo" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
