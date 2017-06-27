@@ -69,64 +69,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<FileResult> Download(int attachmentId)
         {
             var attachment = await DB.Attachments.FindAsync(attachmentId);
-            return File(System.IO.File.OpenRead(attachment.FilePath), System.Net.Mime.MediaTypeNames.Application.Octet, attachment.FileName);
-        }
-
-
-        // GET: Attachments
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: Attachments/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Attachments/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Attachments/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Attachments/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Attachments/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath, false);
+            return File(System.IO.File.OpenRead(path), System.Net.Mime.MediaTypeNames.Application.Octet, attachment.FileName);
         }
 
         // POST: Attachments/Delete/5

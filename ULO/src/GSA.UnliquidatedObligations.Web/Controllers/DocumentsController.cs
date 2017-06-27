@@ -97,14 +97,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     var attachmentsTempData = (List<Attachment>)TempData["attachments"];
                     foreach (var tempAttachment in attachmentsTempData)
                     {
-                        var path = PortalHelpers.GetStorageFolderPath($"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat");
-                        System.IO.File.Copy(tempAttachment.FilePath, path);
                         var attachment = new Attachment
                         {
                             FileName = tempAttachment.FileName,
-                            FilePath = path,
+                            FilePath = $"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat",
                             DocumentId = document.DocumentId
                         };
+                        var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
+                        System.IO.File.Copy(tempAttachment.FilePath, path);
                         DB.Attachments.Add(attachment);
                         Stuff.FileTryDelete(tempAttachment.FileName);
                     }
