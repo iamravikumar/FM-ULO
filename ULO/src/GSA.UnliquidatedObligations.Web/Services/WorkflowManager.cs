@@ -48,7 +48,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance = false)
+        async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance, bool ignoreActionResult)
         {
             string nextOwnerId = "";
             var desc = await (this as IWorkflowManager).GetWorkflowDescriptionAsync(wf);
@@ -109,6 +109,11 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 else if (question != null && question.Answer == "Invalid")
                 {
                     wf.UnliquidatedObligation.Valid = false;
+                }
+
+                if (ignoreActionResult)
+                {
+                    return null;
                 }
 
                 //TODO: if owner changes, look at other ways of redirecting.
