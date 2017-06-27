@@ -49,10 +49,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string QuestionLabel { get; set; }
 
-        [Required(ErrorMessage = "Answer is required")]
+        //[Required(ErrorMessage = "Answer is required")]
         public string Answer { get; set; }
 
-        public int JustificationId { get; set; }
+        public int? JustificationId { get; set; }
         public string Comments { get; set; }
 
         public int WorkflowId { get; }
@@ -227,6 +227,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         }
     }
+
 
     public class EmailViewModel
     {

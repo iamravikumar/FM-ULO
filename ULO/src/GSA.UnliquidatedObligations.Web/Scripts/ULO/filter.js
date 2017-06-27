@@ -1,25 +1,8 @@
 ﻿$(document).ready(function () {
     $("#filterRegions").hide();
-    //$("#filterWorkflows").click(function () {
-    //    var pdn = encodeURI($("#pdn").val());
-    //    var org = encodeURI($("#organization").val());
-    //    var region = encodeURI($("#region").val());
-    //    var zone = encodeURI($("#zone").val());
-    //    var fund = encodeURI($("#fund").val());
-    //    var baCode = encodeURI($("#baCode").val());
-    //    var docType = encodeURI($("#docType").val());
-    //    var ptn = encodeURI($("#ptn").val());
-    //    var pvn = encodeURI($("#pvn").val());
-    //    var contractingOfficersName = encodeURI($("#contractingOfficersName").val());
-    //    var awardNumber = encodeURI($("#awardNumber").val());
-    //    var reasonIncludedInReview = encodeURI($("#reasonIncludedInReview").val());
-    //    var valid = encodeURI($("#valid").val());
-    //    var status = encodeURI($("#status").val());
-    //    filter(pdn, org, region, zone, fund, baCode, docType, ptn, pvn, contractingOfficersName, awardNumber, reasonIncludedInReview, valid, status);
-    //});
 
     $("#clearFilters").click(function() {
-        $("#pdn").val("");
+        $("#pegasysDocumentNumber").val("");
         $("#organization").val("");
         $("#region").val("");
         $("#zone").val("");
@@ -32,8 +15,7 @@
         $("#awardNumber").val("");
         $("#reasonIncludedInReview").val("");
         $("#valid").val("");
-        $("#status").val("");
-        filter();
+        $("#status").val(""); 
     });
 
     $("#showFilters").click(function() {
