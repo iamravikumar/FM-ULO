@@ -96,19 +96,19 @@ function uploadAttachment(documentId, files) {
 }
 
 function downloadAttachment(attachmentId) {
-    $.ajax({
-        type: "GET",
-        url: "/Attachments/Download?attachmentId=" + attachmentId,
-        success: function (result) {
-            console.log(result);
-        },
-        error: function (xhr, status, p3, p4) {
-            var err = "Error " + " " + status + " " + p3 + " " + p4;
-            if (xhr.responseText && xhr.responseText[0] == "{")
-                err = JSON.parse(xhr.responseText).Message;
-            console.log(err);
-        }
-    });
+    //$.ajax({
+    //    type: "GET",
+    //    url: "/Attachments/Download?attachmentId=" + attachmentId,
+    //    success: function (result) {
+    //        console.log(result);
+    //    },
+    //    error: function (xhr, status, p3, p4) {
+    //        var err = "Error " + " " + status + " " + p3 + " " + p4;
+    //        if (xhr.responseText && xhr.responseText[0] == "{")
+    //            err = JSON.parse(xhr.responseText).Message;
+    //        console.log(err);
+    //    }
+    //});
     return false;
 }
 

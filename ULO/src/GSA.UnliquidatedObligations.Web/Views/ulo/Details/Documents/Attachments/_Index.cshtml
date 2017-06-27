@@ -17,13 +17,14 @@
                 
                 @foreach (var attachment in Model.Attachments)
                 {
+
                     var id = "attachment" + attachment.AttachmentsId;
                     <tr id="@id">
                         <td class="file-name">
                             @attachment.FileName
                         </td>
                         <td class="actions">
-                            <a class="attachments-view" data-target="@attachment.AttachmentsId" target="_blank">View</a> |
+                            <a class="attachments-view" href="/Attachments/Download?attachmentId=@attachment.AttachmentsId" data-target="@attachment.AttachmentsId" download>View</a> |
                             <a class="attachments-delete" data-target="@attachment.AttachmentsId">Delete</a>
                         </td>
                     </tr>
