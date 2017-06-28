@@ -76,7 +76,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
-            ViewBag.pegasysDocumentNumber = pegasysDocumentNumber;
             var wfPredicate =
                 PredicateBuilder.Create<Workflow>(
                     wf => claimRegionIds.Contains((int) wf.UnliquidatedObligation.RegionId)

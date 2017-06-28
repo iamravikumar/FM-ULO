@@ -479,6 +479,16 @@ namespace GSA.UnliquidatedObligations.Web
 
         }
 
+        public static string Currency(this HtmlHelper helper, decimal data, string locale = "en-US", bool woCurrency = false)
+        {
+            var culture = new System.Globalization.CultureInfo(locale);
+
+            if (woCurrency || (helper.ViewData["woCurrency"] != null && (bool)helper.ViewData["woCurrency"]))
+                return data.ToString(culture);
+
+            return data.ToString("C", culture);
+        }
+
         public static List<SelectListItem> ConvertToSelectList<T>(this List<T> enums) where T : struct, IConvertible
         {
 

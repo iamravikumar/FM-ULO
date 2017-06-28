@@ -203,7 +203,8 @@
                     Total Line:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.TotalLine)
+                    @*@Html.Currency(Model.TotalLine)*@
+                    @Html.Currency(Convert.ToDecimal(Model.TotalLine))
                 </dd>
             </dl>
         </div>
@@ -215,7 +216,7 @@
                     Receipt:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Rcpt)
+                    @Html.Currency(Convert.ToDecimal(Model.Rcpt))
                 </dd>
             </dl>
         </div>
@@ -227,7 +228,7 @@
                     Accrual:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Accrual)
+                    @Html.Currency(Convert.ToDecimal(Model.Accrual))
                 </dd>
             </dl>
         </div>
@@ -239,7 +240,7 @@
                     Pending Payment:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.PendPayments)
+                    @Html.Currency(Convert.ToDecimal(Model.PendPayments))
                 </dd>
             </dl>
         </div>
@@ -251,7 +252,7 @@
                     Payments(In Transit):
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.PymtsInTransit)
+                    @Html.Currency(Convert.ToDecimal(Model.PymtsInTransit))
                 </dd>
             </dl>
         </div>
@@ -263,7 +264,7 @@
                     Holdbacks:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Holdbacks)
+                    @Html.Currency(Convert.ToDecimal(Model.Holdbacks))
                 </dd>
             </dl>
         </div>
@@ -275,7 +276,7 @@
                     Total Delivered Orders (DO):
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.TotalDO)
+                    @Html.Currency(Convert.ToDecimal(Model.TotalDO))
                 </dd>
             </dl>
         </div>
@@ -285,8 +286,7 @@
                     Total Undelivered Orders (UDO):
                 </dt>
                 <dd>
-                   
-                    @Html.DisplayFor(model => model.UndelOrders)
+                    @Html.Currency(Convert.ToDecimal(Model.UndelOrders))
                 </dd>
             </dl>
         </div>
@@ -296,7 +296,7 @@
                     Total Orders:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.TotalUDOAndDO)
+                    @Html.Currency(Convert.ToDecimal(Model.TotalUDOAndDO))
                 </dd>
             </dl>
         </div>
