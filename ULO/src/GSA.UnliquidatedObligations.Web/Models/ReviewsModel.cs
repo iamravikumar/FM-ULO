@@ -29,6 +29,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string ReviewName { get; set; }
 
         [Required(ErrorMessage = "Review Date is required")]
+        [DataType(DataType.Date)]
         public DateTime ReviewDateInitiated { get; set; }
         public string Comments { get; set; }
 
@@ -42,7 +43,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             ReviewTypes = reviewTypeEnums.ConvertToSelectList();
             ReviewScopes = reviewScopeEnums.ConvertToSelectList();
             WorkflowDefinitions = workflowDefinitions.ConvertToSelectList();
-            ReviewDateInitiated = DateTime.UtcNow;
+            ReviewDateInitiated = DateTime.Today;
         }
 
         public ReviewModel()
