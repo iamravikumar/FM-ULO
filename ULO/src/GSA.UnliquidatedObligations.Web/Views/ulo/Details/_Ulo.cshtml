@@ -2,6 +2,26 @@
 <div class="ulo-details">
     <hr />
     <div class="row">
+        <div class="col-md-2">
+            <dl class="dl-horizontal">
+                <dt>
+                    ULO ID:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UloId)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-2">
+            <dl class="dl-horizontal">
+                <dt>
+                    Workflow ID:
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Workflows.First().WorkflowId)
+                </dd>
+            </dl>
+        </div>
         <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>

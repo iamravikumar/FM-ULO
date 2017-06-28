@@ -6,7 +6,7 @@
 <table class="table table-responsive active-workflows">
 
     <tr>
-        <th></th>
+        <th>@Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")</th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.Zone.ZoneName, overrideDisplayName: "Zone")
         </th>
@@ -56,7 +56,7 @@
     {
         <tr class="active-workflows-record" data-id="@item.WorkflowId">
             <td>
-                @Html.ActionLink("View ULO", "RegionWorkflowDetails", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+                @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), "RegionWorkflowDetails", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneName)
