@@ -38,7 +38,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Services
                 UnliquidatedObligation = new UnliquidatedObligation {UloId = 1, PegasysDocumentNumber = "CL12345"}
             };
             var expectedBody = "Dear testUser, Ulo for for PDN: CL12345 is now assigned to you";
-            BackgroundTasks.Email("subject", "recipient", "Dear @Model.AspNetUser.UserName, Ulo for for PDN: @Model.UnliquidatedObligation.PegasusDocumentNumber is now assigned to you", workflowModel);
+            BackgroundTasks.Email("subject", "recipient", "Dear @Model.AspNetUser.UserName, Ulo for for PDN: @Model.UnliquidatedObligation.PegasysDocumentNumber is now assigned to you", workflowModel);
             EmailServerMock.Verify(e => e.SendEmail("subject", expectedBody, "recipient"));
         }
     }

@@ -106,7 +106,8 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         [TestMethod]
         public async Task RegionWorkflows_returns_correct_workflows()
         {
-            var view = await UloController.RegionWorkflows() as ViewResult;
+
+            var view = await UloController.RegionWorkflows(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null) as ViewResult;
             var returnedModel = (IEnumerable<Workflow>) view.Model;
             Assert.AreEqual(returnedModel.Count(), 7);
         }

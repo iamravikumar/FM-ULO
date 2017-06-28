@@ -57,7 +57,9 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             ComponentContext = new Mock<IComponentContext>().Object; 
 
             ControllerContext = new ControllerContextMock().SetupControllerContextMock(currentUser);
-            HttpContext.Current = new HttpContext(new HttpRequest(null, "http://tempuri.org", null), new HttpResponse(null));
+           // HttpContext.Current = new HttpContext(new HttpRequest(null, "http://tempuri.org", null), new HttpResponse(null));
+            HttpCookie rowsCookie = SetCookie("rowsPerPage", "10");
+            HttpContext.Current.Response.Cookies.Add(rowsCookie);
         }
 
         private ApplicationUserManager SetupApplicationUserMocks(AspNetUser currentUser)
@@ -66,6 +68,13 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             var mockIdentityFactoryOptions = new IdentityFactoryOptionsMock().SetupIdentityFactoryOptionsMock(); 
 
             return new ApplicationUserManager(mockStore, mockIdentityFactoryOptions);
+        }
+        private HttpCookie SetCookie(string name, string value, int expiration = 10)
+        {
+            HttpCookie cookie = new HttpCookie(name);
+            cookie[name] = value;
+            cookie.Expires = DateTime.Now.AddMinutes(expiration);
+            return cookie;
         }
     }
 }
