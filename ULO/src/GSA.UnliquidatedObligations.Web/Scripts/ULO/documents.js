@@ -8,24 +8,38 @@ $(document).ready(function () {
     addDocumentSaveClick();
 });
 
+function setButtonActions(actionSwitch) {
+    if (!actionSwitch) {
+        $(".save-document").prop('disabled', true);
+        $(".save-document").text("Saving...");
+        $(".close-document-modal").prop('disabled', true);
+        $(".attachments-add-btn").prop('disabled', true);
+    }
+    else {
+        $(".save-document").prop('disabled', false);
+        $(".save-document").text("Save");
+        $(".close-document-modal").prop('disabled', false);
+        $(".attachments-add-btn").prop('disabled', false);
+    }
+}
+
 function addDocumentSaveClick() {
     $(".save-document").unbind("click");
     $(".save-document").on("click", function () {
         hideErrorMsg();
-        $(this).prop('disabled', true);
+        setButtonActions(false);
         var documentId = $(this).data("target");
         var workflowId = getParameterByName("workflowId");
         var documentTypeId = $("#" + documentId + "ModalDocumentType").val();
         var documentName = $("#" + documentId + "ModalDocumentName").val();
         if (documentTypeId === "") {
             showErrMsg("You must select a Document Type before saving", $(this));
-            $(this).prop('disabled', false);
+            setButtonActions(true);
         } else if (documentName === "") {
             showErrMsg("You must enter a Document Name before saving", $(this));
-            $(this).prop('disabled', false);
+           setButtonActions(true)
         } else {
-            saveDocument(documentId, documentName, workflowId, documentTypeId);
-            $(this).prop('disabled', false);
+            saveDocument(documentId, documentName, workflowId, documentTypeId);  
         }
 
     });
@@ -96,7 +110,7 @@ function saveDocument(documentId, documentName, workflowId, documentTypeId) {
             closeModal();
             updateDocumentList(documentId, result);
             loadDocumentModal(result.Id, addDocumentDeleteClick, addDocumentSaveClick, window.addAddAttachmentClick, window.addDeleteAttachmentClick);
-
+            setButtonActions(true);
         },
         error: function (xhr, status, p3, p4) {
             var err = "Error " + " " + status + " " + p3 + " " + p4;
