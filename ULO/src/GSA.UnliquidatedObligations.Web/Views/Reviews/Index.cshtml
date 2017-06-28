@@ -8,6 +8,12 @@
 }
 
 
+@if (User.HasPermission(ApplicationPermissionNames.CanCreateReviews))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
 <table class="table">
     @if (Model.Any())
     {
@@ -87,10 +93,3 @@
 </table>
 
 @Html.Partial("_PaginationPartial")
-
-@if (User.HasPermission(ApplicationPermissionNames.CanCreateReviews))
-{
-    <p>
-        @Html.ActionLink("Create New", "Create")
-    </p>
-}
