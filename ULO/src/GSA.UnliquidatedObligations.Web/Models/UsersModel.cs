@@ -51,7 +51,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             UserId = null;
             Claims = new List<string>();
         }
-        public UserModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> regionApplicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<int> otherRegions)
+        public UserModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> regionApplicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<int> otherRegions, int regionId)
         {
             UserName = user.UserName;
             UserId = user.Id;
@@ -63,7 +63,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 subjectCategoryClaimsStringsList.Add($"SC (DT: {subjectCategoryPermission.DocumentType}, BAC: {subjectCategoryPermission.BACode}, OC: {subjectCategoryPermission.OrgCode})");
             }
             Claims = regionApplicationPermissionClaimsStringList.Concat(subjectCategoryClaimsStringsList).ToList();
-            Groups = user.UserUsers.Select(uu => uu.AspNetUser1.UserName).ToList();
+
+            Groups = user.UserUsers.Where(uu => uu.RegionId == regionId).Select(uu => uu.AspNetUser1.UserName).ToList();
             OtherRegions = otherRegions;
         }
 
@@ -97,14 +98,14 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
 
         }
-        public EditUserBodyModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> applicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<AspNetUser> groups)
+        public EditUserBodyModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> applicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<AspNetUser> groups, int regionId)
         {
             UserId = user.Id;
             var usersApplicationPermissions = applicationPermissionClaims.Select(ac => ac.PermissionName);
             ApplicationPermissionClaims = applicationPermissionClaimNames.Select(c => new EditApplicationPermissionClaimModel(c, usersApplicationPermissions.Contains(c))).ToList();
             var subjectCategorySelectList = subjectCategoryPermissionClaimNames.ConvertToSelectList();
             SubjectCategoryClaims = subjectCategoryClaims.Select(scc => new EditSubjectPermissionClaimModel(scc, subjectCategorySelectList)).ToList();
-            var usersGroups = user.UserUsers.Select(uu => uu.AspNetUser1.UserName).ToList();
+            var usersGroups = user.UserUsers.Where(uu => uu.RegionId == regionId).Select(uu => uu.AspNetUser1.UserName).ToList();
             Groups = groups.Select(g => new EditGroupsModel(g.UserName, g.Id, usersGroups.Contains(g.UserName))).ToList();
         }
 
@@ -123,10 +124,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Body = new EditUserBodyModel();
         }
 
-        public EditUserModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> applicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<AspNetUser> groups)
+        public EditUserModel(AspNetUser user, List<AspnetUserApplicationPermissionClaim> applicationPermissionClaims, List<AspnetUserSubjectCategoryClaim> subjectCategoryClaims, List<string> applicationPermissionClaimNames, List<string> subjectCategoryPermissionClaimNames, List<AspNetUser> groups, int regionId)
         {
             UserName = user.UserName;
-            Body = new EditUserBodyModel(user, applicationPermissionClaims, subjectCategoryClaims, applicationPermissionClaimNames, subjectCategoryPermissionClaimNames, groups);
+            Body = new EditUserBodyModel(user, applicationPermissionClaims, subjectCategoryClaims, applicationPermissionClaimNames, subjectCategoryPermissionClaimNames, groups, regionId);
         }
 
     }

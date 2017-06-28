@@ -89,8 +89,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     .ToList();
             var users = await DB.AspNetUsers.Where(u => userIdsforClaimRegion.Contains(u.Id) && u.UserType == "Person").Include("UserUsers.AspNetUser1").ToListAsync();
 
+
             return users
-                .Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims, subjectCategoryPermissionClaims, GetOtherRegionsForUser(u.Id, usersOtherClaimRegions)))
+                .Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims, subjectCategoryPermissionClaims, GetOtherRegionsForUser(u.Id, usersOtherClaimRegions), regionId))
                 .OrderBy(u => u.UserName)
                 .ToList();
         }
@@ -128,7 +129,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     .ToList();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userID);
             var groups = await DB.AspNetUsers.Where(u => u.UserType == "Group").ToListAsync();
-            return new EditUserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), allApplicationPermissionNames, allSubjectCategoryClaimsValues, groups);
+            return new EditUserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), allApplicationPermissionNames, allSubjectCategoryClaimsValues, groups, regionId);
         }
         // GET: Users/Details/5
         public async Task<ActionResult> Details(string id)
