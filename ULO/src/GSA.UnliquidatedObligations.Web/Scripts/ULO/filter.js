@@ -16,7 +16,8 @@
         $("#awardNumber").val("");
         $("#reasonIncludedInReview").val("");
         $("#valid").val("");
-        $("#status").val(""); 
+        $("#status").val("");
+        $("#reviewId").val("");
     });
 
     $("#showFilters").click(function() {
@@ -65,7 +66,8 @@ function showHideFiltersInit() {
         $("#awardNumber").val() !="" ||
         $("#reasonIncludedInReview").val() !="" ||
         $("#valid").val() !="" ||
-        $("#status").val() != "") {
+        $("#status").val() != "" || 
+        $("#reviewId").val() != "") {
             $("#filterRegions").show();
             $("#showFilters").html("Hide Filters");
     }

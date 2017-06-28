@@ -49,6 +49,9 @@
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Status")
         </th>
+        <th>
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review Id")
+        </th>
         <th></th>
     </tr>
 
@@ -102,6 +105,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
             </td>
             <td>@Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList", new WorkflowViewModel(item))</td>
 
