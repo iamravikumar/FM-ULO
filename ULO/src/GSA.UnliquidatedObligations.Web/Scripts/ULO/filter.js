@@ -1,7 +1,8 @@
 ﻿$(document).ready(function () { 
     setValid();
     showHideFiltersInit();
-    $("#clearFilters").click(function() {
+    $("#clearFilters").click(function () {
+        $("#uloId").val("");
         $("#pegasysDocumentNumber").val("");
         $("#organization").val("");
         $("#region").val("");
@@ -50,7 +51,8 @@ function filter(pdn, org, region, zone, fund, baCode, docType, ptn, pvn, contrac
 }
 
 function showHideFiltersInit() {
-    if ($("#pegasysDocumentNumber").val() !="" ||
+    if ($("#uloId").val() != "" ||
+        $("#pegasysDocumentNumber").val() != "" ||
         $("#organization").val() !="" ||
         $("#region").val() !="" ||
         $("#zone").val() !="" ||

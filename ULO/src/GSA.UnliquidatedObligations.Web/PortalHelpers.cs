@@ -73,12 +73,16 @@ namespace GSA.UnliquidatedObligations.Web
 
         }
 
-        public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, string pegasysDocumentNumber, string organization,
+        public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, int? uloId, string pegasysDocumentNumber, string organization,
            int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string status)
         {
 
             var predicate = originalPredicate;
-        
+
+            if (uloId != null)
+            {
+                predicate = predicate.And(wf => wf.TargetUloId == uloId);
+            }
 
             if (!String.IsNullOrEmpty(pegasysDocumentNumber))
             {

@@ -43,34 +43,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 sortCol??nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             return View(workflows);
         }
-
-        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
-        public async Task<ActionResult> Search(string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string status)
-        {
-            //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-            var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
-            var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
-            DB.Database.Log = s => Trace.WriteLine(s);
-
-            var wfPredicate =
-                PredicateBuilder.Create<Workflow>(
-                    wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId)
-                          && wf.OwnerUserId != user.Id);
-
-
-            wfPredicate = wfPredicate.GenerateWorkflowPredicate(pegasysDocumentNumber, organization, region, zone, fund,
-                baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, awardNumber, reasonIncludedInReview, valid, status);
-
-
-            var workflows =
-                await DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).ToListAsync();
-
-            return PartialView("~/Views/Ulo/Search/_Data.cshtml", workflows);
-        }
-
+       
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulo/RegionWorkflows")]
-        public async Task<ActionResult> RegionWorkflows(string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string status, 
+        public async Task<ActionResult> RegionWorkflows(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string status, 
             string sortCol=null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
@@ -82,7 +58,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                           && wf.OwnerUserId != user.Id);
 
 
-            wfPredicate = wfPredicate.GenerateWorkflowPredicate(pegasysDocumentNumber, organization, region, zone, fund,
+            wfPredicate = wfPredicate.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
               baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, awardNumber, reasonIncludedInReview, valid, status);
 
 
