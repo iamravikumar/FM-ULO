@@ -278,6 +278,18 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-12">
+            <dl class="dl-horizontal">
+                <dt>
+                    Payments(Confirmed):
+                </dt>
+                <dd>
+                    @Html.Currency(Convert.ToDecimal(Model.PymtsConfirmed))
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-4">
             <dl class="dl-horizontal">
                 <dt>
