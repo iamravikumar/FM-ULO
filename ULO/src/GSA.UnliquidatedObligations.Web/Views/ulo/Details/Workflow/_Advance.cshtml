@@ -1,7 +1,6 @@
 ﻿@using Hangfire.Annotations
 @model GSA.UnliquidatedObligations.Web.Models.AdvanceViewModel
 
-
 <div class="row advance">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -14,31 +13,34 @@
                     <div class="col-md-3">
                         @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
                         @Html.DropDownListFor(model => model.Answer, new SelectList(Model.QuestionChoices, "Value", "Text"), "Select...", htmlAttributes: new { @onchange = "ChoiceChange(this.value," + @Html.Raw(Json.Encode(Model)) + ")" })<br />
-                        @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id="validateAnswerMessage", @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id = "validateAnswerMessage", @class = "text-danger" })
                     </div>
                     <div class="col-md-9">
-                        @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.JustificationId, new SelectList(Model.DefaultJustifications, "JustificationId", "JustificationText"), "Select....", htmlAttributes: new { id = "justifications" })<br />
-                        @Html.ValidationMessageFor(model => model.JustificationId, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
+                        @if (Model.JustificationNeeded)
+                        {
+                            @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.JustificationId, new SelectList(Model.DefaultJustifications, "JustificationId", "JustificationText"), "Select....", htmlAttributes: new { id = "justifications" })<br />
+                            @Html.ValidationMessageFor(model => model.JustificationId, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
+                        }
+                        </div>
                     </div>
-                </div>
-                <div class="row other-comments row-space-top">
-                    <div class="row">
-                        @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
+                    <div class="row other-comments row-space-top">
+                        <div class="row">
+                            @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
+                        </div>
+                        <div class="row">
+                            @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })
+                        </div>
                     </div>
-                    <div class="row">
-                        @Html.TextAreaFor(model => model.Comments, 10, 30, new {@class = "col-md-6"})
-                    </div>
-                </div>
-                @Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
-               
-                <div class="row row-space-top">
-                    <div class="col-md-10">
-                        <input type="submit" value="Submit" name="Advance" class="btn btn-default" />
-                        <input type="submit" value="Save" name="Save" class="btn btn-primary" />
+                    @Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
+
+                            <div class="row row-space-top">
+                                <div class="col-md-10">
+                                    <input type="submit" value="Save" name="Save" class="btn btn-default" />
+                                    <input type="submit" value="Submit" name="Advance" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>

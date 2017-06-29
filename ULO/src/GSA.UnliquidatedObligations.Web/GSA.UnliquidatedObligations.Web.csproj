@@ -358,6 +358,7 @@
     <Content Include="Content\fonts\BAUHS93.TTF" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\GSA - Web.pubxml" />
+    <None Include="Properties\PublishProfiles\PhysicalPath.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\ULO - Web Deploy.pubxml" />
     <None Include="Properties\Settings.settings">

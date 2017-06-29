@@ -34,5 +34,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [DataMember(Name = "EmailTemplateId")]
         public int EmailTemplateId { get; set; }
+
+        [DataMember(Name = "AllowDocumentsEdit")]
+        public bool AllowDocumentEdit { get; set; }
+
+        [DataMember(Name = "JustificationNeeded")]
+        public bool JustificationNeeded { get; set; }
     }
 }

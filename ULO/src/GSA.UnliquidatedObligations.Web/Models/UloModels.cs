@@ -57,6 +57,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public int WorkflowId { get; }
 
+        public bool JustificationNeeded { get; set; }
+
         public AdvanceViewModel()
         {
 
@@ -64,7 +66,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
 
 
-        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId, bool justificationNeeded = true)
         {
 
             QuestionLabel = workflowQuestionChoices.QuestionLabel;
@@ -107,6 +109,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                     DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
                 }
             }
+            JustificationNeeded = justificationNeeded;
         }
     }
 
@@ -139,15 +142,17 @@ namespace GSA.UnliquidatedObligations.Web.Models
     public class DocumentsViewModel
     {
         public List<Document> Documents { get; set; }
+        public bool AllowDocumentsEdit { get; set; }
 
         public DocumentsViewModel()
         {
 
         }
 
-        public DocumentsViewModel(List<Document> documents)
+        public DocumentsViewModel(List<Document> documents, bool allowDocumentsEdit)
         {
             Documents = documents;
+            AllowDocumentsEdit = allowDocumentsEdit;
         }
     }
 
@@ -168,6 +173,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
             Workflow = workflow;
             var questions = workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList();
+            var allowDocumentEdits = false;
             QuestionsViewModel = new UloWfQuestionsViewModel(questions);
 
             if (workflowDecription != null)
@@ -179,19 +185,20 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 var unliqudatedObjectsWorkflowQuestionPending = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
                 if (unliqudatedObjectsWorkflowQuestionPending == null && questions.Count > 0)
                 {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow.WorkflowId);
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow.WorkflowId, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded);
                 }
                 else
                 {
                     AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow.WorkflowId);
                 }
+                allowDocumentEdits = WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
             RequestForReassignmentsActive = workflow.RequestForReassignments.ToList().Count > 0 &&
                                                          Workflow.RequestForReassignments.FirstOrDefault() != null &&
                                                          Workflow.RequestForReassignments.First().IsActive;
 
 
-            DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList());
+            DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList(), allowDocumentEdits);
         }
     }
 

@@ -23,11 +23,16 @@ function setButtonActions(actionSwitch) {
     }
 }
 
+function attachmentsPresent() {
+    return $(".temp-attachment").length + $(".attachment-row").length > 0;
+}
+
 function addDocumentSaveClick() {
     $(".save-document").unbind("click");
     $(".save-document").on("click", function () {
         hideErrorMsg();
         setButtonActions(false);
+        
         var documentId = $(this).data("target");
         var workflowId = getParameterByName("workflowId");
         var documentTypeId = $("#" + documentId + "ModalDocumentType").val();
@@ -37,8 +42,13 @@ function addDocumentSaveClick() {
             setButtonActions(true);
         } else if (documentName === "") {
             showErrMsg("You must enter a Document Name before saving", $(this));
-           setButtonActions(true)
-        } else {
+            setButtonActions(true)   
+        }
+        else if (!attachmentsPresent()) {
+            showErrMsg("You must add attachments before saving", $(this));
+            setButtonActions(true)
+        }
+        else {
             saveDocument(documentId, documentName, workflowId, documentTypeId);  
         }
 

@@ -42,13 +42,20 @@
                                     @document.UploadDate.ToString("MM/dd/yyyy")
                                 </td>
                                 <td>
-                                    <a data-toggle="modal" data-target="@modalId" href="@modalId">View</a> |
-                                    <a data-toggle="modal" data-target="@deleteModalId" href="@deleteModalId">Delete</a>
+                                    <a data-toggle="modal" data-target="@modalId" href="@modalId">View</a>
+                                    @if (Model.AllowDocumentsEdit)
+                                    {    
+                                    
+                                        @Html.Raw("| <a data-toggle='modal' data-target='" + @deleteModalId + "' href='" + @deleteModalId + "'>Delete</a>")
+                                    }
                                 </td>
                             </tr>
                         }
                     </table>
+                    @if (Model.AllowDocumentsEdit)
+                    {
                     <button type="button" class="btn btn-primary document-add-btn" data-toggle="modal" data-target="#0Modal">Add Document</button>
+                    }
                 </div>
             </div>
         </div>

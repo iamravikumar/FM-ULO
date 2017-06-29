@@ -14,18 +14,21 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public AttachmentsViewModel AttachmentsViewModel { get; set; }
 
+        public bool AllowDocumentEdit { get; set; }
+
         public DocumentModalViewModel()
         {
 
         }
 
-        public DocumentModalViewModel(int documentId, string documentName, int documentTypeId, List<DocumentType> documentTypes, List<Attachment> attachments )
+        public DocumentModalViewModel(int documentId, string documentName, int documentTypeId, List<DocumentType> documentTypes, List<Attachment> attachments, bool allowDocumentEdit )
         {
             DocumentId = documentId;
             DocumentName = documentName;
             DocumentTypeId = documentTypeId;
             DocumentTypes = ConvertToSelectList(documentTypes);
-            AttachmentsViewModel = new AttachmentsViewModel(attachments, documentId);
+            AttachmentsViewModel = new AttachmentsViewModel(attachments, documentId, allowDocumentEdit);
+            AllowDocumentEdit = allowDocumentEdit;
         }
 
         private List<SelectListItem> ConvertToSelectList(List<DocumentType> documentTypes)
@@ -44,15 +47,18 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public List<Attachment> Attachments { get; set; }
         public int DocumentId { get; set; }
+
+        public bool AllowDocumentEdit { get; set; }
         public AttachmentsViewModel()
         {
             
         }
 
-        public AttachmentsViewModel(List<Attachment> attachments, int documentId)
+        public AttachmentsViewModel(List<Attachment> attachments, int documentId, bool allowDocumentEdits)
         {
             Attachments = attachments;
             DocumentId = documentId;
+            AllowDocumentEdit = allowDocumentEdits;
         }
     }
 

@@ -3,8 +3,10 @@
 
 $(document).ready(function() {
 
-    select = document.getElementById("justifications");
-    if (select && select.length === 1) { select.selectedIndex = 0; }
+    if (justificationNeeded()) {
+        select = document.getElementById("justifications");
+        if (select && select.length === 1) { select.selectedIndex = 0; }
+    }
 
     $("#validateAnswerMessage").hide();
     $("#validateJustificationMessage").hide();
@@ -23,7 +25,7 @@ $(document).ready(function() {
                 $("#validateAnswerMessage").show();
                 return false;
             }
-            if ($("#justifications").val() === "") {
+            if (justificationNeeded() && $("#justifications").val() === "") {
                 $("#validateJustificationMessage").show();
                 return false;
             }
@@ -36,28 +38,34 @@ $(document).ready(function() {
     })
 });
 
+function justificationNeeded() {
+    return $("#justifications").length > 0;
+}
+
 function ChoiceChange(value, model) {
-    var justifications = [];
-    if (value != "") {
-        justifications = model.QuestionChoices.filter(function (qc) {
-            return qc.Value === value;
-        })[0].Justifications;
-    }
+    if (justificationNeeded()) {
+        var justifications = [];
+        if (value != "") {
+            justifications = model.QuestionChoices.filter(function (qc) {
+                return qc.Value === value;
+            })[0].Justifications;
+        }
 
-    if (justifications.length > 0) {
-        select.options.length = 0;
-        var el = document.createElement("option");
-        el.textContent = "Select...";
-        el.value = "";
-        select.appendChild(el);
-
-
-        for (var i = 0; i < justifications.length; i++) {
-            var opt = justifications[i];
+        if (justifications.length > 0) {
+            select.options.length = 0;
             var el = document.createElement("option");
-            el.textContent = opt.JustificationText;
-            el.value = opt.JustificationId;
+            el.textContent = "Select...";
+            el.value = "";
             select.appendChild(el);
+
+
+            for (var i = 0; i < justifications.length; i++) {
+                var opt = justifications[i];
+                var el = document.createElement("option");
+                el.textContent = opt.JustificationText;
+                el.value = opt.JustificationId;
+                select.appendChild(el);
+            }
         }
     }
 }
