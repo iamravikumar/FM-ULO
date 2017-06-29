@@ -10,6 +10,12 @@
             @Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")
         </th>
         <th>
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review ID")
+        </th>
+        <th>
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.TotalLine, overrideDisplayName: "Amount")
+        </th>
+        <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
         </th>
         <th>
@@ -39,6 +45,9 @@
         <tr class="active-workflows-record" data-id="@item.WorkflowId">
             <td>
                 @Html.ActionLink("View ULO "+ item.TargetUloId.ToString(), "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
