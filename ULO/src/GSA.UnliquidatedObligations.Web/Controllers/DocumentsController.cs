@@ -33,7 +33,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: Documents/Details/5
-        public ActionResult View(int? documentId)
+        public ActionResult View(int? documentId, bool allowDocumentEdit = false)
         {
             Document document;
             if (documentId == 0)
@@ -54,7 +54,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return HttpNotFound();
             }
-            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentName, document.DocumentTypeId, documentTypes, document.Attachments.ToList()));
+            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentName, document.DocumentTypeId, documentTypes, document.Attachments.ToList(), allowDocumentEdit));
         }
 
         // POST: Documents/Edit/5

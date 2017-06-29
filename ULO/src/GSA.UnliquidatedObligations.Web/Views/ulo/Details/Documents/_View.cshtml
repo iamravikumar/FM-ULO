@@ -15,7 +15,7 @@
 }
 
 <div class="modal fade document-modal" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
-    //TODO: Add antiforgery token
+    @*TODO: Add antiforgery token*@
     @*@Html.AntiForgeryToken()*@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -47,7 +47,9 @@
                 <div class="document-error-msg">This is an Errors</div>
                 <button type="button" class="btn btn-secondary close-document-modal" data-dismiss="modal">Close</button>
 
-                <button type="button" data-target="@Model.DocumentId" class="btn btn-primary save-document">Save Document</button>
+                @if (Model.AllowDocumentEdit) {
+                    <button type="button" data-target="@Model.DocumentId" class="btn btn-primary save-document">Save Document</button>
+                }
             </div>
         </div>
     </div>
@@ -55,7 +57,7 @@
 
 
 <div class="modal fade delete-document-modal" id="@deleteConfId" tabindex="-1" role="dialog" aria-labelledby="@deleteConfLabel" aria-hidden="true">
-    //TODO: Add antiforgery token
+    @*//TODO: Add antiforgery token*@
     @*@Html.AntiForgeryToken()*@
     <div class="modal-dialog" role="document">
         <div class="modal-content">

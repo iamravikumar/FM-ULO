@@ -139,15 +139,17 @@ namespace GSA.UnliquidatedObligations.Web.Models
     public class DocumentsViewModel
     {
         public List<Document> Documents { get; set; }
+        public bool AllowDocumentsEdit { get; set; }
 
         public DocumentsViewModel()
         {
 
         }
 
-        public DocumentsViewModel(List<Document> documents)
+        public DocumentsViewModel(List<Document> documents, bool allowDocumentsEdit)
         {
             Documents = documents;
+            AllowDocumentsEdit = allowDocumentsEdit;
         }
     }
 
@@ -191,7 +193,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                                                          Workflow.RequestForReassignments.First().IsActive;
 
 
-            DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList());
+            DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList(), WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit);
         }
     }
 

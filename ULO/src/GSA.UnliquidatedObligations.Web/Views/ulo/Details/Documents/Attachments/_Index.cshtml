@@ -24,8 +24,13 @@
                             @attachment.FileName
                         </td>
                         <td class="actions">
-                            <a class="attachments-view" href="/Attachments/Download?attachmentId=@attachment.AttachmentsId" data-target="@attachment.AttachmentsId" download>View</a> |
-                            <a class="attachments-delete" data-target="@attachment.AttachmentsId">Delete</a>
+                            <a class="attachments-view" href="/Attachments/Download?attachmentId=@attachment.AttachmentsId" data-target="@attachment.AttachmentsId" download>View</a> 
+
+                            @if (Model.AllowDocumentEdit)
+                            {
+
+                                @Html.Raw("| <a class='attachments-delete' data-target='" + @attachment.AttachmentsId + "'>Delete</a>")
+                            }
                         </td>
                     </tr>
 
@@ -34,10 +39,10 @@
 
             @Html.Hidden("documentId" + Model.DocumentId + "Hidden", Model.DocumentId, htmlAttributes: new { @class = "document-id-hidden" })
 
-            <button type="button" class="btn btn-primary attachments-add-btn">Add Attachment</button>
-            @*<div class="progress progress-striped">
-                    <div class="progress-bar progress-bar-success">0%</div>
-                </div>*@
+            @if (Model.AllowDocumentEdit)
+            {
+                <button type="button" class="btn btn-primary attachments-add-btn">Add Attachment</button>
+            }
 
         </div>
     </div>
