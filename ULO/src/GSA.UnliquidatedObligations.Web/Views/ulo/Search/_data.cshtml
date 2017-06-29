@@ -14,7 +14,7 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
         </th>
         <th>
-            Document Type
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Document Type")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "Pesasys Document Number")
@@ -68,7 +68,7 @@
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionName)
             </td>
             <td>
-                Data Not Present
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.DocType)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)

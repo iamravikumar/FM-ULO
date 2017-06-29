@@ -286,8 +286,36 @@ namespace GSA.UnliquidatedObligations.Web
 
             if (!String.IsNullOrEmpty(docType))
             {
-                //TODO: Add Doctype comparison code
-                //predicate = predicate.And(wf => wf.UnliquidatedObligation.PegasysVendorName == pegasysVendorNameDecoded);
+                docType = docType.Trim().ToLower();
+                if (docType.StartsWith("%") && docType.EndsWith("%"))
+                {
+                    var dt = docType.Replace("%", "");
+                    predicate =
+                       predicate.And(
+                           wf => wf.UnliquidatedObligation.DocType.Trim().ToLower().Contains(dt));
+                }
+                else if (docType.StartsWith("%"))
+                {
+                    var dt = docType.Replace("%", "");
+                    predicate =
+                        predicate.And(
+                            wf => wf.UnliquidatedObligation.DocType.Trim().ToLower().EndsWith(dt));
+                }
+                else if (docType.EndsWith("%"))
+                {
+                    var dt = docType.Replace("%", "");
+                    predicate =
+                        predicate.And(
+                            wf => wf.UnliquidatedObligation.DocType.StartsWith(dt));
+                }
+                else
+                {
+                    predicate =
+                        predicate.And(
+                            wf =>
+                                wf.UnliquidatedObligation.DocType.Trim().ToLower() ==
+                                docType);
+                }
             }
 
             if (!String.IsNullOrEmpty(contractingOfficersName))
