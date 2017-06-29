@@ -276,6 +276,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     claimRegionIds.Add(regionId);
                 }
+                else
+                {
+                    claimRegionIds.Remove(regionId);
+                }
+                
                 if (claimRegionIds.Count > 0)
                 {
                     var claim = new ApplicationPermissionClaimValue
