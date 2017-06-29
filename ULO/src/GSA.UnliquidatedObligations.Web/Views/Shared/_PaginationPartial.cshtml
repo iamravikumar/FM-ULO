@@ -3,7 +3,8 @@
 @if (ViewBag.PaginationSupported == true)
 {
     var queryString = this.Context.Request.QueryString.ToString();
-    var regexPattern = new Regex(@"\W(page=\d+&?)", RegexOptions.IgnoreCase);
+    if (queryString.Length == 0 || queryString[0] != '?') { queryString = "?" + queryString; }
+    var regexPattern = new Regex(@"^\W(page=\d+&?)", RegexOptions.IgnoreCase);
     var match = regexPattern.Match(queryString);
     if (match.Success)
     {
@@ -12,7 +13,6 @@
     }
     if (queryString.Length > 1) { queryString = queryString + "&"; }
     queryString = queryString + "page";
-    if (queryString.Length == 0 || queryString[0] != '?') { queryString = "?" + queryString; }
     var pageNumber = (int)ViewBag.PageNum;
     var rowsPerPage = 10;
     if (ViewBag.PageSize != null)
