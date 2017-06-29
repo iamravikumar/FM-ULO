@@ -17,5 +17,11 @@
     <Setting Name="ReassignGroupUserName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">reassignGroup</Value>
     </Setting>
+    <Setting Name="RunHangfireServer" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="UseHangfireDashboards" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

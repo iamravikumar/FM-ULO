@@ -114,12 +114,12 @@ namespace GSA.UnliquidatedObligations.Utility
         private static string CreateCellReference(int col, int row)
         {
             var cr = "";
-            do
+            for (;;)
             {
                 cr = ((char)('A' + col % 26)) + cr;
-                col = col / 26;
+                if (col < 26) break;
+                col = col / 26-1;
             }
-            while (col > 0);
             cr = cr + (row + 1).ToString();
             return cr;
         }

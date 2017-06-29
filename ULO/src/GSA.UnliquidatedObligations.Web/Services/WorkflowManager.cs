@@ -1,17 +1,18 @@
-﻿using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+﻿using Autofac;
+using Hangfire;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using GSA.UnliquidatedObligations.Utility;
+using GSA.UnliquidatedObligations.Utility.Caching;
+using GSA.UnliquidatedObligations.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 using System.Linq;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Autofac;
-using GSA.UnliquidatedObligations.Web.Models;
-using Hangfire;
-using GSA.UnliquidatedObligations.Utility.Caching;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
@@ -50,6 +51,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance, bool ignoreActionResult)
         {
+            Requires.NonNull(wf, nameof(wf));
+
             string nextOwnerId = "";
             var desc = await (this as IWorkflowManager).GetWorkflowDescriptionAsync(wf);
             var currentActivity = desc.WebActionWorkflowActivities.FirstOrDefault(z => z.WorkflowActivityKey == wf.CurrentWorkflowActivityKey);
@@ -134,6 +137,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         async Task<ActionResult> IWorkflowManager.RequestReassignAsync(Workflow wf)
         {
+            Requires.NonNull(wf, nameof(wf));
+
             //TODO: Get programatically based on user's region
             var reassignGroupId = await GetNextOwnerUserIdAsync(Properties.Settings.Default.ReassignGroupUserName, wf, "");
             wf.OwnerUserId = reassignGroupId;
@@ -144,6 +149,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         async Task IWorkflowManager.SaveQuestionAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
         {
+            Requires.NonNull(wf, nameof(wf));
+            Requires.NonNull(question, nameof(question));
+
             var questionFromDB = await DB.UnliqudatedObjectsWorkflowQuestions.FirstOrDefaultAsync(q => q.WorkflowId == wf.WorkflowId && q.Pending == true);
             if (questionFromDB == null)
             {
@@ -162,6 +170,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         async Task<ActionResult> IWorkflowManager.ReassignAsync(Workflow wf, string userId, string actionName)
         {
+            Requires.NonNull(wf, nameof(wf));
+            Requires.Text(userId, nameof(userId));
+
             //TODO: Get programatically based on user's region
             //TODO: split up into two for redirect and reassign.
             wf.OwnerUserId = userId;
@@ -182,6 +193,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         private async Task<string> GetNextOwnerUserIdAsync(string proposedOwnerUserName, Workflow wf, string nextActivityKey)
         {
+            Requires.Text(proposedOwnerUserName, nameof(proposedOwnerUserName));
+            Requires.NonNull(wf, nameof(wf));
+            Requires.Text(nextActivityKey, nameof(nextActivityKey));
+
             var u = Cacher.FindOrCreateValWithSimpleKey(proposedOwnerUserName, () => DB.AspNetUsers.FirstOrDefault(z => z.UserName == proposedOwnerUserName));
             //TODO: check if null, return proposedOwnserId
             var output = new ObjectParameter("nextOwnerId", typeof(string));

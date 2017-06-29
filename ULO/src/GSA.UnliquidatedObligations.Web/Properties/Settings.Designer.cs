@@ -67,5 +67,23 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((string)(this["ReassignGroupUserName"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RunHangfireServer {
+            get {
+                return ((bool)(this["RunHangfireServer"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseHangfireDashboards {
+            get {
+                return ((bool)(this["UseHangfireDashboards"]));
+            }
+        }
     }
 }

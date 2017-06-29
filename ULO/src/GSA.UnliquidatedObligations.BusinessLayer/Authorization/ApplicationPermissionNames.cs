@@ -39,5 +39,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 
         [Display(Name = "Can Execute Reports")]
         CanExecuteReports,
+
+        [Display(Name = "Can use the background job dashboard")]
+        BackgroundJobDashboard,
     }
 }

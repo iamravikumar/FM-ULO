@@ -29,19 +29,20 @@ namespace GSA.UnliquidatedObligations.Web
                 PrepareSchemaIfNecessary = false
             };
             GlobalConfiguration.Configuration.UseAutofacActivator(container).UseSqlServerStorage("DefaultConnection", options);
-
-          
-
-            app.UseHangfireServer();
+            if (Properties.Settings.Default.RunHangfireServer)
+            {
+                app.UseHangfireServer();
+            }
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
             ConfigureAuth(app);
-
-            DashboardOptions dashboardOptionsoptions = new DashboardOptions
+            if (Properties.Settings.Default.UseHangfireDashboards)
             {
-                Authorization = new[] { new MyAuthorizationFilter() }
-            };
-            app.UseHangfireDashboard("/hangfire", dashboardOptionsoptions);
-
+                DashboardOptions dashboardOptionsoptions = new DashboardOptions
+                {
+                    Authorization = new[] { new HangfireDashboardAuthorizationFilter() }
+                };
+                app.UseHangfireDashboard("/hangfire", dashboardOptionsoptions);
+            }
         }
 
         public ContainerBuilder ConfigureBuilder()
@@ -89,19 +90,6 @@ namespace GSA.UnliquidatedObligations.Web
             //app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
 
             return builder;
-        }
-    }
-
-    public class MyAuthorizationFilter : IDashboardAuthorizationFilter
-    {
-        public bool Authorize(DashboardContext context)
-        {
-            // In case you need an OWIN context, use the next line, `OwinContext` class
-            // is the part of the `Microsoft.Owin` package.
-            var owinContext = new OwinContext(context.GetOwinEnvironment());
-
-            // Allow all authenticated users to see the Dashboard (potentially dangerous).
-            return owinContext.Authentication.User.Identity.IsAuthenticated;
         }
     }
 }

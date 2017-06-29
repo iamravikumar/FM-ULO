@@ -1,5 +1,6 @@
 ﻿using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using System;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 
@@ -18,9 +19,22 @@ namespace GSA.UnliquidatedObligations.Web
         {
             try
             {
-                return httpContext.GetOwinContext().Authentication.User.Claims.GetApplicationPerimissionRegions(ApplicationPermission).Count > 0;
+                var user = httpContext.GetOwinContext().Authentication.User;
+                return HasPermission(user, ApplicationPermission);
             }
-            catch (Exception ex)
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool HasPermission(ClaimsPrincipal user, ApplicationPermissionNames permission)
+        {
+            try
+            {
+                return user.Claims.GetApplicationPerimissionRegions(permission).Count > 0;
+            }
+            catch (Exception)
             {
                 return false;
             }
