@@ -11,6 +11,7 @@
         </div>
     }
 </div>
+
 @{
-    Html.RenderAction("View", "Documents", new { documentId = 0 });
+    Html.RenderAction("View", "Documents", new { documentId = 0, allowDocumentEdit = true });
 }
