@@ -12,6 +12,10 @@
     var deleteConfId = id + "Delete";
     var deleteConfLabel = deleteConfId + "Label";
     var deleteConfBody = deleteConfId + "Body";
+    object docNameAttributes = Model.AllowDocumentEdit ? new { id = @documentName, @class = "col-md-8 document-name" } : (object)new { id = @documentName, @class = "col-md-8 document-name", @readonly = "readonly" };
+    object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "col-md-8 document-type-choices" } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", @disabled = "disabled" };
+    var isDisabled = !Model.AllowDocumentEdit ? "disabled" : "";
+    var isReadOnly = !Model.AllowDocumentEdit ? "readonly" : "";
 }
 
 <div class="modal fade document-modal" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
@@ -25,11 +29,11 @@
             <div id="@body" class="modal-body">
                 <div class="row">
                     @Html.LabelFor(model => model.DocumentName, "Document Name:", htmlAttributes: new { @class = "col-md-4" })
-                    @Html.TextBoxFor(model => model.DocumentName, htmlAttributes: new { id = @documentName, @class = "col-md-8 document-name" })
+                    @Html.TextBoxFor(model => model.DocumentName, htmlAttributes: docNameAttributes)
                 </div>
                 <div class="row">
                     @Html.LabelFor(model => model.DocumentTypeId, "Document Type:", htmlAttributes: new {@class = "col-md-4"})
-                    @Html.DropDownListFor(model => model.DocumentTypeId, Model.DocumentTypes, "Select One..", htmlAttributes: new {id = @documentType, @class = "col-md-8 document-type-choices"})
+                    @Html.DropDownListFor(model => model.DocumentTypeId, Model.DocumentTypes, "Select One..", htmlAttributes: docTypeAttributes)
                 </div>
                 <div class="row">
                     @Html.Partial("~/Views/Ulo/Details/Documents/Attachments/_Index.cshtml", Model.AttachmentsViewModel)

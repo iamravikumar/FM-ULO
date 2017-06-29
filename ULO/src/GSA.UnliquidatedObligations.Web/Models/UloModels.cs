@@ -170,6 +170,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
             Workflow = workflow;
             var questions = workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList();
+            var allowDocumentEdits = false;
             QuestionsViewModel = new UloWfQuestionsViewModel(questions);
 
             if (workflowDecription != null)
@@ -187,13 +188,14 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 {
                     AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow.WorkflowId);
                 }
+                allowDocumentEdits = WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
             RequestForReassignmentsActive = workflow.RequestForReassignments.ToList().Count > 0 &&
                                                          Workflow.RequestForReassignments.FirstOrDefault() != null &&
                                                          Workflow.RequestForReassignments.First().IsActive;
 
 
-            DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList(), WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit);
+            DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList(), allowDocumentEdits);
         }
     }
 
