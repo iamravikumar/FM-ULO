@@ -57,6 +57,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public int WorkflowId { get; }
 
+        public bool JustificationNeeded { get; set; }
+
         public AdvanceViewModel()
         {
 
@@ -64,7 +66,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
 
 
-        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId, bool justificationNeeded = true)
         {
 
             QuestionLabel = workflowQuestionChoices.QuestionLabel;
@@ -107,6 +109,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                     DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
                 }
             }
+            JustificationNeeded = justificationNeeded;
         }
     }
 
@@ -182,7 +185,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 var unliqudatedObjectsWorkflowQuestionPending = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
                 if (unliqudatedObjectsWorkflowQuestionPending == null && questions.Count > 0)
                 {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow.WorkflowId);
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow.WorkflowId, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded);
                 }
                 else
                 {
