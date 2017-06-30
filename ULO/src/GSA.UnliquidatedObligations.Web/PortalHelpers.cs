@@ -74,7 +74,7 @@ namespace GSA.UnliquidatedObligations.Web
         }
 
         public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, int? uloId, string pegasysDocumentNumber, string organization,
-           int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId)
+           int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId)
         {
 
             var predicate = originalPredicate;
@@ -350,6 +350,37 @@ namespace GSA.UnliquidatedObligations.Web
                                 wf.UnliquidatedObligation.ContractingOfficersName.Trim().ToLower() ==
                                 contractingOfficersName);
                 }
+            }
+
+            if (!String.IsNullOrEmpty(currentlyAssignedTo))
+            {
+                currentlyAssignedTo = currentlyAssignedTo.Trim().ToLower();
+                if (currentlyAssignedTo.StartsWith("%") && currentlyAssignedTo.EndsWith("%"))
+                {
+                    var currentAT = currentlyAssignedTo.Replace("%", "");
+                    predicate =
+                       predicate.And(
+                           wf => wf.AspNetUser.UserName.Trim().ToLower().Contains(currentAT));
+                }
+                else if (currentlyAssignedTo.StartsWith("%"))
+                {
+                    var currentAT = currentlyAssignedTo.Replace("%", "");
+                    predicate =
+                        predicate.And(
+                            wf => wf.AspNetUser.UserName.Trim().ToLower().EndsWith(currentAT));
+                }
+                else if (currentlyAssignedTo.EndsWith("%"))
+                {
+                    var currentAT = currentlyAssignedTo.Replace("%", "");
+                    predicate =
+                        predicate.And(
+                            wf => wf.AspNetUser.UserName.Trim().ToLower().StartsWith(currentAT));
+                }
+                else
+                {
+                    predicate = predicate.And(wf => wf.AspNetUser.UserName.Trim().ToLower() == currentlyAssignedTo);
+                }
+
             }
 
             if (!String.IsNullOrEmpty(awardNumber))

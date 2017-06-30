@@ -40,11 +40,14 @@
             <td><input type="text" name="pegasysVendorName" id="pegasysVendorName" value="@Context.Request["pegasysVendorName"]" /></td>
             <td class="label-container"><label for="contractingOfficersName">Contracting Officers Name:</label></td>
             <td><input type="text" name="contractingOfficersName" id="contractingOfficersName" value="@Context.Request["contractingOfficersName"]" /></td>
-            <td class="label-container"><label for="awardNumber">Award Number:</label></td>
-            <td><input type="text" name="awardNumber" id="awardNumber" value="@Context.Request["awardNumber"]"/></td>
+            <td class="label-container"><label for="currentlyAssignedTo">Currently Assigned to:</label></td>
+            <td><input type="text" name="currentlyAssignedTo" id="currentlyAssignedTo" value="@Context.Request["currentlyAssignedTo"]" /></td>
+           
            
         </tr>
         <tr>
+            <td class="label-container"><label for="awardNumber">Award Number:</label></td>
+            <td><input type="text" name="awardNumber" id="awardNumber" value="@Context.Request["awardNumber"]" /></td>
             <td class="label-container"><label for="reasonIncludedInReview">Reason Included In Review:</label></td>
             <td><input type="text" name="reasonIncludedInReview" id="reasonIncludedInReview" value="@Context.Request["reasonIncludedInReview"]" /></td>
             <td class="label-container"><label for="contractingOfficersName">Valid:</label></td>
@@ -55,10 +58,11 @@
                     <option value="false">No</option>
                 </select>
             </td>
-            <td class="label-container"><label for="status">Status:</label></td>
-            <td>@Html.DropDownList("status", Model.Statuses, "", new { @class = "form-control" })</td>
+        
         </tr>
         <tr>
+            <td class="label-container"><label for="status">Status:</label></td>
+            <td>@Html.DropDownList("status", Model.Statuses, "", new { @class = "form-control" })</td>
             <td class="label-container"><label for="reviewId">Review Id:</label></td>
             <td><input type="text" name="reviewId" id="reviewId" value="@Context.Request["reviewId"]" /></td>
         </tr>

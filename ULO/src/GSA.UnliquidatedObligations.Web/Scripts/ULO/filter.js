@@ -13,11 +13,13 @@
         $("#pegasysTitleNumber").val("");
         $("#pegasysVendorName").val("");
         $("#contractingOfficersName").val("");
+        $("#currentlyAssignedTo").val("");
         $("#awardNumber").val("");
         $("#reasonIncludedInReview").val("");
         $("#valid").val("");
         $("#status").val("");
         $("#reviewId").val("");
+        
     });
 
     $("#showFilters").click(function() {
@@ -62,7 +64,8 @@ function showHideFiltersInit() {
         $("#docType").val() !="" ||
         $("#pegasysTitleNumber").val() !="" ||
         $("#pegasysVendorName").val() !="" ||
-        $("#contractingOfficersName").val() !="" ||
+        $("#contractingOfficersName").val() != "" ||
+        $("#currentlyAssignedTo").val() != "" ||
         $("#awardNumber").val() !="" ||
         $("#reasonIncludedInReview").val() !="" ||
         $("#valid").val() !="" ||

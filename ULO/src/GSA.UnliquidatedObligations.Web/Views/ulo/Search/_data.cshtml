@@ -38,6 +38,9 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ContractingOfficersName, overrideDisplayName: "Contracting Officer Name")            
         </th>
         <th>
+            @Html.SortableHeaderFor(z => z.AspNetUser.UserName, overrideDisplayName: "Currently Assigned to")
+        </th>
+        <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.AwardNbr, overrideDisplayName: "Award Number")            
         </th>
         <th>
@@ -90,6 +93,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ContractingOfficersName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AspNetUser.UserName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.AwardNbr)
