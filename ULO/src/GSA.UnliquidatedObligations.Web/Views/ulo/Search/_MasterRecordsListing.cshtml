@@ -1,8 +1,7 @@
-﻿@using GSA.UnliquidatedObligations.Web.Models
-@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+﻿@model GSA.UnliquidatedObligations.Web.Models.FilterViewModel
 
 <h2>Workflows</h2>
 @Html.Partial("~/Views/Ulo/Search/_Filtering.cshtml", Model)
 <div id="masterRecordsListing">
-    @Html.Partial("~/Views/Ulo/Search/_Data.cshtml", Model)
+    @Html.Partial("~/Views/Ulo/Search/_Data.cshtml", Model.Workflows)
 </div>

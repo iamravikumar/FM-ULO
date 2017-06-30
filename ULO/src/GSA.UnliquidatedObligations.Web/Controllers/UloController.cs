@@ -20,7 +20,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     {
         protected readonly IWorkflowManager Manager;
         private readonly ApplicationUserManager UserManager;
-       
+
 
         public UloController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext)
             : base(db, componentContext)
@@ -40,21 +40,21 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             userIds.Add(currentUser.Id);
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => userIds.Contains(wf.OwnerUserId)).Include(wf => wf.UnliquidatedObligation),
-                sortCol??nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             return View(workflows);
         }
-       
+
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulo/RegionWorkflows")]
         public async Task<ActionResult> RegionWorkflows(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId,
-            string sortCol=null, string sortDir = null, int? page = null, int? pageSize = null)
+            string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
             var wfPredicate =
                 PredicateBuilder.Create<Workflow>(
-                    wf => claimRegionIds.Contains((int) wf.UnliquidatedObligation.RegionId)
+                    wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId)
                           && wf.OwnerUserId != user.Id);
 
 
@@ -66,7 +66,22 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region).Include(wf => wf.UnliquidatedObligation.Region.Zone),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToListAsync();
 
-            return View("~/Views/Ulo/Search/Index.cshtml", workflows);
+            var allSubjectCategoryClaimsValues =
+                Enum.GetValues(typeof(SubjectCatagoryNames))
+                    .Cast<SubjectCatagoryNames>()
+                    .Select(scc => scc.GetDisplayName())
+                    .OrderBy(scc => scc)
+                    .ToList();
+
+            var zones = DB.Zones.Select(z => new SelectListItem { Text = z.ZoneName, Value = z.ZoneId.ToString() }).OrderBy(z => z).ToList();
+            var regions = DB.Regions.Select(r => new SelectListItem { Text = r.RegionName, Value = r.RegionId.ToString() }).OrderBy(r => r).ToList();
+            var baCodes = DB.UnliquidatedObligations.Select(u => u.Prog).Distinct().OrderBy(p => p).ToList();
+
+            var workflowDescXML = DB.WorkflowDefinitions.Where(wfd => wfd.WorkflowDefinitionId == 2).Select(wfd => wfd.DescriptionXml).First();
+            var workflowDesc = WorkflowDescription.DeserializeFromXml(workflowDescXML);
+            var statuses = workflowDesc.WebActionWorkflowActivities.OrderBy(a => a.SequenceNumber).Select(a => a.ActivityName).ToList();
+
+            return View("~/Views/Ulo/Search/Index.cshtml", new FilterViewModel(workflows, allSubjectCategoryClaimsValues, zones, regions, baCodes, statuses));
         }
 
 

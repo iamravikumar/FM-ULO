@@ -5,7 +5,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Helpers;
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
     [DataContract(Name = "WorkflowDescription", Namespace = UloHelpers.WorkflowDescUrn)]
-    internal class WorkflowDescription : IWorkflowDescription
+    public class WorkflowDescription : IWorkflowDescription
     {
         private static readonly DataContractSerializer Serializer = new DataContractSerializer(typeof(WorkflowDescription), new [] {typeof(WebActionWorkflowActivity), typeof(WorkflowQuestionChoices), typeof(QuestionChoice) });
 

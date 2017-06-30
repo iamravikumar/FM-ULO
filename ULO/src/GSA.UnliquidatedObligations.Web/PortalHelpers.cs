@@ -489,6 +489,18 @@ namespace GSA.UnliquidatedObligations.Web
 
         }
 
+        public static List<SelectListItem> ConvertToSelectList(this List<SelectListItem> selectListItems)
+        {
+            var selectList = new List<SelectListItem>();
+
+            foreach (var selectListItem in selectListItems)
+            {
+                selectList.Add(selectListItem);
+            }
+            return selectList;
+
+        }
+
         public static List<SelectListItem> ConvertToSelectList(this List<int> nums)
         {
             var numsSelect = new List<SelectListItem>();

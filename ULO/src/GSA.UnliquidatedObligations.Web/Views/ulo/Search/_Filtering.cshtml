@@ -1,4 +1,6 @@
-﻿<button id="showFilters" type="button" class="btn show-filters">
+﻿@model GSA.UnliquidatedObligations.Web.Models.FilterViewModel
+
+<button id="showFilters" type="button" class="btn show-filters">
     Show Filters
 </button>
 
@@ -10,14 +12,14 @@
             <td class="label-container"><label for="uloId">Ulo Id:</label></td>
             <td><input type="text" name="uloId" id="uloId" value="@Context.Request["uloId"]" /></td>
             <td class="label-container"><label for="organization">Zone:</label></td>
-            <td><input type="text" name="zone" id="zone" value="@Context.Request["zone"]"/></td>
+            <td>@Html.DropDownList("zone", Model.Zones, "", new { @class = "form-control" })</td>
             <td class="label-container"><label for="region">Region:</label></td>
-            <td><input type="text" name="region" id="region" value="@Context.Request["region"]"/></td>
+            <td>@Html.DropDownList("region", Model.Regions, "", new { @class = "form-control" })</td>
            
         </tr>
         <tr>
             <td class="label-container"><label for="docType">Document Type:</label></td>
-            <td><input type="text" name="docType" id="docType" value="@Context.Request["docType"]" /></td>
+            <td>@Html.DropDownList("docType", Model.DocTypes, "", new { @class = "form-control" } )</td>
             <td class="label-container"><label for="pegasysDocumentNumber">Pegasys Document Number:</label></td>
             <td><input type="text" name="pegasysDocumentNumber" id="pegasysDocumentNumber" value="@Context.Request["pegasysDocumentNumber"]" /></td>
             <td class="label-container"><label for="pegasysTitleNumber">Pegasys Title Number:</label></td>
@@ -30,7 +32,7 @@
             <td class="label-container"><label for="organization">Organization:</label></td>
             <td><input type="text" name="organization" id="organization" value="@Context.Request["organization"]" /></td>
             <td class="label-container"><label for="baCode">BA Code:</label></td>
-            <td><input type="text" name="baCode" id="baCode" value="@Context.Request["baCode"]" /></td>
+            <td>@Html.DropDownList("baCode", Model.BaCodes, "", new { @class = "form-control" })</td>
 
         </tr>
         <tr>
@@ -54,7 +56,7 @@
                 </select>
             </td>
             <td class="label-container"><label for="status">Status:</label></td>
-            <td><input type="text" name="status" id="status" alue="@Context.Request["status"]" /></td>
+            <td>@Html.DropDownList("status", Model.Statuses, "", new { @class = "form-control" })</td>
         </tr>
         <tr>
             <td class="label-container"><label for="reviewId">Review Id:</label></td>

@@ -4,6 +4,7 @@ using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
@@ -248,6 +249,26 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         }
     }
+
+    public class FilterViewModel
+    {
+        public List<Workflow> Workflows { get; set; }
+        public List<SelectListItem> DocTypes { get; set; }
+        public List<SelectListItem> Zones { get; set; }
+        public List<SelectListItem> Regions { get; set; }
+        public List<SelectListItem> BaCodes { get; set; }
+        public List<SelectListItem> Statuses { get; set; }
+        public FilterViewModel(List<Workflow> workflows, List<string> docTypes, List<SelectListItem> zones, List<SelectListItem> regions, List<string> baCodes, List<string> statuses)
+        {
+            Workflows = workflows;
+            DocTypes = docTypes.ConvertToSelectList();
+            Zones = zones.ConvertToSelectList();
+            Regions = regions.ConvertToSelectList();
+            BaCodes = baCodes.ConvertToSelectList();
+            Statuses = statuses.ConvertToSelectList();
+        }
+    }
+
 
 
     public class EmailViewModel
