@@ -1,6 +1,7 @@
 ﻿@using Hangfire.Annotations
 @model GSA.UnliquidatedObligations.Web.Models.AdvanceViewModel
 
+
 <div class="row advance">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -22,25 +23,38 @@
                             @Html.DropDownListFor(model => model.JustificationId, new SelectList(Model.DefaultJustifications, "JustificationId", "JustificationText"), "Select....", htmlAttributes: new { id = "justifications" })<br />
                             @Html.ValidationMessageFor(model => model.JustificationId, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
                         }
-                        </div>
                     </div>
-                    <div class="row other-comments row-space-top">
-                        <div class="row">
-                            @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
-                        </div>
-                        <div class="row">
-                            @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })
-                        </div>
+                </div>
+                <div class="row row-space-top" id="expectedDateForCompletionContainer">
+                    <div class="col-md-12">
+                        @Html.LabelFor(model => model.ExpectedDateForCompletion, "Expected Date for Completion/Resolution: ", htmlAttributes: new { @class = "control-label" })
+ 
+                            @Html.EditorFor(model => model.ExpectedDateForCompletion, new { @class = "form-control", type = "date" })
+                        <br />
+                        @Html.ValidationMessageFor(model => model.ExpectedDateForCompletion, "Must select Expected Date of Completion", new { id = "validateExpectedDateMessage", @class = "text-danger" })
                     </div>
-                    @Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
 
-                            <div class="row row-space-top">
-                                <div class="col-md-10">
-                                    <input type="submit" value="Save" name="Save" class="btn btn-default" />
-                                    <input type="submit" value="Submit" name="Advance" class="btn btn-primary" />
-                                </div>
-                            </div>
-                        </div>
+                </div>
+                <div class="row other-comments row-space-top">
+                    <div class="row">
+                        @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
+                    </div>
+                    <div class="row">
+                        @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })
+                    </div>
+                </div>
+                @Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
+                @* Needed for checking on submit *@
+                @Html.HiddenFor(model => model.ExpectedDateForCompletionNeeded)
+                @Html.HiddenFor(model => model.ExpectedDateAlwaysShow)
+                @Html.HiddenFor(model => model.ExpectedDateForCompletionEditable)
+                <div class="row row-space-top">
+                    <div class="col-md-10">
+                        <input type="submit" value="Save" name="Save" class="btn btn-default" />
+                        <input type="submit" value="Submit" name="Advance" class="btn btn-primary" />
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>

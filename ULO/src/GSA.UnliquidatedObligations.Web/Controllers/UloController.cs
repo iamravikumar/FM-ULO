@@ -130,7 +130,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Advance(
             int workflowId,
             int uloId,
-            [Bind(Include = "JustificationId,Answer,Comments,UnliqudatedWorkflowQuestionsId")]
+            [Bind(Include = "JustificationId,Answer,ExpectedDateForCompletion,Comments,UnliqudatedWorkflowQuestionsId")]
             AdvanceViewModel advanceModel)
         {
             var wf = await FindWorkflowAsync(workflowId);
@@ -150,6 +150,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     WorkflowRowVersion = wf.WorkflowRowVersion,
                     CreatedAtUtc = DateTime.UtcNow
                 };
+                wf.UnliquidatedObligation.ExpectedDateForCompletion = advanceModel.ExpectedDateForCompletion;
                 return await AdvanceAsync(wf, question);
             }
             return await Details(uloId, workflowId);
@@ -158,7 +159,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [HttpPost]
         [SubmitButtonSelector(Name = "Save")]
         public async Task<ActionResult> SaveQuestion(int workflowId, int uloId,
-            [Bind(Include = "JustificationId,Answer,Comments,UnliqudatedWorkflowQuestionsId")] AdvanceViewModel advanceModel)
+            [Bind(Include = "JustificationId,Answer,Comments,ExpectedDateForCompletion,UnliqudatedWorkflowQuestionsId")] AdvanceViewModel advanceModel)
         {
             var wf = await FindWorkflowAsync(workflowId);
             if (wf == null) return HttpNotFound();
@@ -175,6 +176,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 WorkflowRowVersion = wf.WorkflowRowVersion,
                 CreatedAtUtc = DateTime.UtcNow
             };
+            wf.UnliquidatedObligation.ExpectedDateForCompletion = advanceModel.ExpectedDateForCompletion;
             await Manager.SaveQuestionAsync(wf, question);
             await DB.SaveChangesAsync();
             return await Details(uloId, workflowId);

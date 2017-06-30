@@ -104,6 +104,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     AllowDocumentEdit = true,
                     RouteValueByName = new Dictionary<string, object>(),
                     EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = true,
+                    ExpectedDateForCompletionNeeded = true,
+                    ExpectedDateAlwaysShow = false,
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                         QuestionLabel = "Is this Valid?",
@@ -139,6 +142,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     AllowDocumentEdit = true,
                     RouteValueByName = new Dictionary<string, object>(),
                     EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = true,
+                    ExpectedDateForCompletionNeeded = true,
+                    ExpectedDateAlwaysShow = false,
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                        QuestionLabel = "Do you Approve?",
@@ -172,6 +178,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     JustificationNeeded = false,
                     RouteValueByName = new Dictionary<string, object>(),
                     EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = false,
+                    ExpectedDateForCompletionNeeded = false,
+                    ExpectedDateAlwaysShow = true,
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                        QuestionLabel = "Do you Concur",
@@ -205,6 +214,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     JustificationNeeded = false,
                     RouteValueByName = new Dictionary<string, object>(),
                     EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = false,
+                    ExpectedDateForCompletionNeeded = false,
+                    ExpectedDateAlwaysShow = true,
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                        QuestionLabel = "Do you Concur",
@@ -238,6 +250,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     AllowDocumentEdit = false,
                     RouteValueByName = new Dictionary<string, object>(),
                     EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = false,
+                    ExpectedDateForCompletionNeeded = false,
+                    ExpectedDateAlwaysShow = true,
                     QuestionChoices = new WorkflowQuestionChoices
                     {
                        QuestionLabel = "Do you Concur",
@@ -261,6 +276,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
 
             var d = new WorkflowDescription
             {
+                InitialActivityKey = "B1",
                 WebActionWorkflowActivities = wfDActivities
             };
 

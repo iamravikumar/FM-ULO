@@ -76,6 +76,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string EASi_Base_Contract_Nbr { get; set; }
         public string EASi_GSA_FSS_Other__ { get; set; }
         public Nullable<System.DateTime> EASi_Awd_Expiration_Dt { get; set; }
+        public Nullable<System.DateTime> ExpectedDateForCompletion { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }

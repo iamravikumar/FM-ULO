@@ -40,5 +40,14 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [DataMember(Name = "JustificationNeeded")]
         public bool JustificationNeeded { get; set; }
+
+        [DataMember(Name = "ExpectedDateForCompletionEditable")]
+        public bool ExpectedDateForCompletionEditable { get; set; }
+
+        [DataMember(Name = "ExpectedDateForCompletionNeeded")]
+        public bool ExpectedDateForCompletionNeeded { get; set; }
+
+        [DataMember(Name = "ExpectedDateAlwaysShow")]
+        public bool ExpectedDateAlwaysShow { get; set; }
     }
 }

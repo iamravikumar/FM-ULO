@@ -10,7 +10,8 @@
     padding: 0 20px;
 }
 
-.row.advance .form-horizontal .col-md-3 {
+.row.advance .form-horizontal .col-md-3,
+.row.advance .form-horizontal .col-md-12 {
     padding-left: 0;
 }
 
@@ -27,7 +28,8 @@
     padding-left: 0;
 }
 
-.row.advance .form-horizontal .col-md-3 .control-label {
+.row.advance .form-horizontal .col-md-3 .control-label,
+.row.advance .form-horizontal .col-md-12 .control-label {
     padding-left: 5px;
 }
 

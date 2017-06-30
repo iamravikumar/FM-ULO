@@ -59,6 +59,16 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public bool JustificationNeeded { get; set; }
 
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime? ExpectedDateForCompletion { get; set; }
+
+        public bool ExpectedDateForCompletionEditable { get; set; }
+
+        public bool ExpectedDateForCompletionNeeded { get; set; }
+
+        public bool ExpectedDateAlwaysShow { get; set; }
+
         public AdvanceViewModel()
         {
 
@@ -66,7 +76,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
 
 
-        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId, bool justificationNeeded = true)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId, bool justificationNeeded = true, DateTime? expectedDateForCompletion = null, bool expectedDateForCompletionEditable = true, bool expectedDateForCompletionNeeded = true, bool expectedDateAlwaysShow = true)
         {
 
             QuestionLabel = workflowQuestionChoices.QuestionLabel;
@@ -110,6 +120,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 }
             }
             JustificationNeeded = justificationNeeded;
+            ExpectedDateForCompletion = expectedDateForCompletion;
+            ExpectedDateForCompletionEditable = expectedDateForCompletionEditable;
+            ExpectedDateForCompletionNeeded = expectedDateForCompletionNeeded;
+            ExpectedDateAlwaysShow = expectedDateAlwaysShow;
         }
     }
 
@@ -175,7 +189,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             var questions = workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList();
             var allowDocumentEdits = false;
             QuestionsViewModel = new UloWfQuestionsViewModel(questions);
-
+            var expectedDateForCompletion = workflow.UnliquidatedObligation.ExpectedDateForCompletion;
             if (workflowDecription != null)
             {
                 WorkflowDescriptionViewModel =
@@ -185,11 +199,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 var unliqudatedObjectsWorkflowQuestionPending = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
                 if (unliqudatedObjectsWorkflowQuestionPending == null && questions.Count > 0)
                 {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow.WorkflowId, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded);
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow.WorkflowId, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateAlwaysShow);
                 }
                 else
                 {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow.WorkflowId);
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow.WorkflowId, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateAlwaysShow);
                 }
                 allowDocumentEdits = WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }

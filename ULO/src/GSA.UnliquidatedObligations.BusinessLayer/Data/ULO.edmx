@@ -387,6 +387,7 @@ warning 6013: The table/view 'ULO B.dbo.Reta' does not have a primary key define
           <Property Name="EASi Base Contract Nbr" Type="varchar" MaxLength="50" />
           <Property Name="EASi GSA FSS/Other #" Type="varchar" MaxLength="50" />
           <Property Name="EASi Awd Expiration Dt" Type="datetime" />
+          <Property Name="ExpectedDateForCompletion" Type="date" />
         </EntityType>
         <EntityType Name="UserUsers">
           <Key>
@@ -1230,6 +1231,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="EASi_Base_Contract_Nbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="EASi_GSA_FSS_Other__" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="EASi_Awd_Expiration_Dt" Type="DateTime" Precision="3" />
+          <Property Name="ExpectedDateForCompletion" Type="DateTime" Precision="0" />
           <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__38EE7070" FromRole="UnliquidatedObligations" ToRole="Notes" />
           <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__689D8392" FromRole="UnliquidatedObligations" ToRole="Reviews" />
           <NavigationProperty Name="Region" Relationship="Self.FK__Unliquida__Regio__67A95F59" FromRole="UnliquidatedObligations" ToRole="Regions" />
@@ -2021,6 +2023,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
                 <ScalarProperty Name="EASi_Base_Contract_Nbr" ColumnName="EASi Base Contract Nbr" />
                 <ScalarProperty Name="EASi_GSA_FSS_Other__" ColumnName="EASi GSA FSS/Other #" />
                 <ScalarProperty Name="EASi_Awd_Expiration_Dt" ColumnName="EASi Awd Expiration Dt" />
+                <ScalarProperty Name="ExpectedDateForCompletion" ColumnName="ExpectedDateForCompletion" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
