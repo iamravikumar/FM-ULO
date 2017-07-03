@@ -7,7 +7,69 @@ $(document).ready(function () {
     
     addEditClick();
     addCreateClick();
+    addNewUserSaveClick();
 });
+
+function addNewUserSaveClick() {
+    $(".save-new-user").unbind("click");
+    $(".save-new-user").click(function () {
+        var $save = $(this);
+        $save.prop("disabled", true);
+        $(".close-save-user").prop("disabled", true);
+        $save.text("Saving...");
+        var data = $("form[name=createUserForm]").serializeArray();
+
+        var postData = new CreateUserFormData(data, $("#RegionId").val());
+        if (postData.UserName == "") {
+            showErrMsg("Must Enter Username");
+            $save.prop("disabled", false);
+            $(".close-save-user").prop("disabled", false);
+            $save.text("Save");
+            return;
+        }
+
+        else if (postData.UserEmail == "") {
+            showErrMsg("Must Enter Email");
+            $save.prop("disabled", false);
+            $(".close-save-user").prop("disabled", false);
+            $save.text("Save");
+            return;
+        }
+
+        //console.log(postData);
+        $.ajax({
+            type: "POST",
+            url: "/Users/CreateUser",
+            data: JSON.stringify(postData),
+            success: function (result) {
+                if (result.success == false) {
+                    var errorMsg = "";
+                    result.messages.forEach(function (msg, i) {
+                        errorMsg += msg;
+                        if (i > 0) {
+                            errorMsg += "<br />";
+                        }
+                        showErrMsg(errorMsg);
+                    })
+                }
+                else {
+                    $(".users-data").html(result);
+                    addEditClick();
+                    $("#createUserModal").modal("hide");
+                }
+                $save.prop("disabled", false);
+                $(".close-save-user").prop("disabled", false);
+                $save.text("Save");
+            },
+            error: function (xhr, status, p3, p4) {
+                var err = "Error " + " " + status + " " + p3 + " " + p4;
+                if (xhr.responseText && xhr.responseText[0] == "{")
+                    err = JSON.parse(xhr.responseText).Message;
+                console.log(err);
+            }
+        });
+    });
+}
 
 function addSaveClick() {
     $(".save-user").unbind("click");
@@ -202,4 +264,13 @@ function UsersRegionChanged(regionId) {
     $(".users-data").load(url, function () {
         addEditClick();
     });
+}
+
+function showErrMsg(msg) {
+    $(".create-error-msg").html(msg);
+    $(".create-error-msg").show();
+}
+
+function hideErrMsg() {
+    $(".create-error-msg").hide();
 }

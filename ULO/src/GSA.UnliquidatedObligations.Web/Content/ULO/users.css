@@ -18,3 +18,9 @@
 .edit-user-modal .modal-dialog .subject-category-claims .col-md-3.delete-subject-category-action-container .delete-action {
     cursor: pointer;
 }
+
+.create-user-modal .create-error-msg {
+    float: left;
+    color: #ff0000;
+    display: none;
+}

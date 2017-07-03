@@ -11,6 +11,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using System;
 using Microsoft.AspNet.Identity;
+using System.Diagnostics;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -197,13 +198,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                     DB.UserUsers.Add(userUser);
                 }
-
-                DB.UserUsers.RemoveRange(DB.UserUsers.Where(uu => uu.ChildUserId == user.Id).ToList());
                 await DB.SaveChangesAsync();
 
             }
-            return View();
 
+            else
+            {
+                return Json(new { success = false, messages = createResult.Errors });
+
+            }
+            return await Search(userData.RegionId);
 
         }
 
@@ -237,9 +241,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit()
+        public async Task<ActionResult> Edit(EditUserPostData postData = null)
         {
-            var userData = Request.BodyAsJsonObject<EditUserPostData>();
+            var userData = postData ?? Request.BodyAsJsonObject<EditUserPostData>();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userData.UserId);
             await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, user);
             await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id, userData.RegionId);

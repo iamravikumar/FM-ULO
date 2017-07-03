@@ -8,7 +8,7 @@
 
 <h2>Users</h2>
 <p>
-    <a class="create-user" href="#createUserModal">Create New</a>
+    <a class="create-user" href="#createUserModal">Create User</a>
 </p>
 <div class="row user-options">
     <div class="col-md-3">
@@ -19,4 +19,4 @@
 @Html.Partial("_Data", Model.Users)
 
 @Html.Partial("Edit/_Index", new EditUserModel())
-@*@Html.Partial("Create/_Index")*@
+@Html.Partial("Create/_Index")
