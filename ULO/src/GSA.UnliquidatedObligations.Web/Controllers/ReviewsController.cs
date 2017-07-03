@@ -30,14 +30,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var reviews = ApplyBrowse(
                 DB.Reviews,
                 sortCol ?? nameof(Review.CreatedAt), sortDir??AspHelpers.SortDirDescending, page, pageSize);
-            return View(reviews);
+            return View("", reviews);
         }
 
         // GET: Review/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-
-            return View();
+            var review = await DB.Reviews.FindAsync(id);
+            var reviewStats = await DB.ReviewStats.FindAsync(id);
+            var reviewDetailsModel = new ReviewDetailsModel(review, reviewStats);
+            return View(reviewDetailsModel);
         }
 
         // GET: Review/Create
@@ -122,7 +124,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                     BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
                 }
-                return await Create();
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {

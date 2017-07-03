@@ -1,59 +1,97 @@
-﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.Review
-
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.BusinessLayer.Data
+@model GSA.UnliquidatedObligations.Web.Models.ReviewDetailsModel
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <h2>Details</h2>
-
 <div>
     <h4>Review</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.ReviewName)
+            Review ID:
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.ReviewName)
+            @Html.DisplayFor(model => model.Review.ReviewId)
         </dd>
-
         <dt>
-            @Html.DisplayNameFor(model => model.Status)
+            Created At:
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.Status)
+            @Html.DisplayFor(model => model.Review.CreatedAt)
         </dd>
-
         <dt>
-            @Html.DisplayNameFor(model => model.TypeOfReview)
+            Review Name:
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.TypeOfReview)
+            @Html.DisplayFor(model => model.Review.ReviewName)
         </dd>
-
         <dt>
-            @Html.DisplayNameFor(model => model.Comments)
+            Status:
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.Comments)
+            @Html.DisplayFor(model => model.Review.Status)
         </dd>
-
         <dt>
-            @Html.DisplayNameFor(model => model.Region.RegionName)
+            Type of Review:
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.Region.RegionName)
+            @{
+                var reviewType = (ReviewTypeEnum)Model.Review.ReviewTypeId;
+                var reviewTypeName = reviewType.GetDisplayName();
+            }
+            @reviewTypeName
         </dd>
-
+        <dt>
+            Scope:
+        </dt>
+        <dd>
+            @{
+                var scope = (ReviewScopeEnum)Model.Review.ReviewScopeId;
+                var scopeName = scope.GetDisplayName();
+            }
+            @scopeName
+        </dd>
+        <dt>
+            Comments:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Review.Comments)
+        </dd>
+        <dt>
+            Region:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Review.Region.RegionName)
+        </dd>
+        <dt>
+            442 Uploads:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReviewUploadStats.PO442UploadStats)
+        </dd>
+        <dt>
+            Reta Uploads:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReviewUploadStats.RetaUploadStats)
+        </dd>
+        <dt>
+            Easi Uploads:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReviewUploadStats.EasiUploadStats)
+        </dd>
+        <dt>
+            192 Uploads:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReviewUploadStats.PO192Stats)
+        </dd>
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ReviewId }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

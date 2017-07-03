@@ -12,14 +12,16 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class AspnetUserSubjectCategoryClaim
+    public partial class ReviewStat
     {
-        public System.Guid Id { get; set; }
-        public string UserId { get; set; }
-        public Nullable<int> Region { get; set; }
-        public string BACode { get; set; }
-        public string DocumentType { get; set; }
-        public string OrgCode { get; set; }
-        public int ClaimId { get; set; }
+        public int ReviewId { get; set; }
+        public Nullable<int> EasiCnt { get; set; }
+        public Nullable<int> RetaCnt { get; set; }
+        public Nullable<int> PegasysObligations192Cnt { get; set; }
+        public Nullable<int> PegasysObligations442Cnt { get; set; }
+        public Nullable<int> UloCnt { get; set; }
+        public Nullable<int> PersonCnt { get; set; }
+        public Nullable<int> GroupCnt { get; set; }
+        public Nullable<int> SystemCnt { get; set; }
     }
 }

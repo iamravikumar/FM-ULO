@@ -271,11 +271,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).ToList();
             var applicationPermisionClaimsToAdd = new List<AspNetUserClaim>();
-            //var regionIds = await DB.Regions.Select(r => r.RegionId).ToListAsync();
             var regionIdHash = new HashSet<int>(await DB.Regions.Select(r => r.RegionId).ToListAsync());
 
-            //TODO: if removing, remove claims, if adding, just add all regions
-            //Add comment explaining business rule
+            //Ideally, would only want to assign permission to current region, but business rules dictated that we add
+            //application permissions for all regions.
             foreach (var applicationPermission in allApplicationPermissionNames)
             {
                 var applicationPermissionClaim =

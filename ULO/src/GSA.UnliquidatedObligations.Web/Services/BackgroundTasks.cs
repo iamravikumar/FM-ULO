@@ -84,8 +84,11 @@ namespace GSA.UnliquidatedObligations.Web.Services
         //TODO: Email on exception or let user know what happened
         public void CreateULOsAndAssign(int reviewId, int workflowDefinitionId, DateTime reviewDate)
         {
-            DB.Database.CommandTimeout = 60*15;
-            DB.CreateULOAndAssignWf(reviewId, workflowDefinitionId, reviewDate.Date);
+            using (ULODBEntities _db = DB)
+            {
+                _db.Database.CommandTimeout = 60*15;
+                _db.CreateULOAndAssignWf(reviewId, workflowDefinitionId, reviewDate.Date);
+            }
         }
 
         //TODO: Email on exception or let user know what happened.

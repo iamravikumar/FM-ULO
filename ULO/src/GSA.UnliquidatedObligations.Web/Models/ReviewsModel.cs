@@ -37,7 +37,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         //[DataType(DataType.Date)]
         //public DateTime? ProjectDueDate { get; set; }
 
-        public ReviewModel(List<int> regionChoices, List<ReviewTypeEnum> reviewTypeEnums, List<ReviewScopeEnum> reviewScopeEnums, List<WorkflowDefinition> workflowDefinitions  )
+        public ReviewModel(List<int> regionChoices, List<ReviewTypeEnum> reviewTypeEnums, List<ReviewScopeEnum> reviewScopeEnums, List<WorkflowDefinition> workflowDefinitions)
         {
             RegionChoices = regionChoices.OrderBy(rc => rc).ToList().ConvertToSelectList();
             ReviewTypes = reviewTypeEnums.ConvertToSelectList();
@@ -48,7 +48,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public ReviewModel()
         {
-            
+
         }
 
         //private static List<SelectListItem> ConvertToSelectList(List<string> rev)
@@ -64,6 +64,34 @@ namespace GSA.UnliquidatedObligations.Web.Models
         //}
 
 
+    }
+
+    public class ReviewDetailsModel
+    {
+        public Review Review { get; set; }
+        public ReviewUploadStatsModel ReviewUploadStats { get; set; }
+
+        public ReviewDetailsModel(Review review, ReviewStat reviewStats)
+        {
+            Review = review;
+            ReviewUploadStats = new ReviewUploadStatsModel(reviewStats);
+        }
+
+    }
+
+    public class ReviewUploadStatsModel
+    {
+        public int? PO442UploadStats { get; set; }
+        public int? RetaUploadStats { get; set; }
+        public int? EasiUploadStats { get; set; }
+        public int? PO192Stats { get; set; }
+        public ReviewUploadStatsModel(ReviewStat reviewStat)
+        {
+            PO442UploadStats = reviewStat.PegasysObligations442Cnt;
+            RetaUploadStats = reviewStat.RetaCnt;
+            EasiUploadStats = reviewStat.EasiCnt;
+            PO192Stats = reviewStat.PegasysObligations192Cnt;
+        }
     }
 
     public class UploadFilesModel
