@@ -53,6 +53,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var applicationPermissionRegionPermissionClaims =
                  await DB.AspnetUserApplicationPermissionClaims
                     .Where(c => c.Region.Value == regionId)
+                    .OrderBy(c => c.PermissionName)
                     .ToListAsync();
 
             //DB.Database.Log = s => Trace.WriteLine(s);
@@ -60,6 +61,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var subjectCategoryPermissionClaims =
                 await DB.AspnetUserSubjectCategoryClaims
                 .Where(c => c.Region.Value == regionId)
+                .OrderBy(c => c.DocumentType)
                 .ToListAsync();
 
             //get userIDClaimREgions
@@ -180,7 +182,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (createResult.Succeeded)
             {
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == appUser.UserName);
-                await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, userData.RegionId, user);
+                await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, user);
                 await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id, userData.RegionId);
                 await DB.SaveChangesAsync();
                 foreach (var groupId in userData.GroupIds)
@@ -239,7 +241,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var userData = Request.BodyAsJsonObject<EditUserPostData>();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userData.UserId);
-            await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, userData.RegionId, user);
+            await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, user);
             await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id, userData.RegionId);
             await DB.SaveChangesAsync();
             foreach (var groupId in userData.GroupIds)
@@ -261,10 +263,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return await Search(userData.RegionId);
         }
 
-        private async Task SaveApplicationPermissionUserClaims(List<string> applicationPermissionNames, int regionId, AspNetUser user)
+        private async Task SaveApplicationPermissionUserClaims(List<string> applicationPermissionNames, AspNetUser user)
         {
             var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).ToList();
             var applicationPermisionClaimsToAdd = new List<AspNetUserClaim>();
+            //var regionIds = await DB.Regions.Select(r => r.RegionId).ToListAsync();
+            var regionIdHash = new HashSet<int>(await DB.Regions.Select(r => r.RegionId).ToListAsync());
+
             //TODO: if removing, remove claims, if adding, just add all regions
             //Add comment explaining business rule
             foreach (var applicationPermission in allApplicationPermissionNames)
@@ -273,21 +278,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     (ApplicationPermissionNames)
                     Enum.Parse(typeof(ApplicationPermissionNames), applicationPermission);
 
-                var claimRegionIds = user.GetApplicationPerimissionRegions(applicationPermissionClaim);
                 if (applicationPermissionNames.Contains(applicationPermission))
-                {
-                    claimRegionIds.Add(regionId);
-                }
-                else
-                {
-                    claimRegionIds.Remove(regionId);
-                }
-
-                if (claimRegionIds.Count > 0)
                 {
                     var claim = new ApplicationPermissionClaimValue
                     {
-                        Regions = claimRegionIds,
+                        Regions = regionIdHash,
                         ApplicationPermissionName = applicationPermissionClaim
                     }.ToXml();
 
@@ -340,7 +335,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
 
                 var claimRegionIds = new HashSet<int>() { subjectCategoryClaim.Region.Value };
-               
+
                 var subjectClaimValue = new SubjectCatagoryClaimValue
                 {
                     Regions = claimRegionIds,

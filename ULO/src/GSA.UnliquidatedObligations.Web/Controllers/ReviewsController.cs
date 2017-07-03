@@ -122,7 +122,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                     BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
                 }
-                return Create().Result;
+                return await Create();
             }
             catch (Exception ex)
             {
