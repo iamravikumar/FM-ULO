@@ -19,7 +19,7 @@
         $("#valid").val("");
         $("#status").val("");
         $("#reviewId").val("");
-        
+        $("#hasBeenAssignedto").val("");
     });
 
     $("#showFilters").click(function() {
@@ -70,7 +70,8 @@ function showHideFiltersInit() {
         $("#reasonIncludedInReview").val() !="" ||
         $("#valid").val() !="" ||
         $("#status").val() != "" || 
-        $("#reviewId").val() != "") {
+        $("#reviewId").val() != ""
+        || $("#hasBeenAssignedto").val() != "") {
             $("#filterRegions").show();
             $("#showFilters").html("Hide Filters");
     }

@@ -46,11 +46,17 @@
            
         </tr>
         <tr>
+            <td class="label-container"><label for="hasBeenAssignedto">Has been Assigned to:</label></td>
+            <td><input type="text" name="hasBeenAssignedto" id="hasBeenAssignedto" value="@Context.Request["hasBeenAssignedto"]" /></td>
             <td class="label-container"><label for="awardNumber">Award Number:</label></td>
             <td><input type="text" name="awardNumber" id="awardNumber" value="@Context.Request["awardNumber"]" /></td>
             <td class="label-container"><label for="reasonIncludedInReview">Reason Included In Review:</label></td>
             <td><input type="text" name="reasonIncludedInReview" id="reasonIncludedInReview" value="@Context.Request["reasonIncludedInReview"]" /></td>
-            <td class="label-container"><label for="contractingOfficersName">Valid:</label></td>
+        
+        
+        </tr>
+        <tr>
+            <td class="label-container"><label for="valid">Valid:</label></td>
             <td>
                 <select id="valid" name="valid" class="form-control">
                     <option></option>
@@ -58,9 +64,6 @@
                     <option value="false">No</option>
                 </select>
             </td>
-        
-        </tr>
-        <tr>
             <td class="label-container"><label for="status">Status:</label></td>
             <td>@Html.DropDownList("status", Model.Statuses, "", new { @class = "form-control" })</td>
             <td class="label-container"><label for="reviewId">Review Id:</label></td>

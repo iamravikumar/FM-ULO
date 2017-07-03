@@ -44,6 +44,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             dt.SetColumnWithValue("ReviewId", reviewId);
             dt.MakeDateColumnsFitSqlServerBounds();
+            dt.IdealizeStringColumns();
             dt.UploadIntoSqlServer(CreateSqlConnection);
         }
 

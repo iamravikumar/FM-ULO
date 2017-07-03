@@ -23,9 +23,5 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
         {
             return (ApplicationPermissionClaimValue) Serializer.ReadObject(xml);
         }
-        //public static new ApplicationPermissionClaimValue CreateFromJson(string json)
-        //{
-        //    return string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<ApplicationPermissionClaimValue>(json);
-        //}
     }
 }
