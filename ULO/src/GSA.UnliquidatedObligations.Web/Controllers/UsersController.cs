@@ -198,7 +198,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                 DB.UserUsers.RemoveRange(DB.UserUsers.Where(uu => uu.ChildUserId == user.Id).ToList());
                 await DB.SaveChangesAsync();
-               
+
             }
             return View();
 
@@ -240,7 +240,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var userData = Request.BodyAsJsonObject<EditUserPostData>();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userData.UserId);
             await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, userData.RegionId, user);
-            await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id,  userData.RegionId);
+            await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id, userData.RegionId);
             await DB.SaveChangesAsync();
             foreach (var groupId in userData.GroupIds)
             {
@@ -265,6 +265,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).ToList();
             var applicationPermisionClaimsToAdd = new List<AspNetUserClaim>();
+            //TODO: if removing, remove claims, if adding, just add all regions
+            //Add comment explaining business rule
             foreach (var applicationPermission in allApplicationPermissionNames)
             {
                 var applicationPermissionClaim =
@@ -280,7 +282,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     claimRegionIds.Remove(regionId);
                 }
-                
+
                 if (claimRegionIds.Count > 0)
                 {
                     var claim = new ApplicationPermissionClaimValue
@@ -310,24 +312,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private async Task SaveSubjectCategories(List<PostSubjectCategoryClaim> subjectCategoryClaims, string userId, int regionId)
         {
             var postedClaims = subjectCategoryClaims;
-            var userCurrentSubjectCategoryClaims = await DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userId).ToListAsync();
-            var usersCurrentSubjectCategoryClaimsNotInPostData =
-                userCurrentSubjectCategoryClaims.Where(c => c.UserId == userId && c.Region.Value == regionId &&
-                    !postedClaims.Any(pc => pc.DocType == c.DocumentType && pc.BACode == c.BACode && pc.OrgCode == c.OrgCode));
+            var userCurrentSubjectCategoryClaimsNotInCurrentRegion = await DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userId && c.Region.Value != regionId).ToListAsync();
             var subjectCategoryClaimsToAdd = new List<AspNetUserClaim>();
             var subjectCategoryClaimIdsToDelete = new List<int>();
             foreach (var subjectCategoryClaim in postedClaims)
             {
-                var claimsForSubjectCategoryClaim =
-                    userCurrentSubjectCategoryClaims.Where(c => c.UserId == userId
-                                                               && c.DocumentType == subjectCategoryClaim.DocType &&
-                                                               c.BACode == subjectCategoryClaim.BACode &&
-                                                               c.OrgCode == subjectCategoryClaim.OrgCode)
-                                                               .ToList();
 
-                var claimRegionIds = new HashSet<int>(claimsForSubjectCategoryClaim.Select(c => c.Region.Value));
-
-                claimRegionIds.Add(regionId);
+                var claimRegionIds = new HashSet<int>() { regionId };
 
                 var subjectClaimValue = new SubjectCatagoryClaimValue
                 {
@@ -343,49 +334,30 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     ClaimType = SubjectCatagoryClaimValue.ClaimType,
                     ClaimValue = subjectClaimValue
                 });
-
-                if (claimsForSubjectCategoryClaim.Count > 0)
-                {
-                    subjectCategoryClaimIdsToDelete.Add(claimsForSubjectCategoryClaim[0].ClaimId);
-                }
             }
 
-            foreach (var subjectCategoryClaim in usersCurrentSubjectCategoryClaimsNotInPostData)
+            foreach (var subjectCategoryClaim in userCurrentSubjectCategoryClaimsNotInCurrentRegion)
             {
-                var claimsForSubjectCategoryClaim =
-                    userCurrentSubjectCategoryClaims.Where(c => c.UserId == userId
-                                                                && c.DocumentType == subjectCategoryClaim.DocumentType &&
-                                                                c.BACode == subjectCategoryClaim.BACode &&
-                                                                c.OrgCode == subjectCategoryClaim.OrgCode)
-                                                                .ToList();
-                var claimRegionIds = new HashSet<int>(claimsForSubjectCategoryClaim.Select(c => c.Region.Value));
 
-                claimRegionIds.Remove(regionId);
-
-                if (claimRegionIds.Count > 0)
+                var claimRegionIds = new HashSet<int>() { subjectCategoryClaim.Region.Value };
+               
+                var subjectClaimValue = new SubjectCatagoryClaimValue
                 {
-                    var subjectClaimValue = new SubjectCatagoryClaimValue
-                    {
-                        Regions = claimRegionIds,
-                        DocType = subjectCategoryClaim.DocumentType,
-                        BACode = subjectCategoryClaim.BACode,
-                        OrgCode = subjectCategoryClaim.OrgCode
-                    }.ToXml();
+                    Regions = claimRegionIds,
+                    DocType = subjectCategoryClaim.DocumentType,
+                    BACode = subjectCategoryClaim.BACode,
+                    OrgCode = subjectCategoryClaim.OrgCode
+                }.ToXml();
 
-                    subjectCategoryClaimsToAdd.Add(new AspNetUserClaim
-                    {
-                        UserId = userId,
-                        ClaimType = SubjectCatagoryClaimValue.ClaimType,
-                        ClaimValue = subjectClaimValue
-                    });
-                }
-
-                if (claimsForSubjectCategoryClaim.Count > 0)
+                subjectCategoryClaimsToAdd.Add(new AspNetUserClaim
                 {
-                    subjectCategoryClaimIdsToDelete.Add(claimsForSubjectCategoryClaim[0].ClaimId);
-                }
+                    UserId = userId,
+                    ClaimType = SubjectCatagoryClaimValue.ClaimType,
+                    ClaimValue = subjectClaimValue
+                });
+
             }
-            DB.AspNetUserClaims.RemoveRange(DB.AspNetUserClaims.Where(c => subjectCategoryClaimIdsToDelete.Contains(c.Id)));
+            DB.AspNetUserClaims.RemoveRange(DB.AspNetUserClaims.Where(c => c.UserId == userId && c.ClaimType == SubjectCatagoryClaimValue.ClaimType));
             await DB.SaveChangesAsync();
             DB.AspNetUserClaims.AddRange(subjectCategoryClaimsToAdd);
 
