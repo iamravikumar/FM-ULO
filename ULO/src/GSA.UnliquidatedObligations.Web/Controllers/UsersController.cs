@@ -192,8 +192,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     {
                         ParentUserId = groupId,
                         ChildUserId = user.Id,
-                        RegionId = userData.RegionId,
-                        AutoAssignUser = true
+                        RegionId = userData.RegionId
                     };
 
                     DB.UserUsers.Add(userUser);
@@ -254,8 +253,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     ParentUserId = groupId,
                     ChildUserId = userData.UserId,
-                    RegionId = userData.RegionId,
-                    AutoAssignUser = true
+                    RegionId = userData.RegionId
                 };
 
                 DB.UserUsers.Add(userUser);

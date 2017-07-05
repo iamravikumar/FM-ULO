@@ -18,7 +18,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string ParentUserId { get; set; }
         public string ChildUserId { get; set; }
         public Nullable<int> RegionId { get; set; }
-        public bool AutoAssignUser { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual AspNetUser AspNetUser1 { get; set; }

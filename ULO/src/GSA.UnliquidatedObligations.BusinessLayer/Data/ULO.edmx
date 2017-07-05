@@ -56,6 +56,7 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="UserType" Type="varchar" MaxLength="80" Nullable="false" />
+          <Property Name="AutoAssignUser" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Attachments">
           <Key>
@@ -397,7 +398,6 @@ warning 6013: The table/view 'ULO B.dbo.Reta' does not have a primary key define
           <Property Name="ParentUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="ChildUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="RegionId" Type="int" />
-          <Property Name="AutoAssignUser" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="WorkflowDefinitions">
           <Key>
@@ -1073,6 +1073,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
           <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="UserType" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="AutoAssignUser" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="Documents" Relationship="Self.FK__Document__Upload__7720AD13" FromRole="AspNetUsers" ToRole="Documents" />
@@ -1272,7 +1273,6 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="ParentUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ChildUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="RegionId" Type="Int32" />
-          <Property Name="AutoAssignUser" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="UserUsers" ToRole="AspNetUsers" />
           <NavigationProperty Name="AspNetUser1" Relationship="Self.FK__UserUsers__Paren__37703C52" FromRole="UserUsers" ToRole="AspNetUsers" />
           <NavigationProperty Name="Region" Relationship="Self.FK__UserUsers__Regio__395884C4" FromRole="UserUsers" ToRole="Regions" />
@@ -1898,6 +1898,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
                 <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="AutoAssignUser" ColumnName="AutoAssignUser" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2074,7 +2075,6 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
                 <ScalarProperty Name="ParentUserId" ColumnName="ParentUserId" />
                 <ScalarProperty Name="ChildUserId" ColumnName="ChildUserId" />
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
-                <ScalarProperty Name="AutoAssignUser" ColumnName="AutoAssignUser" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

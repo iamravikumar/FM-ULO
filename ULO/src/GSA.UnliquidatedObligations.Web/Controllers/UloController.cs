@@ -88,13 +88,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Details(int uloId, int workflowId)
         {
             //TODO: check if current user is able to view
-            var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
             var workflow = await FindWorkflowAsync(workflowId);
             var workflowDesc = await FindWorkflowDescAsync(workflow);
-            var workflowAssignedToCurrentUser = currentUser.Id == workflow.OwnerUserId;
 
-            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser));
+            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, true));
         }
 
         public async Task<ActionResult> RegionWorkflowDetails(int uloId, int workflowId)
