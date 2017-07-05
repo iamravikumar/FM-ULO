@@ -241,9 +241,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EditUserPostData postData = null)
+        public async Task<ActionResult> Edit()
         {
-            var userData = postData ?? Request.BodyAsJsonObject<EditUserPostData>();
+            var userData = Request.BodyAsJsonObject<EditUserPostData>();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userData.UserId);
             await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, user);
             await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id, userData.RegionId);
