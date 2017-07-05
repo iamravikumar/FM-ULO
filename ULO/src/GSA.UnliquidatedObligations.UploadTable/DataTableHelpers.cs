@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using RevolutionaryStuff.Core;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -512,7 +513,7 @@ namespace GSA.UnliquidatedObligations.Utility
             var columnMap = new DataColumn[headerRow.Count];
             for (int z = 0; z < headerRow.Count(); ++z)
             {
-                var colName = StringHelpers.TrimOrNull(Stuff.Object2String(headerRow[z]));
+                var colName = StringHelpers.TrimOrNull(Stuff.ObjectToString(headerRow[z]));
                 if (colName == null)
                 {
                     continue;
@@ -652,7 +653,7 @@ namespace GSA.UnliquidatedObligations.Utility
         public static string UpperCamelNoSpecialCharactersColumnNameMapper(string inboundColumnName)
         {
             var s = MakeFriendlyExpr.Replace(inboundColumnName, " ");
-            s = s.ToCamelCase();
+            s = s.ToUpperCamelCase();
             return s;
         }
 
