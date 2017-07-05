@@ -9,7 +9,7 @@
 <div>
     <h4>Review</h4>
     <hr />
-    <dl class="dl-horizontal">
+    <dl class="dl-horizontal review-details">
         <dt>
             Review ID:
         </dt>
@@ -89,6 +89,31 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.ReviewUploadStats.PO192Stats)
+        </dd>
+
+        <dt>
+            Ulos Created:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReviewUploadStats.UlosCreatedStats)
+        </dd>
+        <dt>
+            Assigned to Person Users:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToPersonStats)
+        </dd>
+        <dt>
+            Assigned to Group Users:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToGroupStats)
+        </dd>
+        <dt>
+            Assigned to System Users:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToSystemStats)
         </dd>
     </dl>
 </div>

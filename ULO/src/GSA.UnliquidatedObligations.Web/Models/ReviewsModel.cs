@@ -85,12 +85,20 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public int? RetaUploadStats { get; set; }
         public int? EasiUploadStats { get; set; }
         public int? PO192Stats { get; set; }
+        public int? UlosCreatedStats { get; set; }
+        public int? AssignedToPersonStats { get; set; }
+        public int? AssignedToGroupStats { get; set; }
+        public int? AssignedToSystemStats { get; set; }
         public ReviewUploadStatsModel(ReviewStat reviewStat)
         {
             PO442UploadStats = reviewStat.PegasysObligations442Cnt;
             RetaUploadStats = reviewStat.RetaCnt;
             EasiUploadStats = reviewStat.EasiCnt;
             PO192Stats = reviewStat.PegasysObligations192Cnt;
+            UlosCreatedStats = reviewStat.UloCnt;
+            AssignedToPersonStats = reviewStat.PersonCnt;
+            AssignedToGroupStats = reviewStat.GroupCnt;
+            AssignedToSystemStats = reviewStat.SystemCnt;
         }
     }
 

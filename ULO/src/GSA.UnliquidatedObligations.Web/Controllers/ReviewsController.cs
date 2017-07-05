@@ -62,6 +62,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             //var content = "inside create<br />";
             try
             {
+                if (DB.Reviews.Any(r => r.ReviewName == reviewModel.ReviewName))
+                {
+                    ModelState.AddModelError("ReviewName", "Review Name is already being used in system.");
+                }
+                ModelState.AddModelError("ReviewName", "This is a ReviewName Error");
                 if (ModelState.IsValid)
                 {
 
@@ -122,8 +127,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, review.ReviewDateInitiated.Value));
 
                     BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
+                    return RedirectToAction("Index");
                 }
-                return RedirectToAction("Index");
+                return await Create();
+
             }
             catch (Exception ex)
             {
