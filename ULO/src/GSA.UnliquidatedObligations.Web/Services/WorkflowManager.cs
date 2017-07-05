@@ -2,9 +2,9 @@
 using Hangfire;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
-using GSA.UnliquidatedObligations.Utility;
-using GSA.UnliquidatedObligations.Utility.Caching;
 using GSA.UnliquidatedObligations.Web.Models;
+using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -30,7 +30,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IWorkflowDescriptionFinder Finder;
         private readonly IBackgroundJobClient BackgroundJobClient;
         protected readonly ULODBEntities DB;
-        private readonly ICacher Cacher = new Cache.BasicCacher();
+        private readonly ICacher Cacher = new BasicCacher();
 
         public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, ULODBEntities db)
         {

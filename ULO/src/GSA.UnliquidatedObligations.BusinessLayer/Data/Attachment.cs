@@ -10,8 +10,7 @@
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     using System;
-    using System.Collections.Generic;
-    
+
     public partial class Attachment
     {
         public int AttachmentsId { get; set; }

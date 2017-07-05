@@ -1,5 +1,5 @@
-﻿using GSA.UnliquidatedObligations.Utility;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -19,9 +19,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting
         {
             get
             {
-                var n = Title;
+                var n = Title ?? "";
                 n = NonWordChars.Replace(n, " ");
-                return StringHelpers.ToCamelCase(n);
+                return n.ToUpperCamelCase();
             }
         }
 
