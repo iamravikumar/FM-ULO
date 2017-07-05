@@ -47,7 +47,7 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReasonIncludedInReview, overrideDisplayName: "Reason Included In Review")            
         </th>
         <th>
-            Valid
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Status")
