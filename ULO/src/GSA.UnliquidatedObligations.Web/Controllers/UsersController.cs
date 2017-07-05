@@ -178,7 +178,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var userData = Request.BodyAsJsonObject<CreateUserPostData>();
 
             var appUser = new ApplicationUser { UserName = userData.UserName, Email = userData.UserEmail };
-            var createResult = UserManager.Create(appUser);
+            var createResult = CreateResult(appUser);
             if (createResult.Succeeded)
             {
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == appUser.UserName);
@@ -207,6 +207,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             return await Search(userData.RegionId);
 
+        }
+
+        private IdentityResult CreateResult(ApplicationUser user)
+        {
+            var createResult = UserManager.Create(user);
+            var errors = createResult.Errors.ToList();
+            if (createResult.Succeeded)
+            {
+                if (DB.AspNetUsers.Any(u => u.Email == user.Email))
+                {
+                    errors.Add(string.Format("Email {0} is already taken", user.Email));
+                }
+            }
+            return new IdentityResult(errors);
         }
 
         // GET: Users/Edit/5
