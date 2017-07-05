@@ -45,7 +45,7 @@
             @reviewTypeName
         </dd>
         <dt>
-            Scope:
+            Review Scope:
         </dt>
         <dd>
             @{
@@ -53,6 +53,19 @@
                 var scopeName = scope.GetDisplayName();
             }
             @scopeName
+        </dd>
+        <dt>
+            Review As of Date:
+        </dt>
+        <dd>
+            @{
+                var reviewAsOfDate = "";
+                if (Model.Review.ReviewDateInitiated != null)
+                {
+                    reviewAsOfDate = Convert.ToDateTime(Model.Review.ReviewDateInitiated).ToString("MM/dd/yyyy");
+                }
+            }
+            @reviewAsOfDate
         </dd>
         <dt>
             Comments:

@@ -37,6 +37,9 @@
                 Scope
             </th>
             <th>
+                @Html.SortableHeaderFor(model => model.ReviewDateInitiated, overrideDisplayName: "Review As Of Date")
+            </th>
+            <th>
                 @Html.SortableHeaderFor(model => model.Comments)
             </th>
             <th>
@@ -63,17 +66,28 @@
             </td>
             <td>
                 @{
-                    var reviewType = (ReviewTypeEnum) item.ReviewTypeId;
+                    var reviewType = (ReviewTypeEnum)item.ReviewTypeId;
                     var reviewTypeName = reviewType.GetDisplayName();
                 }
                 @reviewTypeName
             </td>
             <td>
                 @{
-                    var scope = (ReviewScopeEnum) item.ReviewScopeId;
+                    var scope = (ReviewScopeEnum)item.ReviewScopeId;
                     var scopeName = scope.GetDisplayName();
                 }
                 @scopeName
+            </td>
+            <td>
+                @{
+                    var reviewAsOfDate = "";
+                    if (item.ReviewDateInitiated != null)
+                    {
+                        reviewAsOfDate = Convert.ToDateTime(item.ReviewDateInitiated).ToString("MM/dd/yyyy");
+                    }
+                }
+                @reviewAsOfDate
+                @*@Html.DisplayFor(modelItem => item.ReviewDateInitiated)*@
             </td>
 
             <td>
@@ -83,12 +97,12 @@
                 @Html.DisplayFor(modelItem => item.Region.RegionName)
             </td>
             @*<td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
-                @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
-            </td>*@
+                    @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
+                    @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
+                </td>*@
         </tr>
-    }
+                    }
 
 </table>
 
