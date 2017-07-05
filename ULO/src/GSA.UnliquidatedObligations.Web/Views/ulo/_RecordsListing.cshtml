@@ -31,7 +31,7 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.TotalLine, overrideDisplayName: "Amount")
         </th>
         <th>
-            Valid
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.DueAtUtc, overrideDisplayName: "Due Date")
