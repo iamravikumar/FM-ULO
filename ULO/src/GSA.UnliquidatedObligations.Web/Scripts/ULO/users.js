@@ -74,9 +74,10 @@ function addNewUserSaveClick() {
 function addSaveClick() {
     $(".save-user").unbind("click");
     $(".save-user").click(function () {
-        $(this).prop("disabled", true);
+        var $save = $(this);
+        $save.prop("disabled", true);
         $(".close-save-user").prop("disabled", true);
-        $(this).text("Saving...");
+        $save.text("Saving...");
         var data = $("form[name=editUserForm]").serializeArray();
 
         var postData = new FormPostData(data, $("#RegionId").val());
@@ -89,9 +90,9 @@ function addSaveClick() {
                 $(".users-data").html(result);
                 addEditClick();
                 $("#editUserModal").modal("hide");
-                $(this).prop("disabled", false);
+                $save.prop("disabled", false);
                 $(".close-save-user").prop("disabled", true);
-                $(this).text("Save");
+                $save.text("Save");
             },
             error: function (xhr, status, p3, p4) {
                 var err = "Error " + " " + status + " " + p3 + " " + p4;

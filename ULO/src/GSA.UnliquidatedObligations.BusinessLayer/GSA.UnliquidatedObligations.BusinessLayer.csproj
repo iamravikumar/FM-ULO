@@ -307,6 +307,9 @@
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\ReviewScopeEnum.cs" />
+    <Compile Include="Data\ReviewStat.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\ReviewTypeEnum.cs" />
     <Compile Include="Data\JustificationEnum.cs" />
     <Compile Include="Data\Justification.cs" />

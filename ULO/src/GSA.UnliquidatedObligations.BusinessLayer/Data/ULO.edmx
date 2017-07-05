@@ -461,10 +461,9 @@ warning 6013: The table/view 'ULO B.dbo.Reta' does not have a primary key define
 warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspnetUserApplicationPermissionClaims">
           <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="uniqueidentifier" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="PermissionName" Type="nvarchar" MaxLength="50" />
@@ -474,16 +473,31 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' d
 warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspnetUserSubjectCategoryClaims">
           <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="uniqueidentifier" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="BACode" Type="nvarchar" MaxLength="50" />
           <Property Name="DocumentType" Type="nvarchar" MaxLength="50" />
           <Property Name="OrgCode" Type="nvarchar" MaxLength="50" />
           <Property Name="ClaimId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ReviewStats">
+          <Key>
+            <PropertyRef Name="ReviewId" />
+          </Key>
+          <Property Name="ReviewId" Type="int" Nullable="false" />
+          <Property Name="EasiCnt" Type="int" />
+          <Property Name="RetaCnt" Type="int" />
+          <Property Name="PegasysObligations192Cnt" Type="int" />
+          <Property Name="PegasysObligations442Cnt" Type="int" />
+          <Property Name="UloCnt" Type="int" />
+          <Property Name="PersonCnt" Type="int" />
+          <Property Name="GroupCnt" Type="int" />
+          <Property Name="SystemCnt" Type="int" />
         </EntityType>
         <Association Name="FK__Document__Upload__7720AD13">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
@@ -881,6 +895,19 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
     [AspnetUserSubjectCategoryClaims].[OrgCode] AS [OrgCode], 
     [AspnetUserSubjectCategoryClaims].[ClaimId] AS [ClaimId]
     FROM [dbo].[AspnetUserSubjectCategoryClaims] AS [AspnetUserSubjectCategoryClaims]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ReviewStats" EntityType="Self.ReviewStats" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ReviewStats].[ReviewId] AS [ReviewId], 
+    [ReviewStats].[EasiCnt] AS [EasiCnt], 
+    [ReviewStats].[RetaCnt] AS [RetaCnt], 
+    [ReviewStats].[PegasysObligations192Cnt] AS [PegasysObligations192Cnt], 
+    [ReviewStats].[PegasysObligations442Cnt] AS [PegasysObligations442Cnt], 
+    [ReviewStats].[UloCnt] AS [UloCnt], 
+    [ReviewStats].[PersonCnt] AS [PersonCnt], 
+    [ReviewStats].[GroupCnt] AS [GroupCnt], 
+    [ReviewStats].[SystemCnt] AS [SystemCnt]
+    FROM [dbo].[ReviewStats] AS [ReviewStats]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK__Document__Upload__7720AD13" Association="Self.FK__Document__Upload__7720AD13">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -1324,10 +1351,9 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
         </EntityType>
         <EntityType Name="AspnetUserApplicationPermissionClaim">
           <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Guid" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="PermissionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1335,16 +1361,29 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
         </EntityType>
         <EntityType Name="AspnetUserSubjectCategoryClaim">
           <Key>
-            <PropertyRef Name="UserId" />
-            <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Guid" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="BACode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="DocumentType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="OrgCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ClaimId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="ReviewStat">
+          <Key>
+            <PropertyRef Name="ReviewId" />
+          </Key>
+          <Property Name="ReviewId" Type="Int32" Nullable="false" />
+          <Property Name="EasiCnt" Type="Int32" />
+          <Property Name="RetaCnt" Type="Int32" />
+          <Property Name="PegasysObligations192Cnt" Type="Int32" />
+          <Property Name="PegasysObligations442Cnt" Type="Int32" />
+          <Property Name="UloCnt" Type="Int32" />
+          <Property Name="PersonCnt" Type="Int32" />
+          <Property Name="GroupCnt" Type="Int32" />
+          <Property Name="SystemCnt" Type="Int32" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
@@ -1689,6 +1728,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <EntitySet Name="Zones" EntityType="Self.Zone" />
           <EntitySet Name="AspnetUserApplicationPermissionClaims" EntityType="Self.AspnetUserApplicationPermissionClaim" />
           <EntitySet Name="AspnetUserSubjectCategoryClaims" EntityType="Self.AspnetUserSubjectCategoryClaim" />
+          <EntitySet Name="ReviewStats" EntityType="Self.ReviewStat" />
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
@@ -2122,6 +2162,21 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
                 <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
                 <ScalarProperty Name="OrgCode" ColumnName="OrgCode" />
                 <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ReviewStats">
+            <EntityTypeMapping TypeName="Model.ReviewStat">
+              <MappingFragment StoreEntitySet="ReviewStats">
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
+                <ScalarProperty Name="EasiCnt" ColumnName="EasiCnt" />
+                <ScalarProperty Name="RetaCnt" ColumnName="RetaCnt" />
+                <ScalarProperty Name="PegasysObligations192Cnt" ColumnName="PegasysObligations192Cnt" />
+                <ScalarProperty Name="PegasysObligations442Cnt" ColumnName="PegasysObligations442Cnt" />
+                <ScalarProperty Name="UloCnt" ColumnName="UloCnt" />
+                <ScalarProperty Name="PersonCnt" ColumnName="PersonCnt" />
+                <ScalarProperty Name="GroupCnt" ColumnName="GroupCnt" />
+                <ScalarProperty Name="SystemCnt" ColumnName="SystemCnt" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

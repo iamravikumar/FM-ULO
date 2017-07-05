@@ -50,7 +50,7 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ReviewId)
+                @Html.ActionLink("View Review " + item.ReviewId, "Details", new { id = item.ReviewId })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)

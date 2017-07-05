@@ -31,7 +31,7 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.TotalLine, overrideDisplayName: "Amount")
         </th>
         <th>
-            Valid
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.DueAtUtc, overrideDisplayName: "Due Date")
@@ -48,6 +48,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
+            </td>
+            <td>
+                @Html.Currency(Convert.ToDecimal(item.UnliquidatedObligation.TotalLine))
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
