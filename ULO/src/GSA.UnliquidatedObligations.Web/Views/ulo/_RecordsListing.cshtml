@@ -50,6 +50,9 @@
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
             </td>
             <td>
+                @Html.Currency(Convert.ToDecimal(item.UnliquidatedObligation.TotalLine))
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
             </td>
             <td>
