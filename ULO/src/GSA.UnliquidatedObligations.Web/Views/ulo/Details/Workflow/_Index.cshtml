@@ -3,5 +3,8 @@
 
 @* Will need to style a bit for multiple workflows. *@
 @Html.Partial("Details/Workflow/_Questions", Model.QuestionsViewModel)
-@Html.Partial("Details/Workflow/_Advance", Model.AdvanceViewModel)
+@if (Model.WorkflowAssignedToCurrentUser)
+{
+    @Html.Partial("Details/Workflow/_Advance", Model.AdvanceViewModel)
+}
 

@@ -115,7 +115,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
             </td>
-            <td>@Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList", new WorkflowViewModel(item))</td>
+            <td>@Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList", new WorkflowViewModel(item, true))</td>
 
         </tr>
 

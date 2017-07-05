@@ -180,15 +180,17 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public WorkflowDescriptionViewModel WorkflowDescriptionViewModel { get; set; }
         public DocumentsViewModel DocumentsViewModel { get; set; }
         public bool RequestForReassignmentsActive { get; set; }
+        public bool WorkflowAssignedToCurrentUser { get; set; }
         public WorkflowViewModel()
         {
 
         }
-        public WorkflowViewModel(Workflow workflow, IWorkflowDescription workflowDecription = null)
+        public WorkflowViewModel(Workflow workflow, bool workflowAssignedToCurrentUser, IWorkflowDescription workflowDecription = null)
         {
             Workflow = workflow;
             var questions = workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList();
-            var allowDocumentEdits = false;
+            WorkflowAssignedToCurrentUser = workflowAssignedToCurrentUser;
+            bool allowDocumentEdits = workflowAssignedToCurrentUser;
             QuestionsViewModel = new UloWfQuestionsViewModel(questions);
             var expectedDateForCompletion = workflow.UnliquidatedObligation.ExpectedDateForCompletion;
             if (workflowDecription != null)
@@ -206,8 +208,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 {
                     AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow.WorkflowId, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateAlwaysShow);
                 }
-                allowDocumentEdits = WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
+                allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
+
             RequestForReassignmentsActive = workflow.RequestForReassignments.ToList().Count > 0 &&
                                                          Workflow.RequestForReassignments.FirstOrDefault() != null &&
                                                          Workflow.RequestForReassignments.First().IsActive;
@@ -242,10 +245,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public WorkflowViewModel WorkflowViewModel { get; set; }
         public UloViewModel()
         { }
-        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDecription)
+        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDecription, bool workflowAsignedToCurrentUser)
         {
             CurretUnliquidatedObligation = ulo;
-            WorkflowViewModel = new WorkflowViewModel(workflow, workflowDecription);
+            WorkflowViewModel = new WorkflowViewModel(workflow, workflowAsignedToCurrentUser, workflowDecription);
 
         }
     }
