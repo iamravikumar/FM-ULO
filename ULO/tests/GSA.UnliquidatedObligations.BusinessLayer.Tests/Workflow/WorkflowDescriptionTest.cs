@@ -80,7 +80,17 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                         },
                          new FieldComparisonActivityChooser.Expression
                         {
-                            Code = "wf.CurrentWorkflowActivityKey == \"B4\" && wfQuestion.Answer == \"Concur\"",
+                            Code = "wf.CurrentWorkflowActivityKey == \"B4\" && wfQuestion.Answer == \"Concur\" && wf.UnliquidatedObligation.Valid == true",
+                            WorkflowActivityKey = "B5"
+                        },
+                          new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B4\" && wfQuestion.Answer == \"Concur\" && wf.UnliquidatedObligation.Valid == false",
+                            WorkflowActivityKey = "B6"
+                        },
+                        new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B6\" && wfQuestion.Answer == \"Deobligated\"",
                             WorkflowActivityKey = "B5"
                         }
                     }
@@ -255,7 +265,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                     ExpectedDateAlwaysShow = true,
                     QuestionChoices = new WorkflowQuestionChoices
                     {
-                       QuestionLabel = "Do you Concur",
+                       QuestionLabel = "Do you Concur?",
                        DefaultJustificationEnums = allJustificationEnumsList,
                        Choices = new List<QuestionChoice>()
                         {
@@ -268,6 +278,42 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                             {
                                 Text = "No",
                                 Value = "Not Concur"
+                            }
+                        }
+                    }
+                },
+                new WebActionWorkflowActivity
+                {
+                    ActionName = "Index",
+                    ActivityName = "Debobligate",
+                    SequenceNumber = 6,
+                    ControllerName = "Ulo",
+                    NextActivityChooserConfig = nextActivityConfig,
+                    NextActivityChooserTypeName = "FieldComparisonActivityChooser",
+                    WorkflowActivityKey = "B6",
+                    OwnerUserName = "RegionApprovers",
+                    JustificationNeeded = false,
+                    AllowDocumentEdit = false,
+                    RouteValueByName = new Dictionary<string, object>(),
+                    EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = false,
+                    ExpectedDateForCompletionNeeded = false,
+                    ExpectedDateAlwaysShow = true,
+                    QuestionChoices = new WorkflowQuestionChoices
+                    {
+                       QuestionLabel = "Has this been Deobligated?",
+                       DefaultJustificationEnums = allJustificationEnumsList,
+                       Choices = new List<QuestionChoice>()
+                        {
+                            new QuestionChoice()
+                            {
+                                Text = "Yes",
+                                Value = "Deobligated"
+                            },
+                            new QuestionChoice()
+                            {
+                                Text = "No",
+                                Value = "Not Deobligated"
                             }
                         }
                     }

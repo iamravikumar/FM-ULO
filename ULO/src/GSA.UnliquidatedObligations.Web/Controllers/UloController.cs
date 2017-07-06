@@ -76,9 +76,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var regions = DB.Regions.Select(r => new SelectListItem { Text = r.RegionName, Value = r.RegionId.ToString() }).OrderBy(r => r).ToList();
             var baCodes = DB.UnliquidatedObligations.Select(u => u.Prog).Distinct().OrderBy(p => p).ToList();
 
-            var workflowDescXML = DB.WorkflowDefinitions.Where(wfd => wfd.WorkflowDefinitionId == 2).Select(wfd => wfd.DescriptionXml).First();
-            var workflowDesc = WorkflowDescription.DeserializeFromXml(workflowDescXML);
-            var statuses = workflowDesc.WebActionWorkflowActivities.OrderBy(a => a.SequenceNumber).Select(a => a.ActivityName).ToList();
+            var workflowDescXML = await DB.WorkflowDefinitions.Where(wfd => wfd.WorkflowDefinitionName == "ULO Workflow" && wfd.IsActive == true).Select(wfd => wfd.DescriptionXml).FirstOrDefaultAsync();
+            List<string> statuses = new List<string>();
+            if (workflowDescXML != null)
+            {
+                var workflowDesc = WorkflowDescription.DeserializeFromXml(workflowDescXML);
+                statuses = workflowDesc.WebActionWorkflowActivities.OrderBy(a => a.SequenceNumber).Select(a => a.ActivityName).ToList();
+            }
 
             return View("~/Views/Ulo/Search/Index.cshtml", new FilterViewModel(workflows, allSubjectCategoryClaimsValues, zones, regions, baCodes, statuses));
         }
