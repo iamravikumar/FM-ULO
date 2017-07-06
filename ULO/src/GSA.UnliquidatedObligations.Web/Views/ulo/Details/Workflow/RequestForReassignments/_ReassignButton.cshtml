@@ -1,12 +1,16 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
 
 @{
     var modalId = "#" + Model.Workflow.WorkflowId + "RequestForReassignModal";
+    var userReassignRegions = User.GetReassignmentGroupRegions();
 }
+@if (User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(Model.Workflow.UnliquidatedObligation.RegionId))
+{
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">
     @if (!Model.RequestForReassignmentsActive)
     {
-        @Html.Encode("Request Reassignment");
+        @Html.Encode("Reassign");
     }
     else
     {
@@ -14,3 +18,10 @@
     }
 
 </button>
+}
+else if (Model.WorkflowAssignedToCurrentUser)
+{
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">
+            @Html.Encode("Request For Reassignment");
+    </button>
+}

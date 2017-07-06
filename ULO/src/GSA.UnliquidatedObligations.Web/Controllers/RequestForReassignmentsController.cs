@@ -10,6 +10,7 @@ using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -26,11 +27,26 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: RequestForReassignments
-        public async Task<ActionResult> Index()
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
+        public async Task<ActionResult> Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var requestForReassignments = DB.RequestForReassignments.Include(r => r.AspNetUser).Include(r => r.UnliqudatedObjectsWorkflowQuestion).Include(r => r.Workflow);
-            return View(await requestForReassignments.ToListAsync());
+            var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
+            var reassignGroupUser = await UserManager.FindByNameAsync(Properties.Settings.Default.ReassignGroupUserName);
+
+            var reassignGroupRegionIds = await DB.UserUsers
+                .Where(uu => uu.ParentUserId == reassignGroupUser.Id && uu.ChildUserId == currentUser.Id)
+                .Select(uu => uu.RegionId)
+                .Distinct()
+                .ToListAsync();
+           
+            var workflows = ApplyBrowse(
+                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUser.Id && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
+                .Include(wf => wf.UnliquidatedObligation),
+                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            return View("~/Views/Ulo/Index.cshtml", workflows);
         }
+
+
 
         // GET: RequestForReassignments/Details/5
         public ActionResult Details(int? id, int workflowId, bool isAdmin = false)

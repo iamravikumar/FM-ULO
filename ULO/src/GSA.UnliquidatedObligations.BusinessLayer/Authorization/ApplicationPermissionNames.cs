@@ -42,5 +42,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 
         [Display(Name = "Can use the background job dashboard")]
         BackgroundJobDashboard,
+
+        [Display(Name = "Reassign Workflows")]
+        CanReassign,
     }
 }

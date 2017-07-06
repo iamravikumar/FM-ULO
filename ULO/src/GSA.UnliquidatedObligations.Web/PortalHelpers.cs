@@ -13,6 +13,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Web.Mvc;
 using System.Configuration;
 using System.Web.Hosting;
+using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -72,6 +73,31 @@ namespace GSA.UnliquidatedObligations.Web
             return AspNetUser.GetApplicationPerimissionRegions(permissionName).Count > 0;
 
         }
+
+        public static List<int?> GetReassignmentGroupRegions(this IPrincipal user)
+        {
+            var componentContext = (IComponentContext)HttpContext.Current.Items["ComponentContext"];
+            var DB = componentContext.Resolve<ULODBEntities>();
+            List<int?> groupRegions = new List<int?>();
+            var reassignGroup = DB.AspNetUsers.FirstOrDefault(u => u.UserName == Properties.Settings.Default.ReassignGroupUserName);
+            var AspNetUser = DB.AspNetUsers.Include(u => u.UserUsers)
+                .FirstOrDefault(u => u.UserName == user.Identity.Name);
+
+            if (AspNetUser == null && reassignGroup == null)
+                return groupRegions;
+            else
+            {
+                groupRegions = AspNetUser.UserUsers
+                    .Where(uu => uu.ParentUserId == reassignGroup.Id)
+                    .Select(uu => uu.RegionId).ToList();
+            }
+
+
+            return groupRegions;
+
+        }
+
+
 
         public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, int? uloId, string pegasysDocumentNumber, string organization,
            int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId)

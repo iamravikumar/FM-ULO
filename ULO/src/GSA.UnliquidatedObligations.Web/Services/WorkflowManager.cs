@@ -195,7 +195,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             Requires.Text(proposedOwnerUserName, nameof(proposedOwnerUserName));
             Requires.NonNull(wf, nameof(wf));
-            Requires.Text(nextActivityKey, nameof(nextActivityKey));
+            if (proposedOwnerUserName != Properties.Settings.Default.ReassignGroupUserName)
+            {
+                Requires.Text(nextActivityKey, nameof(nextActivityKey));
+            }
 
             var u = Cacher.FindOrCreateValWithSimpleKey(proposedOwnerUserName, () => DB.AspNetUsers.FirstOrDefault(z => z.UserName == proposedOwnerUserName));
             //TODO: check if null, return proposedOwnserId

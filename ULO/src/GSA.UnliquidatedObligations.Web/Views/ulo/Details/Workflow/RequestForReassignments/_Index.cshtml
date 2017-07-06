@@ -2,6 +2,8 @@
 
 @{
 
+    
+
     if (Model.Workflow.RequestForReassignments.Count == 0)
     {
         Html.RenderAction("Details", "RequestForReassignments", new {workflowId = Model.Workflow.WorkflowId});

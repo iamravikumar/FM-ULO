@@ -23,6 +23,10 @@
                 {
                     <li>@Html.ActionLink("Manage Users", "Index", "Users")</li>
                 }
+                @if (User.HasPermission(ApplicationPermissionNames.CanReassign))
+                {
+                    <li>@Html.ActionLink("Reassignment Requests", "Index", "RequestForReassignments")</li>
+                }
             </ul>
             @Html.Partial("_LoginPartial")
         </div>

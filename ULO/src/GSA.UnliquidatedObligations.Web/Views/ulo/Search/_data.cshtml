@@ -1,7 +1,9 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Models
+@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
 @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
 @{
     var todaysDate = DateTime.Today;
+    var userReassignRegions = User.GetReassignmentGroupRegions();
 }
 <table class="table table-responsive active-workflows">
 
@@ -32,19 +34,19 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.VendorName, overrideDisplayName: "Pegasys Vendor Name")            
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.VendorName, overrideDisplayName: "Pegasys Vendor Name")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ContractingOfficersName, overrideDisplayName: "Contracting Officer Name")            
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ContractingOfficersName, overrideDisplayName: "Contracting Officer Name")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.AspNetUser.UserName, overrideDisplayName: "Currently Assigned to")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.AwardNbr, overrideDisplayName: "Award Number")            
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.AwardNbr, overrideDisplayName: "Award Number")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReasonIncludedInReview, overrideDisplayName: "Reason Included In Review")            
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReasonIncludedInReview, overrideDisplayName: "Reason Included In Review")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
@@ -115,11 +117,16 @@
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
             </td>
-            <td>@Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList", new WorkflowViewModel(item, true))</td>
+            <td>
+                    
+                    @if (User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(item.UnliquidatedObligation.RegionId))
+                    {
+                        @Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList", new WorkflowViewModel(item, true))
+                    }
+            </td>
 
         </tr>
-
-                    }
+ }
 
 </table>
 
