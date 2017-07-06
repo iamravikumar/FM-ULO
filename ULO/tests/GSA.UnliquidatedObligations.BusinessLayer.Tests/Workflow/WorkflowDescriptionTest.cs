@@ -250,7 +250,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                 {
                     ActionName = "Index",
                     ActivityName = "Complete",
-                    SequenceNumber = 5,
+                    SequenceNumber = 6,
                     ControllerName = "Ulo",
                     NextActivityChooserConfig = nextActivityConfig,
                     NextActivityChooserTypeName = "FieldComparisonActivityChooser",
@@ -286,7 +286,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                 {
                     ActionName = "Index",
                     ActivityName = "Debobligate",
-                    SequenceNumber = 6,
+                    SequenceNumber = 5,
                     ControllerName = "Ulo",
                     NextActivityChooserConfig = nextActivityConfig,
                     NextActivityChooserTypeName = "FieldComparisonActivityChooser",

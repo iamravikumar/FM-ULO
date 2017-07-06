@@ -80,7 +80,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             //TODO: Add logic for handling groups of users.
             if (nextActivity is WebActionWorkflowActivity)
             {
-                if (wf.AspNetUser.UserName != nextActivity.OwnerUserName || forceAdvance == true)
+                if ((wf.CurrentWorkflowActivityKey != currentActivity.WorkflowActivityKey && wf.AspNetUser.UserName != nextActivity.OwnerUserName) || forceAdvance == true)
                 {
                     nextOwnerId = await GetNextOwnerUserIdAsync(nextActivity.OwnerUserName, wf,
                         nextActivity.WorkflowActivityKey);
