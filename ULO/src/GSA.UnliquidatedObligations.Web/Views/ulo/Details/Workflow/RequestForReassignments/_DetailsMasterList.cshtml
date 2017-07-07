@@ -9,7 +9,7 @@
     var commentsId = currentworkflowId + "RequestComments";
 }
 
-@using (Html.BeginForm("ReassignFromMasterList", "RequestForReassignments", new { workflowId = currentworkflowId }, FormMethod.Post))
+@using (Html.BeginForm("ReassignFromList", "RequestForReassignments", new { workflowId = currentworkflowId }, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     <div class="modal fade requestForReassignModal" id="@modalId" tabindex="-1" role="dialog" aria-labelledby="@modalId" aria-hidden="true">

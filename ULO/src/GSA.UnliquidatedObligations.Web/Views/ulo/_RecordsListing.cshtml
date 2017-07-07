@@ -1,7 +1,9 @@
-﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
-    @{
-        var todaysDate = DateTime.Today;
-    }
+﻿@using GSA.UnliquidatedObligations.Web.Models
+@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+@{
+    var todaysDate = DateTime.Today;
+    var showReassignmentButton = ViewBag.ShowReassignButton;
+}
 <h2>@ViewBag.PageTitle</h2>
 
 <table class="table table-responsive active-workflows">
@@ -19,13 +21,13 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")            
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Review Status")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org Code")            
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org Code")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.TotalLine, overrideDisplayName: "Amount")
@@ -37,14 +39,17 @@
             @Html.SortableHeaderFor(z => z.DueAtUtc, overrideDisplayName: "Due Date")
         </th>
         <th>Days left</th>
-
+        @if (showReassignmentButton)
+        {
+            <th></th>
+        }
     </tr>
 
     @foreach (var item in Model)
     {
         <tr class="active-workflows-record" data-id="@item.WorkflowId">
             <td>
-                @Html.ActionLink("View ULO "+ item.TargetUloId.ToString(), "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+                @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
@@ -58,7 +63,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
             </td>
-          
+
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
             </td>
@@ -81,9 +86,16 @@
             <td>
                 @{
                     @*var dueDate = Convert.ToDateTime(item.UnliquidatedObligation.ExpectedDateForCompletionResolution);
-                    var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
-                    @Html.Encode(daysLeft)*@
-                    
+                        var daysLeft = dueDate.Subtract(todaysDate).TotalDays;
+                        @Html.Encode(daysLeft)*@
+
+                }
+            </td>
+            <td>
+                @if (showReassignmentButton)
+                {
+
+                    @Html.Partial("~/Views/Ulo/Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList.cshtml", new WorkflowViewModel(item, true))
                 }
             </td>
             @*<td>
@@ -95,6 +107,19 @@
                     }
 
 </table>
-
+@if (showReassignmentButton)
+{
+    foreach (var item in Model)
+    {
+        if (item.RequestForReassignments.Count == 0)
+        {
+            Html.RenderAction("Details", "RequestForReassignments", new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true });
+        }
+        else
+        {
+            Html.RenderAction("Details", "RequestForReassignments", new { id = item.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true });
+        }
+    }
+}
 @Html.Partial("_PaginationPartial")
 

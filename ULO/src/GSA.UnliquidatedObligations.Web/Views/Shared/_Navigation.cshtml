@@ -21,7 +21,7 @@
                 }
                 @if (User.HasPermission(ApplicationPermissionNames.CanReassign))
                 {
-                    <li>@Html.ActionLink("Reassignment Requests", "Index", "RequestForReassignments")</li>
+                    <li>@Html.ActionLink("Reassignment Requests", "RequestForReassignments", "Ulo")</li>
                 }
                 @if (User.HasPermission(ApplicationPermissionNames.CanViewReviews))
                 {

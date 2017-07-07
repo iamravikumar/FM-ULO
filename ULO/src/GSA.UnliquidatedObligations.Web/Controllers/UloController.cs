@@ -40,6 +40,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == currentUser.Id).Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            //TODO: A little hacky
+            ViewBag.ShowReassignButton = false;
             return View(workflows);
         }
 
@@ -53,6 +55,26 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => userIds.Contains(wf.OwnerUserId)).Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            return View("Index", workflows);
+        }
+
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
+        public async Task<ActionResult> RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
+        {
+          var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
+            var reassignGroupUser = await UserManager.FindByNameAsync(Properties.Settings.Default.ReassignGroupUserName);
+
+            var reassignGroupRegionIds = await DB.UserUsers
+                .Where(uu => uu.ParentUserId == reassignGroupUser.Id && uu.ChildUserId == currentUser.Id)
+                .Select(uu => uu.RegionId)
+                .Distinct()
+                .ToListAsync();
+
+            var workflows = ApplyBrowse(
+                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUser.Id && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
+                .Include(wf => wf.UnliquidatedObligation),
+                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            ViewBag.ShowReassignButton = true;
             return View("Index", workflows);
         }
 
@@ -116,7 +138,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private bool isReassignmentReferral()
         {
-            return Request.UrlReferrer.LocalPath == "/RequestForReassignments";
+            return Request.UrlReferrer.LocalPath == "/Ulo/RequestForReassignments";
+        }
+        private bool isReassignment()
+        {
+            return Request.Url.Host == "/RequestForReassignments";
         }
 
         public async Task<ActionResult> RegionWorkflowDetails(int uloId, int workflowId)

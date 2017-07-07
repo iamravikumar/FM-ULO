@@ -27,23 +27,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: RequestForReassignments
-        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
         public async Task<ActionResult> Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-            var reassignGroupUser = await UserManager.FindByNameAsync(Properties.Settings.Default.ReassignGroupUserName);
+            //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
+            //var reassignGroupUser = await UserManager.FindByNameAsync(Properties.Settings.Default.ReassignGroupUserName);
 
-            var reassignGroupRegionIds = await DB.UserUsers
-                .Where(uu => uu.ParentUserId == reassignGroupUser.Id && uu.ChildUserId == currentUser.Id)
-                .Select(uu => uu.RegionId)
-                .Distinct()
-                .ToListAsync();
-           
-            var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUser.Id && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
-                .Include(wf => wf.UnliquidatedObligation),
-                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
-            return View("~/Views/Ulo/Index.cshtml", workflows);
+            //var reassignGroupRegionIds = await DB.UserUsers
+            //    .Where(uu => uu.ParentUserId == reassignGroupUser.Id && uu.ChildUserId == currentUser.Id)
+            //    .Select(uu => uu.RegionId)
+            //    .Distinct()
+            //    .ToListAsync();
+
+            //var workflows = ApplyBrowse(
+            //    DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUser.Id && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
+            //    .Include(wf => wf.UnliquidatedObligation),
+            //    sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            //ViewBag.ShowReassignButton = true;
+            //return View("~/Views/Ulo/Index.cshtml", workflows);
+            return View();
         }
 
 
@@ -53,7 +54,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var requestForReassignment = DB.RequestForReassignments.Where(rr => rr.IsActive).FirstOrDefault(r => r.RequestForReassignmentID == id);
 
-
+            
             //List<AspNetUser> users = new List<AspNetUser>();
             AspNetUser groupOwnerUser;
             if (wfDefintionOwnerName == "")
@@ -68,12 +69,22 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 groupOwnerUser = DB.AspNetUsers.FirstOrDefault(u => u.UserName == wfDefintionOwnerName);   
             }
+            
 
             var usersIds = DB.UserUsers
-                  .Where(uu => uu.ParentUserId == groupOwnerUser.Id && uu.RegionId == uloRegionId)
-                  .Select(uu => uu.ChildUserId).ToList();
+                .Where(uu => uu.ParentUserId == groupOwnerUser.Id && uu.RegionId == uloRegionId)
+                .Select(uu => uu.ChildUserId).ToList();
             var users = DB.AspNetUsers.OrderBy(u => u.UserName)
                 .Where(u => u.UserType == "Person" && usersIds.Contains(u.Id)).ToList();
+
+            var userReassignRegions = User.GetReassignmentGroupRegions();
+            if (User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId))
+            {
+                var currentUser = DB.AspNetUsers.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                users.Add(currentUser);
+            }
+
+            users = users.OrderBy(u => u.UserName).ToList();
 
             var justEnums = new List<JustificationEnum>()
             {
@@ -94,8 +105,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ReassignFromMasterList(int workflowId, [Bind(Include = "SuggestedReviewerId,Comments")] RequestForReassignmentViewModel requestForReassignmentViewModel)
+        public async Task<ActionResult> ReassignFromList(int workflowId, [Bind(Include = "SuggestedReviewerId,Comments")] RequestForReassignmentViewModel requestForReassignmentViewModel)
         {
+            var pageToRedirectTo = Request.UrlReferrer.AbsolutePath.Replace("/Ulo/", "");
             if (ModelState.IsValid)
             {
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
@@ -111,13 +123,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     WorkflowRowVersion = wf.WorkflowRowVersion,
                     CreatedAtUtc = DateTime.UtcNow
                 };
-                var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, "RegionWorkflows");
+                var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, pageToRedirectTo);
                 await DB.SaveChangesAsync();
                 return ret;
             }
-
-            return RedirectToAction("RegionWorkflows", "Ulo");
+            
+            return RedirectToAction(pageToRedirectTo, "Ulo");
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -150,7 +163,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     await DB.SaveChangesAsync();
                     return ret;
                 }
-                else if (requestForReassignment == null)
+                else if (requestForReassignment != null)
                 {
                     return await Reassign(wf, question, requestForReassignment, requestForReassignmentViewModel.SuggestedReviewerId);
                 }

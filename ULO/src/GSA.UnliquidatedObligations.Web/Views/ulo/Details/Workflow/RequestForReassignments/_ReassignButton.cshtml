@@ -10,11 +10,11 @@
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">
     @if (!Model.RequestForReassignmentsActive)
     {
-        @Html.Encode("Reassign");
+        @Html.Encode("Reassign")
     }
     else
     {
-        @Html.Encode("Active Reassignment Request");
+        @Html.Encode("Active Reassignment Request")
     }
 
 </button>
@@ -22,6 +22,6 @@
 else if (Model.WorkflowAssignedToCurrentUser)
 {
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">
-            @Html.Encode("Request For Reassignment");
+            @Html.Encode("Request For Reassignment")
     </button>
 }
