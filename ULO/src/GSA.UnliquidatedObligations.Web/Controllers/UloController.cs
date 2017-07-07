@@ -131,11 +131,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
 
             var comingFromReassignmentsPage = isReassignmentReferral();
+            var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
 
             var workflow = await FindWorkflowAsync(workflowId, !isUnassignedReferral(), checkReassignmentsGroup: comingFromReassignmentsPage);
+            var workflowAssignedToCurrentUser = currentUser.Id == workflow.OwnerUserId;
+
             var workflowDesc = await FindWorkflowDescAsync(workflow);
 
-            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, true));
+            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser));
         }
 
         private bool isReassignmentReferral()
