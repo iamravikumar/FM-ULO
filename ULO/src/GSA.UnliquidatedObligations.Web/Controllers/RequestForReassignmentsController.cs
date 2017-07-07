@@ -159,7 +159,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                 if (requestForReassignment == null && User.HasPermission(ApplicationPermissionNames.CanReassign))
                 {
-                    var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, "RegionWorkflows");
+                    var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, "Index");
                     await DB.SaveChangesAsync();
                     return ret;
                 }

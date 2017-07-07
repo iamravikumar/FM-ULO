@@ -45,6 +45,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(workflows);
         }
 
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
             //TODO: wrire stored procedure for nested groups
@@ -55,6 +56,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => userIds.Contains(wf.OwnerUserId)).Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            ViewBag.ShowReassignButton = true;
             return View("Index", workflows);
         }
 
@@ -130,7 +132,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var comingFromReassignmentsPage = isReassignmentReferral();
 
-            var workflow = await FindWorkflowAsync(workflowId, checkReassignmentsGroup: comingFromReassignmentsPage);
+            var workflow = await FindWorkflowAsync(workflowId, !isUnassignedReferral(), checkReassignmentsGroup: comingFromReassignmentsPage);
             var workflowDesc = await FindWorkflowDescAsync(workflow);
 
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, true));
@@ -139,6 +141,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private bool isReassignmentReferral()
         {
             return Request.UrlReferrer.LocalPath == "/Ulo/RequestForReassignments";
+        }
+
+        private bool isUnassignedReferral()
+        {
+            return Request.UrlReferrer.LocalPath == "/Ulo/Unassigned";
         }
         private bool isReassignment()
         {
