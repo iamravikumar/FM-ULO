@@ -1,4 +1,5 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.RequestForReassignmentViewModel
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@model GSA.UnliquidatedObligations.Web.Models.RequestForReassignmentViewModel
 
 @{
     var currentworkflowId = Model.WorkflowId;
@@ -8,9 +9,16 @@
     var suggestedReviwerId = currentworkflowId + "SuggestedReviewerId";
     var commentsId = currentworkflowId + "RequestComments";
     var isActiveReassignment = Model.RequestForReassignmentId != null;
-    var reviewerLabelText = isActiveReassignment ? "Assign to Reviewer" : "Suggeted Reviewer:";
-    var buttonText = isActiveReassignment ? "Reassign to Selected User" : "Request Reassignment";
-    var actionName = isActiveReassignment ? "Reassign" : "RequestReassign";
+    var reviewerLabelText = "Suggeted Reviewer:";
+    var buttonText = "Request Reassignment";
+    var actionName = "RequestReassign";
+    var userReassignRegions = User.GetReassignmentGroupRegions();
+    if ((User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(Model.RegionId)) || isActiveReassignment)
+    {
+        actionName = "Reassign";
+        buttonText = "Reassign to Selected User";
+        reviewerLabelText = "Assign to Reviewer";
+    }
 }
 
 @using (Html.BeginForm(@actionName, "RequestForReassignments", new { workflowId = currentworkflowId }, FormMethod.Post))

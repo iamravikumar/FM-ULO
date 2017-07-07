@@ -49,7 +49,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 
         // GET: RequestForReassignments/Details/5
-        public ActionResult Details(int? id, int workflowId, bool isAdmin = false)
+        public ActionResult Details(int? id, int workflowId, int uloRegionId, bool isAdmin = false)
         {
             var requestForReassignment = DB.RequestForReassignments.Where(rr => rr.IsActive).FirstOrDefault(r => r.RequestForReassignmentID == id);
 
@@ -68,7 +68,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 ? requestForReassignment.UnliqudatedObjectsWorkflowQuestion.Comments : "";
 
             var detailsView = isAdmin ? "_DetailsMasterList.cshtml" : "_Details.cshtml"; 
-            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/" + detailsView, new RequestForReassignmentViewModel(suggestedReviewerId, justificationId, requestForReassignmentId, comments, workflowId, users, justEnums));
+            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/" + detailsView, new RequestForReassignmentViewModel(suggestedReviewerId, justificationId, requestForReassignmentId, comments, workflowId, uloRegionId, users, justEnums));
         }
 
         [HttpPost]
@@ -104,7 +104,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var wf = await FindWorkflowAsync(workflowId);
+                var wf = await FindWorkflowAsync(workflowId, false);
                 if (wf == null) return HttpNotFound();
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var requestForReassignment =
@@ -123,7 +123,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 DB.UnliqudatedObjectsWorkflowQuestions.Add(question);
                 await DB.SaveChangesAsync();
 
-                return await Reassign(wf, question, requestForReassignment, requestForReassignmentViewModel.SuggestedReviewerId);
+                if (requestForReassignment == null && User.HasPermission(ApplicationPermissionNames.CanReassign))
+                {
+                    var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, "RegionWorkflows");
+                    await DB.SaveChangesAsync();
+                    return ret;
+                }
+                else if (requestForReassignment == null)
+                {
+                    return await Reassign(wf, question, requestForReassignment, requestForReassignmentViewModel.SuggestedReviewerId);
+                }
+
             }
 
             return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);

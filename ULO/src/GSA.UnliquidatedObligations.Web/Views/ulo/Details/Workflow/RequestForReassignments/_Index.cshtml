@@ -2,15 +2,15 @@
 
 @{
 
-    
+
 
     if (Model.Workflow.RequestForReassignments.Count == 0)
     {
-        Html.RenderAction("Details", "RequestForReassignments", new {workflowId = Model.Workflow.WorkflowId});
+        Html.RenderAction("Details", "RequestForReassignments", new {workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.UnliquidatedObligation.RegionId });
     }
     else
     {
-        Html.RenderAction("Details", "RequestForReassignments", new { id = Model.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = Model.Workflow.WorkflowId });
+        Html.RenderAction("Details", "RequestForReassignments", new { id = Model.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.UnliquidatedObligation.RegionId });
     }
 
 }

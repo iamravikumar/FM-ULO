@@ -9,6 +9,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public int? RequestForReassignmentId { get; set; } 
         public int WorkflowId { get; set; }
+        public int RegionId { get; set; }
         public string SuggestedReviewerId { get; set; }
 
         public List<SelectListItem> Users { get; set; }
@@ -22,7 +23,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         }
 
-        public RequestForReassignmentViewModel(string suggestedReviewerId, int? justificationId, int? requestForReassignmentId, string comments, int workflowId, List<AspNetUser> users, List<JustificationEnum> justificationEnums)
+        public RequestForReassignmentViewModel(string suggestedReviewerId, int? justificationId, int? requestForReassignmentId, string comments, int workflowId, int regionId, List<AspNetUser> users, List<JustificationEnum> justificationEnums)
         {
             RequestForReassignmentId = requestForReassignmentId;
             SuggestedReviewerId = suggestedReviewerId;
@@ -31,7 +32,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Comments = comments;
             Justifications = ConvertToSelectList(justificationEnums);
             WorkflowId = workflowId;
-
+            RegionId = regionId;
         }
 
         private List<SelectListItem> ConvertToSelectList(List<AspNetUser> aspNetUsers)

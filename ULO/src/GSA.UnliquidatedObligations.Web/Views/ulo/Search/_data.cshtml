@@ -136,10 +136,10 @@
 {
     if (item.RequestForReassignments.Count == 0)
     {
-        Html.RenderAction("Details", "RequestForReassignments", new { workflowId = item.WorkflowId, isAdmin = true });
+        Html.RenderAction("Details", "RequestForReassignments", new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true });
     }
     else
     {
-        Html.RenderAction("Details", "RequestForReassignments", new { id = item.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = item.WorkflowId, isAdmin = true });
+        Html.RenderAction("Details", "RequestForReassignments", new { id = item.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true });
     }
 }
