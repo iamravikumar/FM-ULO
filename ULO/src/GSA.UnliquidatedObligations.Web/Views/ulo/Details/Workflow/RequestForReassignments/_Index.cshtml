@@ -6,7 +6,7 @@
 
     if (Model.Workflow.RequestForReassignments.Count == 0)
     {
-        Html.RenderAction("Details", "RequestForReassignments", new {workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.UnliquidatedObligation.RegionId });
+        Html.RenderAction("Details", "RequestForReassignments", new {workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.UnliquidatedObligation.RegionId, wfDefintionOwnerName = Model.WorkflowDescriptionViewModel.CurrentActivity.OwnerUserName });
     }
     else
     {

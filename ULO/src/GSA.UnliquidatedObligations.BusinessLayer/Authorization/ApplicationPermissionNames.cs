@@ -45,5 +45,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 
         [Display(Name = "Reassign Workflows")]
         CanReassign,
+
+        [Display(Name = "View Unassigned")]
+        CanViewUnassigned,
     }
 }

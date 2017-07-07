@@ -36,12 +36,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             //TODO: wrire stored procedure for nested groups
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
             var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-            var userIds = await GetUsersGroupsAsync(currentUser.Id);
-            userIds.Add(currentUser.Id);
+            ViewBag.PageTitle = "My Outstanding Review Items";
+            var workflows = ApplyBrowse(
+                DB.Workflows.Where(wf => wf.OwnerUserId == currentUser.Id).Include(wf => wf.UnliquidatedObligation),
+                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            return View(workflows);
+        }
+
+        public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
+        {
+            //TODO: wrire stored procedure for nested groups
+            //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
+            var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
+            var userIds = await DB.AspNetUsers.Where(u => u.UserType == "Group").Select(u => u.Id).ToListAsync();
+            ViewBag.PageTitle = "Unassigned Review Items";
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => userIds.Contains(wf.OwnerUserId)).Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
-            return View(workflows);
+            return View("Index", workflows);
         }
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]

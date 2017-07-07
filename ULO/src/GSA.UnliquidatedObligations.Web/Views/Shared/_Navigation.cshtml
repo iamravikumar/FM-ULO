@@ -7,6 +7,10 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
+                @if (User.HasPermission(ApplicationPermissionNames.CanViewUnassigned))
+                {
+                    <li>@Html.ActionLink("Unassigned", "Unassigned", "Ulo")</li>
+                }
                 @if (User.HasPermission(ApplicationPermissionNames.CanViewOtherWorkflows))
                 {
                     <li>@Html.ActionLink("Search", "RegionWorkflows", "Ulo")</li>
@@ -14,6 +18,10 @@
                 @if (User.HasPermission(ApplicationPermissionNames.CanExecuteReports))
                 {
                     <li>@Html.ActionLink("Reports", ReportsController.ActionNames.ListReports, ReportsController.Name)</li>
+                }
+                @if (User.HasPermission(ApplicationPermissionNames.CanReassign))
+                {
+                    <li>@Html.ActionLink("Reassignment Requests", "Index", "RequestForReassignments")</li>
                 }
                 @if (User.HasPermission(ApplicationPermissionNames.CanViewReviews))
                 {
@@ -23,10 +31,7 @@
                 {
                     <li>@Html.ActionLink("Manage Users", "Index", "Users")</li>
                 }
-                @if (User.HasPermission(ApplicationPermissionNames.CanReassign))
-                {
-                    <li>@Html.ActionLink("Reassignment Requests", "Index", "RequestForReassignments")</li>
-                }
+
             </ul>
             @Html.Partial("_LoginPartial")
         </div>

@@ -49,11 +49,32 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 
         // GET: RequestForReassignments/Details/5
-        public ActionResult Details(int? id, int workflowId, int uloRegionId, bool isAdmin = false)
+        public ActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false)
         {
             var requestForReassignment = DB.RequestForReassignments.Where(rr => rr.IsActive).FirstOrDefault(r => r.RequestForReassignmentID == id);
 
-            var users = DB.AspNetUsers.OrderBy(u => u.UserName).Where(u => u.UserType == "Person").ToList();
+
+            //List<AspNetUser> users = new List<AspNetUser>();
+            AspNetUser groupOwnerUser;
+            if (wfDefintionOwnerName == "")
+            {
+                var workflow = DB.Workflows.FirstOrDefault(wf => wf.WorkflowId == workflowId);
+                var wfDesc = Manager.GetWorkflowDescriptionAsync(workflow).Result;
+                var currentActivity = wfDesc.WebActionWorkflowActivities
+                    .FirstOrDefault(a => a.WorkflowActivityKey == workflow.CurrentWorkflowActivityKey);
+                groupOwnerUser = DB.AspNetUsers.FirstOrDefault(u => u.UserName == currentActivity.OwnerUserName);
+            }
+            else
+            {
+                groupOwnerUser = DB.AspNetUsers.FirstOrDefault(u => u.UserName == wfDefintionOwnerName);   
+            }
+
+            var usersIds = DB.UserUsers
+                  .Where(uu => uu.ParentUserId == groupOwnerUser.Id && uu.RegionId == uloRegionId)
+                  .Select(uu => uu.ChildUserId).ToList();
+            var users = DB.AspNetUsers.OrderBy(u => u.UserName)
+                .Where(u => u.UserType == "Person" && usersIds.Contains(u.Id)).ToList();
+
             var justEnums = new List<JustificationEnum>()
             {
                 JustificationEnum.ReassignNeedHelp,
