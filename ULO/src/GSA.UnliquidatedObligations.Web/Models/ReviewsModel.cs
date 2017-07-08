@@ -11,7 +11,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public List<SelectListItem> RegionChoices { get; set; }
 
-        [Required(ErrorMessage = "Region is required")]
         public int? RegionId { get; set; }
 
         [Required(ErrorMessage = "Review Type is required")]

@@ -18,14 +18,6 @@
         
        
         <div class="form-group">
-            @Html.LabelFor(model => model.RegionId, "Region:", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.RegionId,  Model.RegionChoices, "Select One..", htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
             @Html.LabelFor(model => model.ReviewName, "Review Name:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.ReviewName, new { htmlAttributes = new { @class = "form-control" } })
@@ -33,24 +25,30 @@
             </div>
         </div>
 
-        
         <div class="form-group">
-            @Html.LabelFor(model => model.WorkflowDefinitionId, "Workflow:", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.ReviewDateInitiated, "Review As Of Date:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("WorkflowDefinitionId", Model.WorkflowDefinitions, "Select One..", htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.WorkflowDefinitionId, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.ReviewDateInitiated, new { @class = "form-control", type = "date" })
+                @Html.ValidationMessageFor(model => model.ReviewDateInitiated, "", new { @class = "text-danger" })
             </div>
         </div>
 
+        <div class="form-group">
+            @Html.LabelFor(model => model.Comments, "Comments:", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ReviewTypeId, "Type of Review:",  htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.ReviewTypeId, "Type of Review:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-               @Html.DropDownListFor(model => model.ReviewTypeId, Model.ReviewTypes, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.ReviewTypeId, Model.ReviewTypes, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ReviewTypeId, "", new { @class = "text-danger" })
             </div>
         </div>
-        
+
+
         <div class="form-group">
             @Html.LabelFor(model => model.ReviewScopeId, "Review Scope:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -58,22 +56,31 @@
                 @Html.ValidationMessageFor(model => model.ReviewScopeId, "", new { @class = "text-danger" })
             </div>
         </div>
+
+
+        <div id="reviewRegionContainer" class="form-group">
+            @Html.LabelFor(model => model.RegionId, "Region:", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.RegionId,  Model.RegionChoices, "Select One..", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+
         
         <div class="form-group">
-            @Html.LabelFor(model => model.ReviewDateInitiated, "Review As Of Date:", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.WorkflowDefinitionId, "Workflow:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model =>  model.ReviewDateInitiated,  new { @class = "form-control", type = "date" })
-                @Html.ValidationMessageFor(model => model.ReviewDateInitiated, "", new { @class = "text-danger" })
+                @Html.TextBox("WorkflowDefintionName", null, new { @id = "workflowDefintionName", @class= "form-control" })
+                @Html.HiddenFor(model => model.WorkflowDefinitionId)
+                @*@Html.DropDownList("WorkflowDefinitionId", Model.WorkflowDefinitions, "Select One..", htmlAttributes: new { @class = "form-control" })*@
+                @Html.ValidationMessageFor(model => model.WorkflowDefinitionId, "", new { @class = "text-danger" })
             </div>
         </div>
 
+       
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Comments, "Comments:",  htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control" } })
-            </div>
-        </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, "Upload 442 Files:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">

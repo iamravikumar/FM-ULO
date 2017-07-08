@@ -66,7 +66,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     ModelState.AddModelError("ReviewName", "Review Name is already being used in system.");
                 }
-                ModelState.AddModelError("ReviewName", "This is a ReviewName Error");
                 if (ModelState.IsValid)
                 {
 

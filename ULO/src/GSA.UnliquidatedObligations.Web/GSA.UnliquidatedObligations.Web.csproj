@@ -474,6 +474,7 @@
     <Content Include="Scripts\ULO\filter.js" />
     <Content Include="Scripts\ULO\polyfills.js" />
     <Content Include="Scripts\ULO\recordsListing.js" />
+    <Content Include="Scripts\ULO\reviews.js" />
     <Content Include="Scripts\ULO\users.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Content\ULO\Workflows\workflows.css" />
