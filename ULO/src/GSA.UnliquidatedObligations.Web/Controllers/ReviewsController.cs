@@ -51,7 +51,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var reviewTypes = Enum.GetValues(typeof(ReviewTypeEnum)).Cast<ReviewTypeEnum>().ToList();
             var reviewScopes = Enum.GetValues(typeof(ReviewScopeEnum)).Cast<ReviewScopeEnum>().ToList();
-            var workflowDefinitions = await DB.WorkflowDefinitions.Where(wd=>wd.IsActive).ToListAsync();
+            var workflowDefinitions = await DB.WorkflowDefinitions.Where(wd=>wd.IsActive).OrderBy(wfd => wfd.WorkflowDefinitionName).ToListAsync();
             return View(new ReviewModel(claimRegionIds, reviewTypes, reviewScopes, workflowDefinitions));
         }
 

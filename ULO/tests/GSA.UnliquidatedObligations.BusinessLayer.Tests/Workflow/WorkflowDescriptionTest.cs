@@ -97,7 +97,192 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
 
             });
 
-            List<WebActionWorkflowActivity> wfDActivities = new List<WebActionWorkflowActivity>()
+            var regionNextActivityConfig = JsonConvert.SerializeObject(new FieldComparisonActivityChooser.MySettings
+            {
+                Expressions = new List<FieldComparisonActivityChooser.Expression>
+                    {
+                        new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B1\"",
+                            WorkflowActivityKey = "B2"
+                        },
+                        new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B2\" && wfQuestion.Answer == \"Disapprove\"",
+                            WorkflowActivityKey = "B1"
+                        },
+                        new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B2\" && wfQuestion.Answer == \"Approve\" && wf.UnliquidatedObligation.Valid == true",
+                            WorkflowActivityKey = "B3"
+                        },
+                        new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B2\" && wfQuestion.Answer == \"Approve\" && wf.UnliquidatedObligation.Valid == false",
+                            WorkflowActivityKey = "B4"
+                        },
+                        new FieldComparisonActivityChooser.Expression
+                        {
+                            Code = "wf.CurrentWorkflowActivityKey == \"B4\" && wfQuestion.Answer == \"Deobligated\"",
+                            WorkflowActivityKey = "B3"
+                        }
+                    }
+
+            });
+
+            List<WebActionWorkflowActivity> regionWfDActivities = new List<WebActionWorkflowActivity>()
+            {
+                new WebActionWorkflowActivity
+                {
+                    ActionName = "Index",
+                    ActivityName = "Region Review",
+                    SequenceNumber = 1,
+                    ControllerName = "Ulo",
+                    DueIn = new TimeSpan(20, 0, 0, 0),
+                    NextActivityChooserConfig = regionNextActivityConfig,
+                    NextActivityChooserTypeName = "FieldComparisonActivityChooser",
+                    WorkflowActivityKey = "B1",
+                    OwnerUserName = "RegionReviewers",
+                    JustificationNeeded = true,
+                    AllowDocumentEdit = true,
+                    RouteValueByName = new Dictionary<string, object>(),
+                    EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = true,
+                    ExpectedDateForCompletionNeeded = true,
+                    ExpectedDateAlwaysShow = false,
+                    QuestionChoices = new WorkflowQuestionChoices
+                    {
+                        QuestionLabel = "Is this Valid?",
+                        DefaultJustificationEnums = null,
+                        Choices = new List<QuestionChoice>()
+                        {
+                            new QuestionChoice()
+                            {
+                                Text = "Yes",
+                                Value = "Valid",
+                                JustificationsEnums = yesJustificationEnums
+                            },
+                            new QuestionChoice()
+                            {
+                                Text = "No",
+                                Value = "Invalid",
+                                JustificationsEnums = noJustificationEnums
+                            }
+                        }
+                    }
+                },
+                new WebActionWorkflowActivity
+                {
+                    ActionName = "Index",
+                    ActivityName = "Region Approval",
+                    SequenceNumber = 2,
+                    ControllerName = "Ulo",
+                    NextActivityChooserConfig = regionNextActivityConfig,
+                    NextActivityChooserTypeName = "FieldComparisonActivityChooser",
+                    WorkflowActivityKey = "B2",
+                    OwnerUserName = "RegionApprovers",
+                    JustificationNeeded = true,
+                    AllowDocumentEdit = true,
+                    RouteValueByName = new Dictionary<string, object>(),
+                    EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = true,
+                    ExpectedDateForCompletionNeeded = true,
+                    ExpectedDateAlwaysShow = false,
+                    QuestionChoices = new WorkflowQuestionChoices
+                    {
+                       QuestionLabel = "Do you Approve?",
+                       DefaultJustificationEnums = allJustificationEnumsList,
+                       Choices = new List<QuestionChoice>()
+                        {
+                            new QuestionChoice()
+                            {
+                                Text = "Yes",
+                                Value = "Approve"
+                            },
+                            new QuestionChoice()
+                            {
+                                Text = "No",
+                                Value = "Disapprove"
+                            }
+                        }
+                    }
+                },
+                new WebActionWorkflowActivity
+                {
+                    ActionName = "Index",
+                    ActivityName = "Complete",
+                    SequenceNumber = 4,
+                    ControllerName = "Ulo",
+                    NextActivityChooserConfig = regionNextActivityConfig,
+                    NextActivityChooserTypeName = "FieldComparisonActivityChooser",
+                    WorkflowActivityKey = "B3",
+                    OwnerUserName = "RegionApprovers",
+                    JustificationNeeded = false,
+                    AllowDocumentEdit = false,
+                    RouteValueByName = new Dictionary<string, object>(),
+                    EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = false,
+                    ExpectedDateForCompletionNeeded = false,
+                    ExpectedDateAlwaysShow = true,
+                    QuestionChoices = new WorkflowQuestionChoices
+                    {
+                       QuestionLabel = "Do you Concur?",
+                       DefaultJustificationEnums = allJustificationEnumsList,
+                       Choices = new List<QuestionChoice>()
+                        {
+                            new QuestionChoice()
+                            {
+                                Text = "Yes",
+                                Value = "Concur"
+                            },
+                            new QuestionChoice()
+                            {
+                                Text = "No",
+                                Value = "Not Concur"
+                            }
+                        }
+                    }
+                },
+                new WebActionWorkflowActivity
+                {
+                    ActionName = "Index",
+                    ActivityName = "Deobligate",
+                    SequenceNumber = 3,
+                    ControllerName = "Ulo",
+                    NextActivityChooserConfig = regionNextActivityConfig,
+                    NextActivityChooserTypeName = "FieldComparisonActivityChooser",
+                    WorkflowActivityKey = "B4",
+                    OwnerUserName = "RegionApprovers",
+                    JustificationNeeded = false,
+                    AllowDocumentEdit = false,
+                    RouteValueByName = new Dictionary<string, object>(),
+                    EmailTemplateId = 1,
+                    ExpectedDateForCompletionEditable = false,
+                    ExpectedDateForCompletionNeeded = false,
+                    ExpectedDateAlwaysShow = true,
+                    QuestionChoices = new WorkflowQuestionChoices
+                    {
+                       QuestionLabel = "Has this been Deobligated?",
+                       DefaultJustificationEnums = allJustificationEnumsList,
+                       Choices = new List<QuestionChoice>()
+                        {
+                            new QuestionChoice()
+                            {
+                                Text = "Yes",
+                                Value = "Deobligated"
+                            },
+                            new QuestionChoice()
+                            {
+                                Text = "No",
+                                Value = "Not Deobligated"
+                            }
+                        }
+                    }
+                }
+
+            };
+
+            List <WebActionWorkflowActivity> wfDActivities = new List<WebActionWorkflowActivity>()
             {
                 new WebActionWorkflowActivity
                 {
@@ -326,7 +511,14 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
                 WebActionWorkflowActivities = wfDActivities
             };
 
-            var serialized = d.ToXml();
+            var dRegion = new WorkflowDescription
+            {
+                InitialActivityKey = "B1",
+                WebActionWorkflowActivities = regionWfDActivities
+            };
+            
+
+            var serialized = dRegion.ToXml();
             var deserialized = WorkflowDescription.DeserializeFromXml(serialized);
             var xml = d.ToXml();
             Trace.WriteLine(xml);
