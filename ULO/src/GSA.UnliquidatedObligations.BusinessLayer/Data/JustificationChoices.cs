@@ -12,23 +12,23 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             {
                 JustificationEnum.ContractNotComplete,
                 new Justification(Convert.ToInt32(JustificationEnum.ContractNotComplete),
-                    "The Contract is not complete and work is on-going")
+                    "The contract is not complete and work is on-going until (Date of Expected Completion). There has been no recent financial activity because ....(please explain the reason for the lack of financial activity)")
             },
             {
                 JustificationEnum.ServicePeriodNotExpired,
-                new Justification(Convert.ToInt32(JustificationEnum.ServicePeriodNotExpired), "The service period has not Expired")
+                new Justification(Convert.ToInt32(JustificationEnum.ServicePeriodNotExpired), "The service period has not expired. There has been no recent financial activity because ....(please explain the reason for the lack of financial activity).")
             },
             {
                 JustificationEnum.ContractorFiledClaim,
-                new Justification(Convert.ToInt32(JustificationEnum.ContractorFiledClaim), "Contractor has filed claim against GSA")
+                new Justification(Convert.ToInt32(JustificationEnum.ContractorFiledClaim), "Contractor has filed claim against GSA (Please provide claim #)")
             },
             {
                 JustificationEnum.WatingOnRelease,
-                new Justification(Convert.ToInt32(JustificationEnum.WatingOnRelease), "Waiting on release of claims from vendor")
+                new Justification(Convert.ToInt32(JustificationEnum.WatingOnRelease), "Waiting on release of claims from vendor (if this is your justification, please provide the last communication date between the contracting officer and the vendor- if email exists - please provide as documentation)")
             },
             {
                 JustificationEnum.NoRecentActivity, 
-                new Justification(Convert.ToInt32(JustificationEnum.NoRecentActivity), "There has been no recent activity but a notice to proceed will be issued")
+                new Justification(Convert.ToInt32(JustificationEnum.NoRecentActivity), "TThere has been no recent financial activity, the project was delayed because_____ (please provide explanation); A notice to proceed will be issued within the next # days")
             },
             {
                 JustificationEnum.ItemInvalid,

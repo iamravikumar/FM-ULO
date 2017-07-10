@@ -20,7 +20,7 @@
 }
 
 .row.advance select, .row.advance textarea {
-    max-width: none;
+    max-width: 900px;
 }
 
 .row.advance .form-horizontal .control-label {
