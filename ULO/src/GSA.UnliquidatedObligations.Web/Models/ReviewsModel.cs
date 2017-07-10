@@ -7,6 +7,43 @@ using System;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
+
+    public class ReviewItemModel {
+
+        public int ReviewId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string ReviewName { get; set; }
+        public string Status { get; set; }
+        public string ReviewTypeName { get; set; }
+        public string ScopeName { get; set; }
+        public string ReviewAsofDate { get; set; }
+        public string Comments { get; set; }
+        public string RegionName { get; set; }
+
+        public ReviewItemModel()
+        {
+
+        }
+
+        public ReviewItemModel(Review review)
+        {
+            ReviewId = review.ReviewId;
+            CreatedAt = review.CreatedAt;
+            ReviewName = review.ReviewName;
+            Status = review.Status;
+
+            var reviewTypeEnum = (ReviewTypeEnum)review.ReviewTypeId;
+            ReviewTypeName = reviewTypeEnum.GetDisplayName();
+
+            var scopeEnum = (ReviewScopeEnum)review.ReviewScopeId;
+            ScopeName = scopeEnum.GetDisplayName();
+
+            Comments = review.Comments;
+            RegionName = review.Region.RegionName;
+
+        }
+    }
+
     public class ReviewModel
     {
         public List<SelectListItem> RegionChoices { get; set; }

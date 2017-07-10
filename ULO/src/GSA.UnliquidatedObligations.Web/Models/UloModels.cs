@@ -29,6 +29,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string Answer { get; set; }
         public string Justification { get; set; }
         public string Comments { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         public UloWfQuestionViewModel(UnliqudatedObjectsWorkflowQuestion question)
         {
@@ -36,6 +37,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Answer = question.Answer;
             Justification = question.JustificationId != null ? JustificationChoices.Choices[(JustificationEnum)question.JustificationId].JustificationText : null;
             Comments = question.Comments;
+            CreatedDate = question.CreatedAtUtc.Date;
         }
     }
 

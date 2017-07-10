@@ -1,6 +1,6 @@
 ﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
 @using GSA.UnliquidatedObligations.BusinessLayer.Data
-@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Review>
+@model IEnumerable<GSA.UnliquidatedObligations.Web.Models.ReviewItemModel>
 
 @{
     ViewBag.Title = "Index";
@@ -31,6 +31,7 @@
                 @Html.SortableHeaderFor(model => model.Status)
             </th>
             <th>
+                @Html.SortableHeaderFor(model => model)
                 Type of Review
             </th>
             <th>

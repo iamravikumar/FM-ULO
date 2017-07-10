@@ -25,10 +25,31 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // GET: Review
         public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
+            var reviewItems = DB.Reviews.Select(r => new ReviewItemModel
+            {
+                ReviewId = r.ReviewId,
+                CreatedAt = r.CreatedAtUtc,
+                ReviewName = r.ReviewName,
+                Status = r.Status,
+                ReviewTypeName = convertToString((ReviewTypeEnum)r.ReviewTypeId),
+                ScopeName = convertToString((ReviewScopeEnum)r.ReviewScopeId),
+                Comments = r.Comments,
+                RegionName = r.Region.RegionName
+            });
             var reviews = ApplyBrowse(
-                DB.Reviews,
+                reviewItems,
                 sortCol ?? nameof(Review.CreatedAt), sortDir??AspHelpers.SortDirDescending, page, pageSize);
             return View("", reviews);
+        }
+
+        private string convertToString(ReviewTypeEnum reviewTypeEnum)
+        {
+            return reviewTypeEnum.GetDisplayName();
+        }
+
+        private string convertToString(ReviewScopeEnum reviewScopeEnum)
+        {
+            return reviewScopeEnum.GetDisplayName();
         }
 
         // GET: Review/Details/5
