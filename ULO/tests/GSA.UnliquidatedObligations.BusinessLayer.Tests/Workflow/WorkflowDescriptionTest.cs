@@ -520,7 +520,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Tests.Workflow
 
             var serialized = dRegion.ToXml();
             var deserialized = WorkflowDescription.DeserializeFromXml(serialized);
-            var xml = d.ToXml();
+            var xml = dRegion.ToXml();
             Trace.WriteLine(xml);
             Assert.IsInstanceOfType(deserialized, typeof(WorkflowDescription));
 
