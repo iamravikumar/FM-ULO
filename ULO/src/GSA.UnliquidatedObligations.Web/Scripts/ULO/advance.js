@@ -11,6 +11,7 @@ $(document).ready(function() {
     $("#validateAnswerMessage").hide();
     $("#validateJustificationMessage").hide();
     $("#validateExpectedDateMessage").hide();
+    $("#validateCommentMessage").hide();
 
     if ($("#ExpectedDateForCompletionEditable").val() == "False") {
         $("#ExpectedDateForCompletion").attr('type', 'text');
@@ -43,6 +44,12 @@ $(document).ready(function() {
                 $("#validateExpectedDateMessage").show();
                 return false;
             }
+
+            if ($("#justifications option:selected").text() === "Other" && $("#Comments").val() == "") {
+                $("#validateCommentMessage").show();
+                return false;
+            }
+
            
         }
 

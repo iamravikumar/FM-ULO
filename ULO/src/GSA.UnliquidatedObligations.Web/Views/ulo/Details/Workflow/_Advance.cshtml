@@ -44,6 +44,10 @@
                     </div>
                     <div class="row">
                         @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })
+                       
+                    </div>
+                    <div class="row">
+                        @Html.ValidationMessageFor(model => model.Comments, "Must enter Comment when Other is selected", new { id = "validateCommentMessage", @class = "text-danger" })
                     </div>
                 </div>
                 @Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
