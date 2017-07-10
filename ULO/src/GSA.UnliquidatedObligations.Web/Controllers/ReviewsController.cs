@@ -28,6 +28,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var reviews = ApplyBrowse(
                 DB.Reviews,
                 sortCol ?? nameof(Review.CreatedAt), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+
+
             return View("", reviews);
         }
 
