@@ -17,7 +17,7 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review ID")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.TotalLine, overrideDisplayName: "Amount")
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region, overrideDisplayName: "Region")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
@@ -57,7 +57,7 @@
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
             </td>
             <td>
-                @Html.Currency(Convert.ToDecimal(item.UnliquidatedObligation.TotalLine))
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
@@ -73,7 +73,7 @@
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.TotalLine)
+                @Html.Currency(Convert.ToDecimal(item.UnliquidatedObligation.TotalLine))
             </td>
             <td>
                 @{
