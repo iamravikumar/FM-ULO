@@ -90,8 +90,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
             var wfPredicate =
                 PredicateBuilder.Create<Workflow>(
-                    wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId)
-                          && wf.OwnerUserId != user.Id);
+                    wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId));
 
 
             wfPredicate = wfPredicate.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
