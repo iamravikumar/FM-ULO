@@ -399,6 +399,7 @@
     </Compile>
     <Compile Include="HangfireDashboardAuthorizationFilter.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\ReportModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\DocumentModalViewModel.cs" />

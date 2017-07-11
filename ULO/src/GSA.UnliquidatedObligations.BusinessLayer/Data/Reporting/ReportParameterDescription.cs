@@ -3,6 +3,14 @@ using System;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting
 {
+    public enum ReportParameterRenderHints
+    {
+        Standard,
+        TextArea,
+        Region,
+        Review,
+    }
+
     public class ReportParameterDescription : IReportItemDescription
     {
         [JsonProperty("title")]
@@ -13,6 +21,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting
 
         [JsonProperty("clrType")]
         public Type ClrType { get; set; }
+
+        [JsonProperty("renderHint")]
+        public ReportParameterRenderHints ReportParameterRenderHint { get; set; } = ReportParameterRenderHints.Standard;
 
         [JsonProperty("sqlParameterName")]
         public string SqlParameterName { get; set; }
