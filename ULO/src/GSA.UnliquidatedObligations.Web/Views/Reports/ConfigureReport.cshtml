@@ -7,17 +7,8 @@
     var rd = Model.Description;
     ViewBag.Title = rd.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    this.SetTitles(PageKeys.Reports, rd.Title, rd.Description);
 }
-
-<div class="row">
-    <div class="col-xs-12">
-        <h1>@rd.Title</h1>
-        @if (rd.Description != null)
-        {
-            <p class="subheading">@rd.Description</p>
-        }
-    </div>
-</div>
 
 @using (Html.BeginForm(ReportsController.ActionNames.ExecuteReport, null, new { name = rd.Name }, FormMethod.Post, new { @class = "inline-form", role = "form" }))
 {

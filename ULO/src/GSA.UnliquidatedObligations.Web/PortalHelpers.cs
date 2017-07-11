@@ -13,7 +13,8 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Web.Mvc;
 using System.Configuration;
 using System.Web.Hosting;
-using System.Threading.Tasks;
+using RevolutionaryStuff.Core.Caching;
+using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -62,23 +63,25 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static bool HasPermission(this IPrincipal user, ApplicationPermissionNames permissionName)
         {
-            var componentContext = (IComponentContext)HttpContext.Current.Items["ComponentContext"];
-            var DB = componentContext.Resolve<ULODBEntities>();
+            var userClaims = Cache.DataCacher.FindOrCreateValWithSimpleKey(
+                user.Identity?.Name,
+                () => CurrentComponentContext.Resolve<ULODBEntities>().AspNetUsers.Include(u => u.AspNetUserClaims).FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims(),
+                TimeSpan.FromMinutes(1)
+                );
 
-            var AspNetUser =
-                DB.AspNetUsers.Include(u => u.AspNetUserClaims).FirstOrDefault(u => u.UserName == user.Identity.Name);
-            if (AspNetUser == null)
-                return false;
-
-            return AspNetUser.GetApplicationPerimissionRegions(permissionName).Count > 0;
-
+            return userClaims!=null && userClaims.GetApplicationPerimissionRegions(permissionName).Count>0;
         }
+
+        public static IComponentContext GetComponentContext(this HttpContext context)
+            => (IComponentContext) context.Items["ComponentContext"];
+
+        public static IComponentContext CurrentComponentContext
+            => HttpContext.Current.GetComponentContext();
 
         public static List<int?> GetReassignmentGroupRegions(this IPrincipal user)
         {
-            var componentContext = (IComponentContext)HttpContext.Current.Items["ComponentContext"];
-            var DB = componentContext.Resolve<ULODBEntities>();
-            List<int?> groupRegions = new List<int?>();
+            var DB = CurrentComponentContext.Resolve<ULODBEntities>();
+            var groupRegions = new List<int?>();
             var reassignGroup = DB.AspNetUsers.FirstOrDefault(u => u.UserName == Properties.Settings.Default.ReassignGroupUserName);
             var AspNetUser = DB.AspNetUsers.Include(u => u.UserUsers)
                 .FirstOrDefault(u => u.UserName == user.Identity.Name);
@@ -92,12 +95,8 @@ namespace GSA.UnliquidatedObligations.Web
                     .Select(uu => uu.RegionId).ToList();
             }
 
-
             return groupRegions;
-
         }
-
-
 
         public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, int? uloId, string pegasysDocumentNumber, string organization,
            int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId)
@@ -648,13 +647,17 @@ namespace GSA.UnliquidatedObligations.Web
             return eNumsSelect;
         }
 
-
-
         public static T BodyAsJsonObject<T>(this HttpRequestBase req)
         {
             req.InputStream.Seek(0, SeekOrigin.Begin);
             var json = new StreamReader(req.InputStream).ReadToEnd();
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+        }
+
+        public static IEnumerable<SelectListItem> CreateRegionSelectListItems(ULODBEntities db)
+        {
+            return db.Regions.OrderBy(r => r.RegionName).ConvertAll(
+                r => new SelectListItem { Text = $"{r.RegionNumber.PadLeft(2, '0')} - {r.RegionName}", Value = r.RegionId.ToString() }).OrderBy(z => z.Text);
         }
     }
 }

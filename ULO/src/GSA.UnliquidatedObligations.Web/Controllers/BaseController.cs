@@ -4,6 +4,8 @@ using System.Web.Mvc;
 using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
+using System;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -18,6 +20,18 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ComponentContext = componentContext;
             System.Web.HttpContext.Current.Items["ComponentContext"] = ComponentContext;
         }
+
+        public string GetUserId(string username)
+        {
+            if (username != null)
+            {
+                return Cache.DataCacher.FindOrCreateValWithSimpleKey(username, () => DB.AspNetUsers.Where(z => z.UserName == username).Select(z=>z.Id).FirstOrDefault(), TimeSpan.FromMinutes(1));
+            }
+            return null;
+        }
+
+        public string CurrentUserId
+            => GetUserId(User?.Identity?.Name);
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {

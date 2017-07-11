@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
@@ -35,10 +34,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             //TODO: wrire stored procedure for nested groups
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
-            var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             ViewBag.PageTitle = "My Outstanding Review Items";
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == currentUser.Id).Include(wf => wf.UnliquidatedObligation),
+                DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             //TODO: A little hacky
             ViewBag.ShowReassignButton = false;
@@ -50,7 +48,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             //TODO: wrire stored procedure for nested groups
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
-            var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var userIds = await DB.AspNetUsers.Where(u => u.UserType == "Group").Select(u => u.Id).ToListAsync();
             ViewBag.PageTitle = "Unassigned Review Items";
             var workflows = ApplyBrowse(
@@ -63,17 +60,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
         public async Task<ActionResult> RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
-          var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-            var reassignGroupUser = await UserManager.FindByNameAsync(Properties.Settings.Default.ReassignGroupUserName);
+            var reassignGroupUserId = GetUserId(Properties.Settings.Default.ReassignGroupUserName);
 
             var reassignGroupRegionIds = await DB.UserUsers
-                .Where(uu => uu.ParentUserId == reassignGroupUser.Id && uu.ChildUserId == currentUser.Id)
+                .Where(uu => uu.ParentUserId == reassignGroupUserId && uu.ChildUserId == CurrentUserId)
                 .Select(uu => uu.RegionId)
                 .Distinct()
                 .ToListAsync();
 
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUser.Id && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
+                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
                 .Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             ViewBag.ShowReassignButton = true;
@@ -85,7 +81,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> RegionWorkflows(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
-            //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
             var wfPredicate =
@@ -130,10 +125,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
 
             var comingFromReassignmentsPage = isReassignmentReferral();
-            var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
 
             var workflow = await FindWorkflowAsync(workflowId, !isUnassignedReferral(), checkReassignmentsGroup: comingFromReassignmentsPage);
-            var workflowAssignedToCurrentUser = currentUser.Id == workflow.OwnerUserId;
+            var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
 
             var workflowDesc = await FindWorkflowDescAsync(workflow);
 
@@ -157,11 +151,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> RegionWorkflowDetails(int uloId, int workflowId)
         {
             //TODO: check if current user is able to view
-            var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
             var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
             var workflow = await FindWorkflowAsync(workflowId, false);
             var workflowDesc = await FindWorkflowDescAsync(workflow);
-            var workflowAssignedToCurrentUser = currentUser.Id == workflow.OwnerUserId;
+            var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser));
         }
 
@@ -175,11 +168,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (wf != null)
             {
                 if (checkOwner == false) return wf;
-                var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-                var groupsUserBelongsTo = await GetUsersGroupsAsync(currentUser.Id, checkReassignmentsGroup);
-                if (currentUser != null)
+                if (CurrentUserId != null)
                 {
-                    if (wf.OwnerUserId == currentUser.Id || groupsUserBelongsTo.Contains(wf.OwnerUserId)) return wf;
+                    var groupsUserBelongsTo = await GetUsersGroupsAsync(CurrentUserId, checkReassignmentsGroup);
+                    if (wf.OwnerUserId == CurrentUserId || groupsUserBelongsTo.Contains(wf.OwnerUserId)) return wf;
                     if (wf.AspNetUser.UserType == UserTypes.Group.ToString())
                     {
                         //TODO: Write recursive then call recursive sproc to see if current user is in the group
@@ -263,8 +255,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (!includeReassignmentGroup)
             {
-                var reassignGroupUser = await UserManager.FindByNameAsync(Properties.Settings.Default.ReassignGroupUserName);
-                return await DB.UserUsers.Where(uu => uu.ChildUserId == userId && uu.ParentUserId != reassignGroupUser.Id).Select(uu => uu.ParentUserId).ToListAsync();
+                var reassignGroupUserId = GetUserId(Properties.Settings.Default.ReassignGroupUserName);
+                return await DB.UserUsers.Where(uu => uu.ChildUserId == userId && uu.ParentUserId != reassignGroupUserId).Select(uu => uu.ParentUserId).ToListAsync();
             }
             else
             {
@@ -280,6 +272,4 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return ret;
         }
     }
-
-
 }

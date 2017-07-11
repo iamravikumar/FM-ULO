@@ -13,6 +13,18 @@
     @Html.Partial("_Navigation");
 
     <div class="container body-content">
+        @if (ViewBag.PageTitle != null)
+        {
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>@ViewBag.PageTitle</h1>
+                @if (ViewBag.PageSubTitle != null)
+                {
+                    <p class="subheading">@ViewBag.PageSubTitle</p>
+                }
+            </div>
+        </div>
+        }
         @RenderBody()
         <hr />
         <footer class="row">

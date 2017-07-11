@@ -235,11 +235,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (wf != null)
             {
                 if (checkOwner == false) return wf;
-                var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-                var groupsUserBelongsTo = await GetUsersGroups(currentUser.Id);
-                if (currentUser != null)
+                if (CurrentUserId != null)
                 {
-                    if (wf.OwnerUserId == currentUser.Id || groupsUserBelongsTo.Contains(wf.OwnerUserId)) return wf;
+                    var groupsUserBelongsTo = await GetUsersGroups(CurrentUserId);
+                    if (wf.OwnerUserId == CurrentUserId || groupsUserBelongsTo.Contains(wf.OwnerUserId)) return wf;
                     if (wf.AspNetUser.UserType == UserTypes.Group.ToString())
                     {
                         //TODO: Write recursive then call recursive sproc to see if current user is in the group

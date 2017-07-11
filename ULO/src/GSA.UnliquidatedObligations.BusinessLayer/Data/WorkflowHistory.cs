@@ -9,9 +9,7 @@
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
-    using System;
-    using System.Collections.Generic;
-    
+
     public partial class WorkflowHistory
     {
         public int WorkflowHistoryId { get; set; }

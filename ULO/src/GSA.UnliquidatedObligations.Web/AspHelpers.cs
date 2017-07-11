@@ -96,6 +96,14 @@ namespace GSA.UnliquidatedObligations.Web
             }
         }
 
+        public static void SetTitles(this WebViewPage page, PageKeys pageKey, string title, string subTitle=null, string browserTitle=null)
+        {
+            page.ViewBag.PageKey = pageKey;
+            page.ViewBag.Title = browserTitle??title;
+            page.ViewBag.PageTitle = title;
+            page.ViewBag.PageSubTitle = subTitle;
+        }
+
         private static readonly Regex BeginningOfTheEnd = new Regex(
             @"(.+)(\<\/\w+>\s*)", 
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);

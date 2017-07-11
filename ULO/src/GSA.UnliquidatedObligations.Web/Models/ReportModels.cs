@@ -19,8 +19,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public ConfigureReportModel(ULODBEntities db, ReportDescription description=null)
         {
             Description = description;
-            RegionItems.AddRange(db.Regions.OrderBy(r => r.RegionName).ConvertAll(
-                r => new SelectListItem { Text = $"{r.RegionNumber.PadLeft(2, '0')} - {r.RegionName}", Value = r.RegionId.ToString() }).OrderBy(z=>z.Text));
+            RegionItems.AddRange(PortalHelpers.CreateRegionSelectListItems(db));
             ReviewItems.AddRange(db.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
                 r => new SelectListItem { Text = $"{r.ReviewName} - {AspHelpers.GetDisplayName(r.ReviewScope)} - {AspHelpers.GetDisplayName(r.ReviewType)}", Value = r.ReviewId.ToString() }));
         }

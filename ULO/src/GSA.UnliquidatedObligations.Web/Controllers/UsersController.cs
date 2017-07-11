@@ -36,7 +36,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             //get claim Region Ids for user
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
             var userData = await GetUsersByRegion(claimRegionIds[0]);
-            return View(new UsersModel(claimRegionIds, userData));
+            return View(new UsersModel(PortalHelpers.CreateRegionSelectListItems(DB), claimRegionIds, userData));
 
         }
 
@@ -397,15 +397,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             DB.AspNetUsers.Remove(aspNetUser);
             await DB.SaveChangesAsync();
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                DB.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

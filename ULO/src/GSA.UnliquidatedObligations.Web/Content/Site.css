@@ -51,3 +51,8 @@ textarea {
     display: inline-block;
     margin-right: 15px;
 }
+
+a.current {
+    color: white;
+    text-decoration: underline;
+}

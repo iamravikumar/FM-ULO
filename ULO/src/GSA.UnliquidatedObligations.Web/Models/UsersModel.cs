@@ -9,31 +9,26 @@ namespace GSA.UnliquidatedObligations.Web.Models
 {
     public class UsersModel
     {
-        public List<SelectListItem> Regions { get; set; }
-
+        public List<SelectListItem> Regions { get; } = new List<SelectListItem>();
 
         public int RegionId { get; set; }
+
         public List<UserModel> Users { get; set; }
-        public UsersModel(List<int> regions, List<UserModel> userData)
+
+        public UsersModel(IEnumerable<SelectListItem> allRegions, List<int> myRegionIds, List<UserModel> userData)
         {
-            Regions = ConvertToSelectList(regions);
+            foreach (var item in allRegions)
+            {
+                if (myRegionIds.Contains(int.Parse(item.Value)))
+                {
+                    Regions.Add(item);
+                }
+            }
             RegionId = Convert.ToInt32(Regions[0].Value);
             Users = userData;
         }
-
-        private List<SelectListItem> ConvertToSelectList(List<int> regions)
-        {
-            var regionsSelect = new List<SelectListItem>();
-
-            foreach (var region in regions)
-            {
-                regionsSelect.Add(new SelectListItem { Text = region.ToString(), Value = region.ToString() });
-            }
-            return regionsSelect;
-
-        }
-
     }
+
     public class UserModel
     {
         private AspNetUser u;

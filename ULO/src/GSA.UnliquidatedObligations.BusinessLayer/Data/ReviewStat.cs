@@ -10,8 +10,7 @@
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     using System;
-    using System.Collections.Generic;
-    
+
     public partial class ReviewStat
     {
         public int ReviewId { get; set; }

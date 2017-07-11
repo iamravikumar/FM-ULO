@@ -66,8 +66,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
                 Document document;
                 if (documentId != 0)
                 {
@@ -82,7 +80,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     document = new Document
                     {
-                        UploadedByUserId = currentUser.Id,
+                        UploadedByUserId = CurrentUserId,
                         DocumentTypeId = documentTypeId,
                         WorkflowId = workflowId,
                         DocumentName = documentName
@@ -118,7 +116,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 return Json(new
                 {
                     Id = document.DocumentId,
-                    UserName = currentUser.UserName,
+                    UserName = User.Identity.Name,
                     DocumentTypeName = documentType.Name,
                     Name = document.DocumentName,
                     UploadedDate = document.UploadDate.ToString("MM/dd/yyyy")
