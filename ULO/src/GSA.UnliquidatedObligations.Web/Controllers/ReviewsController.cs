@@ -1,14 +1,15 @@
-﻿using System;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using Autofac;
+﻿using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
+using RevolutionaryStuff.Core.Caching;
+using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -16,8 +17,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     {
         private readonly IBackgroundJobClient BackgroundJobClient;
 
-        public ReviewsController(IBackgroundJobClient backgroundJobClient, ULODBEntities db, IComponentContext componentContext)
-            : base(db, componentContext)
+        public ReviewsController(IBackgroundJobClient backgroundJobClient, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+            : base(db, componentContext, cacher)
         {
             BackgroundJobClient = backgroundJobClient;
         }
@@ -28,8 +29,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var reviews = ApplyBrowse(
                 DB.Reviews,
                 sortCol ?? nameof(Review.CreatedAt), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
-
-
             return View("", reviews);
         }
 

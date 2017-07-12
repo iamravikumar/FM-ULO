@@ -9,7 +9,9 @@
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
-
+    using System;
+    using System.Collections.Generic;
+    
     public partial class RequestForReassignment
     {
         public int RequestForReassignmentID { get; set; }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
@@ -17,6 +19,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [DataMember(Name = "OwnerUserName")]
         public string OwnerUserName { get; set; }
+
+        [DataMember(Name = "OwnerProhibitedPreviousActivityNames")]
+        public IList<string> OwnerProhibitedPreviousActivityNames { get; set; }
 
         public Type NextActivityChooserType
         {

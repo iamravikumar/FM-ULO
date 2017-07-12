@@ -1,5 +1,5 @@
-﻿using System.Runtime.Serialization;
-using GSA.UnliquidatedObligations.BusinessLayer.Helpers;
+﻿using RevolutionaryStuff.Core;
+using System.Runtime.Serialization;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {
@@ -20,8 +20,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
         public ApplicationPermissionNames ApplicationPermissionName { get; set; }
 
         public static ApplicationPermissionClaimValue Load(string xml)
-        {
-            return (ApplicationPermissionClaimValue) Serializer.ReadObject(xml);
-        }
+            => Serializer.ReadObjectFromString<ApplicationPermissionClaimValue>(xml);
     }
 }

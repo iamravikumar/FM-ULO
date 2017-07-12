@@ -1,10 +1,9 @@
 ﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+@using GSA.UnliquidatedObligations.Web;
 
 @{
-    ViewBag.Title = "My Active Workflows";
+    this.SetTitles(PageKeys.MyTasks, "My Tasks");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @Html.Partial("~/Views/Ulo/_RecordsListing.cshtml", Model)
-
-

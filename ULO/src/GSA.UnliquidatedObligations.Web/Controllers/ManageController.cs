@@ -1,11 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using Autofac;
+﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using GSA.UnliquidatedObligations.Web.Models;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using RevolutionaryStuff.Core.Caching;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -16,8 +17,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly ApplicationUserManager UserManager;
         private readonly IAuthenticationManager AuthenticationManager;
 
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, ULODBEntities db, IComponentContext componentContext)
-            : base(db, componentContext) 
+        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+            : base(db, componentContext, cacher) 
         {
             UserManager = userManager;
             SignInManager = signInManager;

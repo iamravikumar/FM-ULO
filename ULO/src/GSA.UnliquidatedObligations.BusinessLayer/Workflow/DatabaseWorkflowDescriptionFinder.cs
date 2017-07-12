@@ -27,7 +27,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
             if (z != null)
             {
-                ret = (IWorkflowDescription)WorkflowDescription.DeserializeFromXml(z.DescriptionXml);
+                ret = z.Description;
             }
 
             return Task.FromResult(ret);

@@ -15,6 +15,7 @@ using Microsoft.Owin.Security;
 using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.SqlServer;
+using RevolutionaryStuff.Core.Caching;
 
 [assembly: OwinStartupAttribute(typeof(GSA.UnliquidatedObligations.Web.Startup))]
 namespace GSA.UnliquidatedObligations.Web
@@ -60,6 +61,7 @@ namespace GSA.UnliquidatedObligations.Web
                 .As<IWorkflowDescriptionFinder>()
                 .InstancePerLifetimeScope();
 
+            builder.Register(_ => Cache.DataCacher);
             builder.RegisterType<BackgroundTasks>().As<IBackgroundTasks>().InstancePerBackgroundJob();
             builder.RegisterType<BackgroundJobClient>().As<IBackgroundJobClient>().InstancePerLifetimeScope();
 

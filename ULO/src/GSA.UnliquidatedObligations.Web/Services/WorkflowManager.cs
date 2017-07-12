@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using Hangfire;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
+using Hangfire;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
@@ -38,7 +38,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
             Finder = finder;
             BackgroundJobClient = backgroundJobClient;
             DB = db;
-
         }
 
         private class RedirectingController : Controller
@@ -82,8 +81,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             {
                 if ((wf.CurrentWorkflowActivityKey != currentActivity.WorkflowActivityKey && wf.AspNetUser.UserName != nextActivity.OwnerUserName) || forceAdvance == true)
                 {
-                    nextOwnerId = await GetNextOwnerUserIdAsync(nextActivity.OwnerUserName, wf,
-                        nextActivity.WorkflowActivityKey);
+                    nextOwnerId = await GetNextOwnerUserIdAsync(nextActivity.OwnerUserName, wf, nextActivity.WorkflowActivityKey, nextActivity.OwnerProhibitedPreviousActivityNames);
                     wf.OwnerUserId = nextOwnerId;
                     var nextUser = Cacher.FindOrCreateValWithSimpleKey(
                         wf.OwnerUserId,
@@ -191,20 +189,22 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return await Task.FromResult(c.RedirectToAction(actionName, "Ulo", routeValues));
         }
 
-        private async Task<string> GetNextOwnerUserIdAsync(string proposedOwnerUserName, Workflow wf, string nextActivityKey)
+        private async Task<string> GetNextOwnerUserIdAsync(string proposedOwnerUserName, Workflow wf, string nextActivityKey, IEnumerable<string> ownerProhibitedPreviousActivityNames=null)
         {
             Requires.Text(proposedOwnerUserName, nameof(proposedOwnerUserName));
             Requires.NonNull(wf, nameof(wf));
+
             if (proposedOwnerUserName != Properties.Settings.Default.ReassignGroupUserName)
             {
                 Requires.Text(nextActivityKey, nameof(nextActivityKey));
             }
 
             var u = Cacher.FindOrCreateValWithSimpleKey(proposedOwnerUserName, () => DB.AspNetUsers.FirstOrDefault(z => z.UserName == proposedOwnerUserName));
+
             //TODO: check if null, return proposedOwnserId
             var output = new ObjectParameter("nextOwnerId", typeof(string));
             //DB.Database.Log = s => Trace.WriteLine(s);
-            DB.GetNextLevelOwnerId(u.Id, wf.WorkflowId, nextActivityKey, output);
+            DB.GetNextLevelOwnerId(u.Id, wf.WorkflowId, nextActivityKey, CSV.FormatLine(ownerProhibitedPreviousActivityNames??Empty.StringArray, false), output);
             if (output.Value == DBNull.Value)
             {
                 return await Task.FromResult(u.Id);

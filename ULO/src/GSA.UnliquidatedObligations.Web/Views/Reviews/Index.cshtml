@@ -3,11 +3,10 @@
 @model IEnumerable<GSA.UnliquidatedObligations.Web.Models.ReviewItemModel>
 
 @{
-    ViewBag.Title = "Index";
+    this.SetTitles(PageKeys.ManageReviews, "Manage Reviews");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Manage Reviews</h2>
 @if (User.HasPermission(ApplicationPermissionNames.CanCreateReviews))
 {
     <p>

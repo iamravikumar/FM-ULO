@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -13,13 +14,24 @@ namespace GSA.UnliquidatedObligations.Web
 {
     public static class AspHelpers
     {
+        public const string PleaseSelectOneDropdownItemText = "-- Please Select --";
+
+        public static SelectListItem CreatePleaseSelectListItem(bool selected=true)
+            => new SelectListItem
+            {
+                Disabled = true,
+                Selected = selected,
+                Text = PleaseSelectOneDropdownItemText,                    
+            };
+
         public const string SortDirAscending = "asc";
         public const string SortDirDescending = "desc";
 
         public static bool IsSortDirAscending(string sortDir)
-        {
-            return !(0 == string.Compare(SortDirDescending, sortDir, true));
-        }
+            => !(0 == string.Compare(SortDirDescending, sortDir, true));
+
+        public static string GetDisplayName(Enum e)
+            => e.GetCustomAttributes<DisplayAttribute>().FirstOrDefault(a => a.Name != null)?.Name ?? e.ToString();
 
         public static string FriendlyNameFor<TModelItem, TResult>(this HtmlHelper<TModelItem> hh, Expression<Func<TModelItem, TResult>> columnExpression)
         {
@@ -82,6 +94,14 @@ namespace GSA.UnliquidatedObligations.Web
                 routeValues["sortDir"] = SortDirAscending;
                 return hh.ActionLink(displayName, actionName, routeValues);
             }
+        }
+
+        public static void SetTitles(this WebViewPage page, PageKeys pageKey, string title, string subTitle=null, string browserTitle=null)
+        {
+            page.ViewBag.PageKey = pageKey;
+            page.ViewBag.Title = browserTitle??title;
+            page.ViewBag.PageTitle = title;
+            page.ViewBag.PageSubTitle = subTitle;
         }
 
         private static readonly Regex BeginningOfTheEnd = new Regex(

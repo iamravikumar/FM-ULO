@@ -3,36 +3,53 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            @Html.ActionLink("ULO", "Index", "Ulo", new { area = "" }, new { @class = "navbar-brand" })
+            <h1 class="navbar-brand">ULO</h1>
         </div>
         <div class="navbar-collapse collapse">
+            @if (User.Identity.IsAuthenticated)
+            {
             <ul class="nav navbar-nav">
+                @{ 
+                    PageKeys pageKey = PageKeys.UndefinedPageKey;
+                    try
+                    {
+                        if (ViewBag.PageKey != null)
+                        {
+                            pageKey = (PageKeys)ViewBag.PageKey;
+                        }
+                    }
+                    catch (Exception)
+                    { }
+                    var apka = (object)new { @class = "current" };
+                    var ipka = (object)new { };
+                }
+                <li>@Html.ActionLink("My Tasks", "Index", "Ulo", null, pageKey == PageKeys.MyTasks ? apka : ipka)</li>
                 @if (User.HasPermission(ApplicationPermissionNames.CanViewUnassigned))
                 {
-                    <li>@Html.ActionLink("Unassigned", "Unassigned", "Ulo")</li>
+                    <li>@Html.ActionLink("Unassigned", "Unassigned", "Ulo", null, pageKey == PageKeys.Unassigned ? apka : ipka)</li>
                 }
                 @if (User.HasPermission(ApplicationPermissionNames.CanViewOtherWorkflows))
                 {
-                    <li>@Html.ActionLink("Search", "RegionWorkflows", "Ulo")</li>
+                    <li>@Html.ActionLink("Search", "RegionWorkflows", "Ulo", null, pageKey == PageKeys.Search ? apka : ipka)</li>
                 }
                 @if (User.HasPermission(ApplicationPermissionNames.CanExecuteReports))
                 {
-                    <li>@Html.ActionLink("Reports", ReportsController.ActionNames.ListReports, ReportsController.Name)</li>
+                    <li>@Html.ActionLink("Reports", ReportsController.ActionNames.ListReports, ReportsController.Name, null, pageKey == PageKeys.Reports ? apka : ipka)</li>
                 }
                 @if (User.HasPermission(ApplicationPermissionNames.CanReassign))
                 {
-                    <li>@Html.ActionLink("Reassignment Requests", "RequestForReassignments", "Ulo")</li>
+                    <li>@Html.ActionLink("Reassignment Requests", "RequestForReassignments", "Ulo", null, pageKey == PageKeys.ReassignmentRequests ? apka : ipka)</li>
                 }
                 @if (User.HasPermission(ApplicationPermissionNames.CanViewReviews))
                 {
-                    <li>@Html.ActionLink("Manage Reviews", "Index", "Reviews")</li>
+                    <li>@Html.ActionLink("Manage Reviews", "Index", "Reviews", null, pageKey == PageKeys.ManageReviews ? apka : ipka)</li>
                 }                
                 @if (User.HasPermission(ApplicationPermissionNames.ManageUsers))
                 {
-                    <li>@Html.ActionLink("Manage Users", "Index", "Users")</li>
+                    <li>@Html.ActionLink("Manage Users", "Index", "Users", null, pageKey == PageKeys.ManageUsers ? apka : ipka)</li>
                 }
-
             </ul>
+            }
             @Html.Partial("_LoginPartial")
         </div>
     </div>

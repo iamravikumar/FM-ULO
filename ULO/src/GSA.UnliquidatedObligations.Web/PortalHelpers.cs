@@ -13,13 +13,17 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Web.Mvc;
 using System.Configuration;
 using System.Web.Hosting;
-using System.Threading.Tasks;
+using RevolutionaryStuff.Core.Caching;
+using RevolutionaryStuff.Core;
+using GSA.UnliquidatedObligations.BusinessLayer;
 
 namespace GSA.UnliquidatedObligations.Web
 {
     public static class PortalHelpers
     {
         public static readonly string DefaultUloConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        private static readonly ICacher Cacher = Cache.DataCacher;
+        private static Func<ULODBEntities> UloDbCreator = () => new ULODBEntities();
 
         public static string GetStorageFolderPath(string relativePath, bool createFolderInNotExists=true)
         {
@@ -62,42 +66,65 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static bool HasPermission(this IPrincipal user, ApplicationPermissionNames permissionName)
         {
-            var componentContext = (IComponentContext)HttpContext.Current.Items["ComponentContext"];
-            var DB = componentContext.Resolve<ULODBEntities>();
+            var userClaims = Cache.DataCacher.FindOrCreateValWithSimpleKey(
+                user.Identity?.Name,
+                () => CurrentComponentContext.Resolve<ULODBEntities>().AspNetUsers.Include(u => u.AspNetUserClaims).FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims(),
+                UloHelpers.ShortCacheTimeout
+                );
 
-            var AspNetUser =
-                DB.AspNetUsers.Include(u => u.AspNetUserClaims).FirstOrDefault(u => u.UserName == user.Identity.Name);
-            if (AspNetUser == null)
-                return false;
-
-            return AspNetUser.GetApplicationPerimissionRegions(permissionName).Count > 0;
-
+            return userClaims!=null && userClaims.GetApplicationPerimissionRegions(permissionName).Count>0;
         }
 
-        public static List<int?> GetReassignmentGroupRegions(this IPrincipal user)
+        public static IComponentContext GetComponentContext(this HttpContext context)
+            => (IComponentContext) context.Items["ComponentContext"];
+
+        public static IComponentContext CurrentComponentContext
+            => HttpContext.Current.GetComponentContext();
+
+        public static string GetUserId(string username)
         {
-            var componentContext = (IComponentContext)HttpContext.Current.Items["ComponentContext"];
-            var DB = componentContext.Resolve<ULODBEntities>();
-            List<int?> groupRegions = new List<int?>();
-            var reassignGroup = DB.AspNetUsers.FirstOrDefault(u => u.UserName == Properties.Settings.Default.ReassignGroupUserName);
-            var AspNetUser = DB.AspNetUsers.Include(u => u.UserUsers)
-                .FirstOrDefault(u => u.UserName == user.Identity.Name);
-
-            if (AspNetUser == null && reassignGroup == null)
-                return groupRegions;
-            else
+            if (username != null)
             {
-                groupRegions = AspNetUser.UserUsers
-                    .Where(uu => uu.ParentUserId == reassignGroup.Id)
-                    .Select(uu => uu.RegionId).ToList();
+                return Cacher.FindOrCreateValWithSimpleKey(
+                    username,
+                    () =>
+                    {
+                        using (var db = UloDbCreator())
+                        {
+                            return db.AspNetUsers.Where(z => z.UserName == username).Select(z => z.Id).FirstOrDefault();
+                        }
+                    },
+                    UloHelpers.MediumCacheTimeout
+                    );
             }
-
-
-            return groupRegions;
-
+            return null;
         }
 
+        public static string ReassignGroupUserId
+            => GetUserId(Properties.Settings.Default.ReassignGroupUserName);
 
+        public static IList<int?> GetReassignmentGroupRegions(this IPrincipal user)
+            => Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(nameof(GetReassignmentGroupRegions), user.Identity.Name),
+                () =>
+                {
+                    using (var db = UloDbCreator())
+                    {
+                        var groupRegions = new List<int?>();
+                        var aspNetUser = db.AspNetUsers.Include(u => u.UserUsers).FirstOrDefault(u => u.UserName == user.Identity.Name);
+
+                        if (aspNetUser != null)
+                        {
+                            groupRegions = aspNetUser.UserUsers
+                                .Where(uu => uu.ParentUserId == ReassignGroupUserId)
+                                .Select(uu => uu.RegionId).ToList();
+                        }
+
+                        return groupRegions.AsReadOnly();
+                    }
+                },
+                UloHelpers.ShortCacheTimeout
+                );
 
         public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, int? uloId, string pegasysDocumentNumber, string organization,
            int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId)
@@ -567,7 +594,7 @@ namespace GSA.UnliquidatedObligations.Web
             return attribute.GetName();
         }
 
-        public static List<SelectListItem> ConvertToSelectList(this List<string> stringsToConvert)
+        public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<string> stringsToConvert)
         {
             var stringsSelect = new List<SelectListItem>();
 
@@ -579,7 +606,7 @@ namespace GSA.UnliquidatedObligations.Web
 
         }
 
-        public static List<SelectListItem> ConvertToSelectList(this List<SelectListItem> selectListItems)
+        public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<SelectListItem> selectListItems)
         {
             var selectList = new List<SelectListItem>();
 
@@ -591,7 +618,7 @@ namespace GSA.UnliquidatedObligations.Web
 
         }
 
-        public static List<SelectListItem> ConvertToSelectList(this List<int> nums)
+        public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<int> nums)
         {
             var numsSelect = new List<SelectListItem>();
 
@@ -603,7 +630,7 @@ namespace GSA.UnliquidatedObligations.Web
 
         }
 
-        public static List<SelectListItem> ConvertToSelectList(this List<WorkflowDefinition> workFlowDefintions)
+        public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<WorkflowDefinition> workFlowDefintions)
         {
             var workFlowDefintionsSelect = new List<SelectListItem>();
 
@@ -628,7 +655,7 @@ namespace GSA.UnliquidatedObligations.Web
             return data.ToString("C", culture);
         }
 
-        public static List<SelectListItem> ConvertToSelectList<T>(this List<T> enums) where T : struct, IConvertible
+        public static IList<SelectListItem> ConvertToSelectList<T>(this IEnumerable<T> enums) where T : struct, IConvertible
         {
 
             if (!typeof(T).IsEnum)
@@ -648,13 +675,67 @@ namespace GSA.UnliquidatedObligations.Web
             return eNumsSelect;
         }
 
-
-
         public static T BodyAsJsonObject<T>(this HttpRequestBase req)
         {
             req.InputStream.Seek(0, SeekOrigin.Begin);
             var json = new StreamReader(req.InputStream).ReadToEnd();
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
         }
+
+
+        public static IList<SelectListItem> CreateReviewSelectListItems()
+        => Cacher.FindOrCreateValWithSimpleKey(
+            nameof(CreateReviewSelectListItems),
+            () => 
+            {
+                using (var db = UloDbCreator())
+                {
+                    return db.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
+                                r => new SelectListItem
+                                {
+                                    Text = $"{r.ReviewName} - {AspHelpers.GetDisplayName(r.ReviewScope)} - {AspHelpers.GetDisplayName(r.ReviewType)}",
+                                    Value = r.ReviewId.ToString()
+                                }).
+                                ToList().
+                                AsReadOnly();
+                }
+            },
+            UloHelpers.ShortCacheTimeout
+            );
+
+
+        public static IList<SelectListItem> CreateRegionSelectListItems()
+            => Cacher.FindOrCreateValWithSimpleKey(
+                nameof(CreateRegionSelectListItems),
+                () => 
+                {
+                    using (var db = UloDbCreator())
+                    {
+                        return db.Regions.OrderBy(r => r.RegionName).ConvertAll(
+                            r => new SelectListItem { Text = $"{r.RegionNumber.PadLeft(2, '0')} - {r.RegionName}", Value = r.RegionId.ToString() }).
+                            OrderBy(z => z.Text).
+                            ToList().
+                            AsReadOnly();
+                    }
+                },
+                UloHelpers.MediumCacheTimeout
+                );
+
+        public static IList<SelectListItem> CreateZoneSelectListItems()
+            => Cacher.FindOrCreateValWithSimpleKey(
+                nameof(CreateZoneSelectListItems),
+                () =>
+                {
+                    using (var db = UloDbCreator())
+                    {
+                        return db.Zones.OrderBy(z => z.ZoneName).ConvertAll(
+                            z => new SelectListItem { Text = $"{z.ZoneName}", Value = z.ZoneId.ToString() }).
+                            OrderBy(z => z.Text).
+                            ToList().
+                            AsReadOnly();
+                    }
+                },
+                UloHelpers.MediumCacheTimeout
+                );
     }
 }

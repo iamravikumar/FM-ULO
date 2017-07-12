@@ -1,13 +1,14 @@
-﻿using System.Web.Mvc;
-using Autofac;
+﻿using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using RevolutionaryStuff.Core.Caching;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController(ULODBEntities db, IComponentContext componentContext)
-            : base(db, componentContext)
+        public HomeController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+            : base(db, componentContext, cacher)
         { }
 
         public ActionResult Index()

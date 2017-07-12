@@ -1,25 +1,19 @@
 ﻿@using RevolutionaryStuff.Core;
+@using GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting;
+@using GSA.UnliquidatedObligations.Web.Models;
 @using GSA.UnliquidatedObligations.Web.Controllers;
-@model GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting.ReportDescription
+@model ConfigureReportModel
 @{
-    ViewBag.Title = Model.Title;
+    var rd = Model.Description;
+    ViewBag.Title = rd.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    this.SetTitles(PageKeys.Reports, rd.Title, rd.Description);
 }
 
-<div class="row">
-    <div class="col-xs-12">
-        <h1>@Model.Title</h1>
-        @if (Model.Description != null)
-        {
-            <p class="subheading">@Model.Description</p>
-        }
-    </div>
-</div>
-
-@using (Html.BeginForm(ReportsController.ActionNames.ExecuteReport, null, new { name = Model.Name }, FormMethod.Post, new { @class = "inline-form", role = "form" }))
+@using (Html.BeginForm(ReportsController.ActionNames.ExecuteReport, null, new { name = rd.Name }, FormMethod.Post, new { @class = "inline-form", role = "form" }))
 {
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    foreach (var p in Model.Parameters.Where(z=>!z.IsHardcoded))
+    foreach (var p in rd.Parameters.Where(z => !z.IsHardcoded))
     {
         string htmlInputType;
         if (p.ClrType.IsNumber())
@@ -38,7 +32,29 @@
             <div class="col-sm-12">
                 <div class="form-row">
                     <label for="@p.SqlParameterName">@p.Title</label>
-                    <input class="form-control" name="@p.SqlParameterName" type="@htmlInputType" required="required" />
+                    @{ 
+                        IEnumerable<SelectListItem> items = null;
+                        switch (p.ReportParameterRenderHint)
+                        {
+                            case ReportParameterRenderHints.Region:
+                                items = Model.RegionItems;
+                                break;
+                            case ReportParameterRenderHints.Review:
+                                items = Model.ReviewItems;
+                                break;
+                            case ReportParameterRenderHints.TextArea:
+                                <textarea class="form-control" name="@p.SqlParameterName"></textarea>
+                                break;
+                            case ReportParameterRenderHints.Standard:
+                            default:
+                                <input class="form-control" name="@p.SqlParameterName" type="@htmlInputType" required="required" />
+                                break;
+                        }
+                        if (items != null)
+                        {
+                            @Html.DropDownList(p.SqlParameterName, items, AspHelpers.PleaseSelectOneDropdownItemText, new { required= "required" });
+                        }
+                    }
                 </div>
             </div>
         </div>

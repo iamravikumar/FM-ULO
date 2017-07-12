@@ -46,21 +46,21 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class ReviewModel
     {
-        public List<SelectListItem> RegionChoices { get; set; }
+        public IList<SelectListItem> RegionChoices { get; set; }
 
         public int? RegionId { get; set; }
 
         [Required(ErrorMessage = "Review Type is required")]
         public int? ReviewTypeId { get; set; }
-        public List<SelectListItem> ReviewTypes { get; set; }
+        public IList<SelectListItem> ReviewTypes { get; set; }
 
         [Required(ErrorMessage = "Review Scope is required")]
         public int? ReviewScopeId { get; set; }
-        public List<SelectListItem> ReviewScopes { get; set; }
+        public IList<SelectListItem> ReviewScopes { get; set; }
 
         [Required(ErrorMessage = "Workflow Definition is required")]
         public int? WorkflowDefinitionId { get; set; }
-        public List<SelectListItem> WorkflowDefinitions { get; set; }
+        public IList<SelectListItem> WorkflowDefinitions { get; set; }
         [Required(ErrorMessage = "Review Name is required")]
         public string ReviewName { get; set; }
 

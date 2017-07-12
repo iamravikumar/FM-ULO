@@ -9,8 +9,9 @@
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
+    using System;
     using System.Collections.Generic;
-
+    
     public partial class Region
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -24,6 +25,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int RegionId { get; set; }
         public int ZoneId { get; set; }
         public string RegionName { get; set; }
+        public string RegionNumber { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Review> Reviews { get; set; }

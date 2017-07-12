@@ -21,21 +21,28 @@
             </td>
             <td>
                 <ul>
-                    @foreach (var claim in user.Claims)
-                    {
-                        var c = claim;
-                        if (!RegexHelpers.Common.Whitespace.IsMatch(c))
+                    @{
+                        var seen = new HashSet<string>();
+                        foreach (var claim in user.Claims)
                         {
-                            c = StringHelpers.ToTitleFriendlyString(c);
+                            var c = claim;
+                            if (!RegexHelpers.Common.Whitespace.IsMatch(c))
+                            {
+                                c = StringHelpers.ToTitleFriendlyString(c);
+                            }
+                            if (!seen.Contains(c))
+                            {
+                                seen.Add(c);
+                                <li>@c</li>
+                            }
                         }
-                        <li>@c</li>
                     }
                 </ul>
 
             </td>
             <td>
                 <ul>
-                    @foreach (var group in user.Groups)
+                    @foreach (var group in user.Groups.Distinct().OrderBy())
                     {
                         <li>@group</li>
                     }
@@ -43,10 +50,7 @@
             </td>
             <td>
                 <ul>
-                    @foreach (var otherRegion in user.OtherRegions)
-                    {
-                        <li>@otherRegion</li>
-                    }
+                    @user.OtherRegions.OrderBy().Format(", ")
                 </ul>
             </td>
             <td>

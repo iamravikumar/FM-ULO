@@ -3,7 +3,9 @@ using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting;
 using GSA.UnliquidatedObligations.Utility;
+using GSA.UnliquidatedObligations.Web.Models;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -26,8 +28,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string ExecuteReport = "ExecuteReport";
         }
 
-        public ReportsController(ULODBEntities db, IComponentContext componentContext)
-            : base(db, componentContext)
+        public ReportsController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+            : base(db, componentContext, cacher)
         { }
 
         [ActionName(ActionNames.ListReports)]
@@ -47,7 +49,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var report = (await GetAllReportsAsync()).FirstOrDefault(r => r.Name == name);
             if (report == null) return HttpNotFound();
-            return View(report);
+            return View(new ConfigureReportModel(DB, report));
         }
 
         [ActionName(ActionNames.ExecuteReport)]

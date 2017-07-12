@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -11,8 +12,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class AttachmentsController : BaseController
     {
-        public AttachmentsController(ULODBEntities db, IComponentContext componentContext)
-            : base(db, componentContext)
+        public AttachmentsController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+            : base(db, componentContext, cacher)
         { }
 
         public JsonResult FileShareInfo(string relativePath, bool create=false)

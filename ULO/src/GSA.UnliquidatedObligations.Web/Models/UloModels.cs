@@ -257,24 +257,22 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class FilterViewModel
     {
-        public List<Workflow> Workflows { get; set; }
-        public List<SelectListItem> DocTypes { get; set; }
-        public List<SelectListItem> Zones { get; set; }
-        public List<SelectListItem> Regions { get; set; }
-        public List<SelectListItem> BaCodes { get; set; }
-        public List<SelectListItem> Statuses { get; set; }
-        public FilterViewModel(List<Workflow> workflows, List<string> docTypes, List<SelectListItem> zones, List<SelectListItem> regions, List<string> baCodes, List<string> statuses)
+        public IEnumerable<Workflow> Workflows { get; set; }
+        public IEnumerable<SelectListItem> DocTypes { get; set; }
+        public IEnumerable<SelectListItem> Zones { get; set; }
+        public IEnumerable<SelectListItem> Regions { get; set; }
+        public IEnumerable<SelectListItem> BaCodes { get; set; }
+        public IEnumerable<SelectListItem> Statuses { get; set; }
+        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<string> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> statuses)
         {
             Workflows = workflows;
             DocTypes = docTypes.ConvertToSelectList();
-            Zones = zones.ConvertToSelectList();
-            Regions = regions.ConvertToSelectList();
+            Zones = zones;
+            Regions = regions;
             BaCodes = baCodes.ConvertToSelectList();
             Statuses = statuses.ConvertToSelectList();
         }
     }
-
-
 
     public class EmailViewModel
     {

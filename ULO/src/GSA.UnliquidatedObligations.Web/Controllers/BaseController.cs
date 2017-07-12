@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using Autofac;
+﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -11,13 +13,25 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     {
         protected readonly ULODBEntities DB;
         protected readonly IComponentContext ComponentContext;
+        protected readonly ICacher Cacher;
 
-        public BaseController(ULODBEntities db, IComponentContext componentContext)
+        public BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
         {
             DB = db;
             ComponentContext = componentContext;
+            Cacher = cacher;
             System.Web.HttpContext.Current.Items["ComponentContext"] = ComponentContext;
         }
+
+        public string CurrentUserId
+            => PortalHelpers.GetUserId(User?.Identity?.Name);
+
+        public IEnumerable<GetMyGroups_Result> GetUserGroups(string userId=null)
+            => Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(nameof(GetUserGroups), userId??CurrentUserId),
+                () => DB.GetMyGroups(userId??CurrentUserId).ToList().AsReadOnly(),
+                UloHelpers.ShortCacheTimeout
+                );
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
