@@ -81,25 +81,50 @@ namespace GSA.UnliquidatedObligations.Web
         public static IComponentContext CurrentComponentContext
             => HttpContext.Current.GetComponentContext();
 
-        public static List<int?> GetReassignmentGroupRegions(this IPrincipal user)
+        public static string GetUserId(string username)
         {
-            var DB = CurrentComponentContext.Resolve<ULODBEntities>();
-            var groupRegions = new List<int?>();
-            var reassignGroup = DB.AspNetUsers.FirstOrDefault(u => u.UserName == Properties.Settings.Default.ReassignGroupUserName);
-            var AspNetUser = DB.AspNetUsers.Include(u => u.UserUsers)
-                .FirstOrDefault(u => u.UserName == user.Identity.Name);
-
-            if (AspNetUser == null && reassignGroup == null)
-                return groupRegions;
-            else
+            if (username != null)
             {
-                groupRegions = AspNetUser.UserUsers
-                    .Where(uu => uu.ParentUserId == reassignGroup.Id)
-                    .Select(uu => uu.RegionId).ToList();
+                return Cacher.FindOrCreateValWithSimpleKey(
+                    username,
+                    () =>
+                    {
+                        using (var db = UloDbCreator())
+                        {
+                            return db.AspNetUsers.Where(z => z.UserName == username).Select(z => z.Id).FirstOrDefault();
+                        }
+                    },
+                    UloHelpers.MediumCacheTimeout
+                    );
             }
-
-            return groupRegions;
+            return null;
         }
+
+        public static string ReassignGroupUserId
+            => GetUserId(Properties.Settings.Default.ReassignGroupUserName);
+
+        public static IList<int?> GetReassignmentGroupRegions(this IPrincipal user)
+            => Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(nameof(GetReassignmentGroupRegions), user.Identity.Name),
+                () =>
+                {
+                    using (var db = UloDbCreator())
+                    {
+                        var groupRegions = new List<int?>();
+                        var aspNetUser = db.AspNetUsers.Include(u => u.UserUsers).FirstOrDefault(u => u.UserName == user.Identity.Name);
+
+                        if (aspNetUser != null)
+                        {
+                            groupRegions = aspNetUser.UserUsers
+                                .Where(uu => uu.ParentUserId == ReassignGroupUserId)
+                                .Select(uu => uu.RegionId).ToList();
+                        }
+
+                        return groupRegions.AsReadOnly();
+                    }
+                },
+                UloHelpers.ShortCacheTimeout
+                );
 
         public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, int? uloId, string pegasysDocumentNumber, string organization,
            int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId)

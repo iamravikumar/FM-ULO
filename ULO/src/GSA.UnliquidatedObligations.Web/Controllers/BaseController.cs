@@ -23,31 +23,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             System.Web.HttpContext.Current.Items["ComponentContext"] = ComponentContext;
         }
 
-        public string GetUserId(string username)
-        {
-            if (username != null)
-            {
-                return Cacher.FindOrCreateValWithSimpleKey(
-                    username, 
-                    () => DB.AspNetUsers.Where(z => z.UserName == username).Select(z=>z.Id).FirstOrDefault(),
-                    UloHelpers.MediumCacheTimeout
-                    );
-            }
-            return null;
-        }
-
         public string CurrentUserId
-            => GetUserId(User?.Identity?.Name);
-
-        public string ReassignGroupUserId
-            => GetUserId(Properties.Settings.Default.ReassignGroupUserName);
+            => PortalHelpers.GetUserId(User?.Identity?.Name);
 
         public IEnumerable<GetMyGroups_Result> GetUserGroups(string userId=null)
             => Cacher.FindOrCreateValWithSimpleKey(
                 Cache.CreateKey(nameof(GetUserGroups), userId??CurrentUserId),
-                () => DB.GetMyGroups(userId??CurrentUserId),
+                () => DB.GetMyGroups(userId??CurrentUserId).ToList().AsReadOnly(),
                 UloHelpers.ShortCacheTimeout
-                ).ToList().AsReadOnly();
+                );
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {

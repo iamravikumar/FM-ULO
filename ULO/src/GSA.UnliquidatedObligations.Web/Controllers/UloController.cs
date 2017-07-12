@@ -59,7 +59,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
         public async Task<ActionResult> RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var reassignGroupUserId = ReassignGroupUserId;
+            var reassignGroupUserId = PortalHelpers.ReassignGroupUserId;
 
             var reassignGroupRegionIds = await DB.UserUsers
                 .Where(uu => uu.ParentUserId == reassignGroupUserId && uu.ChildUserId == CurrentUserId)
@@ -278,7 +278,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             IEnumerable<string> ids;
             if (!includeReassignmentGroup)
             {
-                ids = GetUserGroups(userId).ConvertAll(z => z.UserId).Where(z => z != ReassignGroupUserId);
+                ids = GetUserGroups(userId).ConvertAll(z => z.UserId).Where(z => z != PortalHelpers.ReassignGroupUserId);
             }
             else
             {
