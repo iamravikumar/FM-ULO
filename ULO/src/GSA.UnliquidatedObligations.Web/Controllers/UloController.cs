@@ -1,9 +1,13 @@
 ﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
+using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
+using RevolutionaryStuff.Core.Collections;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -21,20 +25,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly ApplicationUserManager UserManager;
 
 
-        public UloController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext)
-            : base(db, componentContext)
+        public UloController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+            : base(db, componentContext, cacher)
         {
             Manager = manager;
             UserManager = userManager;
         }
 
         // GET: Ulo
-
-        public async Task<ActionResult> Index(string sortCol, string sortDir, int? page, int? pageSize)
+        public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            //TODO: wrire stored procedure for nested groups
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
-            ViewBag.PageTitle = "My Outstanding Review Items";
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
@@ -46,21 +47,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            //TODO: wrire stored procedure for nested groups
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
-            var userIds = await DB.AspNetUsers.Where(u => u.UserType == "Group").Select(u => u.Id).ToListAsync();
-            ViewBag.PageTitle = "Unassigned Review Items";
+            var userIds = await GetUsersGroupsAsync(CurrentUserId);
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => userIds.Contains(wf.OwnerUserId)).Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             ViewBag.ShowReassignButton = true;
-            return View("Index", workflows);
+            return View(workflows);
         }
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
         public async Task<ActionResult> RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var reassignGroupUserId = GetUserId(Properties.Settings.Default.ReassignGroupUserName);
+            var reassignGroupUserId = ReassignGroupUserId;
 
             var reassignGroupRegionIds = await DB.UserUsers
                 .Where(uu => uu.ParentUserId == reassignGroupUserId && uu.ChildUserId == CurrentUserId)
@@ -72,8 +71,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
                 .Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+
             ViewBag.ShowReassignButton = true;
-            return View("Index", workflows);
+
+            return View(workflows);
         }
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
@@ -87,10 +88,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 PredicateBuilder.Create<Workflow>(
                     wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId));
 
-
             wfPredicate = wfPredicate.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
               baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasonIncludedInReview, valid, status, reviewId);
-
 
             var workflows = await ApplyBrowse(
                 DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region).Include(wf => wf.UnliquidatedObligation.Region.Zone),
@@ -103,21 +102,44 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     .OrderBy(scc => scc)
                     .ToList();
 
-            var zones = DB.Zones.Select(z => new SelectListItem { Text = z.ZoneName, Value = z.ZoneId.ToString() }).OrderBy(z => z).ToList();
-            var regions = DB.Regions.Select(r => new SelectListItem { Text = r.RegionName, Value = r.RegionId.ToString() }).OrderBy(r => r).ToList();
-            var baCodes = DB.UnliquidatedObligations.Select(u => u.Prog).Distinct().OrderBy(p => p).ToList();
+            var baCodes = Cacher.FindOrCreateValWithSimpleKey(
+                    Cache.CreateKey(nameof(RegionWorkflows), "baCodes"),
+                    () => DB.UnliquidatedObligations.Select(u => u.Prog).Distinct().OrderBy(p => p).ToList().AsReadOnly(),
+                    UloHelpers.MediumCacheTimeout
+                    );
 
-            var workflowDescXML = await DB.WorkflowDefinitions.Where(wfd => wfd.WorkflowDefinitionName == "ULO Workflow" && wfd.IsActive == true).Select(wfd => wfd.DescriptionXml).FirstOrDefaultAsync();
-            List<string> statuses = new List<string>();
-            if (workflowDescXML != null)
-            {
-                var workflowDesc = WorkflowDescription.DeserializeFromXml(workflowDescXML);
-                statuses = workflowDesc.WebActionWorkflowActivities.OrderBy(a => a.SequenceNumber).Select(a => a.ActivityName).ToList();
-            }
+            var wd = await DB.WorkflowDefinitions.Where(wfd => wfd.WorkflowDefinitionName == "ULO Workflow" && wfd.IsActive == true).FirstOrDefaultAsync();
+            var activityNames = GetOrderedActivityNameByWorkflowName().AtomEnumerable.ConvertAll(z => z.Value).Distinct().OrderBy().ToList();
+            var statuses = wd.Description.WebActionWorkflowActivities.OrderBy(a => a.SequenceNumber).Select(a => a.ActivityName).ToList();
 
-            return View("~/Views/Ulo/Search/Index.cshtml", new FilterViewModel(workflows, allSubjectCategoryClaimsValues, zones, regions, baCodes, statuses));
+            return View(
+                "~/Views/Ulo/Search/Index.cshtml", 
+                new FilterViewModel(
+                    workflows, 
+                    allSubjectCategoryClaimsValues, 
+                    PortalHelpers.CreateZoneSelectListItems(),
+                    PortalHelpers.CreateRegionSelectListItems(),
+                    baCodes,
+                    activityNames));
         }
 
+        private MultipleValueDictionary<string, string> GetOrderedActivityNameByWorkflowName()
+            => Cacher.FindOrCreateValWithSimpleKey(
+                nameof(GetOrderedActivityNameByWorkflowName),
+                () =>
+                {
+                    var m = new MultipleValueDictionary<string, string>(null, () => new List<string>());
+                    foreach (var wd in DB.WorkflowDefinitions.Where(wfd => wfd.IsActive == true))
+                    {
+                        foreach (var activityName in wd.Description.WebActionWorkflowActivities.OrderBy(a => a.SequenceNumber).Select(a => a.ActivityName))
+                        {
+                            m.Add(wd.WorkflowDefinitionName, activityName);
+                        }
+                    }
+                    return m;
+                },
+                UloHelpers.MediumCacheTimeout
+                );
 
         public async Task<ActionResult> Details(int uloId, int workflowId)
         {
@@ -251,17 +273,18 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return await Details(uloId, workflowId);
         }
 
-        private async Task<List<string>> GetUsersGroupsAsync(string userId, bool includeReassignmentGroup = false)
+        private Task<IEnumerable<string>> GetUsersGroupsAsync(string userId, bool includeReassignmentGroup=false)
         {
+            IEnumerable<string> ids;
             if (!includeReassignmentGroup)
             {
-                var reassignGroupUserId = GetUserId(Properties.Settings.Default.ReassignGroupUserName);
-                return await DB.UserUsers.Where(uu => uu.ChildUserId == userId && uu.ParentUserId != reassignGroupUserId).Select(uu => uu.ParentUserId).ToListAsync();
+                ids = GetUserGroups(userId).ConvertAll(z => z.UserId).Where(z => z != ReassignGroupUserId);
             }
             else
             {
-                return await DB.UserUsers.Where(uu => uu.ChildUserId == userId).Select(uu => uu.ParentUserId).ToListAsync();
+                ids = GetUserGroups(userId).ConvertAll(z => z.UserId);
             }
+            return Task.FromResult(ids);
         }
 
         private async Task<ActionResult> AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)

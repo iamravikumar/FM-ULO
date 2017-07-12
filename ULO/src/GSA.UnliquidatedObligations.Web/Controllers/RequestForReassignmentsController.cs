@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Web.Models;
+using GSA.UnliquidatedObligations.Web.Services;
+using RevolutionaryStuff.Core.Caching;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Mvc;
-using Autofac;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using GSA.UnliquidatedObligations.Web.Models;
-using GSA.UnliquidatedObligations.Web.Services;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -19,8 +20,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected readonly IWorkflowManager Manager;
         private readonly ApplicationUserManager UserManager;
 
-        public RequestForReassignmentsController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext)
-            : base(db, componentContext)
+        public RequestForReassignmentsController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+            : base(db, componentContext, cacher)
         {
             Manager = manager;
             UserManager = userManager;

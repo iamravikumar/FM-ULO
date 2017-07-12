@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net;
-using System.Web.Mvc;
-using System.Web.UI.WebControls.Expressions;
-using Autofac;
+﻿using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
-using System;
 using Microsoft.AspNet.Identity;
+using RevolutionaryStuff.Core.Caching;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using System.Web.UI.WebControls.Expressions;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -20,8 +21,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     {
         private readonly ApplicationUserManager UserManager;
 
-        public UsersController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext context)
-            : base(db, context)
+        public UsersController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext context, ICacher cacher)
+            : base(db, context, cacher)
         {
             UserManager = userManager;
         }
@@ -36,7 +37,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             //get claim Region Ids for user
             var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
             var userData = await GetUsersByRegion(claimRegionIds[0]);
-            return View(new UsersModel(PortalHelpers.CreateRegionSelectListItems(DB), claimRegionIds, userData));
+            return View(new UsersModel(PortalHelpers.CreateRegionSelectListItems(), claimRegionIds, userData));
 
         }
 

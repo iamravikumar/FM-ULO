@@ -677,10 +677,14 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Parameter Name="workflowDefinitionId" Type="int" Mode="In" />
           <Parameter Name="reviewDate" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetMyGroups" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="proposedOwnerId" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="GetNextLevelOwnerId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="proposedOwnerId" Type="varchar" Mode="In" />
           <Parameter Name="workflowId" Type="int" Mode="In" />
           <Parameter Name="nextActivityKey" Type="varchar" Mode="In" />
+          <Parameter Name="ownerProhibitedPreviousActivityNamesCsv" Type="nvarchar" Mode="In" />
           <Parameter Name="nextOwnerId" Type="varchar" Mode="InOut" />
         </Function>
         <EntityContainer Name="ModelStoreContainer">
@@ -1675,9 +1679,17 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
             <Parameter Name="workflowId" Mode="In" Type="Int32" />
             <Parameter Name="nextActivityKey" Mode="In" Type="String" />
+            <Parameter Name="ownerProhibitedPreviousActivityNamesCsv" Mode="In" Type="String" />
             <Parameter Name="nextOwnerId" Mode="InOut" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="GetMyGroups" ReturnType="Collection(Model.GetMyGroups_Result)">
+            <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
+        <ComplexType Name="GetMyGroups_Result">
+          <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="256" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2020,6 +2032,14 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="CreateULOAndAssignWf" FunctionName="Model.Store.CreateULOAndAssignWf" />
           <FunctionImportMapping FunctionImportName="GetNextLevelOwnerId" FunctionName="Model.Store.GetNextLevelOwnerId" />
+          <FunctionImportMapping FunctionImportName="GetMyGroups" FunctionName="Model.Store.GetMyGroups">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Model.GetMyGroups_Result">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

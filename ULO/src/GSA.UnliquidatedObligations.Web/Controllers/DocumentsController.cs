@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Web.Models;
+using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Hosting;
 using System.Web.Mvc;
-using Autofac;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using GSA.UnliquidatedObligations.Web.Models;
-using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -19,8 +20,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     {
         private readonly ApplicationUserManager UserManager;
 
-        public DocumentsController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext)
-            : base(db, componentContext)
+        public DocumentsController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+            : base(db, componentContext, cacher)
         {
             UserManager = userManager;
         }

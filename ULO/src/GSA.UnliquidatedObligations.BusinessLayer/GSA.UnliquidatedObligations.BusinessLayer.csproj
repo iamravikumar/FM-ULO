@@ -126,8 +126,8 @@
     <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Remotion.Linq.2.1.1\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="RevolutionaryStuff.Core, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\RevolutionaryStuff.Core.1.0.7\lib\net462\RevolutionaryStuff.Core.dll</HintPath>
+    <Reference Include="RevolutionaryStuff.Core, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RevolutionaryStuff.Core.1.0.11\lib\net462\RevolutionaryStuff.Core.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Serilog.2.4.0\lib\net46\Serilog.dll</HintPath>
@@ -286,6 +286,9 @@
     <Compile Include="Data\EmailTemplate.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\GetMyGroups_Result.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\JustificationChoices.cs" />
     <Compile Include="Data\Note.cs">
       <DependentUpon>ULO.tt</DependentUpon>
@@ -349,13 +352,19 @@
     <Compile Include="Data\WorkflowHistory.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\Workflow_.cs" />
     <Compile Include="Data\Zone.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Helpers\XmlHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Helpers\UloHelpers.cs" />
+    <Compile Include="UloHelpers.cs" />
     <Compile Include="Authorization\SubjectCategoryNames.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Workflow\DatabaseWorkflowDescriptionFinder.cs" />
     <Compile Include="Workflow\FieldComparisonActivityChooser.cs" />
     <Compile Include="Workflow\IActivityChooser.cs" />
@@ -377,6 +386,10 @@
       <DependentUpon>ULO.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="DatabaseScripts\0001.ChangeLog.sql" />

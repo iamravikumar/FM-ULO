@@ -1,5 +1,5 @@
-﻿using System.Runtime.Serialization;
-using GSA.UnliquidatedObligations.BusinessLayer.Helpers;
+﻿using RevolutionaryStuff.Core;
+using System.Runtime.Serialization;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {
@@ -14,10 +14,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
         { }
 
         public static SubjectCatagoryClaimValue Load(string xml)
-        {
-            return (SubjectCatagoryClaimValue)Serializer.ReadObject(xml);
-        }
-
+            => Serializer.ReadObjectFromString<SubjectCatagoryClaimValue>(xml);
 
         [DataMember(Name = "DocumentType")]
         public string DocType { get; set; }
@@ -27,6 +24,5 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 
         [DataMember]
         public string OrgCode { get; set; }
-
     }
 }

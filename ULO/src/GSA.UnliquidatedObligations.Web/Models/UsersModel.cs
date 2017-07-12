@@ -195,14 +195,14 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string DocType { get; set; }
         public string BACode { get; set; }
         public string OrgCode { get; set; }
-        public List<SelectListItem> DocTypes { get; set; }
+        public IList<SelectListItem> DocTypes { get; set; }
 
-        public EditSubjectPermissionClaimModel(List<SelectListItem> docTypes)
+        public EditSubjectPermissionClaimModel(IList<SelectListItem> docTypes)
         {
             DocTypes = docTypes;
         }
 
-        public EditSubjectPermissionClaimModel(AspnetUserSubjectCategoryClaim subjectCategoryClaim, List<SelectListItem> docTypes)
+        public EditSubjectPermissionClaimModel(AspnetUserSubjectCategoryClaim subjectCategoryClaim, IList<SelectListItem> docTypes)
         {
             DocType = subjectCategoryClaim.DocumentType;
             BACode = subjectCategoryClaim.BACode;

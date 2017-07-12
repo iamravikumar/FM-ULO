@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using RevolutionaryStuff.Core;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
-using GSA.UnliquidatedObligations.BusinessLayer.Helpers;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
@@ -10,14 +10,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         private static readonly DataContractSerializer Serializer = new DataContractSerializer(typeof(WorkflowDescription), new [] {typeof(WebActionWorkflowActivity), typeof(WorkflowQuestionChoices), typeof(QuestionChoice) });
 
         public virtual string ToXml()
-        {
-            return Serializer.WriteObject(this);
-        }
+            => Serializer.WriteObjectToString(this);
 
-        public static WorkflowDescription DeserializeFromXml(string xml)
-        {
-            return (WorkflowDescription)Serializer.ReadObject(xml);
-        }
+        internal static WorkflowDescription DeserializeFromXml(string xml)
+            => Serializer.ReadObjectFromString<WorkflowDescription>(xml);
 
         public IEnumerable<WorkflowActivity> Activities
         {

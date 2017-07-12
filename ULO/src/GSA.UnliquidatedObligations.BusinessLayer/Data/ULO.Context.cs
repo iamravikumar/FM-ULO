@@ -13,7 +13,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     using System.Data.Entity.Core.Objects;
-
+    using System.Linq;
+    
     public partial class ULODBEntities : DbContext
     {
         public ULODBEntities()
@@ -67,7 +68,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CreateULOAndAssignWf", reviewIdParameter, workflowDefinitionIdParameter, reviewDateParameter);
         }
     
-        public virtual int GetNextLevelOwnerId(string proposedOwnerId, Nullable<int> workflowId, string nextActivityKey, ObjectParameter nextOwnerId)
+        public virtual int GetNextLevelOwnerId(string proposedOwnerId, Nullable<int> workflowId, string nextActivityKey, string ownerProhibitedPreviousActivityNamesCsv, ObjectParameter nextOwnerId)
         {
             var proposedOwnerIdParameter = proposedOwnerId != null ?
                 new ObjectParameter("proposedOwnerId", proposedOwnerId) :
@@ -81,7 +82,20 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
                 new ObjectParameter("nextActivityKey", nextActivityKey) :
                 new ObjectParameter("nextActivityKey", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNextLevelOwnerId", proposedOwnerIdParameter, workflowIdParameter, nextActivityKeyParameter, nextOwnerId);
+            var ownerProhibitedPreviousActivityNamesCsvParameter = ownerProhibitedPreviousActivityNamesCsv != null ?
+                new ObjectParameter("ownerProhibitedPreviousActivityNamesCsv", ownerProhibitedPreviousActivityNamesCsv) :
+                new ObjectParameter("ownerProhibitedPreviousActivityNamesCsv", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNextLevelOwnerId", proposedOwnerIdParameter, workflowIdParameter, nextActivityKeyParameter, ownerProhibitedPreviousActivityNamesCsvParameter, nextOwnerId);
+        }
+    
+        public virtual ObjectResult<GetMyGroups_Result> GetMyGroups(string proposedOwnerId)
+        {
+            var proposedOwnerIdParameter = proposedOwnerId != null ?
+                new ObjectParameter("proposedOwnerId", proposedOwnerId) :
+                new ObjectParameter("proposedOwnerId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetMyGroups_Result>("GetMyGroups", proposedOwnerIdParameter);
         }
     }
 }

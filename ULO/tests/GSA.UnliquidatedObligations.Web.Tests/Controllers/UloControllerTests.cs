@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Mvc;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
+﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RevolutionaryStuff.Core.Caching;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
 {
@@ -19,7 +20,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         public override void Initialize()
         {
             base.Initialize();
-            UloController = new UloController(WorkflowManager, ApplicationUserManager, DbContext, ComponentContext)
+            UloController = new UloController(WorkflowManager, ApplicationUserManager, DbContext, ComponentContext, Cache.DataCacher)
             {
                 ControllerContext = ControllerContext
             };

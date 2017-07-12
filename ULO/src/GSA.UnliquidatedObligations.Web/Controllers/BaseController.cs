@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using Autofac;
+﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -13,11 +13,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     {
         protected readonly ULODBEntities DB;
         protected readonly IComponentContext ComponentContext;
+        protected readonly ICacher Cacher;
 
-        public BaseController(ULODBEntities db, IComponentContext componentContext)
+        public BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
         {
             DB = db;
             ComponentContext = componentContext;
+            Cacher = cacher;
             System.Web.HttpContext.Current.Items["ComponentContext"] = ComponentContext;
         }
 
@@ -25,13 +27,27 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (username != null)
             {
-                return Cache.DataCacher.FindOrCreateValWithSimpleKey(username, () => DB.AspNetUsers.Where(z => z.UserName == username).Select(z=>z.Id).FirstOrDefault(), TimeSpan.FromMinutes(1));
+                return Cacher.FindOrCreateValWithSimpleKey(
+                    username, 
+                    () => DB.AspNetUsers.Where(z => z.UserName == username).Select(z=>z.Id).FirstOrDefault(),
+                    UloHelpers.MediumCacheTimeout
+                    );
             }
             return null;
         }
 
         public string CurrentUserId
             => GetUserId(User?.Identity?.Name);
+
+        public string ReassignGroupUserId
+            => GetUserId(Properties.Settings.Default.ReassignGroupUserName);
+
+        public IEnumerable<GetMyGroups_Result> GetUserGroups(string userId=null)
+            => Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(nameof(GetUserGroups), userId??CurrentUserId),
+                () => DB.GetMyGroups(userId??CurrentUserId),
+                UloHelpers.ShortCacheTimeout
+                ).ToList().AsReadOnly();
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {

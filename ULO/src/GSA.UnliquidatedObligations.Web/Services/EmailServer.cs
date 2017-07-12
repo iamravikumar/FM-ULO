@@ -5,6 +5,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
     public class EmailServer : IEmailServer
     {
         private readonly SmtpClient EmailClient;
+
         public EmailServer(SmtpClient emailClient)
         {
             EmailClient = emailClient;

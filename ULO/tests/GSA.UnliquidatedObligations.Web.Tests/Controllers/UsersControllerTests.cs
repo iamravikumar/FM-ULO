@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
-using System.Web.Mvc;
-using GSA.UnliquidatedObligations.Web.Controllers;
+﻿using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RevolutionaryStuff.Core.Caching;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
 {
@@ -15,7 +16,7 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
         public override void Initialize()
         {
             base.Initialize();
-            UsersController = new UsersController(ApplicationUserManager, DbContext, ComponentContext)
+            UsersController = new UsersController(ApplicationUserManager, DbContext, ComponentContext, Cache.DataCacher)
             {
                 ControllerContext = ControllerContext
             };
