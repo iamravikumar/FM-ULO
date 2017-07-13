@@ -9,14 +9,15 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 
         public ReviewScopeEnum ReviewScope
         {
-            get => (ReviewScopeEnum)ReviewScopeId;
+            get { return (ReviewScopeEnum)ReviewScopeId; }
             set { ReviewScopeId = (int)value; }
         }
 
         public ReviewTypeEnum ReviewType
         {
-            get => (ReviewTypeEnum)ReviewTypeId;
+            get { return (ReviewTypeEnum)ReviewTypeId; }
             set { ReviewTypeId = (int)value; }
         }
     }
 }
+

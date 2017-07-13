@@ -1,109 +1,109 @@
 ﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
 @using GSA.UnliquidatedObligations.BusinessLayer.Data
-@model IEnumerable<GSA.UnliquidatedObligations.Web.Models.ReviewItemModel>
+@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Review>
 
-@{
-    this.SetTitles(PageKeys.ManageReviews, "Manage Reviews");
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-@if (User.HasPermission(ApplicationPermissionNames.CanCreateReviews))
-{
-    <p>
-        <input type="button" value="Create New" class="btn btn-primary" onclick="location.href='@Url.Action("Create")'" />
-    </p>
-}
-<table class="table">
-    @if (Model.Any())
-    {
-        <tr>
-            <th>
-                @Html.SortableHeaderFor(z => z.ReviewId, overrideDisplayName: "Review ID")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.CreatedAt, overrideDisplayName: "Created At")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.ReviewName, overrideDisplayName: "Review Name")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(model => model.Status)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(model => model)
-                Type of Review
-            </th>
-            <th>
-                Scope
-            </th>
-            <th>
-                @Html.SortableHeaderFor(model => model.ReviewDateInitiated, overrideDisplayName: "Review As Of Date")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(model => model.Comments)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(model => model.Region.RegionName, overrideDisplayName: "Region")
-            </th>
-            @*<th></th>*@
-        </tr>
+    @{
+        this.SetTitles(PageKeys.ManageReviews, "Manage Reviews");
+        Layout = "~/Views/Shared/_Layout.cshtml";
     }
 
-    @foreach (var item in Model)
+    @if (User.HasPermission(ApplicationPermissionNames.CanCreateReviews))
     {
-        <tr>
-            <td>
-                @Html.ActionLink("View Review " + item.ReviewId, "Details", new { id = item.ReviewId })
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReviewName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @{
-                    var reviewType = (ReviewTypeEnum)item.ReviewTypeId;
-                    var reviewTypeName = reviewType.GetDisplayName();
-                }
-                @reviewTypeName
-            </td>
-            <td>
-                @{
-                    var scope = (ReviewScopeEnum)item.ReviewScopeId;
-                    var scopeName = scope.GetDisplayName();
-                }
-                @scopeName
-            </td>
-            <td>
-                @{
-                    var reviewAsOfDate = "";
-                    if (item.ReviewDateInitiated != null)
-                    {
-                        reviewAsOfDate = Convert.ToDateTime(item.ReviewDateInitiated).ToString("MM/dd/yyyy");
+        <p>
+            <input type="button" value="Create New" class="btn btn-primary" onclick="location.href='@Url.Action("Create")'" />
+        </p>
+    }
+    <table class="table">
+        @if (Model.Any())
+        {
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.ReviewId, overrideDisplayName: "Review ID")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.CreatedAt, overrideDisplayName: "Created At")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.ReviewName, overrideDisplayName: "Review Name")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.Status)
+                </th>
+                <th>
+                    @*@Html.SortableHeaderFor(model => model)*@
+                    Type of Review
+                </th>
+                <th>
+                    Scope
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.ReviewDateInitiated, overrideDisplayName: "Review As Of Date")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.Comments)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.Region.RegionName, overrideDisplayName: "Region")
+                </th>
+                @*<th></th>*@
+            </tr>
+        }
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink("View Review " + item.ReviewId, "Details", new { id = item.ReviewId })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReviewName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @{
+                        var reviewType = (ReviewTypeEnum)item.ReviewTypeId;
+                        var reviewTypeName = reviewType.GetDisplayName();
                     }
-                }
-                @reviewAsOfDate
-                @*@Html.DisplayFor(modelItem => item.ReviewDateInitiated)*@
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.Comments)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Region.RegionName)
-            </td>
-            @*<td>
-                    @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
-                    @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
-                    @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
-                </td>*@
-        </tr>
+                    @reviewTypeName
+                </td>
+                <td>
+                    @{
+                        var scope = (ReviewScopeEnum)item.ReviewScopeId;
+                        var scopeName = scope.GetDisplayName();
                     }
+                    @scopeName
+                </td>
+                <td>
+                    @{
+                        var reviewAsOfDate = "";
+                        if (item.ReviewDateInitiated != null)
+                        {
+                            reviewAsOfDate = Convert.ToDateTime(item.ReviewDateInitiated).ToString("MM/dd/yyyy");
+                        }
+                    }
+                    @reviewAsOfDate
+                    @*@Html.DisplayFor(modelItem => item.ReviewDateInitiated)*@
+                </td>
 
-</table>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Comments)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Region.RegionName)
+                </td>
+                @*<td>
+                        @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
+                        @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
+                    </td>*@
+            </tr>
+                        }
 
-@Html.Partial("_PaginationPartial")
+    </table>
+
+    @Html.Partial("_PaginationPartial")
