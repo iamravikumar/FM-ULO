@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () { 
     setValid();
+    setReason();
     showHideFiltersInit();
     $("#clearFilters").click(function () {
         $("#uloId").val("");
@@ -85,6 +86,13 @@ function setValid() {
     var valid = getParameterByName("valid");
     if (valid != "") {
         $("#valid").val(valid);
+    }
+}
+
+function setReason() {
+    var reasonIncludedInReview = getParameterByName("reasonIncludedInReview");
+    if (reasonIncludedInReview != "") {
+        $("#reasonIncludedInReview").val(reasonIncludedInReview);
     }
 }
 function getParameterByName(name, url) {

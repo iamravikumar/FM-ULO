@@ -280,6 +280,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string PDN { get; set; }
 
+        public int UloId { get; set; }
+
         public string SiteUrl { get; set; }
         public EmailViewModel()
         {
