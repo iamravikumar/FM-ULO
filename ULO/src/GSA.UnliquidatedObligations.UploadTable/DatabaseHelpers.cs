@@ -9,21 +9,6 @@ namespace GSA.UnliquidatedObligations.Utility
 {
     public static class DatabaseHelpers
     {
-        public static void ExecuteNonQuerySql(this IDbConnection conn, string sql, params object[] args)
-        {
-            if (args != null && args.Length > 0)
-            {
-                sql = string.Format(sql, args);
-            }
-            using (var cmd = new SqlCommand(sql, (SqlConnection)conn)
-            {
-                CommandType = CommandType.Text,
-            })
-            {
-                cmd.ExecuteNonQuery();
-            }
-        }
-
         public static DataSet ExecuteReadDataSet(this SqlCommand command, string tableNamePattern = null)
         {
             var conn = command.Connection;

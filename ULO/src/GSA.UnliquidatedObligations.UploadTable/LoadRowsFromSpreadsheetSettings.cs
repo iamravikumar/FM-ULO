@@ -4,7 +4,7 @@ using System.Data;
 
 namespace GSA.UnliquidatedObligations.Utility
 {
-    public class LoadRowsFromExcelSettings : LoadRowsSettings
+    public class LoadRowsFromSpreadsheetSettings : LoadRowsSettings
     {
         public bool UseSheetNameForTableName { get; set; }
         public int? SheetNumber { get; set; }
@@ -13,13 +13,13 @@ namespace GSA.UnliquidatedObligations.Utility
         public Func<IList<object>, bool> SkipWhileTester { get; set; }
         public bool TreatAllValuesAsText { get; set; }
 
-        public LoadRowsFromExcelSettings() { }
+        public LoadRowsFromSpreadsheetSettings() { }
 
-        public LoadRowsFromExcelSettings(LoadRowsSettings other)
+        public LoadRowsFromSpreadsheetSettings(LoadRowsSettings other)
             : base(other)
         { }
 
-        public LoadRowsFromExcelSettings(LoadRowsFromExcelSettings other)
+        public LoadRowsFromSpreadsheetSettings(LoadRowsFromSpreadsheetSettings other)
             : base(other)
         {
             if (other == null) return;
@@ -30,12 +30,5 @@ namespace GSA.UnliquidatedObligations.Utility
             this.SkipWhileTester = other.SkipWhileTester;
             this.TreatAllValuesAsText = other.TreatAllValuesAsText;
         }
-    }
-
-    public class LoadSheetsFromExcelSettings
-    {
-        public List<LoadRowsFromExcelSettings> SheetSettings;
-        public LoadRowsSettings LoadAllSheetsDefaultSettings;
-        public Func<DataTable> CreateDataTable;
     }
 }

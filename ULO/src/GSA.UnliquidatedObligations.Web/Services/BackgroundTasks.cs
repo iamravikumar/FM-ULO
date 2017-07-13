@@ -141,19 +141,19 @@ namespace GSA.UnliquidatedObligations.Web.Services
             using (var st = File.OpenRead(uploadPath))
             {
                 var ds = new DataSet();
-                var settings = new LoadSheetsFromExcelSettings()
+                var settings = new LoadTablesFromSpreadsheetSettings()
                 {
-                    SheetSettings = new List<LoadRowsFromExcelSettings>(),
+                    SheetSettings = new List<LoadRowsFromSpreadsheetSettings>(),
                     CreateDataTable = CreateRetaDataTable
                 };
 
                 foreach (var sheetName in new[] { "R.00", "R.01", "R.02", "R.03", "R.04", "R.05", "R.06", "R.07", "R.08", "R.09", "R.10", "R.11" })
                 {
                     settings.SheetSettings.Add(
-                    new LoadRowsFromExcelSettings
+                    new LoadRowsFromSpreadsheetSettings
                     {
                         SheetName = sheetName,
-                        TypeConverter = DataTableHelpers.ExcelTypeConverter,
+                        TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
                         UseSheetNameForTableName = true,
                         RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore
                     });
@@ -171,7 +171,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             using (var st = File.OpenRead(uploadPath))
             {
                 var ds = new DataSet();
-                var settings = new LoadSheetsFromExcelSettings()
+                var settings = new LoadTablesFromSpreadsheetSettings()
                 {
                     CreateDataTable = CreateEasiTable,
 
@@ -188,19 +188,19 @@ namespace GSA.UnliquidatedObligations.Web.Services
             using (var st = File.OpenRead(uploadPath))
             {
                 var ds = new DataSet();
-                var settings = new LoadSheetsFromExcelSettings()
+                var settings = new LoadTablesFromSpreadsheetSettings()
                 {
-                    SheetSettings = new List<LoadRowsFromExcelSettings>(),
+                    SheetSettings = new List<LoadRowsFromSpreadsheetSettings>(),
                     CreateDataTable = Create192Table,
                 };
                 foreach (var sheetName in new[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" })
                 {
                     settings.SheetSettings.Add(
-                    new LoadRowsFromExcelSettings
+                    new LoadRowsFromSpreadsheetSettings
                     {
                         SkipWhileTester = r=>r.Count<43,
                         SheetName = sheetName,
-                        TypeConverter = DataTableHelpers.ExcelTypeConverter,
+                        TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
                         UseSheetNameForTableName = true,
                         RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore
                     });

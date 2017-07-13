@@ -1,18 +1,8 @@
-﻿using System.Data.SqlClient;
-
-namespace GSA.UnliquidatedObligations.Utility
+﻿namespace GSA.UnliquidatedObligations.Utility
 {
-    public class UploadIntoSqlServerSettings
+    public class UploadIntoSqlServerSettings : UploadIntoDatastoreSettings
     {
-        public string Schema { get; set; }
+        public string Schema { get; set; } = "dbo";
         public bool GenerateTable { get; set; }
-        public int RowsCopiedNotifyIncrement { get; set; }
-        public SqlRowsCopiedEventHandler RowsCopiedNotifyHandler { get; set; }
-
-        public UploadIntoSqlServerSettings()
-        {
-            Schema = "dbo";
-            RowsCopiedNotifyIncrement = 1000;
-        }
     }
 }

@@ -9,9 +9,12 @@
 
     public class LoadRowsFromDelineatedTextSettings : LoadRowsSettings
     {
-        public LoadRowsFromDelineatedTextFormats Format { get; set; }
-        public char FieldDelim;
-        public char? QuoteChar;
+        public LoadRowsFromDelineatedTextFormats Format { get; set; } = LoadRowsFromDelineatedTextFormats.CommaSeparatedValues;
+
+        public char CustomFieldDelim { get; set; }
+
+        public char? CustomQuoteChar { get; set; }
+
         public int SkipRawRows { get; set; }
     }
 }

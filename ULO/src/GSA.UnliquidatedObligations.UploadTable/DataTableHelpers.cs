@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using RevolutionaryStuff.Core;
+﻿using RevolutionaryStuff.Core;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -83,77 +81,6 @@ namespace GSA.UnliquidatedObligations.Utility
             return sb.ToString();
         }
 
-        public static void UploadIntoSqlServer(this DataTable dt, Func<SqlConnection> createConnection, UploadIntoSqlServerSettings settings = null)
-        {
-            Requires.NonNull(dt, nameof(dt));
-            settings = settings ?? new UploadIntoSqlServerSettings();
-
-            //Create table and insert 1 batch at a time
-            using (var conn = createConnection())
-            {
-                conn.Open();
-
-                if (settings.GenerateTable)
-                {
-                    var sql = dt.GenerateCreateTableSQL(settings.Schema);
-                    Trace.WriteLine(sql);
-                    conn.ExecuteNonQuerySql(sql);
-                }
-
-                var copy = new SqlBulkCopy(conn);
-                copy.BulkCopyTimeout = 60 * 60 * 4;
-                copy.DestinationTableName = string.Format("[{0}].[{1}]", settings.Schema, dt.TableName);
-
-                copy.NotifyAfter = settings.RowsCopiedNotifyIncrement;
-                copy.SqlRowsCopied += (sender, e) => Trace.WriteLine(string.Format("Uploaded {0}/{1} rows",
-                    e.RowsCopied,
-                    dt.Rows.Count
-                    ));
-                if (settings.RowsCopiedNotifyHandler != null)
-                {
-                    copy.SqlRowsCopied += settings.RowsCopiedNotifyHandler;
-                }
-                copy.WriteToServer(dt);
-                copy.Close();
-            }
-            Trace.WriteLine(string.Format("Uploaded {0} rows", dt.Rows.Count));
-        }
-
-        public static void MakeDateColumnsFitSqlServerBounds(this DataTable dt, DateTime? minDate = null, DateTime? maxDate = null)
-        {
-            Requires.NonNull(dt, nameof(dt));
-
-            var lower = minDate.GetValueOrDefault(SqlServerMinDateTime);
-            var upper = maxDate.GetValueOrDefault(SqlServerMaxDateTime);
-
-            for (int colNum = 0; colNum < dt.Columns.Count; ++colNum)
-            {
-                var dc = (DataColumn)dt.Columns[colNum];
-                if (dc.DataType != typeof(DateTime)) continue;
-                int changeCount = 0;
-                for (int rowNum = 0; rowNum < dt.Rows.Count; ++rowNum)
-                {
-                    var o = dt.Rows[rowNum][dc];
-                    if (o == DBNull.Value) continue;
-                    var val = (DateTime)o;
-                    if (val < lower)
-                    {
-                        ++changeCount;
-                        dt.Rows[rowNum][dc] = lower;
-                    }
-                    else if (val > upper)
-                    {
-                        ++changeCount;
-                        dt.Rows[rowNum][dc] = upper;
-                    }
-                }
-                Trace.WriteLine($"MakeDateColumnsFitSqlServerBounds table({dt.TableName}) column({dc.ColumnName}) {colNum}/{dt.Columns.Count} => {changeCount} changes");
-            }
-        }
-
-        private static readonly DateTime SqlServerMinDateTime = new DateTime(1753, 1, 1);
-        private static readonly DateTime SqlServerMaxDateTime = new DateTime(9999, 12, 31);
-
         public static void IdealizeStringColumns(this DataTable dt, bool trimAndNullifyStringData = false)
         {
             Requires.NonNull(dt, nameof(dt));
@@ -218,7 +145,7 @@ namespace GSA.UnliquidatedObligations.Utility
             }
         }
 
-        private static void RequiresZeroRows(DataTable dt, string argName = null)
+        public static void RequiresZeroRows(DataTable dt, string argName = null)
         {
             Requires.NonNull(dt, argName ?? nameof(dt));
             if (dt.Rows.Count > 0) throw new ArgumentException("dt must not already have any rows", nameof(dt));
@@ -246,179 +173,6 @@ namespace GSA.UnliquidatedObligations.Utility
         public static void RowAddErrorTraceAndIgnore(Exception ex, int rowNum)
         {
             Trace.WriteLine(string.Format("Problem adding row {0}.  Will Skip.\n{1}", rowNum, ex));
-        }
-
-        public static object ExcelTypeConverter(object val, Type t)
-        {
-            try
-            {
-                if (t == typeof(DateTime) && val is string)
-                {
-                    double d;
-                    if (double.TryParse((string)val, out d))
-                    {
-                        return DateTime.FromOADate(d);
-                    }
-                }
-                return Convert.ChangeType(val, t);
-            }
-            catch (Exception ex)
-            {
-                if (t == typeof(DateTime))
-                {
-                    return DateTime.FromOADate(Convert.ToDouble(val));
-                }
-                throw ex;
-            }
-        }
-
-        public static void LoadSheetsFromExcel(this DataSet ds, Stream st, LoadSheetsFromExcelSettings settings = null)
-        {
-            settings = settings ?? new LoadSheetsFromExcelSettings();
-            using (var sd = SpreadsheetDocument.Open(st, false))
-            {
-                var sheetSettings = settings.SheetSettings;
-                if (sheetSettings == null || sheetSettings.Count == 0)
-                {
-                    sheetSettings = new List<LoadRowsFromExcelSettings>();
-                    for (int n = 0; n < sd.WorkbookPart.Workbook.GetFirstChild<Sheets>().Elements<Sheet>().Count(); ++n)
-                    {
-                        sheetSettings.Add(new LoadRowsFromExcelSettings(settings.LoadAllSheetsDefaultSettings) { SheetNumber = n, UseSheetNameForTableName = true, TypeConverter = ExcelTypeConverter });
-                    }
-                }
-                foreach (var ss in sheetSettings)
-                {
-                    var dt = settings.CreateDataTable == null ? new DataTable() : settings.CreateDataTable();
-                    dt.LoadRowsFromExcel(sd, ss);
-                    ds.Tables.Add(dt);
-                }
-            }
-        }
-
-        public static void LoadRowsFromExcel(this DataTable dt, Stream st, LoadRowsFromExcelSettings settings)
-        {
-            using (var sd = SpreadsheetDocument.Open(st, false))
-            {
-                dt.LoadRowsFromExcel(sd, settings ?? new LoadRowsFromExcelSettings { SheetNumber = 0 });
-            }
-        }
-
-        private static void LoadRowsFromExcel(this DataTable dt, SpreadsheetDocument sd, LoadRowsFromExcelSettings settings)
-        {
-            RequiresZeroRows(dt, nameof(dt));
-            Requires.NonNull(sd, nameof(sd));
-            Requires.NonNull(settings, nameof(settings));
-
-            var rows = new List<IList<object>>();
-
-            var sharedStringDictionary = ConvertSharedStringTableToDictionary(sd);
-            var sheets = sd.WorkbookPart.Workbook.GetFirstChild<Sheets>().Elements<Sheet>();
-            int sheetNumber = 0;
-            foreach (var sheet in sheets)
-            {
-                if (sheetNumber == settings.SheetNumber || 0 == string.Compare(settings.SheetName, sheet.Name, true))
-                {
-                    if (settings.UseSheetNameForTableName)
-                    {
-                        dt.TableName = sheet.Name;
-                    }
-                    string relationshipId = sheet.Id.Value;
-                    var worksheetPart = (WorksheetPart)sd.WorkbookPart.GetPartById(relationshipId);
-                    SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
-                    IEnumerable<Row> eRows = sheetData.Descendants<Row>();
-                    foreach (Row erow in eRows)
-                    {
-                        CreateRow:
-                        var row = new List<object>();
-                        rows.Add(row);
-                        foreach (var cell in erow.Descendants<Cell>())
-                        {
-                            var cr = GetColRowFromCellReference(cell.CellReference);
-                            if (rows.Count <= cr.Item2) goto CreateRow;
-                            while (row.Count < cr.Item1)
-                            {
-                                row.Add(null);
-                            }
-                            Debug.Assert(row.Count == cr.Item1);
-                            var val = GetCellValue(sd, cell, settings.TreatAllValuesAsText, sharedStringDictionary);
-                            row.Add(val);
-                        }
-                    }
-                    GC.Collect();
-                    IEnumerable<IList<object>> positionnedRows;
-                    if (settings.SkipRawRows.HasValue)
-                    {
-                        positionnedRows = rows.Skip(settings.SkipRawRows.Value);
-                    }
-                    else if (settings.SkipWhileTester!=null)
-                    {
-                        positionnedRows = rows.SkipWhile(settings.SkipWhileTester);
-                    }
-                    else
-                    {
-                        positionnedRows = rows;
-                    }
-                    dt.LoadRows(positionnedRows, settings);
-                    return;
-                }
-                ++sheetNumber;
-            }
-            throw new Exception(string.Format(
-                "Sheet [{0}] was not found",
-                (object)settings.SheetNumber ?? (object)settings.SheetName));
-        }
-
-        private static readonly Regex ColRowExpr = new Regex(@"\s*([A-Z]+)(\d+)\s*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static Tuple<int, int> GetColRowFromCellReference(string cellReference)
-        {
-            var m = ColRowExpr.Match(cellReference);
-            int colNum = 0;
-            string colRef = m.Groups[1].Value.ToLower();
-            for (int z = 0; z < colRef.Length; ++z)
-            {
-                colNum = colNum * 26 + (colRef[z] - 'a' + 1);
-            }
-            return new Tuple<int, int>(colNum - 1, int.Parse(m.Groups[2].Value) - 1);
-        }
-
-        private static IDictionary<int, string> ConvertSharedStringTableToDictionary(SpreadsheetDocument document)
-        {
-            var d = new Dictionary<int, string>();
-            var stringTablePart = document.WorkbookPart.SharedStringTablePart;
-            var pos = 0;
-            foreach (DocumentFormat.OpenXml.OpenXmlElement el in stringTablePart.SharedStringTable.ChildElements)
-            {
-                d[pos++] = el.InnerText;
-            }
-            return d;
-        }
-
-        private static object GetCellValue(SpreadsheetDocument document, Cell cell, bool treatAllValuesAsText, IDictionary<int, string> sharedStringDictionary)
-        {
-            if (cell == null || cell.CellValue == null) return null;
-            string value = cell.CellValue.InnerText;
-            if (cell.DataType == null) return value;
-            var t = cell.DataType.Value;
-            if (treatAllValuesAsText && t != CellValues.SharedString)
-            {
-                return value;
-            }
-            switch (t)
-            {
-                case CellValues.String:
-                    return value;
-                case CellValues.SharedString:
-                    return sharedStringDictionary[Int32.Parse(value)];
-                case CellValues.Boolean:
-                    return value == "1";
-                case CellValues.Number:
-                    return value;
-                case CellValues.Date:
-                    return value;
-                default:
-                    return value;
-            }
         }
 
         public static void LoadRowsFromDelineatedText(this DataTable dt, Stream st, LoadRowsFromDelineatedTextSettings settings)
@@ -466,7 +220,7 @@ namespace GSA.UnliquidatedObligations.Utility
             else if (settings.Format == LoadRowsFromDelineatedTextFormats.Custom)
             {
                 var data = new StreamReader(st).ReadToEnd();
-                rows = CSV.ParseText(data, settings.FieldDelim, settings.QuoteChar);
+                rows = CSV.ParseText(data, settings.CustomFieldDelim, settings.CustomQuoteChar);
             }
             else
             {
