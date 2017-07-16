@@ -92,7 +92,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     var emailModel = new EmailViewModel
                     {
                         UserName = nextUser.UserName,
-                        PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
+                        PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
+                        WorkflowId = wf.WorkflowId,
+                        UloId = wf.UnliquidatedObligation.UloId
                     };
                     //TODO: What happens if it crashes?
                     BackgroundJobClient.Enqueue<IBackgroundTasks>(
@@ -181,7 +183,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
             var emailModel = new EmailViewModel
             {
                 UserName = nextUser.UserName,
-                PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
+                PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
+                WorkflowId = wf.WorkflowId,
+                UloId = wf.UnliquidatedObligation.UloId
             };
             //TODO: What happens if it crashes?
             BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(emailTemplate.EmailSubject, nextUser.Email, emailTemplate.EmailBody, emailModel));

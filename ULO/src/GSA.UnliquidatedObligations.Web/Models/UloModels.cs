@@ -283,6 +283,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public int UloId { get; set; }
 
         public string SiteUrl { get; set; }
+
+        public int WorkflowId { get; set; }
         public EmailViewModel()
         {
             SiteUrl = Properties.Settings.Default.SiteUrl;
