@@ -93,6 +93,7 @@
           </Key>
           <Property Name="EmailTemplateId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="EmailBody" Type="varchar" MaxLength="500" />
+          <Property Name="EmailSubject" Type="varchar" MaxLength="200" />
         </EntityType>
         <EntityType Name="Notes">
           <Key>
@@ -963,6 +964,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="EmailTemplateId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="EmailBody" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="EmailSubject" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Note">
           <Key>
@@ -1784,6 +1786,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <EntitySetMapping Name="EmailTemplates">
             <EntityTypeMapping TypeName="Model.EmailTemplate">
               <MappingFragment StoreEntitySet="EmailTemplates">
+                <ScalarProperty Name="EmailSubject" ColumnName="EmailSubject" />
                 <ScalarProperty Name="EmailTemplateId" ColumnName="EmailTemplateId" />
                 <ScalarProperty Name="EmailBody" ColumnName="EmailBody" />
               </MappingFragment>
