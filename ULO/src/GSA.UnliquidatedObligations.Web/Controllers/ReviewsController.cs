@@ -5,6 +5,7 @@ using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
 using RevolutionaryStuff.Core.Caching;
+using RevolutionaryStuff.Core;
 using System;
 using System.Data.Entity;
 using System.Linq;
@@ -26,9 +27,27 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // GET: Review
         public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var reviews = ApplyBrowse(
-                DB.Reviews,
-                sortCol ?? nameof(Review.CreatedAt), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+            IQueryable reviews;
+            if (sortCol == "ReviewTypeId")
+            {
+                reviews = ApplyBrowse(
+                   DB.Reviews,
+                   "ReviewTypeId", typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+            }
+            else if (sortCol == "ReviewScopeId")
+            {
+                reviews = ApplyBrowse(
+                   DB.Reviews,
+                   "ReviewScopeId", typeof(ReviewScopeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+            }
+            else
+            {
+                reviews = ApplyBrowse(
+               DB.Reviews,
+               sortCol ?? nameof(Review.CreatedAt), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+
+            }
+
             return View("", reviews);
         }
 

@@ -30,11 +30,11 @@
                     @Html.SortableHeaderFor(model => model.Status)
                 </th>
                 <th>
-                    @*@Html.SortableHeaderFor(model => model)*@
-                    Type of Review
+                    @Html.SortableHeaderFor(model => model.ReviewTypeId, overrideDisplayName: "Type of Review")
+
                 </th>
                 <th>
-                    Scope
+                    @Html.SortableHeaderFor(model => model.ReviewScopeId, overrideDisplayName: "Scope")
                 </th>
                 <th>
                     @Html.SortableHeaderFor(model => model.ReviewDateInitiated, overrideDisplayName: "Review As Of Date")

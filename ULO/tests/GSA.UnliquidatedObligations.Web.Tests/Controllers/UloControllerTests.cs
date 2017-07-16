@@ -96,9 +96,11 @@ namespace GSA.UnliquidatedObligations.Web.Tests.Controllers
             Assert.AreEqual(advanceViewModel.QuestionChoices.Count, expectedChoices.Count);
         }
 
+        
         [TestMethod]
         public async Task Details_returns_view_with_correct_Document_information()
         {
+            base.ControllerContext.HttpContext.H
             var view = await UloController.Details(UloId, WorkflowId) as ViewResult;
             var returnedModel = (UloViewModel)view.Model;
             Assert.AreEqual(returnedModel.WorkflowViewModel.DocumentsViewModel.Documents.Count, 10);

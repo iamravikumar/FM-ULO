@@ -3,6 +3,7 @@ using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -37,6 +38,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             ViewBag.TotalItemCount = q.Count();
             q = ApplySort(q, sortCol, sortDir, colMapper);
+            q = ApplyPagination(q, page, pageSize);
+            return q;
+        }
+
+        protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, Type enumType, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
+        {
+            ViewBag.TotalItemCount = q.Count();
+            q = q.OrderByField(sortCol, enumType, AspHelpers.IsSortDirAscending(sortDir));
             q = ApplyPagination(q, page, pageSize);
             return q;
         }

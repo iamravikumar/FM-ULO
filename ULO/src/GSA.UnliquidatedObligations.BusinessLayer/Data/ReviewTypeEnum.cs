@@ -4,10 +4,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     public enum ReviewTypeEnum
     {
-        [Display(Name = "Semi-Annual")]
+        [Display(Name = "Semi-Annual", Order = 1)]
         SemiAnnual = 1,
 
-        [Display(Name = "High-Risk")]
+        [Display(Name = "High-Risk", Order = 0)]
         HighRisk = 2
     }
 }
