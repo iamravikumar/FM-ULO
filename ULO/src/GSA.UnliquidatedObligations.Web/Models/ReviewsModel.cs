@@ -117,24 +117,28 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class ReviewUploadStatsModel
     {
-        public int? PO442UploadStats { get; set; }
-        public int? RetaUploadStats { get; set; }
-        public int? EasiUploadStats { get; set; }
-        public int? PO192Stats { get; set; }
-        public int? UlosCreatedStats { get; set; }
-        public int? AssignedToPersonStats { get; set; }
-        public int? AssignedToGroupStats { get; set; }
-        public int? AssignedToSystemStats { get; set; }
+        public int PO442UploadStats { get; set; }
+        public int RetaUploadStats { get; set; }
+        public int EasiUploadStats { get; set; }
+        public int PO192Stats { get; set; }
+        public int UlosCreatedStats { get; set; }
+        public int AssignedToPersonStats { get; set; }
+        public int AssignedToGroupStats { get; set; }
+        public int AssignedToSystemStats { get; set; }
+        public int AssignedToSystemTheCloserStats { get; set; }
+        public int AssignedToSystePreAssignmentStats { get; set; }
         public ReviewUploadStatsModel(ReviewStat reviewStat)
         {
-            PO442UploadStats = reviewStat.PegasysObligations442Cnt;
-            RetaUploadStats = reviewStat.RetaCnt;
-            EasiUploadStats = reviewStat.EasiCnt;
-            PO192Stats = reviewStat.PegasysObligations192Cnt;
-            UlosCreatedStats = reviewStat.UloCnt;
-            AssignedToPersonStats = reviewStat.PersonCnt;
-            AssignedToGroupStats = reviewStat.GroupCnt;
-            AssignedToSystemStats = reviewStat.SystemCnt;
+            PO442UploadStats = reviewStat.PegasysObligations442Cnt.GetValueOrDefault();
+            RetaUploadStats = reviewStat.RetaCnt.GetValueOrDefault();
+            EasiUploadStats = reviewStat.EasiCnt.GetValueOrDefault();
+            PO192Stats = reviewStat.PegasysObligations192Cnt.GetValueOrDefault();
+            UlosCreatedStats = reviewStat.UloCnt.GetValueOrDefault();
+            AssignedToPersonStats = reviewStat.PersonCnt.GetValueOrDefault(); 
+            AssignedToGroupStats = reviewStat.GroupCnt.GetValueOrDefault();
+            AssignedToSystemStats = reviewStat.SystemCnt.GetValueOrDefault();
+            AssignedToSystemTheCloserStats = reviewStat.TheCloserCnt.GetValueOrDefault();
+            AssignedToSystePreAssignmentStats = reviewStat.PreAssignmentCnt.GetValueOrDefault();
         }
     }
 

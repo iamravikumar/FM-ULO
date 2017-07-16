@@ -114,7 +114,7 @@
             Assigned to Person Users:
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToPersonStats)
+            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToPersonStats+model.ReviewUploadStats.AssignedToSystemTheCloserStats)
         </dd>
         <dt>
             Assigned to Group Users:
@@ -123,10 +123,10 @@
             @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToGroupStats)
         </dd>
         <dt>
-            Assigned to System Users:
+            Pre-Assignment:
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToSystemStats)
+            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToSystePreAssignmentStats)
         </dd>
     </dl>
 </div>

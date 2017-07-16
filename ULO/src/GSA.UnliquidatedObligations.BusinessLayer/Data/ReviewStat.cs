@@ -23,5 +23,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public Nullable<int> PersonCnt { get; set; }
         public Nullable<int> GroupCnt { get; set; }
         public Nullable<int> SystemCnt { get; set; }
+        public Nullable<int> PreAssignmentCnt { get; set; }
+        public Nullable<int> TheCloserCnt { get; set; }
     }
 }

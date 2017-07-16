@@ -327,6 +327,8 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="PersonCnt" Type="int" />
           <Property Name="GroupCnt" Type="int" />
           <Property Name="SystemCnt" Type="int" />
+          <Property Name="PreAssignmentCnt" Type="int" />
+          <Property Name="TheCloserCnt" Type="int" />
         </EntityType>
         <Association Name="FK__Document__Upload__7720AD13">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
@@ -739,7 +741,9 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
     [ReviewStats].[UloCnt] AS [UloCnt], 
     [ReviewStats].[PersonCnt] AS [PersonCnt], 
     [ReviewStats].[GroupCnt] AS [GroupCnt], 
-    [ReviewStats].[SystemCnt] AS [SystemCnt]
+    [ReviewStats].[SystemCnt] AS [SystemCnt], 
+    [ReviewStats].[PreAssignmentCnt] AS [PreAssignmentCnt], 
+    [ReviewStats].[TheCloserCnt] AS [TheCloserCnt]
     FROM [dbo].[ReviewStats] AS [ReviewStats]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK__Document__Upload__7720AD13" Association="Self.FK__Document__Upload__7720AD13">
@@ -1217,6 +1221,8 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="PersonCnt" Type="Int32" />
           <Property Name="GroupCnt" Type="Int32" />
           <Property Name="SystemCnt" Type="Int32" />
+          <Property Name="PreAssignmentCnt" Type="Int32" />
+          <Property Name="TheCloserCnt" Type="Int32" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
@@ -1683,7 +1689,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <Parameter Name="nextOwnerId" Mode="InOut" Type="String" />
           </FunctionImport>
           <FunctionImport Name="GetMyGroups" ReturnType="Collection(Model.GetMyGroups_Result)">
-            <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
+          <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
@@ -2010,6 +2016,8 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <EntitySetMapping Name="ReviewStats">
             <EntityTypeMapping TypeName="Model.ReviewStat">
               <MappingFragment StoreEntitySet="ReviewStats">
+                <ScalarProperty Name="TheCloserCnt" ColumnName="TheCloserCnt" />
+                <ScalarProperty Name="PreAssignmentCnt" ColumnName="PreAssignmentCnt" />
                 <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
                 <ScalarProperty Name="EasiCnt" ColumnName="EasiCnt" />
                 <ScalarProperty Name="RetaCnt" ColumnName="RetaCnt" />
