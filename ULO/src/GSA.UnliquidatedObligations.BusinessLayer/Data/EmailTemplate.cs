@@ -16,5 +16,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     {
         public int EmailTemplateId { get; set; }
         public string EmailBody { get; set; }
+        public string EmailSubject { get; set; }
     }
 }

@@ -95,8 +95,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
                         PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
                     };
                     //TODO: What happens if it crashes?
-                    //BackgroundJobClient.Enqueue<IBackgroundTasks>(
-                    // bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
+                    BackgroundJobClient.Enqueue<IBackgroundTasks>(
+                    bt => bt.Email(emailTemplate.EmailSubject, nextUser.Email, emailTemplate.EmailBody, emailModel));
                 }
                 wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
 
@@ -184,7 +184,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 PDN = wf.UnliquidatedObligation.PegasysDocumentNumber
             };
             //TODO: What happens if it crashes?
-            BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email("new owner", nextUser.Email, emailTemplate.EmailBody, emailModel));
+            BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(emailTemplate.EmailSubject, nextUser.Email, emailTemplate.EmailBody, emailModel));
 
             return await Task.FromResult(c.RedirectToAction(actionName, "Ulo", routeValues));
         }
