@@ -55,7 +55,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return HttpNotFound();
             }
-            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentName, document.DocumentTypeId, documentTypes, document.Attachments.ToList(), allowDocumentEdit));
+            var workflowAssignedTo = document.DocumentId == 0 ? true : checkOwner(document);
+            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentName, document.DocumentTypeId, documentTypes, document.Attachments.ToList(), workflowAssignedTo));
+        }
+
+        private bool checkOwner(Document document)
+        {
+            if (document.Workflow == null)
+            {
+                return false;
+            }
+            else
+            {
+                return CurrentUserId == document.Workflow.OwnerUserId;
+            }
         }
 
         // POST: Documents/Edit/5

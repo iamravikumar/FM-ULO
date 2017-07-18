@@ -17,7 +17,7 @@ function setButtonActions(actionSwitch) {
     }
     else {
         $(".save-document").prop('disabled', false);
-        $(".save-document").text("Save");
+        $(".save-document").text("Save Document");
         $(".close-document-modal").prop('disabled', false);
         $(".attachments-add-btn").prop('disabled', false);
     }
