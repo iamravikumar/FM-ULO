@@ -102,7 +102,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     //content += "before review object create<br />";
                     var review = new Review
                     {
-                        RegionId = reviewModel.RegionId.Value,
+                        RegionId = reviewModel.RegionId.HasValue ? (int?)reviewModel.RegionId.Value : null,
                         ReviewName = reviewModel.ReviewName,
                         Status = "Open",
                         ReviewTypeId = reviewModel.ReviewTypeId.Value,
