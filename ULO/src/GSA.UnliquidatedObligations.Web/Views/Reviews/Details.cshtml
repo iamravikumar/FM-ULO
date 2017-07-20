@@ -114,7 +114,10 @@
             Assigned to Person Users:
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToPersonStats+model.ReviewUploadStats.AssignedToSystemTheCloserStats)
+            @{
+                var personUserStats = Model.ReviewUploadStats.AssignedToPersonStats + Model.ReviewUploadStats.AssignedToSystemTheCloserStats;
+            }
+            @personUserStats
         </dd>
         <dt>
             Assigned to Group Users:
