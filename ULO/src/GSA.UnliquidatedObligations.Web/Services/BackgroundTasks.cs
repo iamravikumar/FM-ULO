@@ -276,7 +276,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.Columns.Add("ReviewId", typeof(int));
             dt.Columns.Add("Agreement", typeof(int));
             dt.Columns.Add("RWA Type", typeof(string));
-            dt.Columns.Add("Completion Date", typeof(string));
+            dt.Columns.Add("Completion Date", typeof(DateTime));
             dt.Columns.Add("Agency Bureau Code", typeof(string));
             dt.Columns.Add("RETA POC", typeof(string));
             dt.Columns.Add("Region", typeof(int));
