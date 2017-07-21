@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Collections.Generic;
@@ -16,19 +17,39 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             : base(db, componentContext, cacher)
         { }
 
+        public JsonResult Throw(string message)
+        {
+            try
+            {
+                throw new Exception(message ?? "NoMessage");
+            }
+            catch (Exception ex)
+            {
+                return Json(new ExceptionError(ex), JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public JsonResult FileShareInfo(string relativePath, bool create=false)
         {
-            if (!Properties.Settings.Default.AllowFileShareInfo)
+            try
             {
-                throw new HttpException((int)HttpStatusCode.Forbidden, "This functionality has been disabled via configuration");
+                if (!Properties.Settings.Default.AllowFileShareInfo)
+                {
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "This functionality has been disabled via configuration");
+                }
+                var ret = new
+                {
+                    docPath = Properties.Settings.Default.DocPath,
+                    relativePath = relativePath,
+                    fullPath = PortalHelpers.GetStorageFolderPath(relativePath, create),
+                    create = create
+                };
+                return Json(ret, JsonRequestBehavior.AllowGet);
             }
-            return Json(new
+            catch (Exception ex)
             {
-                docPath = Properties.Settings.Default.DocPath,
-                relativePath = relativePath,
-                fullPath = PortalHelpers.GetStorageFolderPath(relativePath, create),
-                create = create
-            }, JsonRequestBehavior.AllowGet);
+                return Json(new ExceptionError(ex), JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpPost]

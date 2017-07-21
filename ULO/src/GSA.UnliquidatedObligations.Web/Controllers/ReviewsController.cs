@@ -163,11 +163,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             catch (Exception ex)
             {
-                //Response.StatusCode = (int)HttpStatusCode;
-                return Json(new
-                {
-                    Exception = ex.Message
-                });
+                return Json(new ExceptionError(ex));
             }
         }
  
