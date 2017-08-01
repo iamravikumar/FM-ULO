@@ -121,8 +121,9 @@
     <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Remotion.Linq.2.1.2\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="RevolutionaryStuff.Core, Version=1.0.19.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\RevolutionaryStuff.Core.1.0.19\lib\net462\RevolutionaryStuff.Core.dll</HintPath>
+    <Reference Include="RevolutionaryStuff.Core, Version=1.0.21.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RevolutionaryStuff.Core.1.0.21\lib\net462\RevolutionaryStuff.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Serilog.2.5.0\lib\net46\Serilog.dll</HintPath>

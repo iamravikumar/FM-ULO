@@ -43,8 +43,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class AdvanceViewModel
     {
-
-        public List<QuestionChoicesViewModel> QuestionChoices { get; set; }
+        public List<QuestionChoicesViewModel> QuestionChoices { get; set; } = new List<QuestionChoicesViewModel>();
 
         public List<Justification> DefaultJustifications { get; set; }
 
@@ -77,34 +76,43 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         }
 
-
-
         public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId, bool justificationNeeded = true, DateTime? expectedDateForCompletion = null, bool expectedDateForCompletionEditable = true, bool expectedDateForCompletionNeeded = true, bool expectedDateAlwaysShow = true)
         {
-
-            QuestionLabel = workflowQuestionChoices.QuestionLabel;
-            QuestionChoices = new List<QuestionChoicesViewModel>();
-
-            foreach (var questionChoice in workflowQuestionChoices.Choices)
-            {
-                QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
-            }
-
             Answer = question != null ? question.Answer : "";  
             Comments = question != null ? question.Comments : "";
             UnliqudatedWorkflowQuestionsId = question?.UnliqudatedWorkflowQuestionsId ?? 0;
             JustificationId = question  != null ? Convert.ToInt32(question.JustificationId) : 0;
             WorkflowId = workflowId;
             DefaultJustifications = new List<Justification>();
-            //TODO: I know.  A little messy.
-            if (Answer != "" && question.Pending == true)
+            JustificationNeeded = justificationNeeded;
+            ExpectedDateForCompletion = expectedDateForCompletion;
+            ExpectedDateForCompletionEditable = expectedDateForCompletionEditable;
+            ExpectedDateForCompletionNeeded = expectedDateForCompletionNeeded;
+            ExpectedDateAlwaysShow = expectedDateAlwaysShow;
+            if (workflowQuestionChoices != null)
             {
-                var justificationEnums = workflowQuestionChoices.Choices.FirstOrDefault(c => c.Value == Answer)?.JustificationsEnums;
-                if (justificationEnums != null)
+                QuestionLabel = workflowQuestionChoices.QuestionLabel;
+                foreach (var questionChoice in workflowQuestionChoices.Choices)
                 {
-                    foreach (var justificationsEnum in justificationEnums)
+                    QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
+                }
+                //TODO: I know.  A little messy.
+                if (Answer != "" && question.Pending == true)
+                {
+                    var justificationEnums = workflowQuestionChoices.Choices.FirstOrDefault(c => c.Value == Answer)?.JustificationsEnums;
+                    if (justificationEnums != null)
                     {
-                        DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
+                        foreach (var justificationsEnum in justificationEnums)
+                        {
+                            DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
+                        }
+                    }
+                    else if (workflowQuestionChoices.DefaultJustificationEnums != null)
+                    {
+                        foreach (var justificationsEnum in workflowQuestionChoices.DefaultJustificationEnums)
+                        {
+                            DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
+                        }
                     }
                 }
                 else if (workflowQuestionChoices.DefaultJustificationEnums != null)
@@ -115,18 +123,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
                     }
                 }
             }
-            else if (workflowQuestionChoices.DefaultJustificationEnums != null)
-            {
-                foreach (var justificationsEnum in workflowQuestionChoices.DefaultJustificationEnums)
-                {
-                    DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
-                }
-            }
-            JustificationNeeded = justificationNeeded;
-            ExpectedDateForCompletion = expectedDateForCompletion;
-            ExpectedDateForCompletionEditable = expectedDateForCompletionEditable;
-            ExpectedDateForCompletionNeeded = expectedDateForCompletionNeeded;
-            ExpectedDateAlwaysShow = expectedDateAlwaysShow;
         }
     }
 
