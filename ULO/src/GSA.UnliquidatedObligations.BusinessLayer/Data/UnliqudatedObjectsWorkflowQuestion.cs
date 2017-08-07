@@ -24,7 +24,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int WorkflowId { get; set; }
         public string UserId { get; set; }
         public string Answer { get; set; }
-        public Nullable<int> JustificationId { get; set; }
+        public string JustificationKey { get; set; }
         public string Comments { get; set; }
         public bool Pending { get; set; }
         public byte[] WorkflowRowVersion { get; set; }

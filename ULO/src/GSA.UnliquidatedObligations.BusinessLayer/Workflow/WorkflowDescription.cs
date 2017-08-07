@@ -31,5 +31,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [DataMember(Name= "WebActionActivities")]
         public ICollection<WebActionWorkflowActivity> WebActionWorkflowActivities { get; set; }
+
+        [DataMember(Name = "Justifications")]
+        public ICollection<Justification> Justifications { get; set; }
+
+        [DataMember(Name = "ResassignmentJustificationKeys")]
+        public ICollection<string> ResassignmentJustificationKeys { get; set; }
     }
 }

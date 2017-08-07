@@ -33,6 +33,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             UserManager = userManager;
         }
 
+        private void PopulateWorkflowDescriptionInViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType)
+        {
+            ViewBag.JustificationByKey = workflowDescription.GetJustificationByKey();
+            ViewBag.WorkflowDescription = workflowDescription;
+            var wawa = workflowDescription.Activities.FirstOrDefault(a => a.WorkflowActivityKey == wf.CurrentWorkflowActivityKey) as WebActionWorkflowActivity;
+            if (wawa != null)
+            {
+                ViewBag.JustificationKeysByQuestionChoiceValue = wawa.QuestionChoices.WhereApplicable(docType).ToDictionary(z => z.Value, z => z.JustificationKeys);
+            }
+        }
+
         // GET: Ulo
         public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -159,12 +170,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private bool isReassignmentReferral()
         {
-            return Request.UrlReferrer.LocalPath == "/Ulo/RequestForReassignments";
+            return Request.UrlReferrer?.LocalPath == "/Ulo/RequestForReassignments";
         }
 
         private bool isUnassignedReferral()
         {
-            return Request.UrlReferrer.LocalPath == "/Ulo/Unassigned";
+            return Request.UrlReferrer?.LocalPath == "/Ulo/Unassigned";
         }
         private bool isReassignment()
         {
@@ -182,7 +193,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
-            => await Manager.GetWorkflowDescriptionAsync(wf);
+        {
+            var workflowDescription = await Manager.GetWorkflowDescriptionAsync(wf);
+            PopulateWorkflowDescriptionInViewBag(workflowDescription, wf, wf.UnliquidatedObligation.DocType);
+            return workflowDescription;
+        }
 
         //TODO: Move to Manager?
         private async Task<Workflow> FindWorkflowAsync(int workflowId, bool checkOwner = true, bool checkReassignmentsGroup = false)
@@ -222,7 +237,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Advance(
             int workflowId,
             int uloId,
-            [Bind(Include = "JustificationId,Answer,ExpectedDateForCompletion,Comments,UnliqudatedWorkflowQuestionsId")]
+            [Bind(Include = 
+                nameof(AdvanceViewModel.JustificationKey)+","+
+                nameof(AdvanceViewModel.Answer)+","+
+                nameof(AdvanceViewModel.ExpectedDateForCompletion)+","+
+                nameof(AdvanceViewModel.Comments)+","+
+                nameof(AdvanceViewModel.UnliqudatedWorkflowQuestionsId))]
             AdvanceViewModel advanceModel)
         {
             var wf = await FindWorkflowAsync(workflowId);
@@ -232,7 +252,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
-                    JustificationId = advanceModel.JustificationId,
+                    JustificationKey = advanceModel.JustificationKey,
                     UserId = user.Id,
                     Answer = advanceModel.Answer,
                     WorkflowId = workflowId,
@@ -251,14 +271,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [HttpPost]
         [SubmitButtonSelector(Name = "Save")]
         public async Task<ActionResult> SaveQuestion(int workflowId, int uloId,
-            [Bind(Include = "JustificationId,Answer,Comments,ExpectedDateForCompletion,UnliqudatedWorkflowQuestionsId")] AdvanceViewModel advanceModel)
+            [Bind(Include =
+                nameof(AdvanceViewModel.JustificationKey)+","+
+                nameof(AdvanceViewModel.Answer)+","+
+                nameof(AdvanceViewModel.Comments)+","+
+                nameof(AdvanceViewModel.ExpectedDateForCompletion)+","+
+                nameof(AdvanceViewModel.UnliqudatedWorkflowQuestionsId))]
+        AdvanceViewModel advanceModel)
         {
             var wf = await FindWorkflowAsync(workflowId);
             if (wf == null) return HttpNotFound();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
             var question = new UnliqudatedObjectsWorkflowQuestion
             {
-                JustificationId = advanceModel.JustificationId,
+                JustificationKey = advanceModel.JustificationKey,
                 UserId = user.Id,
                 Answer = advanceModel.Answer,
                 WorkflowId = workflowId,

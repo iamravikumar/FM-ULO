@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
@@ -17,8 +17,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         [JsonProperty("choices")]
         public List<QuestionChoice> Choices { get; set; }
 
-        [DataMember(Name ="DefaultJustificationEnums")]
-        [JsonProperty("defaultJustificationEnums")]
-        public List<JustificationEnum> DefaultJustificationEnums { get; set; }
+        public IEnumerable<QuestionChoice> WhereApplicable(string docType)
+            => Choices.Where(z => z.IsApplicable(docType));
     }
 }

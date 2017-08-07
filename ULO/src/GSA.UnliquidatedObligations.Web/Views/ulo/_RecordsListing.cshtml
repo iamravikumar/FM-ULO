@@ -2,6 +2,7 @@
 @using GSA.UnliquidatedObligations.BusinessLayer.Authorization
 @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
 @{
+    var workflowDescription = (GSA.UnliquidatedObligations.BusinessLayer.Workflow.IWorkflowDescription)ViewBag.WorkflowDescription;
     var todaysDate = DateTime.Today;
     var showReassignmentButton = ViewBag.ShowReassignButton;
     var userReassignRegions = User.GetReassignmentGroupRegions();
@@ -96,7 +97,7 @@
                 @if (showReassignmentButton && User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(item.UnliquidatedObligation.RegionId))
                 {
 
-                    @Html.Partial("~/Views/Ulo/Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList.cshtml", new WorkflowViewModel(item, true))
+                    @Html.Partial("~/Views/Ulo/Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList.cshtml", new WorkflowViewModel(item, true, workflowDescription))
                 }
             </td>
             @*<td>

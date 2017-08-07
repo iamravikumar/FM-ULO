@@ -16,6 +16,7 @@ using System.Web.Hosting;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core;
 using GSA.UnliquidatedObligations.BusinessLayer;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -592,6 +593,22 @@ namespace GSA.UnliquidatedObligations.Web
 
             var attribute = (DisplayAttribute)attributes[0];
             return attribute.GetName();
+        }
+
+        public static SelectListItem CreateSelectListItem(Justification j)
+            => new SelectListItem { Value = j.Key, Text = j.Description };
+
+        public static IList<SelectListItem> CreateSelectList(IEnumerable<Justification> justifications)
+            => justifications.ConvertAll(j => CreateSelectListItem(j)).ToList();
+
+        public static IList<SelectListItem> CreateSelectList(IEnumerable<AspNetUser> aspNetUsers)
+        {
+            return aspNetUsers
+                .Select(u => new SelectListItem
+                {
+                    Text = u.UserName,
+                    Value = u.Id
+                }).ToList();
         }
 
         public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<string> stringsToConvert)

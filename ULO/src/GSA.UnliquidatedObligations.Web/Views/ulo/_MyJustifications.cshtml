@@ -1,0 +1,7 @@
+﻿@using Newtonsoft.Json
+
+<script type="text/javascript">
+    var justificationByKey = @(new MvcHtmlString(JsonConvert.SerializeObject(ViewBag.JustificationByKey)));
+    var justificationKeysByQuestionChoiceValue = @(new MvcHtmlString(JsonConvert.SerializeObject(ViewBag.JustificationKeysByQuestionChoiceValue)));
+</script>
+

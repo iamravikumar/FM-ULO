@@ -5,6 +5,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
@@ -13,12 +14,12 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public List<UloWfQuestionViewModel> Questions { get; set; }
 
-        public UloWfQuestionsViewModel(List<UnliqudatedObjectsWorkflowQuestion> questions)
+        public UloWfQuestionsViewModel(IDictionary<string, Justification> justificationByKey, List<UnliqudatedObjectsWorkflowQuestion> questions)
         {
             Questions = new List<UloWfQuestionViewModel>();
             foreach (var question in questions)
             {
-                Questions.Add(new UloWfQuestionViewModel(question));
+                Questions.Add(new UloWfQuestionViewModel(justificationByKey, question));
             }
         }
     }
@@ -27,15 +28,17 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public string Username { get; set; }
         public string Answer { get; set; }
+        public string JustificationKey { get; set; }
         public string Justification { get; set; }
         public string Comments { get; set; }
         public DateTime CreatedDate { get; set; }
 
-        public UloWfQuestionViewModel(UnliqudatedObjectsWorkflowQuestion question)
+        public UloWfQuestionViewModel(IDictionary<string, Justification> justificationByKey, UnliqudatedObjectsWorkflowQuestion question)
         {
             Username = question.AspNetUser.UserName;
             Answer = question.Answer;
-            Justification = question.JustificationId != null ? JustificationChoices.Choices[(JustificationEnum)question.JustificationId].JustificationText : null;
+            JustificationKey = question.JustificationKey;
+            Justification = justificationByKey.FindOrDefault(question.JustificationKey??"")?.Description;
             Comments = question.Comments;
             CreatedDate = question.CreatedAtUtc.Date;
         }
@@ -43,9 +46,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class AdvanceViewModel
     {
-        public List<QuestionChoicesViewModel> QuestionChoices { get; set; } = new List<QuestionChoicesViewModel>();
-
-        public List<Justification> DefaultJustifications { get; set; }
+        public IList<QuestionChoicesViewModel> QuestionChoices { get; set; } = new List<QuestionChoicesViewModel>();
 
         public int UnliqudatedWorkflowQuestionsId { get; set; }
 
@@ -54,7 +55,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
         //[Required(ErrorMessage = "Answer is required")]
         public string Answer { get; set; }
 
-        public int? JustificationId { get; set; }
+        public string JustificationKey { get; set; }
+
         public string Comments { get; set; }
 
         public int WorkflowId { get; }
@@ -76,14 +78,14 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         }
 
-        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, int workflowId, bool justificationNeeded = true, DateTime? expectedDateForCompletion = null, bool expectedDateForCompletionEditable = true, bool expectedDateForCompletionNeeded = true, bool expectedDateAlwaysShow = true)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, Workflow workflow, bool justificationNeeded = true, DateTime? expectedDateForCompletion = null, bool expectedDateForCompletionEditable = true, bool expectedDateForCompletionNeeded = true, bool expectedDateAlwaysShow = true)
         {
+            var workflowId = workflow.WorkflowId;
             Answer = question != null ? question.Answer : "";  
             Comments = question != null ? question.Comments : "";
             UnliqudatedWorkflowQuestionsId = question?.UnliqudatedWorkflowQuestionsId ?? 0;
-            JustificationId = question  != null ? Convert.ToInt32(question.JustificationId) : 0;
+            JustificationKey = question?.JustificationKey;
             WorkflowId = workflowId;
-            DefaultJustifications = new List<Justification>();
             JustificationNeeded = justificationNeeded;
             ExpectedDateForCompletion = expectedDateForCompletion;
             ExpectedDateForCompletionEditable = expectedDateForCompletionEditable;
@@ -92,35 +94,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
             if (workflowQuestionChoices != null)
             {
                 QuestionLabel = workflowQuestionChoices.QuestionLabel;
-                foreach (var questionChoice in workflowQuestionChoices.Choices)
+                foreach (var questionChoice in workflowQuestionChoices.WhereApplicable(workflow.UnliquidatedObligation.DocType))
                 {
                     QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
-                }
-                //TODO: I know.  A little messy.
-                if (Answer != "" && question.Pending == true)
-                {
-                    var justificationEnums = workflowQuestionChoices.Choices.FirstOrDefault(c => c.Value == Answer)?.JustificationsEnums;
-                    if (justificationEnums != null)
-                    {
-                        foreach (var justificationsEnum in justificationEnums)
-                        {
-                            DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
-                        }
-                    }
-                    else if (workflowQuestionChoices.DefaultJustificationEnums != null)
-                    {
-                        foreach (var justificationsEnum in workflowQuestionChoices.DefaultJustificationEnums)
-                        {
-                            DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
-                        }
-                    }
-                }
-                else if (workflowQuestionChoices.DefaultJustificationEnums != null)
-                {
-                    foreach (var justificationsEnum in workflowQuestionChoices.DefaultJustificationEnums)
-                    {
-                        DefaultJustifications.Add(JustificationChoices.Choices[justificationsEnum]);
-                    }
                 }
             }
         }
@@ -130,7 +106,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public string Text { get; set; }
         public string Value { get; set; }
-        public List<Justification> Justifications { get; set; }
+        public IList<string> JustificationKeys { get; set; } = new List<string>();
 
         public QuestionChoicesViewModel()
         {
@@ -141,12 +117,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
             Text = questionChoice.Text;
             Value = questionChoice.Value;
-            Justifications = new List<Justification>();
-            if (questionChoice.JustificationsEnums != null)
+            if (questionChoice.JustificationKeys != null)
             {
-                foreach (var questionChoiceJustificationsEnum in questionChoice.JustificationsEnums)
+                foreach (var justificationKey in questionChoice.JustificationKeys)
                 {
-                    Justifications.Add(JustificationChoices.Choices[questionChoiceJustificationsEnum]);
+                    JustificationKeys.Add(justificationKey);
                 }
             }
         }
@@ -183,28 +158,31 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
 
         }
-        public WorkflowViewModel(Workflow workflow, bool workflowAssignedToCurrentUser, IWorkflowDescription workflowDecription = null)
+        public WorkflowViewModel(Workflow workflow, bool workflowAssignedToCurrentUser, IWorkflowDescription workflowDescription)
         {
+            Requires.NonNull(workflow, nameof(workflow));
+            Requires.NonNull(workflowDescription, nameof(workflowDescription));
+
             Workflow = workflow;
             var questions = workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList();
             WorkflowAssignedToCurrentUser = workflowAssignedToCurrentUser;
             bool allowDocumentEdits = workflowAssignedToCurrentUser;
-            QuestionsViewModel = new UloWfQuestionsViewModel(questions);
+            QuestionsViewModel = new UloWfQuestionsViewModel(workflowDescription.GetJustificationByKey(), questions);
             var expectedDateForCompletion = workflow.UnliquidatedObligation.ExpectedDateForCompletion;
-            if (workflowDecription != null)
+            if (workflowDescription != null)
             {
                 WorkflowDescriptionViewModel =
-                    new WorkflowDescriptionViewModel(workflowDecription.WebActionWorkflowActivities.ToList(),
+                    new WorkflowDescriptionViewModel(workflowDescription.WebActionWorkflowActivities.ToList(),
                         workflow.CurrentWorkflowActivityKey);
 
                 var unliqudatedObjectsWorkflowQuestionPending = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
                 if (unliqudatedObjectsWorkflowQuestionPending == null && questions.Count > 0)
                 {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow.WorkflowId, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateAlwaysShow);
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateAlwaysShow);
                 }
                 else
                 {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow.WorkflowId, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateAlwaysShow);
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateAlwaysShow);
                 }
                 allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
@@ -243,10 +221,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public WorkflowViewModel WorkflowViewModel { get; set; }
         public UloViewModel()
         { }
-        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDecription, bool workflowAsignedToCurrentUser)
+        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDescription, bool workflowAsignedToCurrentUser)
         {
             CurretUnliquidatedObligation = ulo;
-            WorkflowViewModel = new WorkflowViewModel(workflow, workflowAsignedToCurrentUser, workflowDecription);
+            WorkflowViewModel = new WorkflowViewModel(workflow, workflowAsignedToCurrentUser, workflowDescription);
 
         }
     }

@@ -1,6 +1,6 @@
-﻿@using Hangfire.Annotations
-@model GSA.UnliquidatedObligations.Web.Models.AdvanceViewModel
+﻿@model GSA.UnliquidatedObligations.Web.Models.AdvanceViewModel
 
+@Html.Partial("_MyJustifications")
 
 <div class="row advance">
     <div class="panel panel-default">
@@ -15,16 +15,15 @@
                         @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
                         @Html.DropDownListFor(model => model.Answer, new SelectList(Model.QuestionChoices, "Value", "Text"), "Select...", htmlAttributes: new { @onchange = "ChoiceChange(this.value," + @Html.Raw(Json.Encode(Model)) + ")" })<br />
                         @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id = "validateAnswerMessage", @class = "text-danger" })
-                    </div>
-                  
+                    </div>                  
                 </div>
                 <div class="row row-space-top">
                     <div class="col-md-12">
                         @if (Model.JustificationNeeded)
                         {
-                            @Html.LabelFor(model => model.JustificationId, "Justification:", htmlAttributes: new { @class = "control-label" })
-                            @Html.DropDownListFor(model => model.JustificationId, new SelectList(Model.DefaultJustifications, "JustificationId", "JustificationText"), "Select....", htmlAttributes: new { id = "justifications" })<br />
-                            @Html.ValidationMessageFor(model => model.JustificationId, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
+                            @Html.LabelFor(model => model.JustificationKey, "Justification:", htmlAttributes: new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), "Select....", htmlAttributes: new { id = "justifications" })<br />
+                            @Html.ValidationMessageFor(model => model.JustificationKey, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
                         }
                     </div>
                 </div>
@@ -36,15 +35,13 @@
                         <br />
                         @Html.ValidationMessageFor(model => model.ExpectedDateForCompletion, "Must select Expected Date of Completion", new { id = "validateExpectedDateMessage", @class = "text-danger" })
                     </div>
-
                 </div>
                 <div class="row other-comments row-space-top">
                     <div class="row">
                         @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
                     </div>
                     <div class="row">
-                        @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })
-                       
+                        @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })                       
                     </div>
                     <div class="row">
                         @Html.ValidationMessageFor(model => model.Comments, "Must enter Comment when Other is selected", new { id = "validateCommentMessage", @class = "text-danger" })

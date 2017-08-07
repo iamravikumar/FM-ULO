@@ -87,7 +87,18 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Review/Create
         [HttpPost]
-        public async Task<ActionResult> Create([Bind(Include = "RegionId,ReviewName,ReviewStatus,ReviewId,ReviewTypeId,ReviewScopeId,Comments,Review,WorkflowDefinitionId,ReviewDateInitiated")] ReviewModel reviewModel)
+        public async Task<ActionResult> Create(
+            [Bind(Include =
+                nameof(ReviewModel.RegionId)+","+
+                nameof(ReviewModel.ReviewName)+","+
+                //nameof(ReviewModel.ReviewStatus)+","+
+                nameof(ReviewModel.ReviewTypeId)+","+
+                nameof(ReviewModel.ReviewScopeId)+","+
+                nameof(ReviewModel.Comments)+","+
+                //nameof(ReviewModel.Review)+","+
+                nameof(ReviewModel.WorkflowDefinitionId)+","+
+                nameof(ReviewModel.ReviewDateInitiated))]
+            ReviewModel reviewModel)
         {
             //var content = "inside create<br />";
             try
@@ -102,7 +113,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     //content += "before review object create<br />";
                     var review = new Review
                     {
-                        RegionId = reviewModel.RegionId.HasValue ? (int?)reviewModel.RegionId.Value : null,
+                        //TODO: Jason, figure out the true cardinality of regionId
+                        RegionId = reviewModel.RegionId.GetValueOrDefault(-1),
                         ReviewName = reviewModel.ReviewName,
                         Status = "Open",
                         ReviewTypeId = reviewModel.ReviewTypeId.Value,

@@ -33,6 +33,12 @@ namespace GSA.UnliquidatedObligations.Web
         public static string GetDisplayName(Enum e)
             => e.GetCustomAttributes<DisplayAttribute>().FirstOrDefault(a => a.Name != null)?.Name ?? e.ToString();
 
+        public static string GetDisplayDescription(Enum e)
+        {
+            var da = e.GetCustomAttributes<DisplayAttribute>().FirstOrDefault(a => a.Description != null);
+            return da?.Description ?? da.Name ?? e.ToString();
+        }
+
         public static string FriendlyNameFor<TModelItem, TResult>(this HtmlHelper<TModelItem> hh, Expression<Func<TModelItem, TResult>> columnExpression)
         {
             var fieldMemberInfo = columnExpression.GetMembers().Last();

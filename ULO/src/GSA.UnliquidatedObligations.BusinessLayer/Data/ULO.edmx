@@ -148,7 +148,7 @@
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Answer" Type="varchar" MaxLength="100" />
-          <Property Name="JustificationId" Type="int" />
+          <Property Name="JustificationKey" Type="varchar" MaxLength="80" Nullable="false" />
           <Property Name="Comments" Type="varchar" MaxLength="500" />
           <Property Name="Pending" Type="bit" Nullable="false" />
           <Property Name="WorkflowRowVersion" Type="binary" MaxLength="8" Nullable="false" />
@@ -1029,7 +1029,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Answer" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="JustificationId" Type="Int32" />
+          <Property Name="JustificationKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Pending" Type="Boolean" Nullable="false" />
           <Property Name="WorkflowRowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" />
@@ -1848,7 +1848,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Answer" ColumnName="Answer" />
-                <ScalarProperty Name="JustificationId" ColumnName="JustificationId" />
+                <ScalarProperty Name="JustificationKey" ColumnName="JustificationKey" />
                 <ScalarProperty Name="Comments" ColumnName="Comments" />
                 <ScalarProperty Name="Pending" ColumnName="Pending" />
                 <ScalarProperty Name="WorkflowRowVersion" ColumnName="WorkflowRowVersion" />

@@ -161,7 +161,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             {
                 questionFromDB.Answer = questionFromDB.Answer;
                 questionFromDB.Comments = question.Comments;
-                questionFromDB.JustificationId = question.JustificationId;
+                questionFromDB.JustificationKey = question.JustificationKey;
                 questionFromDB.UserId = question.UserId;
                 questionFromDB.Pending = question.Pending;
                 questionFromDB.CreatedAtUtc = question.CreatedAtUtc;

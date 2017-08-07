@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
+﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Models
@@ -12,57 +12,25 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public int RegionId { get; set; }
         public string SuggestedReviewerId { get; set; }
 
-        public List<SelectListItem> Users { get; set; }
+        public IList<SelectListItem> Users { get; set; }
 
-        public int? JustificationId { get; set; }
+        public string JustificationKey { get; set; }
         public string Comments { get; set; }
-        public List<SelectListItem> Justifications { get; set; }
+        public IList<SelectListItem> Justifications { get; set; }
 
         public RequestForReassignmentViewModel()
-        {
+        { }
 
-        }
-
-        public RequestForReassignmentViewModel(string suggestedReviewerId, int? justificationId, int? requestForReassignmentId, string comments, int workflowId, int regionId, List<AspNetUser> users, List<JustificationEnum> justificationEnums)
+        public RequestForReassignmentViewModel(string suggestedReviewerId, string justificationKey, int? requestForReassignmentId, string comments, int workflowId, int regionId, List<AspNetUser> users, IList<Justification> justifications)
         {
             RequestForReassignmentId = requestForReassignmentId;
             SuggestedReviewerId = suggestedReviewerId;
-            JustificationId = justificationId;
-            Users = ConvertToSelectList(users);
+            JustificationKey = justificationKey;
+            Users = PortalHelpers.CreateSelectList(users);
             Comments = comments;
-            Justifications = ConvertToSelectList(justificationEnums);
+            Justifications = PortalHelpers.CreateSelectList(justifications);
             WorkflowId = workflowId;
             RegionId = regionId;
         }
-
-        private List<SelectListItem> ConvertToSelectList(List<AspNetUser> aspNetUsers)
-        {
-            return aspNetUsers
-                .Select(u => new SelectListItem
-                {
-                    Text = u.UserName,
-                    Value = u.Id
-                }).ToList();
-        }
-
-        private List<SelectListItem> ConvertToSelectList(List<JustificationEnum> justificationEnums)
-        {
-            var selectList = new List<SelectListItem>();
-
-            foreach (var justificationEnum in justificationEnums)
-            {
-                var justification = JustificationChoices.Choices[justificationEnum];
-                selectList.Add(new SelectListItem
-                {
-                    Text = justification.JustificationText,
-                    Value = justification.JustificationId.ToString()
-                });
-            }
-
-           return selectList;
-        }
-
     }
-
-
 }

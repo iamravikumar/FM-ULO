@@ -21,7 +21,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         }
     
         public int ReviewId { get; set; }
-        public int? RegionId { get; set; }
+        public int RegionId { get; set; }
         public string ReviewName { get; set; }
         public string Status { get; set; }
         public string Comments { get; set; }

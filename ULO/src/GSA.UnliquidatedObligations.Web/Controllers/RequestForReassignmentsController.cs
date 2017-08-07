@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using RevolutionaryStuff.Core.Caching;
@@ -48,20 +49,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View();
         }
 
-
-
         // GET: RequestForReassignments/Details/5
         public ActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false)
         {
             var requestForReassignment = DB.RequestForReassignments.Where(rr => rr.IsActive).FirstOrDefault(r => r.RequestForReassignmentID == id);
 
-            
-            //List<AspNetUser> users = new List<AspNetUser>();
+            var workflow = DB.Workflows.FirstOrDefault(wf => wf.WorkflowId == workflowId);
+            var wfDesc = Manager.GetWorkflowDescriptionAsync(workflow).Result;
             AspNetUser groupOwnerUser;
             if (wfDefintionOwnerName == "")
             {
-                var workflow = DB.Workflows.FirstOrDefault(wf => wf.WorkflowId == workflowId);
-                var wfDesc = Manager.GetWorkflowDescriptionAsync(workflow).Result;
                 var currentActivity = wfDesc.WebActionWorkflowActivities
                     .FirstOrDefault(a => a.WorkflowActivityKey == workflow.CurrentWorkflowActivityKey);
                 groupOwnerUser = DB.AspNetUsers.FirstOrDefault(u => u.UserName == currentActivity.OwnerUserName);
@@ -75,8 +72,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var usersIds = DB.UserUsers
                 .Where(uu => uu.ParentUserId == groupOwnerUser.Id && uu.RegionId == uloRegionId)
                 .Select(uu => uu.ChildUserId).ToList();
-            var users = DB.AspNetUsers.OrderBy(u => u.UserName)
-                .Where(u => u.UserType == "Person" && usersIds.Contains(u.Id)).ToList();
+            var users = DB.AspNetUsers
+                .Where(u => u.UserType == AspNetUser.UserTypes.Person && usersIds.Contains(u.Id)).OrderBy(u => u.UserName).ToList();
 
             var userReassignRegions = User.GetReassignmentGroupRegions();
             if (User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId))
@@ -87,26 +84,29 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             users = users.OrderBy(u => u.UserName).ToList();
 
-            var justEnums = new List<JustificationEnum>()
-            {
-                JustificationEnum.ReassignNeedHelp,
-                JustificationEnum.ReassignVaction,
-                JustificationEnum.Other
-            };
             var requestForReassignmentId = requestForReassignment?.RequestForReassignmentID;
             var suggestedReviewerId = requestForReassignment != null ? requestForReassignment.SuggestedReviewerId : "";
-            var justificationId = requestForReassignment?.UnliqudatedObjectsWorkflowQuestion.JustificationId;
+            var justificationKey = requestForReassignment?.UnliqudatedObjectsWorkflowQuestion.JustificationKey;
 
             var comments = requestForReassignment != null
                 ? requestForReassignment.UnliqudatedObjectsWorkflowQuestion.Comments : "";
 
             var detailsView = isAdmin ? "_DetailsMasterList.cshtml" : "_Details.cshtml"; 
-            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/" + detailsView, new RequestForReassignmentViewModel(suggestedReviewerId, justificationId, requestForReassignmentId, comments, workflowId, uloRegionId, users, justEnums));
+            return PartialView(
+                "~/Views/Ulo/Details/Workflow/RequestForReassignments/" + detailsView, 
+                new RequestForReassignmentViewModel(suggestedReviewerId, justificationKey, requestForReassignmentId, comments, workflowId, uloRegionId, users, wfDesc.GetResassignmentJustifications()));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ReassignFromList(int workflowId, [Bind(Include = "SuggestedReviewerId,Comments")] RequestForReassignmentViewModel requestForReassignmentViewModel)
+        public async Task<ActionResult> ReassignFromList(
+            int workflowId, 
+            [Bind(Include =
+                nameof(RequestForReassignmentViewModel.SuggestedReviewerId)+","+
+                nameof(RequestForReassignmentViewModel.Comments)+","+
+                nameof(RequestForReassignmentViewModel.JustificationKey)
+            )]
+            RequestForReassignmentViewModel requestForReassignmentViewModel)
         {
             var pageToRedirectTo = Request.UrlReferrer.AbsolutePath.Replace("/Ulo/", "");
             if (ModelState.IsValid)
@@ -116,7 +116,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 if (wf == null) return HttpNotFound();
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
-                    JustificationId = requestForReassignmentViewModel.JustificationId,
+                    JustificationKey = requestForReassignmentViewModel.JustificationKey,
                     UserId = user.Id,
                     Answer = "Reassigned",
                     WorkflowId = workflowId,
@@ -135,7 +135,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Reassign(int workflowId, [Bind(Include = "SuggestedReviewerId,JustificationId,Comments")] RequestForReassignmentViewModel requestForReassignmentViewModel)
+        public async Task<ActionResult> Reassign(
+            int workflowId,
+            [Bind(Include =
+                nameof(RequestForReassignmentViewModel.SuggestedReviewerId)+","+
+                nameof(RequestForReassignmentViewModel.Comments)+","+
+                nameof(RequestForReassignmentViewModel.JustificationKey)
+            )]
+            RequestForReassignmentViewModel requestForReassignmentViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -147,7 +154,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         rr => rr.WorkflowId == workflowId);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
-                    JustificationId = requestForReassignmentViewModel.JustificationId,
+                    JustificationKey = requestForReassignmentViewModel.JustificationKey,
                     UserId = user.Id,
                     Answer = "Reassigned",
                     WorkflowId = workflowId,
@@ -176,7 +183,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> RequestReassign(int workflowId, [Bind(Include = "WorkflowId,SuggestedReviewerId,JustificationId,Comments")] RequestForReassignmentViewModel requestForReassignmentViewModel)
+        public async Task<ActionResult> RequestReassign(
+            int workflowId, 
+            [Bind(Include =
+            nameof(RequestForReassignmentViewModel.WorkflowId)+","+
+            nameof(RequestForReassignmentViewModel.SuggestedReviewerId)+","+
+            nameof(RequestForReassignmentViewModel.JustificationKey)+","+
+            nameof(RequestForReassignmentViewModel.Comments))]
+        RequestForReassignmentViewModel requestForReassignmentViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -185,7 +199,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
-                    JustificationId = requestForReassignmentViewModel.JustificationId,
+                    JustificationKey = requestForReassignmentViewModel.JustificationKey,
                     UserId = user.Id,
                     Answer = "Request for Reasssignment",
                     WorkflowId = workflowId,

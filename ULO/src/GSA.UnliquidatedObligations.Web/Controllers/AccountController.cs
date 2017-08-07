@@ -82,15 +82,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(DevLoginViewModel model, string returnUrl)
         {
-                var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
-                                new QueryString(
-                                    "ReturnUrl",
-                                    "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
-                return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
-                    redirectUrl);
-
+            var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
+                            new QueryString(
+                                "ReturnUrl",
+                                "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
+            return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
+                redirectUrl);
         }
-
 
         //
         // POST: /Account/DevLogin

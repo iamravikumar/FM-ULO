@@ -49,10 +49,7 @@ $(document).ready(function() {
                 $("#validateCommentMessage").show();
                 return false;
             }
-
-           
         }
-
         $("#validateAnswerMessage").hide();
         $("#validateJustificationMessage").hide();
         return true;
@@ -74,30 +71,24 @@ function showExpectedDate(showBool) {
 }
 
 function ChoiceChange(value, model) {
-    if (justificationNeeded()) {
-        var justifications = [];
-        if (value != "") {
-            justifications = model.QuestionChoices.filter(function (qc) {
-                return qc.Value === value;
-            })[0].Justifications;
-        }
+    //alert(value);
+    var keys = justificationKeysByQuestionChoiceValue[value];
+    //alert(keys);
 
-        if (justifications.length > 0) {
-            select.options.length = 0;
-            var el = document.createElement("option");
-            el.textContent = "Select...";
-            el.value = "";
-            select.appendChild(el);
+    select.options.length = 0;
+    var el = document.createElement("option");
+    el.textContent = "Select...";
+    el.value = "";
+    select.appendChild(el);
 
-
-            for (var i = 0; i < justifications.length; i++) {
-                var opt = justifications[i];
-                var el = document.createElement("option");
-                el.textContent = opt.JustificationText;
-                el.value = opt.JustificationId;
-                select.appendChild(el);
-            }
-        }
+    for (x = 0; x < keys.length; ++x)
+    {
+        var key = keys[x];
+        var desc = justificationByKey[keys[x]].Description; 
+        el = document.createElement("option");
+        el.textContent = desc;
+        el.value = key;
+        select.appendChild(el);
     }
 
     if (value == "Valid" || value == "Approve" || $("#ExpectedDateAlwaysShow").val() == "True") {
@@ -106,5 +97,4 @@ function ChoiceChange(value, model) {
     else {
         showExpectedDate(false);
     }
-
 }

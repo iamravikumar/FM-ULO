@@ -131,7 +131,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     .OrderBy(scc => scc)
                     .ToList();
             var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userID);
-            var groups = await DB.AspNetUsers.Where(u => u.UserType == "Group").ToListAsync();
+            var groups = await DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ToListAsync();
             return new EditUserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), allApplicationPermissionNames, allSubjectCategoryClaimsValues, groups, regionId);
         }
         // GET: Users/Details/5
@@ -163,7 +163,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     .OrderBy(scc => scc)
                     .ToList();
 
-            var groups = await DB.AspNetUsers.Where(u => u.UserType == "Group").ToListAsync();
+            var groups = await DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ToListAsync();
             var createModel = new CreateUserModel(allApplicationPermissionNames, allSubjectCategoryClaimsValues, groups);
             return PartialView("Create/Body/_Index", createModel);
         }

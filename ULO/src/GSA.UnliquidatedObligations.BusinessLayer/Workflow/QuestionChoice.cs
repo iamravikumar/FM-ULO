@@ -12,11 +12,23 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         [DataMember(Name= "Value")]
         [JsonProperty("value")]
         public string Value { get; set; }
+
         [DataMember(Name = "Text")]
         [JsonProperty("text")]
         public string Text { get; set; }
-        [DataMember(Name = "Justifications")]
-        [JsonProperty("justifications")]
-        public List<JustificationEnum> JustificationsEnums { get; set; }
+
+        [DataMember(Name = "JustificationKeys")]
+        public List<string> JustificationKeys { get; set; }
+
+        [DataMember(Name = "DocumentTypes")]
+        [JsonProperty("documentTypes")]
+        public List<string> DocumentTypes { get; set; }
+
+        public bool IsApplicable(string documentType)
+            =>
+                DocumentTypes == null ||
+                DocumentTypes.Count == 0 ||
+                DocumentTypes.Contains(documentType) ||
+                DocumentTypes.Contains("*");
     }
 }
