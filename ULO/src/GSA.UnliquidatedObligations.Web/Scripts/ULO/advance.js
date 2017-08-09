@@ -84,7 +84,13 @@ function ChoiceChange(value, model) {
     for (x = 0; x < keys.length; ++x)
     {
         var key = keys[x];
-        var desc = justificationByKey[keys[x]].Description; 
+        var j = justificationByKey[key];
+        if (j == null)
+        {
+//            alert("missing key value for [" + key + "]");
+            continue;
+        }
+        var desc = j.Description; 
         el = document.createElement("option");
         el.textContent = desc;
         el.value = key;
