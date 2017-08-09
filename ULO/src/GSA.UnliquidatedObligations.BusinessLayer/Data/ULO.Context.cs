@@ -27,6 +27,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
@@ -39,6 +40,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<ReportDefinition> ReportDefinitions { get; set; }
         public virtual DbSet<RequestForReassignment> RequestForReassignments { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
         public virtual DbSet<UnliquidatedObligation> UnliquidatedObligations { get; set; }
         public virtual DbSet<UserUser> UserUsers { get; set; }
@@ -47,6 +49,17 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<Workflow> Workflows { get; set; }
         public virtual DbSet<Region> Regions { get; set; }
         public virtual DbSet<Zone> Zones { get; set; }
+        public virtual DbSet<AggregatedCounter> AggregatedCounters { get; set; }
+        public virtual DbSet<Counter> Counters { get; set; }
+        public virtual DbSet<Hash> Hashes { get; set; }
+        public virtual DbSet<Job> Jobs { get; set; }
+        public virtual DbSet<JobParameter> JobParameters { get; set; }
+        public virtual DbSet<JobQueue> JobQueues { get; set; }
+        public virtual DbSet<List> Lists { get; set; }
+        public virtual DbSet<Schema> Schemata { get; set; }
+        public virtual DbSet<Server> Servers { get; set; }
+        public virtual DbSet<Set> Sets { get; set; }
+        public virtual DbSet<State> States { get; set; }
         public virtual DbSet<AspnetUserApplicationPermissionClaim> AspnetUserApplicationPermissionClaims { get; set; }
         public virtual DbSet<AspnetUserSubjectCategoryClaim> AspnetUserSubjectCategoryClaims { get; set; }
         public virtual DbSet<ReviewStat> ReviewStats { get; set; }
@@ -68,6 +81,15 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("CreateULOAndAssignWf", reviewIdParameter, workflowDefinitionIdParameter, reviewDateParameter);
         }
     
+        public virtual ObjectResult<GetMyGroups_Result> GetMyGroups(string proposedOwnerId)
+        {
+            var proposedOwnerIdParameter = proposedOwnerId != null ?
+                new ObjectParameter("proposedOwnerId", proposedOwnerId) :
+                new ObjectParameter("proposedOwnerId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetMyGroups_Result>("GetMyGroups", proposedOwnerIdParameter);
+        }
+    
         public virtual int GetNextLevelOwnerId(string proposedOwnerId, Nullable<int> workflowId, string nextActivityKey, string ownerProhibitedPreviousActivityNamesCsv, ObjectParameter nextOwnerId)
         {
             var proposedOwnerIdParameter = proposedOwnerId != null ?
@@ -87,15 +109,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
                 new ObjectParameter("ownerProhibitedPreviousActivityNamesCsv", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNextLevelOwnerId", proposedOwnerIdParameter, workflowIdParameter, nextActivityKeyParameter, ownerProhibitedPreviousActivityNamesCsvParameter, nextOwnerId);
-        }
-    
-        public virtual ObjectResult<GetMyGroups_Result> GetMyGroups(string proposedOwnerId)
-        {
-            var proposedOwnerIdParameter = proposedOwnerId != null ?
-                new ObjectParameter("proposedOwnerId", proposedOwnerId) :
-                new ObjectParameter("proposedOwnerId", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetMyGroups_Result>("GetMyGroups", proposedOwnerIdParameter);
         }
     }
 }

@@ -43,6 +43,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string Bldg { get; set; }
         public string SysLoc { get; set; }
         public string VehTag { get; set; }
+        public Nullable<int> WI { get; set; }
         public string LeaseNumber { get; set; }
         public string VendorName { get; set; }
         public string ActgPd { get; set; }

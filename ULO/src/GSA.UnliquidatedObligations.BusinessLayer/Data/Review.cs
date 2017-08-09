@@ -20,11 +20,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.UnliquidatedObligations = new HashSet<UnliquidatedObligation>();
         }
     
-        public int ReviewId { get; set; }
-        public int RegionId { get; set; }
+        public Nullable<int> RegionId { get; set; }
         public string ReviewName { get; set; }
         public string Status { get; set; }
         public string Comments { get; set; }
+        public int ReviewId { get; set; }
         public System.DateTime CreatedAtUtc { get; set; }
         public int ReviewTypeId { get; set; }
         public int ReviewScopeId { get; set; }
@@ -33,6 +33,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public Nullable<System.DateTime> ReviewDateInitiated { get; set; }
     
         public virtual Region Region { get; set; }
+        public virtual Region Region1 { get; set; }
         public virtual WorkflowDefinition WorkflowDefinition { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UnliquidatedObligation> UnliquidatedObligations { get; set; }

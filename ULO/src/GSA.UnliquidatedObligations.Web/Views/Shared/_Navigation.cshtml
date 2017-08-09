@@ -30,7 +30,7 @@
                 }
                 @if (User.HasPermission(ApplicationPermissionNames.CanViewOtherWorkflows))
                 {
-                    <li>@Html.ActionLink("Search", "RegionWorkflows", "Ulo", null, pageKey == PageKeys.Search ? apka : ipka)</li>
+                    <li>@Html.ActionLink("Search", "Search", "Ulo", null, pageKey == PageKeys.Search ? apka : ipka)</li>
                 }
                 @if (User.HasPermission(ApplicationPermissionNames.CanExecuteReports))
                 {

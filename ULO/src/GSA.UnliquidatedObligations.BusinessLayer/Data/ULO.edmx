@@ -4,7 +4,17 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="GSA.UnliquidatedObligations.BusinessLayer.Data.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+          </Key>
+          <Property Name="MigrationId" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContextKey" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="Model" Type="varbinary(max)" Nullable="false" />
+          <Property Name="ProductVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
+        </EntityType>
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -87,6 +97,34 @@
           <Property Name="DocumentTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULODB.dbo.EASI' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="EASI">
+          <Property Name="ReviewId" Type="int" />
+          <Property Name="Created by users Region" Type="nvarchar(max)" />
+          <Property Name="Office" Type="nvarchar(max)" />
+          <Property Name="Created By (User Full Name)" Type="nvarchar(max)" />
+          <Property Name="Contracting Officers Name" Type="nvarchar(max)" />
+          <Property Name="Contracting Userid" Type="nvarchar(max)" />
+          <Property Name="Awd Obligated Amt" Type="nvarchar(max)" />
+          <Property Name="Current Awd Amt" Type="nvarchar(max)" />
+          <Property Name="Document Nbr" Type="nvarchar(max)" />
+          <Property Name="Award Nbr" Type="nvarchar(max)" />
+          <Property Name="Base Contract Nbr" Type="nvarchar(max)" />
+          <Property Name="GSA FSS/Other #" Type="nvarchar(max)" />
+          <Property Name="Vendor Name" Type="nvarchar(max)" />
+          <Property Name="Status Cd" Type="nvarchar(max)" />
+          <Property Name="Status Ds" Type="nvarchar(max)" />
+          <Property Name="Procurement Status" Type="nvarchar(max)" />
+          <Property Name="Create Dt" Type="datetime" />
+          <Property Name="Signed On Date" Type="datetime" />
+          <Property Name="Awd Effective Dt" Type="datetime" />
+          <Property Name="Awd Expiration Dt" Type="datetime" />
+          <Property Name="CLIN ADN" Type="nvarchar(max)" />
+          <Property Name="ACT/PDN" Type="nvarchar(max)" />
+          <Property Name="Data Source" Type="nvarchar(max)" />
+          <Property Name="Region Cd" Type="nvarchar(max)" />
+        </EntityType>-->
         <EntityType Name="EmailTemplates">
           <Key>
             <PropertyRef Name="EmailTemplateId" />
@@ -102,10 +140,106 @@
           <Property Name="NoteId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ParentNoteId" Type="int" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" />
-          <Property Name="Date" Type="datetime" />
-          <Property Name="NoteContents" Type="varchar" MaxLength="1000" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
           <Property Name="UloId" Type="int" Nullable="false" />
+          <Property Name="Body" Type="nvarchar(max)" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULODB.dbo.PegasysObligations192' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="PegasysObligations192">
+          <Property Name="ReviewId" Type="int" />
+          <Property Name="Region" Type="int" />
+          <Property Name="Fund" Type="nvarchar(max)" />
+          <Property Name="Organization" Type="nvarchar(max)" />
+          <Property Name="Prog" Type="nvarchar(max)" />
+          <Property Name="Doc Type" Type="nvarchar" MaxLength="50" />
+          <Property Name="Doc Num" Type="nvarchar(max)" />
+          <Property Name="Itmz Ln Num" Type="int" />
+          <Property Name="Actg Ln Num" Type="int" />
+          <Property Name="Title" Type="nvarchar(max)" />
+          <Property Name="BBFY" Type="nvarchar(max)" />
+          <Property Name="EBFY" Type="nvarchar(max)" />
+          <Property Name="Acty" Type="nvarchar(max)" />
+          <Property Name="O/C" Type="nvarchar(max)" />
+          <Property Name="SOC" Type="nvarchar(max)" />
+          <Property Name="Project" Type="nvarchar(max)" />
+          <Property Name="Agreement" Type="nvarchar(max)" />
+          <Property Name="Contract Num" Type="nvarchar(max)" />
+          <Property Name="Bldg" Type="nvarchar(max)" />
+          <Property Name="Sys/Loc" Type="nvarchar(max)" />
+          <Property Name="Veh Tag" Type="nvarchar(max)" />
+          <Property Name="WI" Type="nvarchar(max)" />
+          <Property Name="Lease Number" Type="nvarchar(max)" />
+          <Property Name="Vendor Name" Type="nvarchar(max)" />
+          <Property Name="Actg Pd" Type="nvarchar(max)" />
+          <Property Name="Total Line" Type="money" />
+          <Property Name="Commitments" Type="money" />
+          <Property Name="Prepayments" Type="money" />
+          <Property Name="Undel Orders" Type="money" />
+          <Property Name="Rcpt" Type="money" />
+          <Property Name="Accrual" Type="money" />
+          <Property Name="Pend Payments" Type="money" />
+          <Property Name="Pymts(In Transit)" Type="money" />
+          <Property Name="Pymts(Confirmed)" Type="money" />
+          <Property Name="Holdbacks" Type="money" />
+          <Property Name="TAFS" Type="nvarchar(max)" />
+          <Property Name="DUNS #" Type="nvarchar(max)" />
+          <Property Name="Date of Last Activity" Type="datetime" />
+          <Property Name="Days Since First Activity" Type="int" />
+          <Property Name="Days Since Last Activity" Type="int" />
+          <Property Name="Date of First Activity" Type="datetime" />
+          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
+          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
+          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
+        </EntityType>-->
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULODB.dbo.PegasysObligations442' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="PegasysObligations442">
+          <Property Name="ReviewId" Type="int" />
+          <Property Name="Region" Type="int" />
+          <Property Name="Fund" Type="nvarchar(max)" />
+          <Property Name="Organization" Type="nvarchar(max)" />
+          <Property Name="Prog" Type="nvarchar(max)" />
+          <Property Name="Doc Type" Type="nvarchar" MaxLength="50" />
+          <Property Name="Doc Num" Type="nvarchar(max)" />
+          <Property Name="Itmz Ln Num" Type="int" />
+          <Property Name="Actg Ln Num" Type="int" />
+          <Property Name="Title" Type="nvarchar(max)" />
+          <Property Name="BBFY" Type="nvarchar(max)" />
+          <Property Name="EBFY" Type="nvarchar(max)" />
+          <Property Name="Acty" Type="nvarchar(max)" />
+          <Property Name="O/C" Type="nvarchar(max)" />
+          <Property Name="SOC" Type="nvarchar(max)" />
+          <Property Name="Project" Type="nvarchar(max)" />
+          <Property Name="Agreement" Type="nvarchar(max)" />
+          <Property Name="Contract Num" Type="nvarchar(max)" />
+          <Property Name="Bldg" Type="nvarchar(max)" />
+          <Property Name="Sys/Loc" Type="nvarchar(max)" />
+          <Property Name="Veh Tag" Type="nvarchar(max)" />
+          <Property Name="WI" Type="nvarchar(max)" />
+          <Property Name="Lease Number" Type="nvarchar(max)" />
+          <Property Name="Vendor Name" Type="nvarchar(max)" />
+          <Property Name="Actg Pd" Type="nvarchar(max)" />
+          <Property Name="Total Line" Type="money" />
+          <Property Name="Commitments" Type="money" />
+          <Property Name="Prepayments" Type="money" />
+          <Property Name="Undel Orders" Type="money" />
+          <Property Name="Rcpt" Type="money" />
+          <Property Name="Accrual" Type="money" />
+          <Property Name="Pend Payments" Type="money" />
+          <Property Name="Pymts(In Transit)" Type="money" />
+          <Property Name="Pymts(Confirmed)" Type="money" />
+          <Property Name="Holdbacks" Type="money" />
+          <Property Name="TAFS" Type="nvarchar(max)" />
+          <Property Name="DUNS #" Type="nvarchar(max)" />
+          <Property Name="Date of Last Activity" Type="nvarchar(max)" />
+          <Property Name="Days Since First Activity" Type="int" />
+          <Property Name="Days Since Last Activity" Type="int" />
+          <Property Name="Date of First Activity" Type="nvarchar(max)" />
+          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
+          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
+          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
+        </EntityType>-->
         <EntityType Name="ReportDefinitions">
           <Key>
             <PropertyRef Name="ReportDefinitionId" />
@@ -120,25 +254,87 @@
           </Key>
           <Property Name="RequestForReassignmentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SuggestedReviewerId" Type="nvarchar" MaxLength="128" />
-          <Property Name="UnliqudatedWorkflowQuestionsId" Type="int" Nullable="false" />
+          <Property Name="UnliqudatedWorkflowQuestionsId" Type="int" />
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULODB.dbo.Reta' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="Reta">
+          <Property Name="ReviewId" Type="int" />
+          <Property Name="Agreement" Type="int" />
+          <Property Name="RWA Type" Type="nvarchar(max)" />
+          <Property Name="Completion Date" Type="nvarchar(max)" />
+          <Property Name="Agency Bureau Code" Type="nvarchar(max)" />
+          <Property Name="RETA POC" Type="nvarchar(max)" />
+          <Property Name="Region" Type="int" />
+          <Property Name="Fund" Type="nvarchar(max)" />
+          <Property Name="Organization" Type="nvarchar(max)" />
+          <Property Name="Prog" Type="nvarchar(max)" />
+          <Property Name="Doc Type" Type="nvarchar(max)" />
+          <Property Name="Doc Num" Type="nvarchar(max)" />
+          <Property Name="Itmz Ln Num" Type="int" />
+          <Property Name="Actg Ln Num" Type="int" />
+          <Property Name="Title" Type="nvarchar(max)" />
+          <Property Name="BBFY" Type="nvarchar(max)" />
+          <Property Name="EBFY" Type="nvarchar(max)" />
+          <Property Name="Acty" Type="nvarchar(max)" />
+          <Property Name="O/C" Type="nvarchar(max)" />
+          <Property Name="SOC" Type="nvarchar(max)" />
+          <Property Name="Project" Type="nvarchar(max)" />
+          <Property Name="Contract Num" Type="nvarchar(max)" />
+          <Property Name="Bldg" Type="nvarchar(max)" />
+          <Property Name="Sys/Loc" Type="nvarchar(max)" />
+          <Property Name="Veh Tag" Type="nvarchar(max)" />
+          <Property Name="WI" Type="nvarchar(max)" />
+          <Property Name="Lease Number" Type="nvarchar(max)" />
+          <Property Name="Vendor Name" Type="nvarchar(max)" />
+          <Property Name="Actg Pd" Type="nvarchar(max)" />
+          <Property Name="Total Line" Type="money" />
+          <Property Name="Commitments" Type="money" />
+          <Property Name="Prepayments" Type="money" />
+          <Property Name="Undel Orders" Type="money" />
+          <Property Name="Rcpt" Type="money" />
+          <Property Name="Accrual" Type="money" />
+          <Property Name="Pend Payments" Type="money" />
+          <Property Name="Pymts(In Transit)" Type="money" />
+          <Property Name="Pymts(Confirmed)" Type="money" />
+          <Property Name="Holdbacks" Type="money" />
+          <Property Name="TAFS" Type="nvarchar(max)" />
+          <Property Name="DUNS #" Type="nvarchar(max)" />
+          <Property Name="Date of Last Activity" Type="datetime" />
+          <Property Name="Days Since First Activity" Type="int" />
+          <Property Name="Days Since Last Activity" Type="int" />
+          <Property Name="Date of First Activity" Type="datetime" />
+          <Property Name="Trading Partner Type" Type="nvarchar(max)" />
+          <Property Name="Vendor Agency Code" Type="nvarchar(max)" />
+          <Property Name="Vendor Bureau Code" Type="nvarchar(max)" />
+        </EntityType>-->
         <EntityType Name="Reviews">
           <Key>
             <PropertyRef Name="ReviewId" />
           </Key>
-          <Property Name="ReviewId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RegionId" Type="int" Nullable="false" />
+          <Property Name="RegionId" Type="int" />
           <Property Name="ReviewName" Type="varchar" MaxLength="100" />
           <Property Name="Status" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Comments" Type="varchar" MaxLength="500" />
+          <Property Name="ReviewId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
           <Property Name="ReviewTypeId" Type="int" Nullable="false" />
           <Property Name="ReviewScopeId" Type="int" Nullable="false" />
           <Property Name="WorkflowDefinitionId" Type="int" Nullable="false" />
           <Property Name="ProjectDueDate" Type="datetime" />
           <Property Name="ReviewDateInitiated" Type="date" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestions">
           <Key>
@@ -148,11 +344,11 @@
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Answer" Type="varchar" MaxLength="100" />
-          <Property Name="JustificationKey" Type="varchar" MaxLength="80" Nullable="false" />
           <Property Name="Comments" Type="varchar" MaxLength="500" />
           <Property Name="Pending" Type="bit" Nullable="false" />
           <Property Name="WorkflowRowVersion" Type="binary" MaxLength="8" Nullable="false" />
           <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
+          <Property Name="JustificationKey" Type="varchar" MaxLength="80" />
         </EntityType>
         <EntityType Name="UnliquidatedObligations">
           <Key>
@@ -180,6 +376,7 @@
           <Property Name="Bldg" Type="varchar" MaxLength="50" />
           <Property Name="SysLoc" Type="varchar" MaxLength="50" />
           <Property Name="VehTag" Type="varchar" MaxLength="50" />
+          <Property Name="WI" Type="int" />
           <Property Name="LeaseNumber" Type="varchar" MaxLength="50" />
           <Property Name="VendorName" Type="varchar" MaxLength="100" />
           <Property Name="ActgPd" Type="varchar" MaxLength="50" />
@@ -273,8 +470,8 @@
           </Key>
           <Property Name="RegionId" Type="int" Nullable="false" />
           <Property Name="ZoneId" Type="int" Nullable="false" />
-          <Property Name="RegionName" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="RegionNumber" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="RegionName" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="Zones">
           <Key>
@@ -283,29 +480,129 @@
           <Property Name="ZoneId" Type="int" Nullable="false" />
           <Property Name="ZoneName" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'ULO B.dbo.AspnetUserApplicationPermissionClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="AspnetUserApplicationPermissionClaims">
+        <EntityType Name="AggregatedCounter">
           <Key>
-            
-            
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Key" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Value" Type="bigint" Nullable="false" />
+          <Property Name="ExpireAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Counter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Key" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Value" Type="smallint" Nullable="false" />
+          <Property Name="ExpireAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Hash">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Key" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Field" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Value" Type="nvarchar(max)" />
+          <Property Name="ExpireAt" Type="datetime2" Precision="7" />
+        </EntityType>
+        <EntityType Name="Job">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StateId" Type="int" />
+          <Property Name="StateName" Type="nvarchar" MaxLength="20" />
+          <Property Name="InvocationData" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Arguments" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="ExpireAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="JobParameter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="JobId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="40" Nullable="false" />
+          <Property Name="Value" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="JobQueue">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="JobId" Type="int" Nullable="false" />
+          <Property Name="Queue" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FetchedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="List">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Key" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Value" Type="nvarchar(max)" />
+          <Property Name="ExpireAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Schema">
+          <Key>
+            <PropertyRef Name="Version" />
+          </Key>
+          <Property Name="Version" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Server">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Data" Type="nvarchar(max)" />
+          <Property Name="LastHeartbeat" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Set">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Key" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Score" Type="float" Nullable="false" />
+          <Property Name="Value" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ExpireAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="State">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="JobId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Reason" Type="nvarchar" MaxLength="100" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="Data" Type="nvarchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ULODB.dbo.AspnetUserApplicationPermissionClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="AspnetUserApplicationPermissionClaims">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ClaimId" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="PermissionName" Type="nvarchar" MaxLength="50" />
           <Property Name="ClaimId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'ULODB.dbo.AspnetUserSubjectCategoryClaims' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AspnetUserSubjectCategoryClaims">
           <Key>
-            
-            
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ClaimId" />
           </Key>
-          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Id" Type="uniqueidentifier" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="BACode" Type="nvarchar" MaxLength="50" />
@@ -314,7 +611,7 @@ warning 6002: The table/view 'ULO B.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="ClaimId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ReviewStats">
           <Key>
             <PropertyRef Name="ReviewId" />
@@ -331,7 +628,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="PreAssignmentCnt" Type="int" />
           <Property Name="TheCloserCnt" Type="int" />
         </EntityType>
-        <Association Name="FK__Document__Upload__7720AD13">
+        <Association Name="FK__Document__Upload__7BE56230">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
           <ReferentialConstraint>
@@ -343,7 +640,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notes__ParentNot__214BF109">
+        <Association Name="FK__Notes__ParentNot__52793849">
           <End Role="Notes" Type="Self.Notes" Multiplicity="0..1" />
           <End Role="Notes1" Type="Self.Notes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -355,7 +652,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notes__UloId__38EE7070">
+        <Association Name="FK__Notes__UloId__5555A4F4">
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="1" />
           <End Role="Notes" Type="Self.Notes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -367,7 +664,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notes__UserId__22401542">
+        <Association Name="FK__Notes__UserId__536D5C82">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="Notes" Type="Self.Notes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -391,7 +688,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RequestFo__Sugge__69C6B1F5">
+        <Association Name="FK__RequestFo__Sugge__73501C2F">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="RequestForReassignment" Type="Self.RequestForReassignment" Multiplicity="*" />
           <ReferentialConstraint>
@@ -403,8 +700,8 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RequestFo__Unliq__6ABAD62E">
-          <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestions" Multiplicity="1" />
+        <Association Name="FK__RequestFo__Unliq__74444068">
+          <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestions" Multiplicity="0..1" />
           <End Role="RequestForReassignment" Type="Self.RequestForReassignment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UnliqudatedObjectsWorkflowQuestions">
@@ -415,7 +712,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RequestFo__Workf__6BAEFA67">
+        <Association Name="FK__RequestForReassignment_WorkflowId">
           <End Role="Workflows" Type="Self.Workflows" Multiplicity="1" />
           <End Role="RequestForReassignment" Type="Self.RequestForReassignment" Multiplicity="*" />
           <ReferentialConstraint>
@@ -427,8 +724,8 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Reviews__RegionI__093F5D4E">
-          <End Role="Regions" Type="Self.Regions" Multiplicity="1" />
+        <Association Name="FK__Review__RegionId__0EF836A4">
+          <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
           <End Role="Reviews" Type="Self.Reviews" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Regions">
@@ -439,7 +736,19 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Reviews__Workflo__3BCADD1B">
+        <Association Name="FK__Reviews__RegionI__1699586C">
+          <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
+          <End Role="Reviews" Type="Self.Reviews" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Regions">
+              <PropertyRef Name="RegionId" />
+            </Principal>
+            <Dependent Role="Reviews">
+              <PropertyRef Name="RegionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reviews__Workflo__45544755">
           <End Role="WorkflowDefinitions" Type="Self.WorkflowDefinitions" Multiplicity="1" />
           <End Role="Reviews" Type="Self.Reviews" Multiplicity="*" />
           <ReferentialConstraint>
@@ -451,7 +760,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Regio__67A95F59">
+        <Association Name="FK__Unliquida__Regio__408F9238">
           <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
           <ReferentialConstraint>
@@ -463,7 +772,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Revie__689D8392">
+        <Association Name="FK__Unliquida__Revie__4183B671">
           <End Role="Reviews" Type="Self.Reviews" Multiplicity="1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
           <ReferentialConstraint>
@@ -547,7 +856,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Workflows__Targe__37FA4C37">
+        <Association Name="FK__Workflows__Targe__4277DAAA">
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="1" />
           <End Role="Workflows" Type="Self.Workflows" Multiplicity="*" />
           <ReferentialConstraint>
@@ -651,6 +960,34 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_HangFire_JobParameter_Job">
+          <End Role="Job" Type="Self.Job" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="JobParameter" Type="Self.JobParameter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Job">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="JobParameter">
+              <PropertyRef Name="JobId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HangFire_State_Job">
+          <End Role="Job" Type="Self.Job" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="State" Type="Self.State" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Job">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="State">
+              <PropertyRef Name="JobId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestions" Multiplicity="*" />
@@ -690,7 +1027,8 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Parameter Name="ownerProhibitedPreviousActivityNamesCsv" Type="nvarchar" Mode="In" />
           <Parameter Name="nextOwnerId" Type="varchar" Mode="InOut" />
         </Function>
-        <EntityContainer Name="ModelStoreContainer">
+        <EntityContainer Name="GSAUnliquidatedObligationsBusinessLayerDataStoreContainer">
+          <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
@@ -704,6 +1042,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <EntitySet Name="ReportDefinitions" EntityType="Self.ReportDefinitions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestForReassignment" EntityType="Self.RequestForReassignment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reviews" EntityType="Self.Reviews" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnliqudatedObjectsWorkflowQuestions" EntityType="Self.UnliqudatedObjectsWorkflowQuestions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnliquidatedObligations" EntityType="Self.UnliquidatedObligations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserUsers" EntityType="Self.UserUsers" Schema="dbo" store:Type="Tables" />
@@ -712,6 +1051,17 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <EntitySet Name="Workflows" EntityType="Self.Workflows" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Regions" EntityType="Self.Regions" Schema="gsa" store:Type="Tables" />
           <EntitySet Name="Zones" EntityType="Self.Zones" Schema="gsa" store:Type="Tables" />
+          <EntitySet Name="AggregatedCounter" EntityType="Self.AggregatedCounter" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="Counter" EntityType="Self.Counter" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="Hash" EntityType="Self.Hash" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="Job" EntityType="Self.Job" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="JobParameter" EntityType="Self.JobParameter" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="JobQueue" EntityType="Self.JobQueue" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="List" EntityType="Self.List" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="Schema" EntityType="Self.Schema" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="Server" EntityType="Self.Server" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="Set" EntityType="Self.Set" Schema="HangFire" store:Type="Tables" />
+          <EntitySet Name="State" EntityType="Self.State" Schema="HangFire" store:Type="Tables" />
           <EntitySet Name="AspnetUserApplicationPermissionClaims" EntityType="Self.AspnetUserApplicationPermissionClaims" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [AspnetUserApplicationPermissionClaims].[Id] AS [Id], 
@@ -747,19 +1097,19 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
     [ReviewStats].[TheCloserCnt] AS [TheCloserCnt]
     FROM [dbo].[ReviewStats] AS [ReviewStats]</DefiningQuery>
           </EntitySet>
-          <AssociationSet Name="FK__Document__Upload__7720AD13" Association="Self.FK__Document__Upload__7720AD13">
+          <AssociationSet Name="FK__Document__Upload__7BE56230" Association="Self.FK__Document__Upload__7BE56230">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notes__ParentNot__214BF109" Association="Self.FK__Notes__ParentNot__214BF109">
+          <AssociationSet Name="FK__Notes__ParentNot__52793849" Association="Self.FK__Notes__ParentNot__52793849">
             <End Role="Notes" EntitySet="Notes" />
             <End Role="Notes1" EntitySet="Notes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notes__UloId__38EE7070" Association="Self.FK__Notes__UloId__38EE7070">
+          <AssociationSet Name="FK__Notes__UloId__5555A4F4" Association="Self.FK__Notes__UloId__5555A4F4">
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
             <End Role="Notes" EntitySet="Notes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notes__UserId__22401542" Association="Self.FK__Notes__UserId__22401542">
+          <AssociationSet Name="FK__Notes__UserId__536D5C82" Association="Self.FK__Notes__UserId__536D5C82">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Notes" EntitySet="Notes" />
           </AssociationSet>
@@ -767,31 +1117,35 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <End Role="Zones" EntitySet="Zones" />
             <End Role="Regions" EntitySet="Regions" />
           </AssociationSet>
-          <AssociationSet Name="FK__RequestFo__Sugge__69C6B1F5" Association="Self.FK__RequestFo__Sugge__69C6B1F5">
+          <AssociationSet Name="FK__RequestFo__Sugge__73501C2F" Association="Self.FK__RequestFo__Sugge__73501C2F">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="RequestForReassignment" EntitySet="RequestForReassignment" />
           </AssociationSet>
-          <AssociationSet Name="FK__RequestFo__Unliq__6ABAD62E" Association="Self.FK__RequestFo__Unliq__6ABAD62E">
+          <AssociationSet Name="FK__RequestFo__Unliq__74444068" Association="Self.FK__RequestFo__Unliq__74444068">
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
             <End Role="RequestForReassignment" EntitySet="RequestForReassignment" />
           </AssociationSet>
-          <AssociationSet Name="FK__RequestFo__Workf__6BAEFA67" Association="Self.FK__RequestFo__Workf__6BAEFA67">
+          <AssociationSet Name="FK__RequestForReassignment_WorkflowId" Association="Self.FK__RequestForReassignment_WorkflowId">
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="RequestForReassignment" EntitySet="RequestForReassignment" />
           </AssociationSet>
-          <AssociationSet Name="FK__Reviews__RegionI__093F5D4E" Association="Self.FK__Reviews__RegionI__093F5D4E">
+          <AssociationSet Name="FK__Review__RegionId__0EF836A4" Association="Self.FK__Review__RegionId__0EF836A4">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Reviews__Workflo__3BCADD1B" Association="Self.FK__Reviews__Workflo__3BCADD1B">
+          <AssociationSet Name="FK__Reviews__RegionI__1699586C" Association="Self.FK__Reviews__RegionI__1699586C">
+            <End Role="Regions" EntitySet="Regions" />
+            <End Role="Reviews" EntitySet="Reviews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reviews__Workflo__45544755" Association="Self.FK__Reviews__Workflo__45544755">
             <End Role="WorkflowDefinitions" EntitySet="WorkflowDefinitions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Regio__67A95F59" Association="Self.FK__Unliquida__Regio__67A95F59">
+          <AssociationSet Name="FK__Unliquida__Regio__408F9238" Association="Self.FK__Unliquida__Regio__408F9238">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__689D8392" Association="Self.FK__Unliquida__Revie__689D8392">
+          <AssociationSet Name="FK__Unliquida__Revie__4183B671" Association="Self.FK__Unliquida__Revie__4183B671">
             <End Role="Reviews" EntitySet="Reviews" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
@@ -819,7 +1173,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
-          <AssociationSet Name="FK__Workflows__Targe__37FA4C37" Association="Self.FK__Workflows__Targe__37FA4C37">
+          <AssociationSet Name="FK__Workflows__Targe__4277DAAA" Association="Self.FK__Workflows__Targe__4277DAAA">
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
             <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
@@ -851,6 +1205,14 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
+          <AssociationSet Name="FK_HangFire_JobParameter_Job" Association="Self.FK_HangFire_JobParameter_Job">
+            <End Role="Job" EntitySet="Job" />
+            <End Role="JobParameter" EntitySet="JobParameter" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HangFire_State_Job" Association="Self.FK_HangFire_State_Job">
+            <End Role="Job" EntitySet="Job" />
+            <End Role="State" EntitySet="State" />
+          </AssociationSet>
           <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" Association="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
@@ -860,10 +1222,21 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="GSA.UnliquidatedObligations.BusinessLayer.Data" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="C__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+          </Key>
+          <Property Name="MigrationId" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ContextKey" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Model" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+          <Property Name="ProductVersion" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
         <EntityType Name="AspNetRole">
           <Key>
             <PropertyRef Name="Id" />
@@ -913,9 +1286,9 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="AutoAssignUser" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
-          <NavigationProperty Name="Documents" Relationship="Self.FK__Document__Upload__7720AD13" FromRole="AspNetUsers" ToRole="Documents" />
-          <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UserId__22401542" FromRole="AspNetUsers" ToRole="Notes" />
-          <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Sugge__69C6B1F5" FromRole="AspNetUsers" ToRole="RequestForReassignment" />
+          <NavigationProperty Name="Documents" Relationship="Self.FK__Document__Upload__7BE56230" FromRole="AspNetUsers" ToRole="Documents" />
+          <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UserId__536D5C82" FromRole="AspNetUsers" ToRole="Notes" />
+          <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Sugge__73501C2F" FromRole="AspNetUsers" ToRole="RequestForReassignment" />
           <NavigationProperty Name="UserUsers" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="AspNetUsers" ToRole="UserUsers" />
           <NavigationProperty Name="UserUsers1" Relationship="Self.FK__UserUsers__Paren__37703C52" FromRole="AspNetUsers" ToRole="UserUsers" />
           <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Owner__4865BE2A" FromRole="AspNetUsers" ToRole="WorkflowHistory" />
@@ -945,7 +1318,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="UploadedByUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="DocumentName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="UploadDate" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Document__Upload__7720AD13" FromRole="Documents" ToRole="AspNetUsers" />
+          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Document__Upload__7BE56230" FromRole="Documents" ToRole="AspNetUsers" />
           <NavigationProperty Name="Attachments" Relationship="Self.FK_Attachments_ToDocument" FromRole="Documents" ToRole="Attachments" />
           <NavigationProperty Name="DocumentType" Relationship="Self.FK_Document_ToDocumentType" FromRole="Documents" ToRole="DocumentTypes" />
           <NavigationProperty Name="Workflow" Relationship="Self.FK_Document_ToWorkflow" FromRole="Documents" ToRole="Workflows" />
@@ -973,13 +1346,13 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="NoteId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ParentNoteId" Type="Int32" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Date" Type="DateTime" Precision="3" />
-          <Property Name="NoteContents" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="UloId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Notes__UserId__22401542" FromRole="Notes" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Notes1" Relationship="Self.FK__Notes__ParentNot__214BF109" FromRole="Notes" ToRole="Notes1" />
-          <NavigationProperty Name="Note1" Relationship="Self.FK__Notes__ParentNot__214BF109" FromRole="Notes1" ToRole="Notes" />
-          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__Notes__UloId__38EE7070" FromRole="Notes" ToRole="UnliquidatedObligations" />
+          <Property Name="Body" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Notes__UserId__536D5C82" FromRole="Notes" ToRole="AspNetUsers" />
+          <NavigationProperty Name="Notes1" Relationship="Self.FK__Notes__ParentNot__52793849" FromRole="Notes" ToRole="Notes1" />
+          <NavigationProperty Name="Note1" Relationship="Self.FK__Notes__ParentNot__52793849" FromRole="Notes1" ToRole="Notes" />
+          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__Notes__UloId__5555A4F4" FromRole="Notes" ToRole="UnliquidatedObligations" />
         </EntityType>
         <EntityType Name="ReportDefinition">
           <Key>
@@ -995,31 +1368,42 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="RequestForReassignmentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SuggestedReviewerId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="UnliqudatedWorkflowQuestionsId" Type="Int32" Nullable="false" />
+          <Property Name="UnliqudatedWorkflowQuestionsId" Type="Int32" />
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__RequestFo__Sugge__69C6B1F5" FromRole="RequestForReassignment" ToRole="AspNetUsers" />
-          <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestion" Relationship="Self.FK__RequestFo__Unliq__6ABAD62E" FromRole="RequestForReassignment" ToRole="UnliqudatedObjectsWorkflowQuestions" />
-          <NavigationProperty Name="Workflow" Relationship="Self.FK__RequestFo__Workf__6BAEFA67" FromRole="RequestForReassignment" ToRole="Workflows" />
+          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__RequestFo__Sugge__73501C2F" FromRole="RequestForReassignment" ToRole="AspNetUsers" />
+          <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestion" Relationship="Self.FK__RequestFo__Unliq__74444068" FromRole="RequestForReassignment" ToRole="UnliqudatedObjectsWorkflowQuestions" />
+          <NavigationProperty Name="Workflow" Relationship="Self.FK__RequestForReassignment_WorkflowId" FromRole="RequestForReassignment" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="Review">
           <Key>
             <PropertyRef Name="ReviewId" />
           </Key>
-          <Property Name="ReviewId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RegionId" Type="Int32" Nullable="false" />
+          <Property Name="RegionId" Type="Int32" />
           <Property Name="ReviewName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ReviewId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ReviewTypeId" Type="Int32" Nullable="false" />
           <Property Name="ReviewScopeId" Type="Int32" Nullable="false" />
           <Property Name="WorkflowDefinitionId" Type="Int32" Nullable="false" />
           <Property Name="ProjectDueDate" Type="DateTime" Precision="3" />
           <Property Name="ReviewDateInitiated" Type="DateTime" Precision="0" />
-          <NavigationProperty Name="Region" Relationship="Self.FK__Reviews__RegionI__093F5D4E" FromRole="Reviews" ToRole="Regions" />
-          <NavigationProperty Name="WorkflowDefinition" Relationship="Self.FK__Reviews__Workflo__3BCADD1B" FromRole="Reviews" ToRole="WorkflowDefinitions" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Revie__689D8392" FromRole="Reviews" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="Region" Relationship="Self.FK__Review__RegionId__0EF836A4" FromRole="Reviews" ToRole="Regions" />
+          <NavigationProperty Name="Region1" Relationship="Self.FK__Reviews__RegionI__1699586C" FromRole="Reviews" ToRole="Regions" />
+          <NavigationProperty Name="WorkflowDefinition" Relationship="Self.FK__Reviews__Workflo__45544755" FromRole="Reviews" ToRole="WorkflowDefinitions" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Revie__4183B671" FromRole="Reviews" ToRole="UnliquidatedObligations" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestion">
           <Key>
@@ -1029,13 +1413,13 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Answer" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="JustificationKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Pending" Type="Boolean" Nullable="false" />
           <Property Name="WorkflowRowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" />
           <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="JustificationKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="AspNetUsers" />
-          <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Unliq__6ABAD62E" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="RequestForReassignment" />
+          <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Unliq__74444068" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="RequestForReassignment" />
           <NavigationProperty Name="Workflow" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="UnliquidatedObligation">
@@ -1064,6 +1448,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="Bldg" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="SysLoc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="VehTag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="WI" Type="Int32" />
           <Property Name="LeaseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="VendorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="ActgPd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -1098,10 +1483,10 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="EASi_GSA_FSS_Other__" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="EASi_Awd_Expiration_Dt" Type="DateTime" Precision="3" />
           <Property Name="ExpectedDateForCompletion" Type="DateTime" Precision="0" />
-          <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__38EE7070" FromRole="UnliquidatedObligations" ToRole="Notes" />
-          <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__689D8392" FromRole="UnliquidatedObligations" ToRole="Reviews" />
-          <NavigationProperty Name="Region" Relationship="Self.FK__Unliquida__Regio__67A95F59" FromRole="UnliquidatedObligations" ToRole="Regions" />
-          <NavigationProperty Name="Workflows" Relationship="Self.FK__Workflows__Targe__37FA4C37" FromRole="UnliquidatedObligations" ToRole="Workflows" />
+          <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__5555A4F4" FromRole="UnliquidatedObligations" ToRole="Notes" />
+          <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__4183B671" FromRole="UnliquidatedObligations" ToRole="Reviews" />
+          <NavigationProperty Name="Region" Relationship="Self.FK__Unliquida__Regio__408F9238" FromRole="UnliquidatedObligations" ToRole="Regions" />
+          <NavigationProperty Name="Workflows" Relationship="Self.FK__Workflows__Targe__4277DAAA" FromRole="UnliquidatedObligations" ToRole="Workflows" />
         </EntityType>
         <EntityType Name="UserUser">
           <Key>
@@ -1125,7 +1510,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="DescriptionXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="WorkflowDefinitionName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__Workflo__3BCADD1B" FromRole="WorkflowDefinitions" ToRole="Reviews" />
+          <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__Workflo__45544755" FromRole="WorkflowDefinitions" ToRole="Reviews" />
         </EntityType>
         <EntityType Name="WorkflowHistory">
           <Key>
@@ -1162,9 +1547,9 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="WorkflowRowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Workflows__Owner__40058253" FromRole="Workflows" ToRole="AspNetUsers" />
           <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToWorkflow" FromRole="Workflows" ToRole="Documents" />
-          <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Workf__6BAEFA67" FromRole="Workflows" ToRole="RequestForReassignment" />
+          <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestForReassignment_WorkflowId" FromRole="Workflows" ToRole="RequestForReassignment" />
           <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="Workflows" ToRole="UnliqudatedObjectsWorkflowQuestions" />
-          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__Workflows__Targe__37FA4C37" FromRole="Workflows" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__Workflows__Targe__4277DAAA" FromRole="Workflows" ToRole="UnliquidatedObligations" />
           <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Workf__477199F1" FromRole="Workflows" ToRole="WorkflowHistory" />
         </EntityType>
         <EntityType Name="Region">
@@ -1173,12 +1558,13 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="RegionId" Type="Int32" Nullable="false" />
           <Property Name="ZoneId" Type="Int32" Nullable="false" />
+          <Property Name="RegionNumber" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="RegionName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__RegionI__093F5D4E" FromRole="Regions" ToRole="Reviews" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Regio__67A95F59" FromRole="Regions" ToRole="UnliquidatedObligations" />
+          <NavigationProperty Name="Reviews" Relationship="Self.FK__Review__RegionId__0EF836A4" FromRole="Regions" ToRole="Reviews" />
+          <NavigationProperty Name="Reviews1" Relationship="Self.FK__Reviews__RegionI__1699586C" FromRole="Regions" ToRole="Reviews" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Regio__408F9238" FromRole="Regions" ToRole="UnliquidatedObligations" />
           <NavigationProperty Name="UserUsers" Relationship="Self.FK__UserUsers__Regio__395884C4" FromRole="Regions" ToRole="UserUsers" />
           <NavigationProperty Name="Zone" Relationship="Self.FK__Regions__ZoneId__30C33EC3" FromRole="Regions" ToRole="Zones" />
-          <Property Name="RegionNumber" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Zone">
           <Key>
@@ -1188,11 +1574,118 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <Property Name="ZoneName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Regions" Relationship="Self.FK__Regions__ZoneId__30C33EC3" FromRole="Zones" ToRole="Regions" />
         </EntityType>
-        <EntityType Name="AspnetUserApplicationPermissionClaim">
+        <EntityType Name="AggregatedCounter">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Value" Type="Int64" Nullable="false" />
+          <Property Name="ExpireAt" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Counter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Value" Type="Int16" Nullable="false" />
+          <Property Name="ExpireAt" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Hash">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Field" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExpireAt" Type="DateTime" Precision="7" />
+        </EntityType>
+        <EntityType Name="Job">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StateId" Type="Int32" />
+          <Property Name="StateName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="InvocationData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Arguments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ExpireAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="JobParameters" Relationship="Self.FK_HangFire_JobParameter_Job" FromRole="Job" ToRole="JobParameter" />
+          <NavigationProperty Name="States" Relationship="Self.FK_HangFire_State_Job" FromRole="Job" ToRole="State" />
+        </EntityType>
+        <EntityType Name="JobParameter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="JobId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="40" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Job" Relationship="Self.FK_HangFire_JobParameter_Job" FromRole="JobParameter" ToRole="Job" />
+        </EntityType>
+        <EntityType Name="JobQueue">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="JobId" Type="Int32" Nullable="false" />
+          <Property Name="Queue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FetchedAt" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="List">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExpireAt" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Schema">
+          <Key>
+            <PropertyRef Name="Version" />
+          </Key>
+          <Property Name="Version" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Server">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastHeartbeat" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="Set">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Score" Type="Double" Nullable="false" />
+          <Property Name="Value" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ExpireAt" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="State">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="JobId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Reason" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Job" Relationship="Self.FK_HangFire_State_Job" FromRole="State" ToRole="Job" />
+        </EntityType>
+        <EntityType Name="AspnetUserApplicationPermissionClaim">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ClaimId" />
+          </Key>
+          <Property Name="Id" Type="Guid" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="PermissionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1200,9 +1693,10 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
         </EntityType>
         <EntityType Name="AspnetUserSubjectCategoryClaim">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ClaimId" />
           </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Id" Type="Guid" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Region" Type="Int32" />
           <Property Name="BACode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1254,7 +1748,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Document__Upload__7720AD13">
+        <Association Name="FK__Document__Upload__7BE56230">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
           <End Role="Documents" Type="Self.Document" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1266,7 +1760,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notes__UserId__22401542">
+        <Association Name="FK__Notes__UserId__536D5C82">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="0..1" />
           <End Role="Notes" Type="Self.Note" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1278,7 +1772,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RequestFo__Sugge__69C6B1F5">
+        <Association Name="FK__RequestFo__Sugge__73501C2F">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="0..1" />
           <End Role="RequestForReassignment" Type="Self.RequestForReassignment" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1386,7 +1880,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notes__ParentNot__214BF109">
+        <Association Name="FK__Notes__ParentNot__52793849">
           <End Role="Notes" Type="Self.Note" Multiplicity="0..1" />
           <End Role="Notes1" Type="Self.Note" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1398,7 +1892,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notes__UloId__38EE7070">
+        <Association Name="FK__Notes__UloId__5555A4F4">
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="1" />
           <End Role="Notes" Type="Self.Note" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1410,8 +1904,8 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RequestFo__Unliq__6ABAD62E">
-          <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestion" Multiplicity="1" />
+        <Association Name="FK__RequestFo__Unliq__74444068">
+          <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestion" Multiplicity="0..1" />
           <End Role="RequestForReassignment" Type="Self.RequestForReassignment" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="UnliqudatedObjectsWorkflowQuestions">
@@ -1422,7 +1916,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RequestFo__Workf__6BAEFA67">
+        <Association Name="FK__RequestForReassignment_WorkflowId">
           <End Role="Workflows" Type="Self.Workflow" Multiplicity="1" />
           <End Role="RequestForReassignment" Type="Self.RequestForReassignment" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1434,8 +1928,8 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Reviews__RegionI__093F5D4E">
-          <End Role="Regions" Type="Self.Region" Multiplicity="1" />
+        <Association Name="FK__Review__RegionId__0EF836A4">
+          <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
           <End Role="Reviews" Type="Self.Review" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Regions">
@@ -1446,7 +1940,19 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Reviews__Workflo__3BCADD1B">
+        <Association Name="FK__Reviews__RegionI__1699586C">
+          <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
+          <End Role="Reviews" Type="Self.Review" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Regions">
+              <PropertyRef Name="RegionId" />
+            </Principal>
+            <Dependent Role="Reviews">
+              <PropertyRef Name="RegionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reviews__Workflo__45544755">
           <End Role="WorkflowDefinitions" Type="Self.WorkflowDefinition" Multiplicity="1" />
           <End Role="Reviews" Type="Self.Review" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1458,7 +1964,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Revie__689D8392">
+        <Association Name="FK__Unliquida__Revie__4183B671">
           <End Role="Reviews" Type="Self.Review" Multiplicity="1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1482,7 +1988,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Regio__67A95F59">
+        <Association Name="FK__Unliquida__Regio__408F9238">
           <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1494,7 +2000,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Workflows__Targe__37FA4C37">
+        <Association Name="FK__Workflows__Targe__4277DAAA">
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="1" />
           <End Role="Workflows" Type="Self.Workflow" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1542,11 +2048,40 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_HangFire_JobParameter_Job">
+          <End Role="Job" Type="Self.Job" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="JobParameter" Type="Self.JobParameter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Job">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="JobParameter">
+              <PropertyRef Name="JobId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HangFire_State_Job">
+          <End Role="Job" Type="Self.Job" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="State" Type="Self.State" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Job">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="State">
+              <PropertyRef Name="JobId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="AspNetUserRoles">
           <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
         </Association>
         <EntityContainer Name="ULODBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRole" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaim" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogin" />
@@ -1559,6 +2094,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <EntitySet Name="ReportDefinitions" EntityType="Self.ReportDefinition" />
           <EntitySet Name="RequestForReassignments" EntityType="Self.RequestForReassignment" />
           <EntitySet Name="Reviews" EntityType="Self.Review" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <EntitySet Name="UnliqudatedObjectsWorkflowQuestions" EntityType="Self.UnliqudatedObjectsWorkflowQuestion" />
           <EntitySet Name="UnliquidatedObligations" EntityType="Self.UnliquidatedObligation" />
           <EntitySet Name="UserUsers" EntityType="Self.UserUser" />
@@ -1567,6 +2103,17 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
           <EntitySet Name="Workflows" EntityType="Self.Workflow" />
           <EntitySet Name="Regions" EntityType="Self.Region" />
           <EntitySet Name="Zones" EntityType="Self.Zone" />
+          <EntitySet Name="AggregatedCounters" EntityType="Self.AggregatedCounter" />
+          <EntitySet Name="Counters" EntityType="Self.Counter" />
+          <EntitySet Name="Hashes" EntityType="Self.Hash" />
+          <EntitySet Name="Jobs" EntityType="Self.Job" />
+          <EntitySet Name="JobParameters" EntityType="Self.JobParameter" />
+          <EntitySet Name="JobQueues" EntityType="Self.JobQueue" />
+          <EntitySet Name="Lists" EntityType="Self.List" />
+          <EntitySet Name="Schemata" EntityType="Self.Schema" />
+          <EntitySet Name="Servers" EntityType="Self.Server" />
+          <EntitySet Name="Sets" EntityType="Self.Set" />
+          <EntitySet Name="States" EntityType="Self.State" />
           <EntitySet Name="AspnetUserApplicationPermissionClaims" EntityType="Self.AspnetUserApplicationPermissionClaim" />
           <EntitySet Name="AspnetUserSubjectCategoryClaims" EntityType="Self.AspnetUserSubjectCategoryClaim" />
           <EntitySet Name="ReviewStats" EntityType="Self.ReviewStat" />
@@ -1578,15 +2125,15 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
           </AssociationSet>
-          <AssociationSet Name="FK__Document__Upload__7720AD13" Association="Self.FK__Document__Upload__7720AD13">
+          <AssociationSet Name="FK__Document__Upload__7BE56230" Association="Self.FK__Document__Upload__7BE56230">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notes__UserId__22401542" Association="Self.FK__Notes__UserId__22401542">
+          <AssociationSet Name="FK__Notes__UserId__536D5C82" Association="Self.FK__Notes__UserId__536D5C82">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Notes" EntitySet="Notes" />
           </AssociationSet>
-          <AssociationSet Name="FK__RequestFo__Sugge__69C6B1F5" Association="Self.FK__RequestFo__Sugge__69C6B1F5">
+          <AssociationSet Name="FK__RequestFo__Sugge__73501C2F" Association="Self.FK__RequestFo__Sugge__73501C2F">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
           </AssociationSet>
@@ -1622,31 +2169,35 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notes__ParentNot__214BF109" Association="Self.FK__Notes__ParentNot__214BF109">
+          <AssociationSet Name="FK__Notes__ParentNot__52793849" Association="Self.FK__Notes__ParentNot__52793849">
             <End Role="Notes" EntitySet="Notes" />
             <End Role="Notes1" EntitySet="Notes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notes__UloId__38EE7070" Association="Self.FK__Notes__UloId__38EE7070">
+          <AssociationSet Name="FK__Notes__UloId__5555A4F4" Association="Self.FK__Notes__UloId__5555A4F4">
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
             <End Role="Notes" EntitySet="Notes" />
           </AssociationSet>
-          <AssociationSet Name="FK__RequestFo__Unliq__6ABAD62E" Association="Self.FK__RequestFo__Unliq__6ABAD62E">
+          <AssociationSet Name="FK__RequestFo__Unliq__74444068" Association="Self.FK__RequestFo__Unliq__74444068">
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
             <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
           </AssociationSet>
-          <AssociationSet Name="FK__RequestFo__Workf__6BAEFA67" Association="Self.FK__RequestFo__Workf__6BAEFA67">
+          <AssociationSet Name="FK__RequestForReassignment_WorkflowId" Association="Self.FK__RequestForReassignment_WorkflowId">
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
           </AssociationSet>
-          <AssociationSet Name="FK__Reviews__RegionI__093F5D4E" Association="Self.FK__Reviews__RegionI__093F5D4E">
+          <AssociationSet Name="FK__Review__RegionId__0EF836A4" Association="Self.FK__Review__RegionId__0EF836A4">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Reviews__Workflo__3BCADD1B" Association="Self.FK__Reviews__Workflo__3BCADD1B">
+          <AssociationSet Name="FK__Reviews__RegionI__1699586C" Association="Self.FK__Reviews__RegionI__1699586C">
+            <End Role="Regions" EntitySet="Regions" />
+            <End Role="Reviews" EntitySet="Reviews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reviews__Workflo__45544755" Association="Self.FK__Reviews__Workflo__45544755">
             <End Role="WorkflowDefinitions" EntitySet="WorkflowDefinitions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__689D8392" Association="Self.FK__Unliquida__Revie__689D8392">
+          <AssociationSet Name="FK__Unliquida__Revie__4183B671" Association="Self.FK__Unliquida__Revie__4183B671">
             <End Role="Reviews" EntitySet="Reviews" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
@@ -1654,11 +2205,11 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Regio__67A95F59" Association="Self.FK__Unliquida__Regio__67A95F59">
+          <AssociationSet Name="FK__Unliquida__Regio__408F9238" Association="Self.FK__Unliquida__Regio__408F9238">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
-          <AssociationSet Name="FK__Workflows__Targe__37FA4C37" Association="Self.FK__Workflows__Targe__37FA4C37">
+          <AssociationSet Name="FK__Workflows__Targe__4277DAAA" Association="Self.FK__Workflows__Targe__4277DAAA">
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
             <End Role="Workflows" EntitySet="Workflows" />
           </AssociationSet>
@@ -1674,6 +2225,14 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <End Role="Zones" EntitySet="Zones" />
             <End Role="Regions" EntitySet="Regions" />
           </AssociationSet>
+          <AssociationSet Name="FK_HangFire_JobParameter_Job" Association="Self.FK_HangFire_JobParameter_Job">
+            <End Role="Job" EntitySet="Jobs" />
+            <End Role="JobParameter" EntitySet="JobParameters" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HangFire_State_Job" Association="Self.FK_HangFire_State_Job">
+            <End Role="Job" EntitySet="Jobs" />
+            <End Role="State" EntitySet="States" />
+          </AssociationSet>
           <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -1683,15 +2242,15 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             <Parameter Name="workflowDefinitionId" Mode="In" Type="Int32" />
             <Parameter Name="reviewDate" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <FunctionImport Name="GetMyGroups" ReturnType="Collection(GSA.UnliquidatedObligations.BusinessLayer.Data.GetMyGroups_Result)">
+            <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
+          </FunctionImport>
           <FunctionImport Name="GetNextLevelOwnerId">
             <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
             <Parameter Name="workflowId" Mode="In" Type="Int32" />
             <Parameter Name="nextActivityKey" Mode="In" Type="String" />
             <Parameter Name="ownerProhibitedPreviousActivityNamesCsv" Mode="In" Type="String" />
             <Parameter Name="nextOwnerId" Mode="InOut" Type="String" />
-          </FunctionImport>
-          <FunctionImport Name="GetMyGroups" ReturnType="Collection(Model.GetMyGroups_Result)">
-          <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
@@ -1703,9 +2262,19 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="ULODBEntities">
+        <EntityContainerMapping StorageEntityContainer="GSAUnliquidatedObligationsBusinessLayerDataStoreContainer" CdmEntityContainer="ULODBEntities">
+          <EntitySetMapping Name="C__MigrationHistory">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.C__MigrationHistory">
+              <MappingFragment StoreEntitySet="__MigrationHistory">
+                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
+                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="AspNetRoles">
-            <EntityTypeMapping TypeName="Model.AspNetRole">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetRole">
               <MappingFragment StoreEntitySet="AspNetRoles">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1713,7 +2282,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserClaims">
-            <EntityTypeMapping TypeName="Model.AspNetUserClaim">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserClaim">
               <MappingFragment StoreEntitySet="AspNetUserClaims">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
@@ -1723,7 +2292,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserLogins">
-            <EntityTypeMapping TypeName="Model.AspNetUserLogin">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserLogin">
               <MappingFragment StoreEntitySet="AspNetUserLogins">
                 <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
                 <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
@@ -1732,7 +2301,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUsers">
-            <EntityTypeMapping TypeName="Model.AspNetUser">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser">
               <MappingFragment StoreEntitySet="AspNetUsers">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
@@ -1752,7 +2321,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Attachments">
-            <EntityTypeMapping TypeName="Model.Attachment">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Attachment">
               <MappingFragment StoreEntitySet="Attachments">
                 <ScalarProperty Name="AttachmentsId" ColumnName="AttachmentsId" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
@@ -1764,7 +2333,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Documents">
-            <EntityTypeMapping TypeName="Model.Document">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Document">
               <MappingFragment StoreEntitySet="Documents">
                 <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
                 <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
@@ -1776,7 +2345,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DocumentTypes">
-            <EntityTypeMapping TypeName="Model.DocumentType">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.DocumentType">
               <MappingFragment StoreEntitySet="DocumentTypes">
                 <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1784,28 +2353,28 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="EmailTemplates">
-            <EntityTypeMapping TypeName="Model.EmailTemplate">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.EmailTemplate">
               <MappingFragment StoreEntitySet="EmailTemplates">
-                <ScalarProperty Name="EmailSubject" ColumnName="EmailSubject" />
                 <ScalarProperty Name="EmailTemplateId" ColumnName="EmailTemplateId" />
                 <ScalarProperty Name="EmailBody" ColumnName="EmailBody" />
+                <ScalarProperty Name="EmailSubject" ColumnName="EmailSubject" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Notes">
-            <EntityTypeMapping TypeName="Model.Note">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Note">
               <MappingFragment StoreEntitySet="Notes">
                 <ScalarProperty Name="NoteId" ColumnName="NoteId" />
                 <ScalarProperty Name="ParentNoteId" ColumnName="ParentNoteId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="NoteContents" ColumnName="NoteContents" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="UloId" ColumnName="UloId" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ReportDefinitions">
-            <EntityTypeMapping TypeName="Model.ReportDefinition">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.ReportDefinition">
               <MappingFragment StoreEntitySet="ReportDefinitions">
                 <ScalarProperty Name="ReportDefinitionId" ColumnName="ReportDefinitionId" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
@@ -1814,7 +2383,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RequestForReassignments">
-            <EntityTypeMapping TypeName="Model.RequestForReassignment">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment">
               <MappingFragment StoreEntitySet="RequestForReassignment">
                 <ScalarProperty Name="RequestForReassignmentID" ColumnName="RequestForReassignmentID" />
                 <ScalarProperty Name="SuggestedReviewerId" ColumnName="SuggestedReviewerId" />
@@ -1825,13 +2394,13 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Reviews">
-            <EntityTypeMapping TypeName="Model.Review">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Review">
               <MappingFragment StoreEntitySet="Reviews">
-                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
                 <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
                 <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
                 <ScalarProperty Name="ReviewTypeId" ColumnName="ReviewTypeId" />
                 <ScalarProperty Name="ReviewScopeId" ColumnName="ReviewScopeId" />
@@ -1841,23 +2410,34 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="UnliqudatedObjectsWorkflowQuestions">
-            <EntityTypeMapping TypeName="Model.UnliqudatedObjectsWorkflowQuestion">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion">
               <MappingFragment StoreEntitySet="UnliqudatedObjectsWorkflowQuestions">
                 <ScalarProperty Name="UnliqudatedWorkflowQuestionsId" ColumnName="UnliqudatedWorkflowQuestionsId" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Answer" ColumnName="Answer" />
-                <ScalarProperty Name="JustificationKey" ColumnName="JustificationKey" />
                 <ScalarProperty Name="Comments" ColumnName="Comments" />
                 <ScalarProperty Name="Pending" ColumnName="Pending" />
                 <ScalarProperty Name="WorkflowRowVersion" ColumnName="WorkflowRowVersion" />
                 <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="JustificationKey" ColumnName="JustificationKey" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UnliquidatedObligations">
-            <EntityTypeMapping TypeName="Model.UnliquidatedObligation">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation">
               <MappingFragment StoreEntitySet="UnliquidatedObligations">
                 <ScalarProperty Name="UloId" ColumnName="UloId" />
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
@@ -1881,6 +2461,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
                 <ScalarProperty Name="Bldg" ColumnName="Bldg" />
                 <ScalarProperty Name="SysLoc" ColumnName="SysLoc" />
                 <ScalarProperty Name="VehTag" ColumnName="VehTag" />
+                <ScalarProperty Name="WI" ColumnName="WI" />
                 <ScalarProperty Name="LeaseNumber" ColumnName="LeaseNumber" />
                 <ScalarProperty Name="VendorName" ColumnName="VendorName" />
                 <ScalarProperty Name="ActgPd" ColumnName="ActgPd" />
@@ -1919,7 +2500,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserUsers">
-            <EntityTypeMapping TypeName="Model.UserUser">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UserUser">
               <MappingFragment StoreEntitySet="UserUsers">
                 <ScalarProperty Name="UserUserId" ColumnName="UserUserId" />
                 <ScalarProperty Name="ParentUserId" ColumnName="ParentUserId" />
@@ -1929,7 +2510,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="WorkflowDefinitions">
-            <EntityTypeMapping TypeName="Model.WorkflowDefinition">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowDefinition">
               <MappingFragment StoreEntitySet="WorkflowDefinitions">
                 <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />
                 <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
@@ -1941,7 +2522,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="WorkflowHistories">
-            <EntityTypeMapping TypeName="Model.WorkflowHistory">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowHistory">
               <MappingFragment StoreEntitySet="WorkflowHistory">
                 <ScalarProperty Name="WorkflowHistoryId" ColumnName="WorkflowHistoryId" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
@@ -1958,7 +2539,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Workflows">
-            <EntityTypeMapping TypeName="Model.Workflow">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow">
               <MappingFragment StoreEntitySet="Workflows">
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
                 <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
@@ -1975,25 +2556,138 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Regions">
-            <EntityTypeMapping TypeName="Model.Region">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Region">
               <MappingFragment StoreEntitySet="Regions">
-                <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
                 <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
+                <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
                 <ScalarProperty Name="RegionName" ColumnName="RegionName" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Zones">
-            <EntityTypeMapping TypeName="Model.Zone">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Zone">
               <MappingFragment StoreEntitySet="Zones">
                 <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
                 <ScalarProperty Name="ZoneName" ColumnName="ZoneName" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="AggregatedCounters">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AggregatedCounter">
+              <MappingFragment StoreEntitySet="AggregatedCounter">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Counters">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Counter">
+              <MappingFragment StoreEntitySet="Counter">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Hashes">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Hash">
+              <MappingFragment StoreEntitySet="Hash">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Field" ColumnName="Field" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Jobs">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Job">
+              <MappingFragment StoreEntitySet="Job">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="StateId" ColumnName="StateId" />
+                <ScalarProperty Name="StateName" ColumnName="StateName" />
+                <ScalarProperty Name="InvocationData" ColumnName="InvocationData" />
+                <ScalarProperty Name="Arguments" ColumnName="Arguments" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="JobParameters">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.JobParameter">
+              <MappingFragment StoreEntitySet="JobParameter">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="JobId" ColumnName="JobId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="JobQueues">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.JobQueue">
+              <MappingFragment StoreEntitySet="JobQueue">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="JobId" ColumnName="JobId" />
+                <ScalarProperty Name="Queue" ColumnName="Queue" />
+                <ScalarProperty Name="FetchedAt" ColumnName="FetchedAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Lists">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.List">
+              <MappingFragment StoreEntitySet="List">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Schemata">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Schema">
+              <MappingFragment StoreEntitySet="Schema">
+                <ScalarProperty Name="Version" ColumnName="Version" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Servers">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Server">
+              <MappingFragment StoreEntitySet="Server">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
+                <ScalarProperty Name="LastHeartbeat" ColumnName="LastHeartbeat" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sets">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Set">
+              <MappingFragment StoreEntitySet="Set">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Score" ColumnName="Score" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="States">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.State">
+              <MappingFragment StoreEntitySet="State">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="JobId" ColumnName="JobId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="AspnetUserApplicationPermissionClaims">
-            <EntityTypeMapping TypeName="Model.AspnetUserApplicationPermissionClaim">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspnetUserApplicationPermissionClaim">
               <MappingFragment StoreEntitySet="AspnetUserApplicationPermissionClaims">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
@@ -2004,7 +2698,7 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspnetUserSubjectCategoryClaims">
-            <EntityTypeMapping TypeName="Model.AspnetUserSubjectCategoryClaim">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspnetUserSubjectCategoryClaim">
               <MappingFragment StoreEntitySet="AspnetUserSubjectCategoryClaims">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
@@ -2017,10 +2711,8 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ReviewStats">
-            <EntityTypeMapping TypeName="Model.ReviewStat">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.ReviewStat">
               <MappingFragment StoreEntitySet="ReviewStats">
-                <ScalarProperty Name="TheCloserCnt" ColumnName="TheCloserCnt" />
-                <ScalarProperty Name="PreAssignmentCnt" ColumnName="PreAssignmentCnt" />
                 <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
                 <ScalarProperty Name="EasiCnt" ColumnName="EasiCnt" />
                 <ScalarProperty Name="RetaCnt" ColumnName="RetaCnt" />
@@ -2030,10 +2722,12 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
                 <ScalarProperty Name="PersonCnt" ColumnName="PersonCnt" />
                 <ScalarProperty Name="GroupCnt" ColumnName="GroupCnt" />
                 <ScalarProperty Name="SystemCnt" ColumnName="SystemCnt" />
+                <ScalarProperty Name="PreAssignmentCnt" ColumnName="PreAssignmentCnt" />
+                <ScalarProperty Name="TheCloserCnt" ColumnName="TheCloserCnt" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="AspNetUserRoles" TypeName="Model.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
+          <AssociationSetMapping Name="AspNetUserRoles" TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
             <EndProperty Name="AspNetRoles">
               <ScalarProperty Name="Id" ColumnName="RoleId" />
             </EndProperty>
@@ -2041,16 +2735,16 @@ warning 6002: The table/view 'ULO B.dbo.ReviewStats' does not have a primary key
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
           </AssociationSetMapping>
-          <FunctionImportMapping FunctionImportName="CreateULOAndAssignWf" FunctionName="Model.Store.CreateULOAndAssignWf" />
-          <FunctionImportMapping FunctionImportName="GetNextLevelOwnerId" FunctionName="Model.Store.GetNextLevelOwnerId" />
-          <FunctionImportMapping FunctionImportName="GetMyGroups" FunctionName="Model.Store.GetMyGroups">
+          <FunctionImportMapping FunctionImportName="CreateULOAndAssignWf" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.CreateULOAndAssignWf" />
+          <FunctionImportMapping FunctionImportName="GetMyGroups" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetMyGroups">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="Model.GetMyGroups_Result">
+              <ComplexTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.GetMyGroups_Result">
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetNextLevelOwnerId" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetNextLevelOwnerId" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

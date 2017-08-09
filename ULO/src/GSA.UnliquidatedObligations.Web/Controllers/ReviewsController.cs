@@ -113,8 +113,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     //content += "before review object create<br />";
                     var review = new Review
                     {
-                        //TODO: Jason, figure out the true cardinality of regionId
-                        RegionId = reviewModel.RegionId.GetValueOrDefault(-1),
+                        RegionId = reviewModel.RegionId,
                         ReviewName = reviewModel.ReviewName,
                         Status = "Open",
                         ReviewTypeId = reviewModel.ReviewTypeId.Value,

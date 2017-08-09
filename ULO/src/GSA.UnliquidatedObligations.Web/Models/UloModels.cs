@@ -158,19 +158,18 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
 
         }
-        public WorkflowViewModel(Workflow workflow, bool workflowAssignedToCurrentUser, IWorkflowDescription workflowDescription)
+        public WorkflowViewModel(Workflow workflow, bool workflowAssignedToCurrentUser, IWorkflowDescription workflowDescription=null)
         {
             Requires.NonNull(workflow, nameof(workflow));
-            Requires.NonNull(workflowDescription, nameof(workflowDescription));
 
             Workflow = workflow;
             var questions = workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList();
             WorkflowAssignedToCurrentUser = workflowAssignedToCurrentUser;
             bool allowDocumentEdits = workflowAssignedToCurrentUser;
-            QuestionsViewModel = new UloWfQuestionsViewModel(workflowDescription.GetJustificationByKey(), questions);
             var expectedDateForCompletion = workflow.UnliquidatedObligation.ExpectedDateForCompletion;
             if (workflowDescription != null)
             {
+                QuestionsViewModel = new UloWfQuestionsViewModel(workflowDescription.GetJustificationByKey(), questions);
                 WorkflowDescriptionViewModel =
                     new WorkflowDescriptionViewModel(workflowDescription.WebActionWorkflowActivities.ToList(),
                         workflow.CurrentWorkflowActivityKey);

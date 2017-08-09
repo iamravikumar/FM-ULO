@@ -250,6 +250,9 @@
     <Compile Include="Authorization\RegionalClaimValue.cs" />
     <Compile Include="Authorization\SubjectCatagoryClaimValue.cs" />
     <Compile Include="Authorization\DocumentTypeNames.cs" />
+    <Compile Include="Data\AggregatedCounter.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\AspNetRole.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -272,6 +275,12 @@
     <Compile Include="Data\Attachment.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\Counter.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\C__MigrationHistory.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\DbCommandInterceptors\SqlCommandTextInterceptor.cs" />
     <Compile Include="Data\DbCommandInterceptors\SqlTracerInterceptor.cs" />
     <Compile Include="Data\Document.cs">
@@ -284,6 +293,21 @@
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\GetMyGroups_Result.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Hash.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Job.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\JobParameter.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\JobQueue.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\List.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\Note.cs">
@@ -311,6 +335,21 @@
     </Compile>
     <Compile Include="Data\ReviewTypeEnum.cs" />
     <Compile Include="Data\Review_.cs" />
+    <Compile Include="Data\Schema.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Server.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Set.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\State.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\sysdiagram.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\ULO.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

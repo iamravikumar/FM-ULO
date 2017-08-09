@@ -90,8 +90,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
-        [Route("Ulo/RegionWorkflows")]
-        public async Task<ActionResult> RegionWorkflows(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId,
+        [Route("Ulo/Search")]
+        public async Task<ActionResult> Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
@@ -115,7 +115,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     .ToList();
 
             var baCodes = Cacher.FindOrCreateValWithSimpleKey(
-                    Cache.CreateKey(nameof(RegionWorkflows), "baCodes"),
+                    Cache.CreateKey(nameof(Search), "baCodes"),
                     () => DB.UnliquidatedObligations.Select(u => u.Prog).Distinct().OrderBy(p => p).ToList().AsReadOnly(),
                     UloHelpers.MediumCacheTimeout
                     );

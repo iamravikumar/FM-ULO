@@ -16,7 +16,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     {
         public int RequestForReassignmentID { get; set; }
         public string SuggestedReviewerId { get; set; }
-        public int UnliqudatedWorkflowQuestionsId { get; set; }
+        public Nullable<int> UnliqudatedWorkflowQuestionsId { get; set; }
         public int WorkflowId { get; set; }
         public bool IsActive { get; set; }
     

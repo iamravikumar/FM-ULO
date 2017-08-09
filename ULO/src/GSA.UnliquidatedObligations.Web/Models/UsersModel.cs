@@ -31,7 +31,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class UserModel
     {
-        private AspNetUser u;
         private List<AspnetUserApplicationPermissionClaim> applicationPermissionRegionPermissionClaims;
         private List<AspnetUserSubjectCategoryClaim> subjectCategoryPermissionClaims;
 
