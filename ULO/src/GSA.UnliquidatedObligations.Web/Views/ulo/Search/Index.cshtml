@@ -1,9 +1,10 @@
 ﻿@model GSA.UnliquidatedObligations.Web.Models.FilterViewModel
-
 @{
     this.SetTitles(PageKeys.Search, "Search");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@Html.Partial("~/Views/Ulo/Search/_MasterRecordsListing.cshtml", Model)
-
+@Html.Partial("~/Views/Ulo/Search/_Filtering.cshtml", Model)
+<div id="masterRecordsListing">
+    @Html.Partial("~/Views/Ulo/Search/_Data.cshtml", Model.Workflows)
+</div>

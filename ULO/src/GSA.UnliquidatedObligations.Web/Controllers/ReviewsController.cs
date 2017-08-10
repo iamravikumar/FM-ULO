@@ -74,11 +74,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
         public async Task<ActionResult> Create()
         {
-            var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == this.User.Identity.Name);
-
-            //get claim Region Ids for user
-            var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
-
+            var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
             var reviewTypes = Enum.GetValues(typeof(ReviewTypeEnum)).Cast<ReviewTypeEnum>().ToList();
             var reviewScopes = Enum.GetValues(typeof(ReviewScopeEnum)).Cast<ReviewScopeEnum>().ToList();
             var workflowDefinitions = await DB.WorkflowDefinitions.Where(wd=>wd.IsActive).OrderBy(wfd => wfd.WorkflowDefinitionName).ToListAsync();

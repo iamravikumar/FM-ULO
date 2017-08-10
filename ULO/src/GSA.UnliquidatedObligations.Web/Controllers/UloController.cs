@@ -94,8 +94,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
-            var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
-            var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
+            var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
             var wfPredicate =
                 PredicateBuilder.Create<Workflow>(
                     wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId));
@@ -104,7 +103,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
               baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasonIncludedInReview, valid, status, reviewId);
 
             var workflows = await ApplyBrowse(
-                DB.Workflows.Where(wfPredicate).Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region).Include(wf => wf.UnliquidatedObligation.Region.Zone),
+                DB.Workflows.Where(wfPredicate).
+                Include(wf => wf.UnliquidatedObligation).
+                Include(wf => wf.UnliquidatedObligation.Region).
+                Include(wf => wf.UnliquidatedObligation.Region.Zone).
+                Include(wf => wf.RequestForReassignments).
+                Include(wf => wf.AspNetUser),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToListAsync();
 
             var allSubjectCategoryClaimsValues =
@@ -249,11 +253,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (wf == null) return HttpNotFound();
             if (ModelState.IsValid)
             {
-                var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
                     JustificationKey = advanceModel.JustificationKey,
-                    UserId = user.Id,
+                    UserId = CurrentUserId,
                     Answer = advanceModel.Answer,
                     WorkflowId = workflowId,
                     Comments = advanceModel.Comments,
@@ -281,11 +284,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var wf = await FindWorkflowAsync(workflowId);
             if (wf == null) return HttpNotFound();
-            var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
             var question = new UnliqudatedObjectsWorkflowQuestion
             {
                 JustificationKey = advanceModel.JustificationKey,
-                UserId = user.Id,
+                UserId = CurrentUserId,
                 Answer = advanceModel.Answer,
                 WorkflowId = workflowId,
                 Comments = advanceModel.Comments,

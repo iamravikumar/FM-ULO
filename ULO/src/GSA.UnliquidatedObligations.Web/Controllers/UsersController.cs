@@ -31,14 +31,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
         public async Task<ActionResult> Index()
         {
-            //get user object for user logged in.
-            var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == this.User.Identity.Name);
-
-            //get claim Region Ids for user
-            var claimRegionIds = user.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
+            var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
             var userData = await GetUsersByRegion(claimRegionIds[0]);
             return View(new UsersModel(PortalHelpers.CreateRegionSelectListItems(), claimRegionIds, userData));
-
         }
 
         public async Task<ActionResult> Search(int regionId, string username = "")
@@ -182,32 +177,27 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var createResult = CreateResult(appUser);
             if (createResult.Succeeded)
             {
-                var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == appUser.UserName);
-                await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, user);
-                await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id, userData.RegionId);
+                await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, CurrentUser);
+                await SaveSubjectCategories(userData.SubjectCategoryClaims, CurrentUser.Id, userData.RegionId);
                 await DB.SaveChangesAsync();
                 foreach (var groupId in userData.GroupIds)
                 {
                     var userUser = new UserUser
                     {
                         ParentUserId = groupId,
-                        ChildUserId = user.Id,
+                        ChildUserId = CurrentUser.Id,
                         RegionId = userData.RegionId
                     };
 
                     DB.UserUsers.Add(userUser);
                 }
                 await DB.SaveChangesAsync();
-
             }
-
             else
             {
                 return Json(new { success = false, messages = createResult.Errors });
-
             }
             return await Search(userData.RegionId);
-
         }
 
         private IdentityResult CreateResult(ApplicationUser user)

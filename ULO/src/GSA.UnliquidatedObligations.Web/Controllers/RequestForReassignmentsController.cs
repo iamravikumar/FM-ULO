@@ -78,8 +78,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var userReassignRegions = User.GetReassignmentGroupRegions();
             if (User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId))
             {
-                var currentUser = DB.AspNetUsers.FirstOrDefault(u => u.UserName == User.Identity.Name);
-                users.Add(currentUser);
+                users.Add(CurrentUser);
             }
 
             users = users.OrderBy(u => u.UserName).ToList();
@@ -111,13 +110,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var pageToRedirectTo = Request.UrlReferrer.AbsolutePath.Replace("/Ulo/", "");
             if (ModelState.IsValid)
             {
-                var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var wf = await FindWorkflowAsync(workflowId, false);
                 if (wf == null) return HttpNotFound();
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
                     JustificationKey = requestForReassignmentViewModel.JustificationKey,
-                    UserId = user.Id,
+                    UserId = CurrentUserId,
                     Answer = "Reassigned",
                     WorkflowId = workflowId,
                     Comments = requestForReassignmentViewModel.Comments,
@@ -148,14 +146,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 var wf = await FindWorkflowAsync(workflowId, false);
                 if (wf == null) return HttpNotFound();
-                var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var requestForReassignment =
                     await DB.RequestForReassignments.FirstOrDefaultAsync(
                         rr => rr.WorkflowId == workflowId);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
                     JustificationKey = requestForReassignmentViewModel.JustificationKey,
-                    UserId = user.Id,
+                    UserId = CurrentUserId,
                     Answer = "Reassigned",
                     WorkflowId = workflowId,
                     Comments = requestForReassignmentViewModel.Comments,
@@ -175,7 +172,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     return await Reassign(wf, question, requestForReassignment, requestForReassignmentViewModel.SuggestedReviewerId);
                 }
-
             }
 
             return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);
@@ -196,11 +192,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 var wf = await FindWorkflowAsync(workflowId);
                 if (wf == null) return HttpNotFound();
-                var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
                     JustificationKey = requestForReassignmentViewModel.JustificationKey,
-                    UserId = user.Id,
+                    UserId = CurrentUserId,
                     Answer = "Request for Reasssignment",
                     WorkflowId = workflowId,
                     Comments = requestForReassignmentViewModel.Comments,

@@ -4,6 +4,7 @@
 @{
     var todaysDate = DateTime.Today;
     var userReassignRegions = User.GetReassignmentGroupRegions();
+    var canReassign = User.HasPermission(ApplicationPermissionNames.CanReassign);
 }
 <table class="table table-responsive active-workflows">
 
@@ -118,16 +119,13 @@
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
             </td>
             <td>
-                    
-                    @if (User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(item.UnliquidatedObligation.RegionId))
-                    {
-                        @Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList", new WorkflowViewModel(item, true))
-                    }
+                @if (canReassign && userReassignRegions.Contains(item.UnliquidatedObligation.RegionId))
+                {
+                    @Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList", new WorkflowViewModel(item, true))
+                }
             </td>
-
         </tr>
- }
-
+                    }
 </table>
 
 @Html.Partial("_PaginationPartial")

@@ -27,6 +27,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public string CurrentUserId
             => PortalHelpers.GetUserId(User?.Identity?.Name);
 
+        protected AspNetUser CurrentUser
+        {
+            get
+            {
+                if (CurrentUser_p == null)
+                {
+                    CurrentUser_p = DB.AspNetUsers.FirstOrDefault(u => u.UserName == this.User.Identity.Name);
+                }
+                return CurrentUser_p;
+            }
+        }
+        private AspNetUser CurrentUser_p;
+
         public IEnumerable<GetMyGroups_Result> GetUserGroups(string userId=null)
             => Cacher.FindOrCreateValWithSimpleKey(
                 Cache.CreateKey(nameof(GetUserGroups), userId??CurrentUserId),
