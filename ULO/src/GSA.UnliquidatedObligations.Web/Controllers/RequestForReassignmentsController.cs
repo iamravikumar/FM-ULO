@@ -235,7 +235,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             RequestForReassignment requestForReassignment = await DB.RequestForReassignments.FindAsync(id);
             DB.RequestForReassignments.Remove(requestForReassignment);
             await DB.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToIndex();
         }
 
         //TODO: Move to Manager?

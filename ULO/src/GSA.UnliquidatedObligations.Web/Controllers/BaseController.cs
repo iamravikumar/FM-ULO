@@ -24,6 +24,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             System.Web.HttpContext.Current.Items["ComponentContext"] = ComponentContext;
         }
 
+
+        protected ActionResult RedirectToIndex()
+            => RedirectToAction("Index");
+
         public string CurrentUserId
             => PortalHelpers.GetUserId(User?.Identity?.Name);
 

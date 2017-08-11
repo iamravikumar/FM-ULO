@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using RevolutionaryStuff.Core;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using System;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
 
-    public class ReviewItemModel {
-
+    public class ReviewItemModel
+    {
         public int ReviewId { get; set; }
         public DateTime CreatedAt { get; set; }
         public string ReviewName { get; set; }
@@ -40,7 +41,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
             Comments = review.Comments;
             RegionName = review.Region.RegionName;
-
         }
     }
 
@@ -73,33 +73,20 @@ namespace GSA.UnliquidatedObligations.Web.Models
         //[DataType(DataType.Date)]
         //public DateTime? ProjectDueDate { get; set; }
 
-        public ReviewModel(List<int> regionChoices, List<ReviewTypeEnum> reviewTypeEnums, List<ReviewScopeEnum> reviewScopeEnums, List<WorkflowDefinition> workflowDefinitions)
+        public ReviewModel()
         {
-            RegionChoices = regionChoices.OrderBy(rc => rc).ToList().ConvertToSelectList();
-            ReviewTypes = reviewTypeEnums.ConvertToSelectList();
-            ReviewScopes = reviewScopeEnums.ConvertToSelectList();
+            ReviewTypes = Enum.GetValues(typeof(ReviewTypeEnum)).Cast<ReviewTypeEnum>().ToList().ConvertToSelectList();
+            ReviewScopes = Enum.GetValues(typeof(ReviewScopeEnum)).Cast<ReviewScopeEnum>().ToList().ConvertToSelectList();
+        }
+
+        public ReviewModel(IList<int> permissableRegionIds, IList<WorkflowDefinition> workflowDefinitions)
+            : this()
+        {
+            var permissibleVals = permissableRegionIds.ConvertAll(r => r.ToString()).Distinct().ToDictionary(z => z, z=>true);
+            RegionChoices = PortalHelpers.CreateRegionSelectListItems().Where(s => permissibleVals.ContainsKey(s.Value)).ToList();
             WorkflowDefinitions = workflowDefinitions.ConvertToSelectList();
             ReviewDateInitiated = DateTime.Today;
         }
-
-        public ReviewModel()
-        {
-
-        }
-
-        //private static List<SelectListItem> ConvertToSelectList(List<string> rev)
-        //{
-        //    var regionsSelect = new List<SelectListItem>();
-
-        //    foreach (var region in regions)
-        //    {
-        //        regionsSelect.Add(new SelectListItem { Text = region.ToString(), Value = region.ToString() });
-        //    }
-        //    return regionsSelect;
-
-        //}
-
-
     }
 
     public class ReviewDetailsModel
@@ -146,23 +133,17 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public int ReviewId { get; set; }
 
-        public List<string> PegasysFilePathsList { get; set; }
+        public IList<string> PegasysFilePathsList { get; set; } = new List<string>();
 
-        public List<string> RetaFileList { get; set; }
+        public IList<string> RetaFileList { get; set; } = new List<string>();
 
-        public List<string> EasiFileList { get; set; }
+        public IList<string> EasiFileList { get; set; } = new List<string>();
 
-        public List<string> One92FileList { get; set; }
+        public IList<string> One92FileList { get; set; } = new List<string>();
 
         public UploadFilesModel(int reviewId)
         {
             ReviewId = reviewId;
-            PegasysFilePathsList = new List<string>();
-            RetaFileList = new List<string>();
-            EasiFileList = new List<string>();
-            One92FileList = new List<string>();
         }
     }
-
-
 }

@@ -5,18 +5,15 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create</h2>
+<h2>Create Review</h2>
 
 @using (Html.BeginForm("Create", "Reviews", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>Review</h4>
         <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        
-       
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
         <div class="form-group">
             @Html.LabelFor(model => model.ReviewName, "Review Name:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -24,7 +21,6 @@
                 @Html.ValidationMessageFor(model => model.ReviewName, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.ReviewDateInitiated, "Review As Of Date:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -32,14 +28,12 @@
                 @Html.ValidationMessageFor(model => model.ReviewDateInitiated, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, "Comments:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control" } })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.ReviewTypeId, "Type of Review:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -47,8 +41,6 @@
                 @Html.ValidationMessageFor(model => model.ReviewTypeId, "", new { @class = "text-danger" })
             </div>
         </div>
-
-
         <div class="form-group">
             @Html.LabelFor(model => model.ReviewScopeId, "Review Scope:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -56,35 +48,26 @@
                 @Html.ValidationMessageFor(model => model.ReviewScopeId, "", new { @class = "text-danger" })
             </div>
         </div>
-
-
         <div id="reviewRegionContainer" class="form-group">
             @Html.LabelFor(model => model.RegionId, "Region:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.RegionId,  Model.RegionChoices, "Select One..", htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.RegionId, Model.RegionChoices, "Select One..", htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
             </div>
         </div>
-
-
-
-        
         <div class="form-group">
             @Html.LabelFor(model => model.WorkflowDefinitionId, "Workflow:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBox("WorkflowDefintionName", null, new { @id = "workflowDefintionName", @class= "form-control", @readonly="readonly" })
+                @Html.TextBox("WorkflowDefintionName", null, new { @id = "workflowDefintionName", @class = "form-control", @readonly = "readonly" })
                 @Html.HiddenFor(model => model.WorkflowDefinitionId)
                 @*@Html.DropDownList("WorkflowDefinitionId", Model.WorkflowDefinitions, "Select One..", htmlAttributes: new { @class = "form-control" })*@
                 @Html.ValidationMessageFor(model => model.WorkflowDefinitionId, "", new { @class = "text-danger" })
             </div>
         </div>
-
-       
-
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, "Upload 442 Files:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" name="pegasysFiles" class="form-control" multiple/>
+                <input type="file" name="pegasysFiles" class="form-control" multiple />
             </div>
         </div>
         <div class="form-group">
@@ -93,27 +76,23 @@
                 <input type="file" name="retaFiles" class="form-control" multiple />
             </div>
         </div>
-        
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, "Upload Easi Files:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 <input type="file" name="easiFiles" class="form-control" multiple />
             </div>
         </div>
-        
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, "Upload 192 Files:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 <input type="file" name="One92Files" class="form-control" multiple />
             </div>
         </div>
-
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </div>
-
     </div>
 }
 

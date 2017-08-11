@@ -384,10 +384,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string id)
         {
-            AspNetUser aspNetUser = await DB.AspNetUsers.FindAsync(id);
-            DB.AspNetUsers.Remove(aspNetUser);
+            var user = await DB.AspNetUsers.FindAsync(id);
+            DB.AspNetUsers.Remove(user);
             await DB.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToIndex();
         }
     }
 }
