@@ -488,31 +488,18 @@
     <Content Include="Scripts\ULO\users.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Content\ULO\Workflows\workflows.css" />
-    <Content Include="Views\Users\_Data.cshtml" />
-    <Content Include="Views\Users\Edit\Body\_Index.cshtml" />
-    <Content Include="Views\Users\Edit\Body\_ApplicationPermissions.cshtml" />
-    <Content Include="Views\Users\Edit\Body\_Groups.cshtml" />
-    <Content Include="Views\Users\Edit\Body\SubjectCategories\_Index.cshtml" />
-    <Content Include="Views\Users\Edit\Body\SubjectCategories\_SubjectCategory.cshtml" />
     <Content Include="Views\Reviews\Create.cshtml" />
     <Content Include="Views\Reviews\Delete.cshtml" />
     <Content Include="Views\Reviews\Details.cshtml" />
     <Content Include="Views\Reviews\Edit.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Users\Create\_Index.cshtml" />
-    <Content Include="Views\Users\Create\Body\_ApplicationPermissions.cshtml" />
-    <Content Include="Views\Users\Create\Body\_Groups.cshtml" />
-    <Content Include="Views\Users\Create\Body\_Index.cshtml" />
-    <Content Include="Views\Users\Create\Body\SubjectCategories\_Index.cshtml" />
-    <Content Include="Views\Users\Create\Body\SubjectCategories\_SubjectCategory.cshtml" />
-    <Content Include="Views\Users\Create\Body\_UserInfo.cshtml" />
     <Content Include="Views\Reports\Index.cshtml" />
     <Content Include="Views\Shared\_PaginationPartial.cshtml" />
     <Content Include="Views\Reports\ConfigureReport.cshtml" />
-    <Content Include="Views\Users\Edit\Body\_Body.cshtml" />
     <Content Include="Views\Ulo\Unassigned.cshtml" />
     <Content Include="Views\Ulo\RequestForReassignments.cshtml" />
     <Content Include="Views\Ulo\_MyJustifications.cshtml" />
+    <Content Include="Views\Users\_Details.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -550,9 +537,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Users\Create.cshtml" />
-    <Content Include="Views\Users\Delete.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
-    <Content Include="Views\Users\Edit\_Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Ulo\Index.cshtml" />
     <Content Include="Views\Ulo\_RecordsListing.cshtml" />

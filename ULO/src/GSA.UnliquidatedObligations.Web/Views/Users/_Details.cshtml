@@ -1,0 +1,149 @@
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Data
+@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@model GSA.UnliquidatedObligations.Web.Models.UserModel
+@{
+    var createMode = Model.UserId == null;
+    var readonlyHtmlAttributes = new { @readonly = "readonly" };
+    var groupNameSelectItems = ((IList<string>)ViewBag.GroupNames).ConvertToSelectList();
+    var applicationPermissionSelectItems = PortalHelpers.ConvertNamesToSelectList<ApplicationPermissionNames>();
+}
+
+
+@using (Html.BeginForm("Save", "Users", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(Model => Model.UserId)
+    <div>
+        <hr />
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.UserName)
+            </div>
+            <div class="col-sm-10">
+                @if (createMode)
+                {
+                    @Html.TextBoxFor(model => model.UserName)
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.UserName, readonlyHtmlAttributes)
+                }
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Email)
+            </div>
+            <div class="col-sm-10">
+                @if (createMode)
+                {
+                    @Html.TextBoxFor(model => model.Email)
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.Email, readonlyHtmlAttributes)
+                }
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.UserType)
+            </div>
+            <div class="col-sm-10">
+                @if (createMode)
+                {
+                    @Html.DropDownListFor(z => z.UserType, PortalHelpers.CreateUserTypesSelectListItems(), AspHelpers.PleaseSelectOneDropdownItemText)
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.UserType, readonlyHtmlAttributes)
+                }
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Groups)
+            </div>
+            <div class="col-sm-10">
+                @Html.CheckBoxListFor(z => z.Groups, groupNameSelectItems)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Permissions)
+            </div>
+            <div class="col-sm-10">
+                @Html.CheckBoxListFor(z => z.Permissions, applicationPermissionSelectItems)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Claims)
+            </div>
+            <div class="col-sm-10">
+                <table class="table table-responsive users-data" id="SCClaimsTable">
+                    <thead>
+                        <tr>
+                            <th>Doc Type</th>
+                            <th>BA Code</th>
+                            <th>Org Code</th>
+                            <th>Region</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    @foreach (var claim in Model.SubjectCategoryClaims)
+                    {
+                        <tr>
+                            <td>@Html.TextBox("scc.docType", claim.DocumentType, readonlyHtmlAttributes)</td>
+                            <td>@Html.TextBox("scc.bacode", claim.BACode, readonlyHtmlAttributes)</td>
+                            <td>@Html.TextBox("scc.orgcode", claim.OrgCode, readonlyHtmlAttributes)</td>
+                            <td>@Html.TextBox("scc.region", claim.Region, readonlyHtmlAttributes)</td>
+                            <td><a href="#" onclick="DeleteMyRow(event, this)">Delete</a></td>
+                        </tr>
+                    }
+                </table>
+                <button type="button" class="btn" onclick="AddNewClaim(event)">Add New Claim</button>
+            </div>
+        </div>
+    </div>
+
+    <p>
+        <button type="submit" class="btn btn-primary">@ViewBag.SubmitButtonText</button>
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary" })
+    </p>
+}
+
+<table class="hidden" id="SCClaimTemplateRowContainer">
+    <tr>
+        <td>@Html.DropDownList("scc.docType", PortalHelpers.ConvertNamesToSelectList<SubjectCatagoryNames>())</td>
+        <td><input type="text" name="scc.bacode" required="required" /></td>
+        <td><input type="text" name="scc.orgcode" required="required" /></td>
+        <td>@Html.DropDownList("scc.region", PortalHelpers.CreateRegionSelectListItems(true))</td>
+        <td><a href="#" onclick="DeleteMyRow(event, this)">Delete</a></td>
+    </tr>
+</table>
+
+
+<script type="text/javascript">
+    function DeleteMyRow(event, el) {
+        //alert("DeleteMyRow " + event + " " + el.tagName + " " + el.parentElement.tagName);
+        while (el != null && el.tagName != "TR") {
+            el = el.parentElement;
+        }
+        if (el != null) {
+            //alert(el.parentElement.tagName + " removing " + el.tagName);
+            el.parentElement.removeChild(el);
+        }
+        event.stopPropagation();
+        return false;
+    }
+    function AddNewClaim(event) {
+        //alert("adding");
+        var template = $("#SCClaimTemplateRowContainer").children(0);
+        //alert(template.html());
+        template.clone().appendTo("#SCClaimsTable");
+        event.stopPropagation();
+        return false;
+    }
+</script>

@@ -2,13 +2,11 @@
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
-using Microsoft.AspNet.Identity;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.UI.WebControls.Expressions;
@@ -16,6 +14,7 @@ using System.Web.UI.WebControls.Expressions;
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
     public class UsersController : BaseController
     {
@@ -27,367 +26,162 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             UserManager = userManager;
         }
 
-        // GET: Users
-        [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
-        public async Task<ActionResult> Index()
+        [Route("Users")]
+        public async Task<ActionResult> Index(string username, string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
-            var userData = await GetUsersByRegion(claimRegionIds[0]);
-            return View(new UsersModel(PortalHelpers.CreateRegionSelectListItems(), claimRegionIds, userData));
+            username = StringHelpers.TrimOrNull(username);
+            var users = ApplyBrowse(
+                DB.AspNetUsers.Where(u => username == null || u.UserName.Contains(username)),
+                sortCol ?? nameof(AspNetUser.UserName), sortDir, page, pageSize);
+            var m = await CreateModelAsync(users);
+            return View(m);
         }
 
-        public async Task<ActionResult> Search(int regionId, string username = "")
+        private async Task<IList<UserModel>> CreateModelAsync(IEnumerable<AspNetUser> aspNetUsers)
         {
-            var usersData = await GetUsersByRegion(regionId);
-            return PartialView("_Data", usersData);
+            var users = aspNetUsers.ToList();
+            var userIds = users.ConvertAll(u => u.Id);
+            var groups = DB.UserUsers.Include(uu=>uu.ParentUser).Where(uu => userIds.Contains(uu.ChildUserId));
+            var applicationPermissionClaims = await DB.AspnetUserApplicationPermissionClaims.Where(c => userIds.Contains(c.UserId)).ToListAsync();
+            var subjectCategoryClaims = await DB.AspnetUserSubjectCategoryClaims.Where(c => userIds.Contains(c.UserId)).ToListAsync();
+            var groupsByUserId = groups.ToMultipleValueDictionary(z => z.ChildUserId);
+            var applicationPermissionClaimsByUserId = applicationPermissionClaims.ToMultipleValueDictionary(z => z.UserId);
+            var subjectCategoryClaimsByUserId = subjectCategoryClaims.ToMultipleValueDictionary(z => z.UserId);
+            var userModels = users.ConvertAll(u => new UserModel(u, groupsByUserId[u.Id], applicationPermissionClaimsByUserId[u.Id], subjectCategoryClaimsByUserId[u.Id]));
+            return userModels;
         }
 
-
-        private async Task<List<UserModel>> GetUsersByRegion(int regionId, string username = "")
+        private Task PopulateDetailsViewBag()
         {
-            //get application permission regions
-            var applicationPermissionRegionPermissionClaims =
-                 await DB.AspnetUserApplicationPermissionClaims
-                    .Where(c => c.Region.Value == regionId)
-                    .OrderBy(c => c.PermissionName)
-                    .ToListAsync();
-
-            //DB.Database.Log = s => Trace.WriteLine(s);
-            //get subject category claims
-            var subjectCategoryPermissionClaims =
-                await DB.AspnetUserSubjectCategoryClaims
-                .Where(c => c.Region.Value == regionId)
-                .OrderBy(c => c.DocumentType)
-                .ToListAsync();
-
-            //get userIDClaimREgions
-            var userIdsforClaimRegion =
-                 applicationPermissionRegionPermissionClaims
-                 .Select(c => c.UserId)
-                 .Concat(subjectCategoryPermissionClaims.Select(c => c.UserId))
-                    .Distinct()
-                    .ToList();
-
-            var usersOtherApplicationClaimRegions =
-                DB.AspnetUserApplicationPermissionClaims
-                    .Where(c => userIdsforClaimRegion.Contains(c.UserId) && c.Region.Value != regionId)
-                    .ToList()
-                    .Select(c => new OtherRegionInfo(c.UserId, c.Region.Value));
-
-            var usersOtherSubjectCategoryClaimRegions =
-                DB.AspnetUserApplicationPermissionClaims
-                    .Where(c => userIdsforClaimRegion.Contains(c.UserId) && c.Region.Value != regionId)
-                    .OrderBy(scc => scc.PermissionName)
-                    .ToList()
-                      .Select(c => new OtherRegionInfo(c.UserId, c.Region.Value));
-
-            var usersOtherClaimRegions =
-                usersOtherSubjectCategoryClaimRegions
-                    .Concat(usersOtherApplicationClaimRegions)
-                    .ToList();
-            var users = await DB.AspNetUsers.Where(u => userIdsforClaimRegion.Contains(u.Id) && u.UserType == "Person").Include("UserUsers.AspNetUser1").ToListAsync();
-
-
-            return users
-                .Select(u => new UserModel(u, applicationPermissionRegionPermissionClaims, subjectCategoryPermissionClaims, GetOtherRegionsForUser(u.Id, usersOtherClaimRegions), regionId))
-                .OrderBy(u => u.UserName)
-                .ToList();
+            var userNames =
+                from u in DB.AspNetUsers
+                where u.UserType == AspNetUser.UserTypes.Group
+                select u.UserName;
+            ViewBag.GroupNames = userNames.Distinct().OrderBy().ToList();
+            return Task.CompletedTask;
         }
 
-        private List<int> GetOtherRegionsForUser(string userId, List<OtherRegionInfo> otherRegionInfoList)
+        [Route("Users/{username}", Order =2)]
+        public async Task<ActionResult> Details(string username)
         {
-            var regionsList = otherRegionInfoList
-                .Where(or => or.UserId == userId)
-                .Select(or => or.RegionId)
-                .Distinct()
-                .ToList();
-
-            regionsList.Sort();
-
-            return regionsList;
+            var users = await DB.AspNetUsers.Where(u => u.UserName == username).ToListAsync();
+            if (users.Count != 1) return HttpNotFound();
+            var m = await CreateModelAsync(users);
+            await PopulateDetailsViewBag();
+            return View(m.Single());
         }
 
-        private async Task<EditUserModel> GetEditUserById(string userID, int regionId)
-        {
-            //get application permission regions
-            var applicationPermissionRegionPermissionClaims =
-                DB.AspnetUserApplicationPermissionClaims.Where(c => c.UserId == userID && c.Region.Value == regionId);
-
-            //DB.Database.Log = s => Trace.WriteLine(s);
-            //get subject category claims
-            var subjectCategoryPermissionClaims =
-                DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userID && c.Region.Value == regionId);
-
-            var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).OrderBy(ap => ap).ToList();
-            var allSubjectCategoryClaimsValues =
-                Enum.GetValues(typeof(SubjectCatagoryNames))
-                    .Cast<SubjectCatagoryNames>()
-                    .Select(scc => scc.GetDisplayName())
-                    .OrderBy(scc => scc)
-                    .ToList();
-            var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userID);
-            var groups = await DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ToListAsync();
-            return new EditUserModel(user, applicationPermissionRegionPermissionClaims.ToList(), subjectCategoryPermissionClaims.ToList(), allApplicationPermissionNames, allSubjectCategoryClaimsValues, groups, regionId);
-        }
-        // GET: Users/Details/5
-        public async Task<ActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AspNetUser aspNetUser = await DB.AspNetUsers.FindAsync(id);
-            if (aspNetUser == null)
-            {
-                return HttpNotFound();
-            }
-            return View(aspNetUser);
-        }
-
-        // GET: Users/Create
-        [HttpGet]
+        [Route("Users/Create", Order =1)]
         public async Task<ActionResult> Create()
         {
-            //get application permission regions
-
-            var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).OrderBy(ap => ap).ToList();
-            var allSubjectCategoryClaimsValues =
-                Enum.GetValues(typeof(SubjectCatagoryNames))
-                    .Cast<SubjectCatagoryNames>()
-                    .Select(scc => scc.GetDisplayName())
-                    .OrderBy(scc => scc)
-                    .ToList();
-
-            var groups = await DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ToListAsync();
-            var createModel = new CreateUserModel(allApplicationPermissionNames, allSubjectCategoryClaimsValues, groups);
-            return PartialView("Create/Body/_Index", createModel);
+            await PopulateDetailsViewBag();
+            return View(new UserModel());
         }
 
-        // POST: Users/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-
-        //[ValidateAntiForgeryToken]
+        [Route("Users/Save")]
         [HttpPost]
-        public async Task<ActionResult> CreateUser()
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Save(
+            [Bind(Include =
+                nameof(UserModel.UserId)+","+
+                nameof(UserModel.UserName)+","+
+                nameof(UserModel.Email)+","+
+                nameof(UserModel.UserType)+","+
+                nameof(UserModel.Claims)+","+
+                nameof(UserModel.Permissions)+","+
+                nameof(UserModel.Groups)+","+
+                nameof(UserModel.SubjectCategoryClaims)+","+
+                nameof(UserModel.SubjectCategoryClaims)+"."+nameof(SubjectCatagoryClaimValue.BACode)+","+
+                nameof(UserModel.SubjectCategoryClaims)+"."+nameof(SubjectCatagoryClaimValue.DocType)+","+
+                nameof(UserModel.SubjectCategoryClaims)+"."+nameof(SubjectCatagoryClaimValue.OrgCode)+","+
+                nameof(UserModel.SubjectCategoryClaims)+"."+nameof(SubjectCatagoryClaimValue.Regions)
+            )]
+            UserModel m)
         {
-            var userData = Request.BodyAsJsonObject<CreateUserPostData>();
-
-            var appUser = new ApplicationUser { UserName = userData.UserName, Email = userData.UserEmail };
-            var createResult = CreateResult(appUser);
-            if (createResult.Succeeded)
+            if (ModelState.IsValid)
             {
-                await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, CurrentUser);
-                await SaveSubjectCategories(userData.SubjectCategoryClaims, CurrentUser.Id, userData.RegionId);
-                await DB.SaveChangesAsync();
-                foreach (var groupId in userData.GroupIds)
+                AspNetUser u;
+                if (string.IsNullOrEmpty(m.UserId))
                 {
-                    var userUser = new UserUser
+                    m.UserName = StringHelpers.TrimOrNull(m.UserName);
+                    u = await DB.AspNetUsers.FirstOrDefaultAsync(z => z.UserName == m.UserName);
+                    if (u != null)
                     {
-                        ParentUserId = groupId,
-                        ChildUserId = CurrentUser.Id,
-                        RegionId = userData.RegionId
-                    };
-
-                    DB.UserUsers.Add(userUser);
+                        ModelState.AddModelError(nameof(m.UserName), $"Username {m.UserName} already exists, cannot re-add");
+                        goto Mulligan;
+                    }
+                    else
+                    {
+                        var res = await UserManager.CreateAsync(new ApplicationUser { UserName = m.UserName, Email = StringHelpers.TrimOrNull(m.Email) });
+                        u = await DB.AspNetUsers.FirstOrDefaultAsync(z => z.UserName == m.UserName);
+                    }
                 }
-                await DB.SaveChangesAsync();
-            }
-            else
-            {
-                return Json(new { success = false, messages = createResult.Errors });
-            }
-            return await Search(userData.RegionId);
-        }
-
-        private IdentityResult CreateResult(ApplicationUser user)
-        {
-            var createResult = UserManager.Create(user);
-            var errors = createResult.Errors.ToList();
-            if (createResult.Succeeded)
-            {
-                if (DB.AspNetUsers.Any(u => u.Email == user.Email))
+                else
                 {
-                    errors.Add(string.Format("Email {0} is already taken", user.Email));
+                    u = await DB.AspNetUsers.FindAsync(m.UserId);
+                    if (u == null) return HttpNotFound();
                 }
-            }
-            return new IdentityResult(errors);
-        }
-
-        // GET: Users/Edit/5
-        public async Task<ActionResult> Edit(string userId, int regionId)
-        {
-            var user = await GetEditUserById(userId, regionId);
-            return PartialView("Edit/Body/_Index", user);
-        }
-
-        public ActionResult AddSubjectCategoryRow()
-        {
-
-            var allSubjectCategoryClaimsValues =
-                 Enum.GetValues(typeof(SubjectCatagoryNames))
-                     .Cast<SubjectCatagoryNames>()
-                     .Select(scc => scc.GetDisplayName())
-                     .OrderBy(scc => scc)
-                     .ToList();
-
-            var allSubjectCategoryClaims = allSubjectCategoryClaimsValues.ConvertToSelectList();
-
-
-
-            return PartialView("Edit/Body/SubjectCategories/_SubjectCategory",
-                new EditSubjectPermissionClaimModel(allSubjectCategoryClaims));
-        }
-
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        // [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit()
-        {
-            var userData = Request.BodyAsJsonObject<EditUserPostData>();
-            var user = await DB.AspNetUsers.FirstOrDefaultAsync(u => u.Id == userData.UserId);
-            await SaveApplicationPermissionUserClaims(userData.ApplicationPermissionNames, user);
-            await SaveSubjectCategories(userData.SubjectCategoryClaims, user.Id, userData.RegionId);
-            await DB.SaveChangesAsync();
-            foreach (var groupId in userData.GroupIds)
-            {
-                var userUser = new UserUser
+                var myGroups = await DB.AspNetUsers.Where(g => g.UserType == AspNetUser.UserTypes.Group && m.Groups.Contains(g.UserName)).ToListAsync();
+                foreach (var uu in u.ChildUserUsers.ToList())
                 {
-                    ParentUserId = groupId,
-                    ChildUserId = userData.UserId,
-                    RegionId = userData.RegionId
-                };
-
-                DB.UserUsers.Add(userUser);
-            }
-
-            DB.UserUsers.RemoveRange(DB.UserUsers.Where(uu => uu.ChildUserId == userData.UserId).ToList());
-            await DB.SaveChangesAsync();
-
-            return await Search(userData.RegionId);
-        }
-
-        private async Task SaveApplicationPermissionUserClaims(List<string> applicationPermissionNames, AspNetUser user)
-        {
-            var allApplicationPermissionNames = Enum.GetNames(typeof(ApplicationPermissionNames)).ToList();
-            var applicationPermisionClaimsToAdd = new List<AspNetUserClaim>();
-            var regionIdHash = new HashSet<int>(await DB.Regions.Select(r => r.RegionId).ToListAsync());
-
-            //Ideally, would only want to assign permission to current region, but business rules dictated that we add
-            //application permissions for all regions.
-            foreach (var applicationPermission in allApplicationPermissionNames)
-            {
-                var applicationPermissionClaim =
-                    (ApplicationPermissionNames)
-                    Enum.Parse(typeof(ApplicationPermissionNames), applicationPermission);
-
-                if (applicationPermissionNames.Contains(applicationPermission))
+                    DB.UserUsers.Remove(uu);
+                }
+                myGroups.ForEach(g => DB.UserUsers.Add(new UserUser { ParentUser = g, ChildUser = u }));
+                foreach (var c in u.AspNetUserClaims.Where(z => z.ClaimType == ApplicationPermissionClaimValue.ClaimType || z.ClaimType == SubjectCatagoryClaimValue.ClaimType).ToList())
                 {
-                    var claim = new ApplicationPermissionClaimValue
+                    DB.AspNetUserClaims.Remove(c);
+                }
+                foreach (var p in m.Permissions)
+                {
+                    DB.AspNetUserClaims.Add(new AspNetUserClaim
                     {
-                        Regions = regionIdHash,
-                        ApplicationPermissionName = applicationPermissionClaim
-                    }.ToXml();
-
-                    applicationPermisionClaimsToAdd.Add(new AspNetUserClaim
-                    {
-                        UserId = user.Id,
                         ClaimType = ApplicationPermissionClaimValue.ClaimType,
-                        ClaimValue = claim
+                        UserId = u.Id,
+                        AspNetUser = u,
+                        ClaimValue = new ApplicationPermissionClaimValue
+                        {
+                            ApplicationPermissionName = Parse.ParseEnum<ApplicationPermissionNames>(p)
+                        }.ToXml()
                     });
                 }
-
-            }
-            DB.AspNetUserClaims.RemoveRange(DB.AspNetUserClaims.Where(c => c.UserId == user.Id
-                    && c.ClaimType == ApplicationPermissionClaimValue.ClaimType).ToList());
-
-            await DB.SaveChangesAsync();
-            DB.AspNetUserClaims.AddRange(applicationPermisionClaimsToAdd);
-        }
-
-
-
-        private async Task SaveSubjectCategories(List<PostSubjectCategoryClaim> subjectCategoryClaims, string userId, int regionId)
-        {
-            var postedClaims = subjectCategoryClaims;
-            var userCurrentSubjectCategoryClaimsNotInCurrentRegion = await DB.AspnetUserSubjectCategoryClaims.Where(c => c.UserId == userId && c.Region.Value != regionId).ToListAsync();
-            var subjectCategoryClaimsToAdd = new List<AspNetUserClaim>();
-            var subjectCategoryClaimIdsToDelete = new List<int>();
-            foreach (var subjectCategoryClaim in postedClaims)
-            {
-
-                var claimRegionIds = new HashSet<int>() { regionId };
-
-                var subjectClaimValue = new SubjectCatagoryClaimValue
+                var sccDocTypes = HttpContext.Request.Form.GetValues("scc.docType") ?? Empty.StringArray;
+                var sccBaCodes = HttpContext.Request.Form.GetValues("scc.bacode") ?? Empty.StringArray;
+                var sccOrgCodes = HttpContext.Request.Form.GetValues("scc.orgcode") ?? Empty.StringArray;
+                var sccRegions = HttpContext.Request.Form.GetValues("scc.region") ?? Empty.StringArray;
+                m.Claims.Clear();
+                m.SubjectCategoryClaims = new List<AspnetUserSubjectCategoryClaim>();
+                for (int z = 0; z < sccDocTypes.Length; ++z)
                 {
-                    Regions = claimRegionIds,
-                    DocType = subjectCategoryClaim.DocType,
-                    BACode = subjectCategoryClaim.BACode,
-                    OrgCode = subjectCategoryClaim.OrgCode
-                }.ToXml();
-
-                subjectCategoryClaimsToAdd.Add(new AspNetUserClaim
-                {
-                    UserId = userId,
-                    ClaimType = SubjectCatagoryClaimValue.ClaimType,
-                    ClaimValue = subjectClaimValue
-                });
+                    var sccv = new SubjectCatagoryClaimValue
+                    {
+                        BACode = sccBaCodes[z],
+                        DocType = sccDocTypes[z],
+                        OrgCode = sccOrgCodes[z]
+                    };
+                    if (null == StringHelpers.TrimOrNull(sccv.DocType)) continue;
+                    DB.AspNetUserClaims.Add(new AspNetUserClaim
+                    {
+                        ClaimType = SubjectCatagoryClaimValue.ClaimType,
+                        UserId = u.Id,
+                        AspNetUser = u,
+                        ClaimValue = sccv.ToXml()
+                    });
+                    var scc = new AspnetUserSubjectCategoryClaim
+                    {
+                        BACode = sccv.BACode,
+                        DocumentType = sccv.DocType,
+                        OrgCode = sccv.OrgCode,
+                    };
+                    m.SubjectCategoryClaims.Add(scc);
+                    m.Claims.Add(scc.ToFriendlyString());
+                }
+                await DB.SaveChangesAsync();
+                return RedirectToIndex();
             }
-
-            foreach (var subjectCategoryClaim in userCurrentSubjectCategoryClaimsNotInCurrentRegion)
-            {
-
-                var claimRegionIds = new HashSet<int>() { subjectCategoryClaim.Region.Value };
-
-                var subjectClaimValue = new SubjectCatagoryClaimValue
-                {
-                    Regions = claimRegionIds,
-                    DocType = subjectCategoryClaim.DocumentType,
-                    BACode = subjectCategoryClaim.BACode,
-                    OrgCode = subjectCategoryClaim.OrgCode
-                }.ToXml();
-
-                subjectCategoryClaimsToAdd.Add(new AspNetUserClaim
-                {
-                    UserId = userId,
-                    ClaimType = SubjectCatagoryClaimValue.ClaimType,
-                    ClaimValue = subjectClaimValue
-                });
-
-            }
-            DB.AspNetUserClaims.RemoveRange(DB.AspNetUserClaims.Where(c => c.UserId == userId && c.ClaimType == SubjectCatagoryClaimValue.ClaimType));
-            await DB.SaveChangesAsync();
-            DB.AspNetUserClaims.AddRange(subjectCategoryClaimsToAdd);
-
-        }
-
-
-        // GET: Users/Delete/5
-        public async Task<ActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AspNetUser aspNetUser = await DB.AspNetUsers.FindAsync(id);
-            if (aspNetUser == null)
-            {
-                return HttpNotFound();
-            }
-            return View(aspNetUser);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(string id)
-        {
-            var user = await DB.AspNetUsers.FindAsync(id);
-            DB.AspNetUsers.Remove(user);
-            await DB.SaveChangesAsync();
-            return RedirectToIndex();
+            Mulligan:
+            await PopulateDetailsViewBag();
+            if (m.UserId == null) return View("Create", m);
+            else return View("Details", m);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
@@ -125,6 +126,30 @@ namespace GSA.UnliquidatedObligations.Web
                 hs = new MvcHtmlString(html);
             }
             return hs;
+        }
+
+        public static MvcHtmlString CheckBoxListFor<TModelItem>(
+            this HtmlHelper<TModelItem> hh,
+            Expression<Func<TModelItem, IEnumerable<string>>> columnExpression,
+            IEnumerable<SelectListItem> items)
+        {
+            var vals = new HashSet<string>();
+            foreach (var val in columnExpression.Compile().Invoke(hh.ViewData.Model))
+            {
+                vals.Add(val);
+            }
+            var name = columnExpression.GetName();
+            var sb = new StringBuilder();
+            int z = 0;
+            foreach (var item in items)
+            {
+                var id = name + "_" + (z++).ToString();
+                sb.AppendLine("<div>");
+                sb.AppendLine($"<input name=\"{name}\" id=\"{id}\" type=\"checkbox\" value=\"{item.Value}\"{(vals.Contains(item.Value)? " checked=\"checked\"":"")}>");
+                sb.AppendLine($"<label for=\"{id}\">{item.Text}</label>");
+                sb.AppendLine("</div>");
+            }
+            return new MvcHtmlString(sb.ToString());
         }
     }
 }

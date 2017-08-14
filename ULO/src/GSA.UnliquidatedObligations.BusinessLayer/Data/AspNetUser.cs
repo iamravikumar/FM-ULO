@@ -22,8 +22,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.Documents = new HashSet<Document>();
             this.Notes = new HashSet<Note>();
             this.RequestForReassignments = new HashSet<RequestForReassignment>();
-            this.UserUsers = new HashSet<UserUser>();
-            this.UserUsers1 = new HashSet<UserUser>();
+            this.ChildUserUsers = new HashSet<UserUser>();
+            this.ParentUserUsers = new HashSet<UserUser>();
             this.WorkflowHistories = new HashSet<WorkflowHistory>();
             this.Workflows = new HashSet<Workflow>();
             this.UnliqudatedObjectsWorkflowQuestions = new HashSet<UnliqudatedObjectsWorkflowQuestion>();
@@ -56,9 +56,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RequestForReassignment> RequestForReassignments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserUser> UserUsers { get; set; }
+        public virtual ICollection<UserUser> ChildUserUsers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserUser> UserUsers1 { get; set; }
+        public virtual ICollection<UserUser> ParentUserUsers { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

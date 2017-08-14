@@ -1,20 +1,91 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Models;
-@model GSA.UnliquidatedObligations.Web.Models.UsersModel
-
+@using RevolutionaryStuff.Core;
+@model IEnumerable<UserModel>
 @{
     this.SetTitles(PageKeys.ManageUsers, "Manage Users");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <p>
-    <input type="button" value="Create User" class="btn btn-primary create-user" />
+    @Html.ActionLink("Create User", "Create", null, new { @class = "btn btn-primary create-user" })
 </p>
-<div class="row user-options">
-    <div class="col-md-3">
-        @Html.LabelFor(model => model.RegionId, "Select Region:", htmlAttributes: new { @class = "control-label" })
-        @Html.DropDownListFor(model => model.RegionId, Model.Regions, new { @class = "form-control" })
+
+@*
+    <div class="row user-options">
+        <div class="col-md-3">
+            @Html.LabelFor(model => model.RegionId, "Select Region:", htmlAttributes: new { @class = "control-label" })
+            @Html.DropDownListFor(model => model.RegionId, Model.Regions, new { @class = "form-control" })
+        </div>
     </div>
-</div>
-@Html.Partial("_Data", Model.Users)
-@Html.Partial("Edit/_Index", new EditUserModel())
-@Html.Partial("Create/_Index")
+*@
+
+<table class="table table-responsive users-data">
+    <tr>
+        <th>@Html.SortableHeaderFor(z => z.UserName, overrideDisplayName: "User Name")</th>
+        <th>@Html.SortableHeaderFor(z => z.Email, overrideDisplayName: "Email")</th>
+        <th>@Html.SortableHeaderFor(z => z.UserType, overrideDisplayName: "User Type")</th>
+        <th>Claims</th>
+        <th>Permissions</th>
+        <th>Groups</th>
+        <th></th>
+    </tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => user.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => user.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => user.UserType)
+            </td>
+            <td>
+                <ul>
+                    @{
+                        foreach (var claim in user.Claims)
+                        {
+                            var c = claim;
+                            if (!RegexHelpers.Common.Whitespace.IsMatch(c))
+                            {
+                                c = StringHelpers.ToTitleFriendlyString(c);
+                            }
+                            <li>@c</li>
+                        }
+                    }
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    @{
+                        foreach (var claim in user.Permissions)
+                        {
+                            var c = claim;
+                            if (!RegexHelpers.Common.Whitespace.IsMatch(c))
+                            {
+                                c = StringHelpers.ToTitleFriendlyString(c);
+                            }
+                            <li>@c</li>
+                        }
+                    }
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    @{
+                        foreach (var claim in user.Groups)
+                        {
+                            <li>@claim</li>
+                        }
+                    }
+                </ul>
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { userName = user.UserName })
+            </td>
+        </tr>
+    }
+</table>
+
+@Html.Partial("_PaginationPartial")

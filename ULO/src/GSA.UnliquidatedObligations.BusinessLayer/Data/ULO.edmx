@@ -1289,8 +1289,8 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <NavigationProperty Name="Documents" Relationship="Self.FK__Document__Upload__7BE56230" FromRole="AspNetUsers" ToRole="Documents" />
           <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UserId__536D5C82" FromRole="AspNetUsers" ToRole="Notes" />
           <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Sugge__73501C2F" FromRole="AspNetUsers" ToRole="RequestForReassignment" />
-          <NavigationProperty Name="UserUsers" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="AspNetUsers" ToRole="UserUsers" />
-          <NavigationProperty Name="UserUsers1" Relationship="Self.FK__UserUsers__Paren__37703C52" FromRole="AspNetUsers" ToRole="UserUsers" />
+          <NavigationProperty Name="ChildUserUsers" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="AspNetUsers" ToRole="UserUsers" />
+          <NavigationProperty Name="ParentUserUsers" Relationship="Self.FK__UserUsers__Paren__37703C52" FromRole="AspNetUsers" ToRole="UserUsers" />
           <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Owner__4865BE2A" FromRole="AspNetUsers" ToRole="WorkflowHistory" />
           <NavigationProperty Name="Workflows" Relationship="Self.FK__Workflows__Owner__40058253" FromRole="AspNetUsers" ToRole="Workflows" />
           <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="AspNetUsers" ToRole="UnliqudatedObjectsWorkflowQuestions" />
@@ -1496,8 +1496,8 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="ParentUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ChildUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="RegionId" Type="Int32" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="UserUsers" ToRole="AspNetUsers" />
-          <NavigationProperty Name="AspNetUser1" Relationship="Self.FK__UserUsers__Paren__37703C52" FromRole="UserUsers" ToRole="AspNetUsers" />
+          <NavigationProperty Name="ChildUser" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="UserUsers" ToRole="AspNetUsers" />
+          <NavigationProperty Name="ParentUser" Relationship="Self.FK__UserUsers__Paren__37703C52" FromRole="UserUsers" ToRole="AspNetUsers" />
           <NavigationProperty Name="Region" Relationship="Self.FK__UserUsers__Regio__395884C4" FromRole="UserUsers" ToRole="Regions" />
         </EntityType>
         <EntityType Name="WorkflowDefinition">

@@ -112,11 +112,11 @@ namespace GSA.UnliquidatedObligations.Web
                     using (var db = UloDbCreator())
                     {
                         var groupRegions = new List<int?>();
-                        var aspNetUser = db.AspNetUsers.Include(u => u.UserUsers).FirstOrDefault(u => u.UserName == user.Identity.Name);
+                        var aspNetUser = db.AspNetUsers.Include(u => u.ChildUserUsers).FirstOrDefault(u => u.UserName == user.Identity.Name);
 
                         if (aspNetUser != null)
                         {
-                            groupRegions = aspNetUser.UserUsers
+                            groupRegions = aspNetUser.ChildUserUsers
                                 .Where(uu => uu.ParentUserId == ReassignGroupUserId)
                                 .Select(uu => uu.RegionId).ToList();
                         }
@@ -644,7 +644,6 @@ namespace GSA.UnliquidatedObligations.Web
                 numsSelect.Add(new SelectListItem { Text = num.ToString(), Value = num.ToString() });
             }
             return numsSelect;
-
         }
 
         public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<WorkflowDefinition> workFlowDefintions)
@@ -672,7 +671,10 @@ namespace GSA.UnliquidatedObligations.Web
             return data.ToString("C", culture);
         }
 
-        public static IList<SelectListItem> ConvertToSelectList<T>(this IEnumerable<T> enums) where T : struct, IConvertible
+        public static IList<SelectListItem> ConvertNamesToSelectList<T>() where T : struct
+            => ((IEnumerable<T>)Enum.GetValues(typeof(T))).ConvertToSelectList(true);
+
+        public static IList<SelectListItem> ConvertToSelectList<T>(this IEnumerable<T> enums, bool names=false) where T : struct
         {
             if (!typeof(T).IsEnum)
             {
@@ -685,7 +687,15 @@ namespace GSA.UnliquidatedObligations.Web
             {
                 var e = (Enum)Enum.Parse(typeof(T), enu.ToString());
                 var displayName = e.GetDisplayName();
-                var value = ((int) Enum.Parse(typeof(T), enu.ToString())).ToString();
+                string value;
+                if (names)
+                {
+                    value = enu.ToString();
+                }
+                else
+                {
+                    value = ((int)Enum.Parse(typeof(T), enu.ToString())).ToString();
+                }
                 eNumsSelect.Add(new SelectListItem { Text = displayName, Value = value });
             }
             return eNumsSelect;
@@ -719,19 +729,29 @@ namespace GSA.UnliquidatedObligations.Web
             UloHelpers.ShortCacheTimeout
             );
 
+        public static IList<SelectListItem> CreateUserTypesSelectListItems(bool creatableOnly = true)
+            =>new[] {
+                AspNetUser.UserTypes.Person,
+                AspNetUser.UserTypes.Group,
+                creatableOnly ? null : AspNetUser.UserTypes.System,
+            }.WhereNotNull().OrderBy().ConvertToSelectList();
 
-        public static IList<SelectListItem> CreateRegionSelectListItems()
+        public static IList<SelectListItem> CreateRegionSelectListItems(bool includeAllRegions=false, string allRegionsValue="*")
             => Cacher.FindOrCreateValWithSimpleKey(
                 nameof(CreateRegionSelectListItems),
                 () => 
                 {
                     using (var db = UloDbCreator())
                     {
-                        return db.Regions.OrderBy(r => r.RegionName).ConvertAll(
+                        var items = db.Regions.OrderBy(r => r.RegionName).ConvertAll(
                             r => new SelectListItem { Text = $"{r.RegionNumber.PadLeft(2, '0')} - {r.RegionName}", Value = r.RegionId.ToString() }).
                             OrderBy(z => z.Text).
-                            ToList().
-                            AsReadOnly();
+                            ToList();
+                        if (includeAllRegions)
+                        {
+                            items.Insert(0, new SelectListItem { Text = "*", Value = allRegionsValue });
+                        }
+                        return items.AsReadOnly();
                     }
                 },
                 UloHelpers.MediumCacheTimeout
@@ -753,5 +773,11 @@ namespace GSA.UnliquidatedObligations.Web
                 },
                 UloHelpers.MediumCacheTimeout
                 );
+
+        public static string ToFriendlySubjectCategoryClaimString(string documentType, string baCode, string orgCode, int? region)
+            => $"SC (DT: {documentType}, BAC: {baCode}, OC: {orgCode}), R:{(region.HasValue ? region.ToString() : "*")}";
+
+        public static string ToFriendlyString(this AspnetUserSubjectCategoryClaim claim)
+            => ToFriendlySubjectCategoryClaimString(claim.DocumentType, claim.BACode, claim.OrgCode, claim.Region);
     }
 }

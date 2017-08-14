@@ -5,7 +5,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
     public enum SubjectCatagoryNames
     {
         [Display(Name ="*")]
-        aaa,
+        _ALL_ = 1,
         [Display(Name = "UE")]
         UE,
         [Display(Name = "LR")]
