@@ -71,14 +71,12 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public bool ExpectedDateForCompletionNeeded { get; set; }
 
-        public bool ExpectedDateAlwaysShow { get; set; }
-
         public AdvanceViewModel()
         {
 
         }
 
-        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, Workflow workflow, bool justificationNeeded = true, DateTime? expectedDateForCompletion = null, bool expectedDateForCompletionEditable = true, bool expectedDateForCompletionNeeded = true, bool expectedDateAlwaysShow = true)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, Workflow workflow, bool justificationNeeded = true, DateTime? expectedDateForCompletion = null, bool expectedDateForCompletionEditable = true, bool expectedDateForCompletionNeeded = true)
         {
             var workflowId = workflow.WorkflowId;
             Answer = question != null ? question.Answer : "";  
@@ -90,7 +88,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
             ExpectedDateForCompletion = expectedDateForCompletion;
             ExpectedDateForCompletionEditable = expectedDateForCompletionEditable;
             ExpectedDateForCompletionNeeded = expectedDateForCompletionNeeded;
-            ExpectedDateAlwaysShow = expectedDateAlwaysShow;
             if (workflowQuestionChoices != null)
             {
                 QuestionLabel = workflowQuestionChoices.QuestionLabel;
@@ -107,6 +104,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string Text { get; set; }
         public string Value { get; set; }
         public IList<string> JustificationKeys { get; set; } = new List<string>();
+        public bool ExpectedDateAlwaysShow { get; set; }
 
         public QuestionChoicesViewModel()
         {
@@ -117,6 +115,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
             Text = questionChoice.Text;
             Value = questionChoice.Value;
+            ExpectedDateAlwaysShow = questionChoice.ExpectedDateAlwaysShow;
             if (questionChoice.JustificationKeys != null)
             {
                 foreach (var justificationKey in questionChoice.JustificationKeys)
@@ -177,11 +176,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 var unliqudatedObjectsWorkflowQuestionPending = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
                 if (unliqudatedObjectsWorkflowQuestionPending == null && questions.Count > 0)
                 {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateAlwaysShow);
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded);
                 }
                 else
                 {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateAlwaysShow);
+                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow, WorkflowDescriptionViewModel.CurrentActivity.JustificationNeeded, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded);
                 }
                 allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }

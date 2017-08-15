@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -51,8 +50,5 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [DataMember(Name = "ExpectedDateForCompletionNeeded")]
         public bool ExpectedDateForCompletionNeeded { get; set; }
-
-        [DataMember(Name = "ExpectedDateAlwaysShow")]
-        public bool ExpectedDateAlwaysShow { get; set; }
     }
 }

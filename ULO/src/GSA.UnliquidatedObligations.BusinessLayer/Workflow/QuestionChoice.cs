@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using RevolutionaryStuff.Core;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
@@ -18,11 +18,16 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         public string Text { get; set; }
 
         [DataMember(Name = "JustificationKeys")]
+        [JsonProperty("justificationKeys")]
         public List<string> JustificationKeys { get; set; }
 
         [DataMember(Name = "DocumentTypes")]
         [JsonProperty("documentTypes")]
         public List<string> DocumentTypes { get; set; }
+
+        [DataMember(Name = "ExpectedDateAlwaysShow")]
+        [JsonProperty("expectedDateAlwaysShow")]
+        public bool ExpectedDateAlwaysShow { get; set; }
 
         public bool IsApplicable(string documentType)
             =>
@@ -30,5 +35,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
                 DocumentTypes.Count == 0 ||
                 DocumentTypes.Contains(documentType) ||
                 DocumentTypes.Contains("*");
+
+        public override string ToString()
+            => $"{this.GetType().Name} value=[{this.Value}] docTypes=[{CSV.FormatLine(DocumentTypes, false)}]";
     }
 }

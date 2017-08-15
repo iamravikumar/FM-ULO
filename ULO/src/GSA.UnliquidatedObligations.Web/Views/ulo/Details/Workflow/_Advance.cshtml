@@ -15,9 +15,9 @@
                         @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
                         @Html.DropDownListFor(model => model.Answer, new SelectList(Model.QuestionChoices, "Value", "Text"), "Select...", htmlAttributes: new { @onchange = "ChoiceChange(this.value," + @Html.Raw(Json.Encode(Model)) + ")" })<br />
                         @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id = "validateAnswerMessage", @class = "text-danger" })
-                    </div>                  
+                    </div>
                 </div>
-                <div class="row row-space-top">
+                <div class="row row-space-top" style="display:none">
                     <div class="col-md-12">
                         @if (Model.JustificationNeeded)
                         {
@@ -30,8 +30,7 @@
                 <div class="row row-space-top" id="expectedDateForCompletionContainer">
                     <div class="col-md-12">
                         @Html.LabelFor(model => model.ExpectedDateForCompletion, "Expected Date for Completion/Resolution: ", htmlAttributes: new { @class = "control-label" })
-
-                            @Html.EditorFor(model => model.ExpectedDateForCompletion, new { @class = "form-control", type = "date" })
+                        @Html.EditorFor(model => model.ExpectedDateForCompletion, new { @class = "form-control", type = "date" })
                         <br />
                         @Html.ValidationMessageFor(model => model.ExpectedDateForCompletion, "Must select Expected Date of Completion", new { id = "validateExpectedDateMessage", @class = "text-danger" })
                     </div>
@@ -41,7 +40,7 @@
                         @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
                     </div>
                     <div class="row">
-                        @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })                       
+                        @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })
                     </div>
                     <div class="row">
                         @Html.ValidationMessageFor(model => model.Comments, "Must enter Comment when Other is selected", new { id = "validateCommentMessage", @class = "text-danger" })
@@ -50,12 +49,11 @@
                 @Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
                 @* Needed for checking on submit *@
                 @Html.HiddenFor(model => model.ExpectedDateForCompletionNeeded)
-                @Html.HiddenFor(model => model.ExpectedDateAlwaysShow)
                 @Html.HiddenFor(model => model.ExpectedDateForCompletionEditable)
                 <div class="row row-space-top">
                     <div class="col-md-10">
-                        <input type="submit" value="Save" name="Save" class="btn btn-default" />
-                        <input type="submit" value="Submit" name="Advance" class="btn btn-primary" />
+                        <input type="submit" value="Save" name="Save" class="btn btn-default confirm-on-click" confirmMessage="Do you want to save?" />
+                        <input type="submit" value="Submit" name="Advance" class="btn btn-primary confirm-on-click" confirmMessage="Do you want to submit?" />
                     </div>
                 </div>
             </div>

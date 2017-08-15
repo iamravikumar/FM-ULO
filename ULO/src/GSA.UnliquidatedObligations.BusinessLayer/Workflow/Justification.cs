@@ -2,6 +2,7 @@
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 {
+    [DataContract(Name = "Justification", Namespace = UloHelpers.WorkflowDescUrn)]
     public class Justification
     {
         [DataMember(Name = "Key", IsRequired =true)]

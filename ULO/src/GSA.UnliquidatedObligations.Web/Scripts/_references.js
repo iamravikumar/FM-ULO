@@ -16,4 +16,5 @@
 /// <reference path="ulo/polyfills.js" />
 /// <reference path="ulo/recordslisting.js" />
 /// <reference path="ulo/reviews.js" />
+/// <reference path="ulo/site.js" />
 /// <reference path="ulo/users.js" />

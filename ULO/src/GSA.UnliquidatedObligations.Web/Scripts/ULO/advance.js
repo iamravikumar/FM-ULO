@@ -71,16 +71,16 @@ function showExpectedDate(showBool) {
 }
 
 function ChoiceChange(value, model) {
-    //alert(value);
-    var keys = justificationKeysByQuestionChoiceValue[value];
-    //alert(keys);
+    var q = questionChoiceByQuestionChoiceValue[value];
+    var keys = q.justificationKeys;
 
     select.options.length = 0;
     var el = document.createElement("option");
     el.textContent = "Select...";
     el.value = "";
     select.appendChild(el);
-
+    
+    var jc = 0;
     for (x = 0; x < keys.length; ++x)
     {
         var key = keys[x];
@@ -95,12 +95,21 @@ function ChoiceChange(value, model) {
         el.textContent = desc;
         el.value = key;
         select.appendChild(el);
+        ++jc;
     }
 
-    if (value == "Valid" || value == "Approve" || $("#ExpectedDateAlwaysShow").val() == "True") {
-        showExpectedDate(true);
+    while (el.tagName != "DIV" && el != null) {
+        el = el.parentElement;
     }
-    else {
-        showExpectedDate(false);
+    //alert("jc=" + jc+"; el.tagName="+el.tagName+"; el.id="+el.id);
+    if (el != null) {
+        if (jc < 3) {
+            $(el.parentElement).hide();
+        }
+        else {
+            $(el.parentElement).show();
+        }
     }
+
+    showExpectedDate(q.expectedDateAlwaysShow);
 }

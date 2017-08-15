@@ -38,10 +38,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ViewBag.JustificationByKey = workflowDescription.GetJustificationByKey();
             ViewBag.WorkflowDescription = workflowDescription;
             var wawa = workflowDescription.Activities.FirstOrDefault(a => a.WorkflowActivityKey == wf.CurrentWorkflowActivityKey) as WebActionWorkflowActivity;
-            if (wawa != null)
-            {
-                ViewBag.JustificationKeysByQuestionChoiceValue = wawa.QuestionChoices.WhereApplicable(docType).ToDictionary(z => z.Value, z => z.JustificationKeys);
-            }
+            var d = new Dictionary<string, QuestionChoice>();
+            ViewBag.QuestionChoiceByQuestionChoiceValue = d;
+            wawa?.QuestionChoices?.WhereApplicable(docType).ForEach(z => d[z.Value] = z);
         }
 
         // GET: Ulo
@@ -49,7 +48,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).Include(wf => wf.UnliquidatedObligation),
+                DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).Include(wf => wf.UnliquidatedObligation).Include(wf=>wf.UnliquidatedObligation.Region),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             //TODO: A little hacky
             ViewBag.ShowReassignButton = false;
@@ -124,7 +123,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     UloHelpers.MediumCacheTimeout
                     );
 
-            var wd = await DB.WorkflowDefinitions.Where(wfd => wfd.WorkflowDefinitionName == "ULO Workflow" && wfd.IsActive == true).FirstOrDefaultAsync();
+            var wd = await DB.WorkflowDefinitions.Where(wfd => wfd.WorkflowDefinitionName == "ULO Workflow" && wfd.IsActive == true).OrderByDescending(wfd=>wfd.Version).FirstOrDefaultAsync();
             var activityNames = GetOrderedActivityNameByWorkflowName().AtomEnumerable.ConvertAll(z => z.Value).Distinct().OrderBy().ToList();
             var statuses = wd.Description.WebActionWorkflowActivities.OrderBy(a => a.SequenceNumber).Select(a => a.ActivityName).ToList();
 
