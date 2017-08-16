@@ -13,5 +13,5 @@
 </div>
 
 @{
-    Html.RenderAction("View", "Documents", new { documentId = 0, allowDocumentEdit = true });
+    Html.RenderAction("View", "Documents", new { documentId = 0, allowDocumentEdit = true, docType=Model.DocType });
 }

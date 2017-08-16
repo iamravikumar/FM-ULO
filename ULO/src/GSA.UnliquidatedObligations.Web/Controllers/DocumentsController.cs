@@ -34,7 +34,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: Documents/Details/5
-        public ActionResult View(int? documentId, bool allowDocumentEdit = false)
+        public ActionResult View(int? documentId, bool allowDocumentEdit = false, string docType=null)
         {
             Document document;
             if (documentId == 0)
@@ -49,12 +49,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             else
             {
                 document = DB.Documents.FirstOrDefault(dt => dt.DocumentId == documentId);
+                if (document == null)
+                {
+                    return HttpNotFound();
+                }
             }
-            var documentTypes = DB.DocumentTypes.OrderBy(dt => dt.Name).ToList();
-            if (document == null)
-            {
-                return HttpNotFound();
-            }
+            var documentTypes = DB.DocumentTypes.Where(dt => dt.DocType == null || dt.DocType == docType).OrderBy(dt => dt.Name).ToList();
             var workflowAssignedTo = document.DocumentId == 0 ? true : checkOwner(document);
             return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentName, document.DocumentTypeId, documentTypes, document.Attachments.ToList(), workflowAssignedTo));
         }
