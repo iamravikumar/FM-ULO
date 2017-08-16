@@ -21,14 +21,7 @@
                 @Html.DisplayNameFor(model => model.UserName)
             </div>
             <div class="col-sm-10">
-                @if (createMode)
-                {
-                    @Html.TextBoxFor(model => model.UserName)
-                }
-                else
-                {
-                    @Html.TextBoxFor(model => model.UserName, readonlyHtmlAttributes)
-                }
+                @Html.TextBoxFor(model => model.UserName)
             </div>
         </div>
         <div class="form-row">
@@ -36,14 +29,7 @@
                 @Html.DisplayNameFor(model => model.Email)
             </div>
             <div class="col-sm-10">
-                @if (createMode)
-                {
-                    @Html.TextBoxFor(model => model.Email)
-                }
-                else
-                {
-                    @Html.TextBoxFor(model => model.Email, readonlyHtmlAttributes)
-                }
+                @Html.TextBoxFor(model => model.Email)
             </div>
         </div>
         <div class="form-row">

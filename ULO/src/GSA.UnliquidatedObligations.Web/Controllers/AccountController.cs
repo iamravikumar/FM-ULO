@@ -18,6 +18,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        public const string Name = "Account";
+
+        public static class ActionNames
+        {
+            public const string Login = "Login";
+        }
+
         private ApplicationSignInManager SignInManager;
         private ApplicationUserManager UserManager;
         private readonly IAuthenticationManager AuthenticationManager;
@@ -34,6 +41,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         ////
         // GET: /Account/Login
         [AllowAnonymous]
+        [ActionName(ActionNames.Login)]
         public ActionResult Login(string returnUrl)
         {
             if (Properties.Settings.Default.UseDevAuthentication)
@@ -46,33 +54,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (cookie == null)
             {
                 return View(new LoginViewModel());
-
-                //var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
-                //                new QueryString(
-                //                    "ReturnUrl",
-                //                    "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
-                //return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
-                //    redirectUrl);
             }
             return ExternalLoginCallback(returnUrl);
-
-
-
-            //var cookie = Request.Cookies["PostAuthToken199"];
-            //if (cookie == null)
-            //{
-            //    var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
-            //                    new QueryString(
-            //                        "ReturnUrl",
-            //                        "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
-            //    return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
-            //        redirectUrl);
-            //}
-            //else
-            //{
-            //    return ExternalLoginCallback(returnUrl);
-            //}
-
         }
 
         //
@@ -80,14 +63,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(DevLoginViewModel model, string returnUrl)
+        public ActionResult Login(DevLoginViewModel model, string returnUrl)
         {
             var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
                             new QueryString(
                                 "ReturnUrl",
                                 "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
-            return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie,
-                redirectUrl);
+            return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie, redirectUrl);
         }
 
         //

@@ -2,37 +2,36 @@
 @{
     ViewBag.Title = "Log in";
 }
-
 <h2>@ViewBag.Title</h2>
+<hr />
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-4">
         <section id="loginForm">
-            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", style = "margin-top:20px" }))
             {
                 @Html.AntiForgeryToken()
-                <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">
-                    <div class="col-md-12">
+                    <div class="col-md-8">
                         @if (!Model.ShowUserNotInDBMessage)
                         {
-
-                        <input type="submit" value="Log in" class="btn btn-default" />
-
+                            <input type="submit" value="Log in" class="btn btn-default" />
                         }
                         else
                         {
-                           @Html.Encode("You do not have access to the ULO system. Please contact your Ulo coordinator.")
+                            @Html.Encode("You do not have access to the ULO system. Please contact your Ulo coordinator.")
                         }
                     </div>
                 </div>
                 @* Enable this once you have account confirmation enabled for password reset functionality
-                <p>
-                    @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                </p>*@
+                    <p>
+                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                    </p>*@
             }
         </section>
-
+    </div>
+    <div class="col-md-8">
+        @Html.Partial("~/Views/Shared/_ApplicationDescription.cshtml")
     </div>
 </div>
 

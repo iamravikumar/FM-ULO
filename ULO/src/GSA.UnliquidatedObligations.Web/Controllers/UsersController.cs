@@ -18,6 +18,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
     public class UsersController : BaseController
     {
+        public const string Name = "Users";
+
+        public static class ActionNames
+        {
+            public const string Index = "Index";
+        }
+
         private readonly ApplicationUserManager UserManager;
 
         public UsersController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext context, ICacher cacher)
@@ -27,6 +34,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [Route("Users")]
+        [ActionName(ActionNames.Index)]
         public async Task<ActionResult> Index(string username, string sortCol, string sortDir, int? page, int? pageSize)
         {
             username = StringHelpers.TrimOrNull(username);
@@ -98,29 +106,47 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             )]
             UserModel m)
         {
-            if (ModelState.IsValid)
+            AspNetUser u = null;
+            m.UserId = StringHelpers.TrimOrNull(m.UserId);
+            m.UserName = StringHelpers.TrimOrNull(m.UserName);
+            m.Email = StringHelpers.TrimOrNull(m.Email);
+            var users = await DB.AspNetUsers.Where(z => z.UserName == m.UserName || z.Email == m.Email || z.Id == m.UserId).ToListAsync();
+            bool hasErrors = false;
+            foreach (var user in users)
             {
-                AspNetUser u;
-                if (string.IsNullOrEmpty(m.UserId))
+                if (user.Id == m.UserId)
                 {
-                    m.UserName = StringHelpers.TrimOrNull(m.UserName);
+                    u = user;
+                    continue;
+                }
+                if (0 == string.Compare(m.UserName, user.UserName, true))
+                {
+                    ModelState.AddModelError(nameof(m.UserName), $"Username {m.UserName} already exists, cannot re-add");
+                    hasErrors = true;
+                }
+                if (0 == string.Compare(m.Email, user.Email, true))
+                {
+                    ModelState.AddModelError(nameof(m.Email), $"Email {m.Email} already exists, cannot re-add");
+                    hasErrors = true;
+                }
+            }
+            if (ModelState.IsValid && !hasErrors)
+            {
+                if (u == null && m.UserId == null)
+                {
+                    var res = await UserManager.CreateAsync(new ApplicationUser { UserName = m.UserName, Email = StringHelpers.TrimOrNull(m.Email) });
                     u = await DB.AspNetUsers.FirstOrDefaultAsync(z => z.UserName == m.UserName);
-                    if (u != null)
-                    {
-                        ModelState.AddModelError(nameof(m.UserName), $"Username {m.UserName} already exists, cannot re-add");
-                        goto Mulligan;
-                    }
-                    else
-                    {
-                        var res = await UserManager.CreateAsync(new ApplicationUser { UserName = m.UserName, Email = StringHelpers.TrimOrNull(m.Email) });
-                        u = await DB.AspNetUsers.FirstOrDefaultAsync(z => z.UserName == m.UserName);
-                    }
+                }
+                else if (u==null)
+                {
+                    return HttpNotFound();
                 }
                 else
                 {
-                    u = await DB.AspNetUsers.FindAsync(m.UserId);
-                    if (u == null) return HttpNotFound();
+                    u.Email = m.Email;
+                    u.UserName = m.UserName;
                 }
+
                 var myGroups = await DB.AspNetUsers.Where(g => g.UserType == AspNetUser.UserTypes.Group && m.Groups.Contains(g.UserName)).ToListAsync();
                 foreach (var uu in u.ChildUserUsers.ToList())
                 {
@@ -159,6 +185,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         OrgCode = sccOrgCodes[z]
                     };
                     if (null == StringHelpers.TrimOrNull(sccv.DocType)) continue;
+                    int regionId = Parse.ParseInt32(sccRegions[z]);
+                    if (regionId > 0)
+                    {
+                        sccv.Regions = sccv.Regions ?? new HashSet<int>();
+                        sccv.Regions.Add(regionId);
+                    }
                     DB.AspNetUserClaims.Add(new AspNetUserClaim
                     {
                         ClaimType = SubjectCatagoryClaimValue.ClaimType,

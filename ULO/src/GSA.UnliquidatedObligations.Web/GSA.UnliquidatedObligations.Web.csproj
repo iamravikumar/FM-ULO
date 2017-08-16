@@ -508,6 +508,7 @@
     <Content Include="Views\Ulo\RequestForReassignments.cshtml" />
     <Content Include="Views\Ulo\_MyJustifications.cshtml" />
     <Content Include="Views\Users\_Details.cshtml" />
+    <Content Include="Views\Shared\_ApplicationDescription.cshtml" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

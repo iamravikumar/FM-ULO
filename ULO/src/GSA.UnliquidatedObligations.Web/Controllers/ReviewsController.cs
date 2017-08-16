@@ -17,6 +17,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public class ReviewsController : BaseController
     {
+        public const string Name = "Reviews";
+
+        public static class ActionNames
+        {
+            public const string Index = "Index";
+        }
+
         private readonly IBackgroundJobClient BackgroundJobClient;
 
         public ReviewsController(IBackgroundJobClient backgroundJobClient, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
@@ -25,7 +32,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             BackgroundJobClient = backgroundJobClient;
         }
 
-        // GET: Review
+        [ActionName(ActionNames.Index)]
         public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
             IQueryable reviews;

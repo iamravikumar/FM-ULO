@@ -22,6 +22,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class UloController : BaseController
     {
+        public const string Name = "Ulo";
+
+        public static class ActionNames
+        {
+            public const string MyTasks = "Index";
+            public const string Search = "Search";
+            public const string RequestForReassignments = "RequestForReassignments";
+            public const string Unassigned = "Unassigned";
+        }
+
         protected readonly IWorkflowManager Manager;
         private readonly ApplicationUserManager UserManager;
 
@@ -43,6 +53,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             wawa?.QuestionChoices?.WhereApplicable(docType).ForEach(z => d[z.Value] = z);
         }
 
+        [ActionName(ActionNames.MyTasks)]
         // GET: Ulo
         public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -55,6 +66,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(workflows);
         }
 
+        [ActionName(ActionNames.Unassigned)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -67,6 +79,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(workflows);
         }
 
+        [ActionName(ActionNames.RequestForReassignments)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
         public async Task<ActionResult> RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -88,6 +101,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(workflows);
         }
 
+        [ActionName(ActionNames.Search)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulo/Search")]
         public async Task<ActionResult> Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId,

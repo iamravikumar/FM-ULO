@@ -61,3 +61,17 @@ h1.navbar-brand {
     margin-top: 0;
     margin-bottom: 0;
 }
+
+
+
+#footer-menu {
+  padding-left: 0;	
+}
+#footer-menu li {
+  display: inline-block;
+}
+#footer-menu li a {
+  display: block;
+  color: #000;
+  padding: 25px 20px;
+}

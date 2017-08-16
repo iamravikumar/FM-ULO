@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -15,21 +16,28 @@
     <div class="container body-content" style="margin-top: 30px">
         @if (ViewBag.PageTitle != null)
         {
-        <div class="row">
-            <div class="col-xs-12">
-                <h1>@ViewBag.PageTitle</h1>
-                @if (ViewBag.PageSubTitle != null)
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1>@ViewBag.PageTitle</h1>
+                    @if (ViewBag.PageSubTitle != null)
                 {
-                    <p class="subheading">@ViewBag.PageSubTitle</p>
-                }
+                        <p class="subheading">@ViewBag.PageSubTitle</p>
+                    }
+                </div>
             </div>
-        </div>
         }
         @RenderBody()
         <hr />
-        <footer class="row">
-            <div class="col-md-6">&copy; @DateTime.Now.Year - ULO</div>
-            <div class="col-md-6 text-right">Timberwolves</div>
+        <footer>
+            <div class="row">
+                <ul id="footer-menu" class="text-center">
+                    <li>@Html.ActionLink("About", HomeController.ActionNames.About, HomeController.Name)</li>
+                </ul>
+            </div>
+            <div class="row">
+                <div class="col-md-4">&copy; @DateTime.Now.Year - ULO</div>
+                <div class="col-md-8 text-right">Timberwolves</div>
+            </div>
         </footer>
     </div>
 
