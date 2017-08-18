@@ -33,6 +33,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<Attachment> Attachments { get; set; }
+        public virtual DbSet<DocumentDocumentType> DocumentDocumentTypes { get; set; }
         public virtual DbSet<Document> Documents { get; set; }
         public virtual DbSet<DocumentType> DocumentTypes { get; set; }
         public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
@@ -40,7 +41,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<ReportDefinition> ReportDefinitions { get; set; }
         public virtual DbSet<RequestForReassignment> RequestForReassignments { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
         public virtual DbSet<UnliquidatedObligation> UnliquidatedObligations { get; set; }
         public virtual DbSet<UserUser> UserUsers { get; set; }

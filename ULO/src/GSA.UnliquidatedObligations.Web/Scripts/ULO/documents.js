@@ -94,8 +94,20 @@ function closeModal() {
 }
 
 function updateDocumentList(documentId, document) {
+    //alert("JBT_updateDocumentList - 1");
     $(".documents-heading-row").addClass("show").removeClass("hide");
-    var tableRowString = "<tr id='document" + document.Id + "'><td>" + document.Name + "</td><td>" + document.DocumentTypeName + "</td><td>" + document.UserName + "</td><td>" + document.UploadedDate + "</td><td><a data-target='' data-toggle='modal' href='#" + document.Id + "Modal'>View</a> | <a data-toggle='modal' data-target='#" + document.Id + "ModalDelete' href='#" + document.Id + "ModalDelete'>Delete</a></td></tr>"
+    var docTypeNames = "";
+    for (var x = 0; x < document.DocumentTypeNames.length; ++x)
+    {
+        docTypeNames += "<li>" + document.DocumentTypeNames[x]+ "</li>";
+    }
+    var tableRowString =
+        "<tr id='document" + document.Id + "'><td>" +
+        document.Name + "</td><td>" +
+        "<ul>" + docTypeNames + "</ul></td><td>" +
+        document.AttachmentCount + "</td><td>" +
+        document.UserName + "</td><td>" +
+        document.UploadedDate + "</td><td><a data-target='' data-toggle='modal' href='#" + document.Id + "Modal'>View</a> | <a data-toggle='modal' data-target='#" + document.Id + "ModalDelete' href='#" + document.Id + "ModalDelete'>Delete</a></td></tr>"
     if (documentId === 0) {
         $(".documents-list > tbody:last-child").append(tableRowString);
     } else {
@@ -119,7 +131,7 @@ function saveDocument(documentId, documentName, workflowId, documentTypeId) {
         success: function (result) {
             closeModal();
             updateDocumentList(documentId, result);
-            loadDocumentModal(result.Id, addDocumentDeleteClick, addDocumentSaveClick, window.addAddAttachmentClick, window.addDeleteAttachmentClick);
+//            loadDocumentModal(result.Id, addDocumentDeleteClick, addDocumentSaveClick, window.addAddAttachmentClick, window.addDeleteAttachmentClick);
             setButtonActions(true);
         },
         error: function (xhr, status, p3, p4) {

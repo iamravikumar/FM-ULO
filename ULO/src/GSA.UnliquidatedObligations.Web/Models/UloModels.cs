@@ -143,6 +143,14 @@ namespace GSA.UnliquidatedObligations.Web.Models
             AllowDocumentsEdit = allowDocumentsEdit;
             DocType = docType;
         }
+
+        public DocumentsViewModel Subset(Document document)
+            => new DocumentsViewModel
+            {
+                Documents = new List<Document> { document },
+                AllowDocumentsEdit = this.AllowDocumentsEdit,
+                DocType = this.DocType
+            };
     }
 
     public class WorkflowViewModel
@@ -216,7 +224,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class UloViewModel
     {
-        //TODO: set properties explicitly for UnliquidatedObligation
         public UnliquidatedObligation CurretUnliquidatedObligation { get; set; }
         public WorkflowViewModel WorkflowViewModel { get; set; }
         public UloViewModel()
@@ -225,7 +232,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
             CurretUnliquidatedObligation = ulo;
             WorkflowViewModel = new WorkflowViewModel(workflow, workflowAsignedToCurrentUser, workflowDescription);
-
         }
     }
 

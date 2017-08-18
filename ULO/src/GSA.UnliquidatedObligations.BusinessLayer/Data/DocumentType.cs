@@ -17,7 +17,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public DocumentType()
         {
-            this.Documents = new HashSet<Document>();
+            this.DocumentDocumentTypes = new HashSet<DocumentDocumentType>();
         }
     
         public int DocumentTypeId { get; set; }
@@ -25,6 +25,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string DocType { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Document> Documents { get; set; }
+        public virtual ICollection<DocumentDocumentType> DocumentDocumentTypes { get; set; }
     }
 }

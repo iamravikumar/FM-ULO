@@ -400,7 +400,7 @@
     <Compile Include="Models\ReportModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\DocumentModalViewModel.cs" />
+    <Compile Include="Models\FileModels.cs" />
     <Compile Include="Models\RequestForReassignmentViewModel.cs" />
     <Compile Include="Models\UloModels.cs" />
     <Compile Include="Models\ReviewsModel.cs" />

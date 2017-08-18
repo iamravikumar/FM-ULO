@@ -2,15 +2,19 @@
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Web.Mvc;
+using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
     public class DocumentModalViewModel
     {
         public int DocumentId { get; set; }
+
         public string DocumentName { get; set; }
-        public int? DocumentTypeId { get; set; }
-        public List<SelectListItem> DocumentTypes { get; set; }
+
+        public IList<int> DocumentTypeIds { get; set; }
+
+        public IList<SelectListItem> DocumentTypes { get; set; }
 
         public AttachmentsViewModel AttachmentsViewModel { get; set; }
 
@@ -21,40 +25,39 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         }
 
-        public DocumentModalViewModel(int documentId, string documentName, int documentTypeId, List<DocumentType> documentTypes, List<Attachment> attachments, bool allowDocumentEdit )
+        public DocumentModalViewModel(Document document, IList<DocumentType> documentTypes, bool allowDocumentEdit)
         {
-            DocumentId = documentId;
-            DocumentName = documentName;
-            DocumentTypeId = documentTypeId;
+            DocumentId = document.DocumentId;
+            DocumentName = document.DocumentName;
+            DocumentTypeIds = document.DocumentDocumentTypes.ConvertAll(z => z.DocumentTypeId).ToList();
             DocumentTypes = ConvertToSelectList(documentTypes);
-            AttachmentsViewModel = new AttachmentsViewModel(attachments, documentId, allowDocumentEdit);
+            AttachmentsViewModel = new AttachmentsViewModel(document.Attachments.ToList(), DocumentId, allowDocumentEdit);
             AllowDocumentEdit = allowDocumentEdit;
         }
 
-        private List<SelectListItem> ConvertToSelectList(List<DocumentType> documentTypes)
-        {
-            return documentTypes
-                .Select(dt => new SelectListItem
-                {
-                    Text = dt.Name,
-                    Value = dt.DocumentTypeId.ToString()
-                }).ToList();
-        }
-
+        private IList<SelectListItem> ConvertToSelectList(IEnumerable<DocumentType> documentTypes)
+            => documentTypes
+            .Select(dt => new SelectListItem
+            {
+                Text = dt.Name,
+                Value = dt.DocumentTypeId.ToString()
+            }).ToList();
     }
 
     public class AttachmentsViewModel
     {
-        public List<Attachment> Attachments { get; set; }
+        public IList<Attachment> Attachments { get; set; }
+
         public int DocumentId { get; set; }
 
         public bool AllowDocumentEdit { get; set; }
+
         public AttachmentsViewModel()
         {
             
         }
 
-        public AttachmentsViewModel(List<Attachment> attachments, int documentId, bool allowDocumentEdits)
+        public AttachmentsViewModel(IList<Attachment> attachments, int documentId, bool allowDocumentEdits)
         {
             Attachments = attachments;
             DocumentId = documentId;

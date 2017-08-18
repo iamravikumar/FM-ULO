@@ -12,12 +12,13 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class sysdiagram
+    public partial class DocumentDocumentType
     {
-        public string name { get; set; }
-        public int principal_id { get; set; }
-        public int diagram_id { get; set; }
-        public Nullable<int> version { get; set; }
-        public byte[] definition { get; set; }
+        public int DocumentDocumentTypeId { get; set; }
+        public int DocumentId { get; set; }
+        public int DocumentTypeId { get; set; }
+    
+        public virtual Document Document { get; set; }
+        public virtual DocumentType DocumentType { get; set; }
     }
 }

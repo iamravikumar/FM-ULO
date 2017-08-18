@@ -79,23 +79,30 @@
           <Property Name="FileSize" Type="bigint" Nullable="false" />
           <Property Name="ContentType" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
+        <EntityType Name="DocumentDocumentTypes">
+          <Key>
+            <PropertyRef Name="DocumentDocumentTypeId" />
+          </Key>
+          <Property Name="DocumentDocumentTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DocumentId" Type="int" Nullable="false" />
+          <Property Name="DocumentTypeId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Documents">
           <Key>
             <PropertyRef Name="DocumentId" />
           </Key>
           <Property Name="DocumentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="DocumentTypeId" Type="int" Nullable="false" />
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="UploadedByUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="DocumentName" Type="varchar" MaxLength="200" />
-          <Property Name="UploadDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
+          <Property Name="DocumentName" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="DocumentTypes">
           <Key>
             <PropertyRef Name="DocumentTypeId" />
           </Key>
           <Property Name="DocumentTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Name" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="DocType" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="EmailTemplates">
@@ -106,6 +113,12 @@
           <Property Name="EmailBody" Type="varchar" MaxLength="500" />
           <Property Name="EmailSubject" Type="varchar" MaxLength="200" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'ULODB.dbo.FiscalMonthMapping' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="FiscalMonthMapping">
+          <Property Name="CalendarMonth" Type="int" />
+          <Property Name="FiscalMonth" Type="varchar" MaxLength="5" />
+        </EntityType>-->
         <EntityType Name="Notes">
           <Key>
             <PropertyRef Name="NoteId" />
@@ -113,9 +126,9 @@
           <Property Name="NoteId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ParentNoteId" Type="int" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" />
-          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
           <Property Name="UloId" Type="int" Nullable="false" />
           <Property Name="Body" Type="nvarchar(max)" />
+          <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="ReportDefinitions">
           <Key>
@@ -150,16 +163,6 @@
           <Property Name="WorkflowDefinitionId" Type="int" Nullable="false" />
           <Property Name="ProjectDueDate" Type="datetime" />
           <Property Name="ReviewDateInitiated" Type="date" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestions">
           <Key>
@@ -465,6 +468,30 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__DocumentD__Docum__62AFA012">
+          <End Role="Documents" Type="Self.Documents" Multiplicity="1" />
+          <End Role="DocumentDocumentTypes" Type="Self.DocumentDocumentTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Documents">
+              <PropertyRef Name="DocumentId" />
+            </Principal>
+            <Dependent Role="DocumentDocumentTypes">
+              <PropertyRef Name="DocumentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DocumentD__Docum__63A3C44B">
+          <End Role="DocumentTypes" Type="Self.DocumentTypes" Multiplicity="1" />
+          <End Role="DocumentDocumentTypes" Type="Self.DocumentDocumentTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DocumentTypes">
+              <PropertyRef Name="DocumentTypeId" />
+            </Principal>
+            <Dependent Role="DocumentDocumentTypes">
+              <PropertyRef Name="DocumentTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Notes__ParentNot__52793849">
           <End Role="Notes" Type="Self.Notes" Multiplicity="0..1" />
           <End Role="Notes1" Type="Self.Notes" Multiplicity="*" />
@@ -761,18 +788,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Document_ToDocumentType">
-          <End Role="DocumentTypes" Type="Self.DocumentTypes" Multiplicity="1" />
-          <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DocumentTypes">
-              <PropertyRef Name="DocumentTypeId" />
-            </Principal>
-            <Dependent Role="Documents">
-              <PropertyRef Name="DocumentTypeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Document_ToWorkflow">
           <End Role="Workflows" Type="Self.Workflows" Multiplicity="1" />
           <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
@@ -860,6 +875,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Attachments" EntityType="Self.Attachments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DocumentDocumentTypes" EntityType="Self.DocumentDocumentTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Documents" EntityType="Self.Documents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentTypes" EntityType="Self.DocumentTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EmailTemplates" EntityType="Self.EmailTemplates" Schema="dbo" store:Type="Tables" />
@@ -867,7 +883,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <EntitySet Name="ReportDefinitions" EntityType="Self.ReportDefinitions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestForReassignment" EntityType="Self.RequestForReassignment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reviews" EntityType="Self.Reviews" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnliqudatedObjectsWorkflowQuestions" EntityType="Self.UnliqudatedObjectsWorkflowQuestions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UnliquidatedObligations" EntityType="Self.UnliquidatedObligations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserUsers" EntityType="Self.UserUsers" Schema="dbo" store:Type="Tables" />
@@ -925,6 +940,14 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <AssociationSet Name="FK__Document__Upload__7BE56230" Association="Self.FK__Document__Upload__7BE56230">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Documents" EntitySet="Documents" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DocumentD__Docum__62AFA012" Association="Self.FK__DocumentD__Docum__62AFA012">
+            <End Role="Documents" EntitySet="Documents" />
+            <End Role="DocumentDocumentTypes" EntitySet="DocumentDocumentTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DocumentD__Docum__63A3C44B" Association="Self.FK__DocumentD__Docum__63A3C44B">
+            <End Role="DocumentTypes" EntitySet="DocumentTypes" />
+            <End Role="DocumentDocumentTypes" EntitySet="DocumentDocumentTypes" />
           </AssociationSet>
           <AssociationSet Name="FK__Notes__ParentNot__52793849" Association="Self.FK__Notes__ParentNot__52793849">
             <End Role="Notes" EntitySet="Notes" />
@@ -1022,10 +1045,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
-          <AssociationSet Name="FK_Document_ToDocumentType" Association="Self.FK_Document_ToDocumentType">
-            <End Role="DocumentTypes" EntitySet="DocumentTypes" />
-            <End Role="Documents" EntitySet="Documents" />
-          </AssociationSet>
           <AssociationSet Name="FK_Document_ToWorkflow" Association="Self.FK_Document_ToWorkflow">
             <End Role="Workflows" EntitySet="Workflows" />
             <End Role="Documents" EntitySet="Documents" />
@@ -1051,33 +1070,214 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="GSA.UnliquidatedObligations.BusinessLayer.Data" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="ULODBEntities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="CreateULOAndAssignWf">
+            <Parameter Name="reviewId" Mode="In" Type="Int32" />
+            <Parameter Name="workflowDefinitionId" Mode="In" Type="Int32" />
+            <Parameter Name="reviewDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="GetMyGroups" ReturnType="Collection(GSA.UnliquidatedObligations.BusinessLayer.Data.GetMyGroups_Result)">
+          <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetNextLevelOwnerId">
+            <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
+            <Parameter Name="workflowId" Mode="In" Type="Int32" />
+            <Parameter Name="nextActivityKey" Mode="In" Type="String" />
+            <Parameter Name="ownerProhibitedPreviousActivityNamesCsv" Mode="In" Type="String" />
+            <Parameter Name="nextOwnerId" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="C__MigrationHistory" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.C__MigrationHistory" />
+          <EntitySet Name="AspNetRoles" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetRole" />
+          <EntitySet Name="AspNetUserClaims" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserClaim" />
+          <EntitySet Name="AspNetUserLogins" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserLogin" />
+          <EntitySet Name="AspNetUsers" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" />
+          <EntitySet Name="Attachments" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Attachment" />
+          <EntitySet Name="DocumentDocumentTypes" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.DocumentDocumentType" />
+          <EntitySet Name="Documents" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Document" />
+          <EntitySet Name="DocumentTypes" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.DocumentType" />
+          <EntitySet Name="EmailTemplates" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.EmailTemplate" />
+          <EntitySet Name="Notes" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Note" />
+          <EntitySet Name="ReportDefinitions" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.ReportDefinition" />
+          <EntitySet Name="RequestForReassignments" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment" />
+          <EntitySet Name="Reviews" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" />
+          <EntitySet Name="UnliqudatedObjectsWorkflowQuestions" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion" />
+          <EntitySet Name="UnliquidatedObligations" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" />
+          <EntitySet Name="UserUsers" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UserUser" />
+          <EntitySet Name="WorkflowDefinitions" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowDefinition" />
+          <EntitySet Name="WorkflowHistories" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowHistory" />
+          <EntitySet Name="Workflows" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" />
+          <EntitySet Name="Regions" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Region" />
+          <EntitySet Name="Zones" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Zone" />
+          <EntitySet Name="AggregatedCounters" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AggregatedCounter" />
+          <EntitySet Name="Counters" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Counter" />
+          <EntitySet Name="Hashes" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Hash" />
+          <EntitySet Name="Jobs" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Job" />
+          <EntitySet Name="JobParameters" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.JobParameter" />
+          <EntitySet Name="JobQueues" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.JobQueue" />
+          <EntitySet Name="Lists" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.List" />
+          <EntitySet Name="Schemata" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Schema" />
+          <EntitySet Name="Servers" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Server" />
+          <EntitySet Name="Sets" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Set" />
+          <EntitySet Name="States" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.State" />
+          <EntitySet Name="AspnetUserApplicationPermissionClaims" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AspnetUserApplicationPermissionClaim" />
+          <EntitySet Name="AspnetUserSubjectCategoryClaims" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AspnetUserSubjectCategoryClaim" />
+          <EntitySet Name="ReviewStats" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.ReviewStat" />
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaim" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Document__Upload__7BE56230" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Document__Upload__7BE56230">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Document" EntitySet="Documents" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Notes__UserId__536D5C82" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UserId__536D5C82">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Note" EntitySet="Notes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RequestFo__Sugge__73501C2F" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Sugge__73501C2F">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserUsers__Child__3864608B" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Child__3864608B">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="UserUser" EntitySet="UserUsers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserUsers__Paren__37703C52" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Paren__37703C52">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="UserUser" EntitySet="UserUsers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkflowH__Owner__4865BE2A" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowH__Owner__4865BE2A">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Workflows__Owner__40058253" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Owner__40058253">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Workflow" EntitySet="Workflows" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="UnliqudatedObjectsWorkflowQuestion" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Attachments_ToDocument" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Attachments_ToDocument">
+            <End Role="Document" EntitySet="Documents" />
+            <End Role="Attachment" EntitySet="Attachments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DocumentD__Docum__62AFA012" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__DocumentD__Docum__62AFA012">
+            <End Role="Document" EntitySet="Documents" />
+            <End Role="DocumentDocumentType" EntitySet="DocumentDocumentTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DocumentD__Docum__63A3C44B" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__DocumentD__Docum__63A3C44B">
+            <End Role="DocumentType" EntitySet="DocumentTypes" />
+            <End Role="DocumentDocumentType" EntitySet="DocumentDocumentTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Document_ToWorkflow" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Document_ToWorkflow">
+            <End Role="Workflow" EntitySet="Workflows" />
+            <End Role="Document" EntitySet="Documents" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Notes__ParentNot__52793849" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__ParentNot__52793849">
+            <End Role="Note" EntitySet="Notes" />
+            <End Role="Note1" EntitySet="Notes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Notes__UloId__5555A4F4" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4">
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+            <End Role="Note" EntitySet="Notes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RequestFo__Unliq__74444068" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Unliq__74444068">
+            <End Role="UnliqudatedObjectsWorkflowQuestion" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
+            <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RequestForReassignment_WorkflowId" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestForReassignment_WorkflowId">
+            <End Role="Workflow" EntitySet="Workflows" />
+            <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Review__RegionId__0EF836A4" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Review__RegionId__0EF836A4">
+            <End Role="Region" EntitySet="Regions" />
+            <End Role="Review" EntitySet="Reviews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reviews__RegionI__1699586C" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__RegionI__1699586C">
+            <End Role="Region" EntitySet="Regions" />
+            <End Role="Review" EntitySet="Reviews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reviews__Workflo__45544755" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Workflo__45544755">
+            <End Role="WorkflowDefinition" EntitySet="WorkflowDefinitions" />
+            <End Role="Review" EntitySet="Reviews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Revie__4183B671" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671">
+            <End Role="Review" EntitySet="Reviews" />
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows">
+            <End Role="Workflow" EntitySet="Workflows" />
+            <End Role="UnliqudatedObjectsWorkflowQuestion" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Regio__408F9238" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238">
+            <End Role="Region" EntitySet="Regions" />
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Workflows__Targe__4277DAAA" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA">
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+            <End Role="Workflow" EntitySet="Workflows" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserUsers__Regio__395884C4" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Regio__395884C4">
+            <End Role="Region" EntitySet="Regions" />
+            <End Role="UserUser" EntitySet="UserUsers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkflowH__Workf__477199F1" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowH__Workf__477199F1">
+            <End Role="Workflow" EntitySet="Workflows" />
+            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Regions__ZoneId__30C33EC3" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Regions__ZoneId__30C33EC3">
+            <End Role="Zone" EntitySet="Zones" />
+            <End Role="Region" EntitySet="Regions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HangFire_JobParameter_Job" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_HangFire_JobParameter_Job">
+            <End Role="Job" EntitySet="Jobs" />
+            <End Role="JobParameter" EntitySet="JobParameters" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HangFire_State_Job" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_HangFire_State_Job">
+            <End Role="Job" EntitySet="Jobs" />
+            <End Role="State" EntitySet="States" />
+          </AssociationSet>
+          <AssociationSet Name="AspNetUserRoles" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserRoles">
+            <End Role="AspNetRole" EntitySet="AspNetRoles" />
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+          </AssociationSet>
+        </EntityContainer>
+        <ComplexType Name="GetMyGroups_Result">
+          <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="256" />
+        </ComplexType>
         <EntityType Name="C__MigrationHistory">
           <Key>
             <PropertyRef Name="MigrationId" />
             <PropertyRef Name="ContextKey" />
           </Key>
-          <Property Name="MigrationId" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ContextKey" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Model" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
-          <Property Name="ProductVersion" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MigrationId" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContextKey" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Model" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <Property Name="ProductVersion" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="AspNetRole">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUsers" Relationship="Self.AspNetUserRoles" FromRole="AspNetRoles" ToRole="AspNetUsers" />
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserRoles" FromRole="AspNetRole" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="AspNetUserClaim">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaim" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="AspNetUserLogin">
           <Key>
@@ -1085,16 +1285,16 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <PropertyRef Name="ProviderKey" />
             <PropertyRef Name="UserId" />
           </Key>
-          <Property Name="LoginProvider" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ProviderKey" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogins" ToRole="AspNetUsers" />
+          <Property Name="LoginProvider" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderKey" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogin" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="AspNetUser">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
           <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -1105,20 +1305,20 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
           <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
           <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
-          <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="UserType" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="UserType" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="false" />
           <Property Name="AutoAssignUser" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
-          <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
-          <NavigationProperty Name="Documents" Relationship="Self.FK__Document__Upload__7BE56230" FromRole="AspNetUsers" ToRole="Documents" />
-          <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UserId__536D5C82" FromRole="AspNetUsers" ToRole="Notes" />
-          <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Sugge__73501C2F" FromRole="AspNetUsers" ToRole="RequestForReassignment" />
-          <NavigationProperty Name="ChildUserUsers" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="AspNetUsers" ToRole="UserUsers" />
-          <NavigationProperty Name="ParentUserUsers" Relationship="Self.FK__UserUsers__Paren__37703C52" FromRole="AspNetUsers" ToRole="UserUsers" />
-          <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Owner__4865BE2A" FromRole="AspNetUsers" ToRole="WorkflowHistory" />
-          <NavigationProperty Name="Workflows" Relationship="Self.FK__Workflows__Owner__40058253" FromRole="AspNetUsers" ToRole="Workflows" />
-          <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="AspNetUsers" ToRole="UnliqudatedObjectsWorkflowQuestions" />
-          <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
+          <NavigationProperty Name="AspNetUserClaims" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserClaim" />
+          <NavigationProperty Name="AspNetUserLogins" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserLogin" />
+          <NavigationProperty Name="Documents" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Document__Upload__7BE56230" FromRole="AspNetUser" ToRole="Document" />
+          <NavigationProperty Name="Notes" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UserId__536D5C82" FromRole="AspNetUser" ToRole="Note" />
+          <NavigationProperty Name="RequestForReassignments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Sugge__73501C2F" FromRole="AspNetUser" ToRole="RequestForReassignment" />
+          <NavigationProperty Name="ChildUserUsers" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Child__3864608B" FromRole="AspNetUser" ToRole="UserUser" />
+          <NavigationProperty Name="ParentUserUsers" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Paren__37703C52" FromRole="AspNetUser" ToRole="UserUser" />
+          <NavigationProperty Name="WorkflowHistories" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowH__Owner__4865BE2A" FromRole="AspNetUser" ToRole="WorkflowHistory" />
+          <NavigationProperty Name="Workflows" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Owner__40058253" FromRole="AspNetUser" ToRole="Workflow" />
+          <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="AspNetUser" ToRole="UnliqudatedObjectsWorkflowQuestion" />
+          <NavigationProperty Name="AspNetRoles" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -1129,32 +1329,41 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="FilePath" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Name="DocumentId" Type="Int32" />
           <Property Name="FileSize" Type="Int64" Nullable="false" />
-          <Property Name="ContentType" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Document" Relationship="Self.FK_Attachments_ToDocument" FromRole="Attachments" ToRole="Documents" />
+          <Property Name="ContentType" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Document" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Attachments_ToDocument" FromRole="Attachment" ToRole="Document" />
+        </EntityType>
+        <EntityType Name="DocumentDocumentType">
+          <Key>
+            <PropertyRef Name="DocumentDocumentTypeId" />
+          </Key>
+          <Property Name="DocumentDocumentTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DocumentId" Type="Int32" Nullable="false" />
+          <Property Name="DocumentTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Document" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__DocumentD__Docum__62AFA012" FromRole="DocumentDocumentType" ToRole="Document" />
+          <NavigationProperty Name="DocumentType" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__DocumentD__Docum__63A3C44B" FromRole="DocumentDocumentType" ToRole="DocumentType" />
         </EntityType>
         <EntityType Name="Document">
           <Key>
             <PropertyRef Name="DocumentId" />
           </Key>
           <Property Name="DocumentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="DocumentTypeId" Type="Int32" Nullable="false" />
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
-          <Property Name="UploadedByUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="DocumentName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="UploadDate" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Document__Upload__7BE56230" FromRole="Documents" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Attachments" Relationship="Self.FK_Attachments_ToDocument" FromRole="Documents" ToRole="Attachments" />
-          <NavigationProperty Name="DocumentType" Relationship="Self.FK_Document_ToDocumentType" FromRole="Documents" ToRole="DocumentTypes" />
-          <NavigationProperty Name="Workflow" Relationship="Self.FK_Document_ToWorkflow" FromRole="Documents" ToRole="Workflows" />
+          <Property Name="UploadedByUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DocumentName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Document__Upload__7BE56230" FromRole="Document" ToRole="AspNetUser" />
+          <NavigationProperty Name="Attachments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Attachments_ToDocument" FromRole="Document" ToRole="Attachment" />
+          <NavigationProperty Name="DocumentDocumentTypes" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__DocumentD__Docum__62AFA012" FromRole="Document" ToRole="DocumentDocumentType" />
+          <NavigationProperty Name="Workflow" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Document_ToWorkflow" FromRole="Document" ToRole="Workflow" />
         </EntityType>
         <EntityType Name="DocumentType">
           <Key>
             <PropertyRef Name="DocumentTypeId" />
           </Key>
           <Property Name="DocumentTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToDocumentType" FromRole="DocumentTypes" ToRole="Documents" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="DocType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DocumentDocumentTypes" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__DocumentD__Docum__63A3C44B" FromRole="DocumentType" ToRole="DocumentDocumentType" />
         </EntityType>
         <EntityType Name="EmailTemplate">
           <Key>
@@ -1171,13 +1380,13 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="NoteId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ParentNoteId" Type="Int32" />
           <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="UloId" Type="Int32" Nullable="false" />
           <Property Name="Body" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Notes__UserId__536D5C82" FromRole="Notes" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Notes1" Relationship="Self.FK__Notes__ParentNot__52793849" FromRole="Notes" ToRole="Notes1" />
-          <NavigationProperty Name="Note1" Relationship="Self.FK__Notes__ParentNot__52793849" FromRole="Notes1" ToRole="Notes" />
-          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__Notes__UloId__5555A4F4" FromRole="Notes" ToRole="UnliquidatedObligations" />
+          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UserId__536D5C82" FromRole="Note" ToRole="AspNetUser" />
+          <NavigationProperty Name="Notes1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__ParentNot__52793849" FromRole="Note" ToRole="Note1" />
+          <NavigationProperty Name="Note1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__ParentNot__52793849" FromRole="Note1" ToRole="Note" />
+          <NavigationProperty Name="UnliquidatedObligation" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4" FromRole="Note" ToRole="UnliquidatedObligation" />
         </EntityType>
         <EntityType Name="ReportDefinition">
           <Key>
@@ -1196,9 +1405,9 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="UnliqudatedWorkflowQuestionsId" Type="Int32" />
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__RequestFo__Sugge__73501C2F" FromRole="RequestForReassignment" ToRole="AspNetUsers" />
-          <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestion" Relationship="Self.FK__RequestFo__Unliq__74444068" FromRole="RequestForReassignment" ToRole="UnliqudatedObjectsWorkflowQuestions" />
-          <NavigationProperty Name="Workflow" Relationship="Self.FK__RequestForReassignment_WorkflowId" FromRole="RequestForReassignment" ToRole="Workflows" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Sugge__73501C2F" FromRole="RequestForReassignment" ToRole="AspNetUser" />
+          <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestion" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Unliq__74444068" FromRole="RequestForReassignment" ToRole="UnliqudatedObjectsWorkflowQuestion" />
+          <NavigationProperty Name="Workflow" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestForReassignment_WorkflowId" FromRole="RequestForReassignment" ToRole="Workflow" />
         </EntityType>
         <EntityType Name="Review">
           <Key>
@@ -1206,7 +1415,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="RegionId" Type="Int32" />
           <Property Name="ReviewName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Status" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="ReviewId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
@@ -1215,20 +1424,10 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="WorkflowDefinitionId" Type="Int32" Nullable="false" />
           <Property Name="ProjectDueDate" Type="DateTime" Precision="3" />
           <Property Name="ReviewDateInitiated" Type="DateTime" Precision="0" />
-          <NavigationProperty Name="Region" Relationship="Self.FK__Review__RegionId__0EF836A4" FromRole="Reviews" ToRole="Regions" />
-          <NavigationProperty Name="Region1" Relationship="Self.FK__Reviews__RegionI__1699586C" FromRole="Reviews" ToRole="Regions" />
-          <NavigationProperty Name="WorkflowDefinition" Relationship="Self.FK__Reviews__Workflo__45544755" FromRole="Reviews" ToRole="WorkflowDefinitions" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Revie__4183B671" FromRole="Reviews" ToRole="UnliquidatedObligations" />
-        </EntityType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Region" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Review__RegionId__0EF836A4" FromRole="Review" ToRole="Region" />
+          <NavigationProperty Name="Region1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__RegionI__1699586C" FromRole="Review" ToRole="Region" />
+          <NavigationProperty Name="WorkflowDefinition" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Workflo__45544755" FromRole="Review" ToRole="WorkflowDefinition" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" FromRole="Review" ToRole="UnliquidatedObligation" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestion">
           <Key>
@@ -1236,16 +1435,16 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="UnliqudatedWorkflowQuestionsId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Answer" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Pending" Type="Boolean" Nullable="false" />
-          <Property Name="WorkflowRowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" />
+          <Property Name="WorkflowRowVersion" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" />
           <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="JustificationKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="AspNetUsers" />
-          <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestFo__Unliq__74444068" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="RequestForReassignment" />
-          <NavigationProperty Name="Workflow" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="UnliqudatedObjectsWorkflowQuestions" ToRole="Workflows" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="UnliqudatedObjectsWorkflowQuestion" ToRole="AspNetUser" />
+          <NavigationProperty Name="RequestForReassignments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Unliq__74444068" FromRole="UnliqudatedObjectsWorkflowQuestion" ToRole="RequestForReassignment" />
+          <NavigationProperty Name="Workflow" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="UnliqudatedObjectsWorkflowQuestion" ToRole="Workflow" />
         </EntityType>
         <EntityType Name="UnliquidatedObligation">
           <Key>
@@ -1308,34 +1507,34 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="EASi_GSA_FSS_Other__" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="EASi_Awd_Expiration_Dt" Type="DateTime" Precision="3" />
           <Property Name="ExpectedDateForCompletion" Type="DateTime" Precision="0" />
-          <NavigationProperty Name="Notes" Relationship="Self.FK__Notes__UloId__5555A4F4" FromRole="UnliquidatedObligations" ToRole="Notes" />
-          <NavigationProperty Name="Review" Relationship="Self.FK__Unliquida__Revie__4183B671" FromRole="UnliquidatedObligations" ToRole="Reviews" />
-          <NavigationProperty Name="Region" Relationship="Self.FK__Unliquida__Regio__408F9238" FromRole="UnliquidatedObligations" ToRole="Regions" />
-          <NavigationProperty Name="Workflows" Relationship="Self.FK__Workflows__Targe__4277DAAA" FromRole="UnliquidatedObligations" ToRole="Workflows" />
+          <NavigationProperty Name="Notes" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4" FromRole="UnliquidatedObligation" ToRole="Note" />
+          <NavigationProperty Name="Review" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" FromRole="UnliquidatedObligation" ToRole="Review" />
+          <NavigationProperty Name="Region" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" FromRole="UnliquidatedObligation" ToRole="Region" />
+          <NavigationProperty Name="Workflows" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" FromRole="UnliquidatedObligation" ToRole="Workflow" />
         </EntityType>
         <EntityType Name="UserUser">
           <Key>
             <PropertyRef Name="UserUserId" />
           </Key>
           <Property Name="UserUserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ParentUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ChildUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ParentUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ChildUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="RegionId" Type="Int32" />
-          <NavigationProperty Name="ChildUser" Relationship="Self.FK__UserUsers__Child__3864608B" FromRole="UserUsers" ToRole="AspNetUsers" />
-          <NavigationProperty Name="ParentUser" Relationship="Self.FK__UserUsers__Paren__37703C52" FromRole="UserUsers" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Region" Relationship="Self.FK__UserUsers__Regio__395884C4" FromRole="UserUsers" ToRole="Regions" />
+          <NavigationProperty Name="ChildUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Child__3864608B" FromRole="UserUser" ToRole="AspNetUser" />
+          <NavigationProperty Name="ParentUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Paren__37703C52" FromRole="UserUser" ToRole="AspNetUser" />
+          <NavigationProperty Name="Region" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Regio__395884C4" FromRole="UserUser" ToRole="Region" />
         </EntityType>
         <EntityType Name="WorkflowDefinition">
           <Key>
             <PropertyRef Name="WorkflowDefinitionId" />
           </Key>
           <Property Name="WorkflowDefinitionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="WorkflowKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="WorkflowKey" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
           <Property Name="DescriptionXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="WorkflowDefinitionName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Reviews" Relationship="Self.FK__Reviews__Workflo__45544755" FromRole="WorkflowDefinitions" ToRole="Reviews" />
+          <NavigationProperty Name="Reviews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Workflo__45544755" FromRole="WorkflowDefinition" ToRole="Review" />
         </EntityType>
         <EntityType Name="WorkflowHistory">
           <Key>
@@ -1343,39 +1542,39 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="WorkflowHistoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
-          <Property Name="WorkflowKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="WorkflowKey" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
-          <Property Name="CurrentWorkflowActivityKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="OwnerUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CurrentWorkflowActivityKey" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="OwnerUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CurrentActivityEnteredAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="TargetUloId" Type="Int32" Nullable="false" />
-          <Property Name="WorkflowRowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" />
+          <Property Name="WorkflowRowVersion" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" />
           <Property Name="CurrentActivityExitedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__WorkflowH__Owner__4865BE2A" FromRole="WorkflowHistory" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Workflow" Relationship="Self.FK__WorkflowH__Workf__477199F1" FromRole="WorkflowHistory" ToRole="Workflows" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowH__Owner__4865BE2A" FromRole="WorkflowHistory" ToRole="AspNetUser" />
+          <NavigationProperty Name="Workflow" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowH__Workf__477199F1" FromRole="WorkflowHistory" ToRole="Workflow" />
         </EntityType>
         <EntityType Name="Workflow">
           <Key>
             <PropertyRef Name="WorkflowId" />
           </Key>
           <Property Name="WorkflowId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="WorkflowKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="WorkflowKey" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="false" />
           <Property Name="Version" Type="Int32" Nullable="false" />
-          <Property Name="CurrentWorkflowActivityKey" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="OwnerUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CurrentWorkflowActivityKey" Type="String" Nullable="false" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="OwnerUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CurrentActivityEnteredAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="TargetUloId" Type="Int32" Nullable="false" />
           <Property Name="ExpectedDurationInSeconds" Type="Int64" />
           <Property Name="DueAtUtc" Type="DateTime" annotation:StoreGeneratedPattern="Computed" Precision="3" />
-          <Property Name="WorkflowRowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
-          <NavigationProperty Name="AspNetUser" Relationship="Self.FK__Workflows__Owner__40058253" FromRole="Workflows" ToRole="AspNetUsers" />
-          <NavigationProperty Name="Documents" Relationship="Self.FK_Document_ToWorkflow" FromRole="Workflows" ToRole="Documents" />
-          <NavigationProperty Name="RequestForReassignments" Relationship="Self.FK__RequestForReassignment_WorkflowId" FromRole="Workflows" ToRole="RequestForReassignment" />
-          <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="Workflows" ToRole="UnliqudatedObjectsWorkflowQuestions" />
-          <NavigationProperty Name="UnliquidatedObligation" Relationship="Self.FK__Workflows__Targe__4277DAAA" FromRole="Workflows" ToRole="UnliquidatedObligations" />
-          <NavigationProperty Name="WorkflowHistories" Relationship="Self.FK__WorkflowH__Workf__477199F1" FromRole="Workflows" ToRole="WorkflowHistory" />
+          <Property Name="WorkflowRowVersion" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Owner__40058253" FromRole="Workflow" ToRole="AspNetUser" />
+          <NavigationProperty Name="Documents" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Document_ToWorkflow" FromRole="Workflow" ToRole="Document" />
+          <NavigationProperty Name="RequestForReassignments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestForReassignment_WorkflowId" FromRole="Workflow" ToRole="RequestForReassignment" />
+          <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="Workflow" ToRole="UnliqudatedObjectsWorkflowQuestion" />
+          <NavigationProperty Name="UnliquidatedObligation" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" FromRole="Workflow" ToRole="UnliquidatedObligation" />
+          <NavigationProperty Name="WorkflowHistories" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowH__Workf__477199F1" FromRole="Workflow" ToRole="WorkflowHistory" />
         </EntityType>
         <EntityType Name="Region">
           <Key>
@@ -1383,28 +1582,28 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="RegionId" Type="Int32" Nullable="false" />
           <Property Name="ZoneId" Type="Int32" Nullable="false" />
-          <Property Name="RegionNumber" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="RegionName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Reviews" Relationship="Self.FK__Review__RegionId__0EF836A4" FromRole="Regions" ToRole="Reviews" />
-          <NavigationProperty Name="Reviews1" Relationship="Self.FK__Reviews__RegionI__1699586C" FromRole="Regions" ToRole="Reviews" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="Self.FK__Unliquida__Regio__408F9238" FromRole="Regions" ToRole="UnliquidatedObligations" />
-          <NavigationProperty Name="UserUsers" Relationship="Self.FK__UserUsers__Regio__395884C4" FromRole="Regions" ToRole="UserUsers" />
-          <NavigationProperty Name="Zone" Relationship="Self.FK__Regions__ZoneId__30C33EC3" FromRole="Regions" ToRole="Zones" />
+          <Property Name="RegionNumber" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="RegionName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Reviews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Review__RegionId__0EF836A4" FromRole="Region" ToRole="Review" />
+          <NavigationProperty Name="Reviews1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__RegionI__1699586C" FromRole="Region" ToRole="Review" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" FromRole="Region" ToRole="UnliquidatedObligation" />
+          <NavigationProperty Name="UserUsers" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Regio__395884C4" FromRole="Region" ToRole="UserUser" />
+          <NavigationProperty Name="Zone" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Regions__ZoneId__30C33EC3" FromRole="Region" ToRole="Zone" />
         </EntityType>
         <EntityType Name="Zone">
           <Key>
             <PropertyRef Name="ZoneId" />
           </Key>
           <Property Name="ZoneId" Type="Int32" Nullable="false" />
-          <Property Name="ZoneName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Regions" Relationship="Self.FK__Regions__ZoneId__30C33EC3" FromRole="Zones" ToRole="Regions" />
+          <Property Name="ZoneName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Regions" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Regions__ZoneId__30C33EC3" FromRole="Zone" ToRole="Region" />
         </EntityType>
         <EntityType Name="AggregatedCounter">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Key" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Value" Type="Int64" Nullable="false" />
           <Property Name="ExpireAt" Type="DateTime" Precision="3" />
         </EntityType>
@@ -1413,7 +1612,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Key" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Value" Type="Int16" Nullable="false" />
           <Property Name="ExpireAt" Type="DateTime" Precision="3" />
         </EntityType>
@@ -1422,8 +1621,8 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Field" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Key" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Field" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ExpireAt" Type="DateTime" Precision="7" />
         </EntityType>
@@ -1434,12 +1633,12 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="StateId" Type="Int32" />
           <Property Name="StateName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="InvocationData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Arguments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="InvocationData" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Arguments" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ExpireAt" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="JobParameters" Relationship="Self.FK_HangFire_JobParameter_Job" FromRole="Job" ToRole="JobParameter" />
-          <NavigationProperty Name="States" Relationship="Self.FK_HangFire_State_Job" FromRole="Job" ToRole="State" />
+          <NavigationProperty Name="JobParameters" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_HangFire_JobParameter_Job" FromRole="Job" ToRole="JobParameter" />
+          <NavigationProperty Name="States" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_HangFire_State_Job" FromRole="Job" ToRole="State" />
         </EntityType>
         <EntityType Name="JobParameter">
           <Key>
@@ -1447,9 +1646,9 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="JobId" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="40" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
           <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Job" Relationship="Self.FK_HangFire_JobParameter_Job" FromRole="JobParameter" ToRole="Job" />
+          <NavigationProperty Name="Job" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_HangFire_JobParameter_Job" FromRole="JobParameter" ToRole="Job" />
         </EntityType>
         <EntityType Name="JobQueue">
           <Key>
@@ -1457,7 +1656,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="JobId" Type="Int32" Nullable="false" />
-          <Property Name="Queue" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Queue" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="FetchedAt" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="List">
@@ -1465,7 +1664,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Key" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ExpireAt" Type="DateTime" Precision="3" />
         </EntityType>
@@ -1479,7 +1678,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LastHeartbeat" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
@@ -1488,9 +1687,9 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Key" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Key" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Score" Type="Double" Nullable="false" />
-          <Property Name="Value" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Value" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="ExpireAt" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="State">
@@ -1499,11 +1698,11 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="JobId" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="Reason" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Job" Relationship="Self.FK_HangFire_State_Job" FromRole="State" ToRole="Job" />
+          <NavigationProperty Name="Job" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_HangFire_State_Job" FromRole="State" ToRole="Job" />
         </EntityType>
         <EntityType Name="AspnetUserApplicationPermissionClaim">
           <Key>
@@ -1511,7 +1710,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <PropertyRef Name="ClaimId" />
           </Key>
           <Property Name="Id" Type="Guid" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Region" Type="Int32" />
           <Property Name="PermissionName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ClaimId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
@@ -1522,7 +1721,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <PropertyRef Name="ClaimId" />
           </Key>
           <Property Name="Id" Type="Guid" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Region" Type="Int32" />
           <Property Name="BACode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="DocumentType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1546,62 +1745,62 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="TheCloserCnt" Type="Int32" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaim" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserClaim" Role="AspNetUserClaim" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="AspNetUserClaims">
+            <Dependent Role="AspNetUserClaim">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogin" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserLogin" Role="AspNetUserLogin" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="AspNetUserLogins">
+            <Dependent Role="AspNetUserLogin">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Document__Upload__7BE56230">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
-          <End Role="Documents" Type="Self.Document" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Document" Role="Document" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Documents">
+            <Dependent Role="Document">
               <PropertyRef Name="UploadedByUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Notes__UserId__536D5C82">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="0..1" />
-          <End Role="Notes" Type="Self.Note" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Note" Role="Note" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Notes">
+            <Dependent Role="Note">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__RequestFo__Sugge__73501C2F">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="0..1" />
-          <End Role="RequestForReassignment" Type="Self.RequestForReassignment" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment" Role="RequestForReassignment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="RequestForReassignment">
@@ -1610,34 +1809,34 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__UserUsers__Child__3864608B">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
-          <End Role="UserUsers" Type="Self.UserUser" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UserUser" Role="UserUser" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="UserUsers">
+            <Dependent Role="UserUser">
               <PropertyRef Name="ChildUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__UserUsers__Paren__37703C52">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
-          <End Role="UserUsers" Type="Self.UserUser" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UserUser" Role="UserUser" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="UserUsers">
+            <Dependent Role="UserUser">
               <PropertyRef Name="ParentUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__WorkflowH__Owner__4865BE2A">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
-          <End Role="WorkflowHistory" Type="Self.WorkflowHistory" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowHistory" Role="WorkflowHistory" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="WorkflowHistory">
@@ -1646,94 +1845,106 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Workflows__Owner__40058253">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
-          <End Role="Workflows" Type="Self.Workflow" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Workflows">
+            <Dependent Role="Workflow">
               <PropertyRef Name="OwnerUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1" />
-          <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestion" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion" Role="UnliqudatedObjectsWorkflowQuestion" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="AspNetUsers">
+            <Principal Role="AspNetUser">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="UnliqudatedObjectsWorkflowQuestions">
+            <Dependent Role="UnliqudatedObjectsWorkflowQuestion">
               <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Attachments_ToDocument">
-          <End Role="Documents" Type="Self.Document" Multiplicity="0..1" />
-          <End Role="Attachments" Type="Self.Attachment" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Document" Role="Document" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Attachment" Role="Attachment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Documents">
+            <Principal Role="Document">
               <PropertyRef Name="DocumentId" />
             </Principal>
-            <Dependent Role="Attachments">
+            <Dependent Role="Attachment">
               <PropertyRef Name="DocumentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Document_ToDocumentType">
-          <End Role="DocumentTypes" Type="Self.DocumentType" Multiplicity="1" />
-          <End Role="Documents" Type="Self.Document" Multiplicity="*" />
+        <Association Name="FK__DocumentD__Docum__62AFA012">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Document" Role="Document" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.DocumentDocumentType" Role="DocumentDocumentType" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="DocumentTypes">
+            <Principal Role="Document">
+              <PropertyRef Name="DocumentId" />
+            </Principal>
+            <Dependent Role="DocumentDocumentType">
+              <PropertyRef Name="DocumentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DocumentD__Docum__63A3C44B">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.DocumentType" Role="DocumentType" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.DocumentDocumentType" Role="DocumentDocumentType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DocumentType">
               <PropertyRef Name="DocumentTypeId" />
             </Principal>
-            <Dependent Role="Documents">
+            <Dependent Role="DocumentDocumentType">
               <PropertyRef Name="DocumentTypeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Document_ToWorkflow">
-          <End Role="Workflows" Type="Self.Workflow" Multiplicity="1" />
-          <End Role="Documents" Type="Self.Document" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Document" Role="Document" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Workflows">
+            <Principal Role="Workflow">
               <PropertyRef Name="WorkflowId" />
             </Principal>
-            <Dependent Role="Documents">
+            <Dependent Role="Document">
               <PropertyRef Name="WorkflowId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Notes__ParentNot__52793849">
-          <End Role="Notes" Type="Self.Note" Multiplicity="0..1" />
-          <End Role="Notes1" Type="Self.Note" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Note" Role="Note" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Note" Role="Note1" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Notes">
+            <Principal Role="Note">
               <PropertyRef Name="NoteId" />
             </Principal>
-            <Dependent Role="Notes1">
+            <Dependent Role="Note1">
               <PropertyRef Name="ParentNoteId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Notes__UloId__5555A4F4">
-          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="1" />
-          <End Role="Notes" Type="Self.Note" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Note" Role="Note" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="UnliquidatedObligations">
+            <Principal Role="UnliquidatedObligation">
               <PropertyRef Name="UloId" />
             </Principal>
-            <Dependent Role="Notes">
+            <Dependent Role="Note">
               <PropertyRef Name="UloId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__RequestFo__Unliq__74444068">
-          <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestion" Multiplicity="0..1" />
-          <End Role="RequestForReassignment" Type="Self.RequestForReassignment" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion" Role="UnliqudatedObjectsWorkflowQuestion" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment" Role="RequestForReassignment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="UnliqudatedObjectsWorkflowQuestions">
+            <Principal Role="UnliqudatedObjectsWorkflowQuestion">
               <PropertyRef Name="UnliqudatedWorkflowQuestionsId" />
             </Principal>
             <Dependent Role="RequestForReassignment">
@@ -1742,10 +1953,10 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__RequestForReassignment_WorkflowId">
-          <End Role="Workflows" Type="Self.Workflow" Multiplicity="1" />
-          <End Role="RequestForReassignment" Type="Self.RequestForReassignment" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment" Role="RequestForReassignment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Workflows">
+            <Principal Role="Workflow">
               <PropertyRef Name="WorkflowId" />
             </Principal>
             <Dependent Role="RequestForReassignment">
@@ -1754,106 +1965,106 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Review__RegionId__0EF836A4">
-          <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
-          <End Role="Reviews" Type="Self.Review" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Region" Role="Region" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" Role="Review" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Regions">
+            <Principal Role="Region">
               <PropertyRef Name="RegionId" />
             </Principal>
-            <Dependent Role="Reviews">
+            <Dependent Role="Review">
               <PropertyRef Name="RegionId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Reviews__RegionI__1699586C">
-          <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
-          <End Role="Reviews" Type="Self.Review" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Region" Role="Region" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" Role="Review" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Regions">
+            <Principal Role="Region">
               <PropertyRef Name="RegionId" />
             </Principal>
-            <Dependent Role="Reviews">
+            <Dependent Role="Review">
               <PropertyRef Name="RegionId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Reviews__Workflo__45544755">
-          <End Role="WorkflowDefinitions" Type="Self.WorkflowDefinition" Multiplicity="1" />
-          <End Role="Reviews" Type="Self.Review" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowDefinition" Role="WorkflowDefinition" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" Role="Review" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="WorkflowDefinitions">
+            <Principal Role="WorkflowDefinition">
               <PropertyRef Name="WorkflowDefinitionId" />
             </Principal>
-            <Dependent Role="Reviews">
+            <Dependent Role="Review">
               <PropertyRef Name="WorkflowDefinitionId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Unliquida__Revie__4183B671">
-          <End Role="Reviews" Type="Self.Review" Multiplicity="1" />
-          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" Role="Review" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Reviews">
+            <Principal Role="Review">
               <PropertyRef Name="ReviewId" />
             </Principal>
-            <Dependent Role="UnliquidatedObligations">
+            <Dependent Role="UnliquidatedObligation">
               <PropertyRef Name="ReviewId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows">
-          <End Role="Workflows" Type="Self.Workflow" Multiplicity="1" />
-          <End Role="UnliqudatedObjectsWorkflowQuestions" Type="Self.UnliqudatedObjectsWorkflowQuestion" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion" Role="UnliqudatedObjectsWorkflowQuestion" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Workflows">
+            <Principal Role="Workflow">
               <PropertyRef Name="WorkflowId" />
             </Principal>
-            <Dependent Role="UnliqudatedObjectsWorkflowQuestions">
+            <Dependent Role="UnliqudatedObjectsWorkflowQuestion">
               <PropertyRef Name="WorkflowId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Unliquida__Regio__408F9238">
-          <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
-          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Region" Role="Region" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Regions">
+            <Principal Role="Region">
               <PropertyRef Name="RegionId" />
             </Principal>
-            <Dependent Role="UnliquidatedObligations">
+            <Dependent Role="UnliquidatedObligation">
               <PropertyRef Name="RegionId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Workflows__Targe__4277DAAA">
-          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligation" Multiplicity="1" />
-          <End Role="Workflows" Type="Self.Workflow" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="UnliquidatedObligations">
+            <Principal Role="UnliquidatedObligation">
               <PropertyRef Name="UloId" />
             </Principal>
-            <Dependent Role="Workflows">
+            <Dependent Role="Workflow">
               <PropertyRef Name="TargetUloId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__UserUsers__Regio__395884C4">
-          <End Role="Regions" Type="Self.Region" Multiplicity="0..1" />
-          <End Role="UserUsers" Type="Self.UserUser" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Region" Role="Region" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UserUser" Role="UserUser" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Regions">
+            <Principal Role="Region">
               <PropertyRef Name="RegionId" />
             </Principal>
-            <Dependent Role="UserUsers">
+            <Dependent Role="UserUser">
               <PropertyRef Name="RegionId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__WorkflowH__Workf__477199F1">
-          <End Role="Workflows" Type="Self.Workflow" Multiplicity="1" />
-          <End Role="WorkflowHistory" Type="Self.WorkflowHistory" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowHistory" Role="WorkflowHistory" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Workflows">
+            <Principal Role="Workflow">
               <PropertyRef Name="WorkflowId" />
             </Principal>
             <Dependent Role="WorkflowHistory">
@@ -1862,22 +2073,22 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Regions__ZoneId__30C33EC3">
-          <End Role="Zones" Type="Self.Zone" Multiplicity="1" />
-          <End Role="Regions" Type="Self.Region" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Zone" Role="Zone" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Region" Role="Region" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Zones">
+            <Principal Role="Zone">
               <PropertyRef Name="ZoneId" />
             </Principal>
-            <Dependent Role="Regions">
+            <Dependent Role="Region">
               <PropertyRef Name="ZoneId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_HangFire_JobParameter_Job">
-          <End Role="Job" Type="Self.Job" Multiplicity="1">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Job" Role="Job" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="JobParameter" Type="Self.JobParameter" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.JobParameter" Role="JobParameter" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Job">
               <PropertyRef Name="Id" />
@@ -1888,10 +2099,10 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_HangFire_State_Job">
-          <End Role="Job" Type="Self.Job" Multiplicity="1">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Job" Role="Job" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="State" Type="Self.State" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.State" Role="State" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Job">
               <PropertyRef Name="Id" />
@@ -1902,270 +2113,111 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           </ReferentialConstraint>
         </Association>
         <Association Name="AspNetUserRoles">
-          <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
-          <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetRole" Role="AspNetRole" Multiplicity="*" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="ULODBEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
-          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRole" />
-          <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaim" />
-          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogin" />
-          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
-          <EntitySet Name="Attachments" EntityType="Self.Attachment" />
-          <EntitySet Name="Documents" EntityType="Self.Document" />
-          <EntitySet Name="DocumentTypes" EntityType="Self.DocumentType" />
-          <EntitySet Name="EmailTemplates" EntityType="Self.EmailTemplate" />
-          <EntitySet Name="Notes" EntityType="Self.Note" />
-          <EntitySet Name="ReportDefinitions" EntityType="Self.ReportDefinition" />
-          <EntitySet Name="RequestForReassignments" EntityType="Self.RequestForReassignment" />
-          <EntitySet Name="Reviews" EntityType="Self.Review" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
-          <EntitySet Name="UnliqudatedObjectsWorkflowQuestions" EntityType="Self.UnliqudatedObjectsWorkflowQuestion" />
-          <EntitySet Name="UnliquidatedObligations" EntityType="Self.UnliquidatedObligation" />
-          <EntitySet Name="UserUsers" EntityType="Self.UserUser" />
-          <EntitySet Name="WorkflowDefinitions" EntityType="Self.WorkflowDefinition" />
-          <EntitySet Name="WorkflowHistories" EntityType="Self.WorkflowHistory" />
-          <EntitySet Name="Workflows" EntityType="Self.Workflow" />
-          <EntitySet Name="Regions" EntityType="Self.Region" />
-          <EntitySet Name="Zones" EntityType="Self.Zone" />
-          <EntitySet Name="AggregatedCounters" EntityType="Self.AggregatedCounter" />
-          <EntitySet Name="Counters" EntityType="Self.Counter" />
-          <EntitySet Name="Hashes" EntityType="Self.Hash" />
-          <EntitySet Name="Jobs" EntityType="Self.Job" />
-          <EntitySet Name="JobParameters" EntityType="Self.JobParameter" />
-          <EntitySet Name="JobQueues" EntityType="Self.JobQueue" />
-          <EntitySet Name="Lists" EntityType="Self.List" />
-          <EntitySet Name="Schemata" EntityType="Self.Schema" />
-          <EntitySet Name="Servers" EntityType="Self.Server" />
-          <EntitySet Name="Sets" EntityType="Self.Set" />
-          <EntitySet Name="States" EntityType="Self.State" />
-          <EntitySet Name="AspnetUserApplicationPermissionClaims" EntityType="Self.AspnetUserApplicationPermissionClaim" />
-          <EntitySet Name="AspnetUserSubjectCategoryClaims" EntityType="Self.AspnetUserSubjectCategoryClaim" />
-          <EntitySet Name="ReviewStats" EntityType="Self.ReviewStat" />
-          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
-          </AssociationSet>
-          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Document__Upload__7BE56230" Association="Self.FK__Document__Upload__7BE56230">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="Documents" EntitySet="Documents" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Notes__UserId__536D5C82" Association="Self.FK__Notes__UserId__536D5C82">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="Notes" EntitySet="Notes" />
-          </AssociationSet>
-          <AssociationSet Name="FK__RequestFo__Sugge__73501C2F" Association="Self.FK__RequestFo__Sugge__73501C2F">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
-          </AssociationSet>
-          <AssociationSet Name="FK__UserUsers__Child__3864608B" Association="Self.FK__UserUsers__Child__3864608B">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="UserUsers" EntitySet="UserUsers" />
-          </AssociationSet>
-          <AssociationSet Name="FK__UserUsers__Paren__37703C52" Association="Self.FK__UserUsers__Paren__37703C52">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="UserUsers" EntitySet="UserUsers" />
-          </AssociationSet>
-          <AssociationSet Name="FK__WorkflowH__Owner__4865BE2A" Association="Self.FK__WorkflowH__Owner__4865BE2A">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Workflows__Owner__40058253" Association="Self.FK__Workflows__Owner__40058253">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="Workflows" EntitySet="Workflows" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" Association="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers">
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-            <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Attachments_ToDocument" Association="Self.FK_Attachments_ToDocument">
-            <End Role="Documents" EntitySet="Documents" />
-            <End Role="Attachments" EntitySet="Attachments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Document_ToDocumentType" Association="Self.FK_Document_ToDocumentType">
-            <End Role="DocumentTypes" EntitySet="DocumentTypes" />
-            <End Role="Documents" EntitySet="Documents" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Document_ToWorkflow" Association="Self.FK_Document_ToWorkflow">
-            <End Role="Workflows" EntitySet="Workflows" />
-            <End Role="Documents" EntitySet="Documents" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Notes__ParentNot__52793849" Association="Self.FK__Notes__ParentNot__52793849">
-            <End Role="Notes" EntitySet="Notes" />
-            <End Role="Notes1" EntitySet="Notes" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Notes__UloId__5555A4F4" Association="Self.FK__Notes__UloId__5555A4F4">
-            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
-            <End Role="Notes" EntitySet="Notes" />
-          </AssociationSet>
-          <AssociationSet Name="FK__RequestFo__Unliq__74444068" Association="Self.FK__RequestFo__Unliq__74444068">
-            <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
-            <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
-          </AssociationSet>
-          <AssociationSet Name="FK__RequestForReassignment_WorkflowId" Association="Self.FK__RequestForReassignment_WorkflowId">
-            <End Role="Workflows" EntitySet="Workflows" />
-            <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Review__RegionId__0EF836A4" Association="Self.FK__Review__RegionId__0EF836A4">
-            <End Role="Regions" EntitySet="Regions" />
-            <End Role="Reviews" EntitySet="Reviews" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Reviews__RegionI__1699586C" Association="Self.FK__Reviews__RegionI__1699586C">
-            <End Role="Regions" EntitySet="Regions" />
-            <End Role="Reviews" EntitySet="Reviews" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Reviews__Workflo__45544755" Association="Self.FK__Reviews__Workflo__45544755">
-            <End Role="WorkflowDefinitions" EntitySet="WorkflowDefinitions" />
-            <End Role="Reviews" EntitySet="Reviews" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__4183B671" Association="Self.FK__Unliquida__Revie__4183B671">
-            <End Role="Reviews" EntitySet="Reviews" />
-            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" Association="Self.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows">
-            <End Role="Workflows" EntitySet="Workflows" />
-            <End Role="UnliqudatedObjectsWorkflowQuestions" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Regio__408F9238" Association="Self.FK__Unliquida__Regio__408F9238">
-            <End Role="Regions" EntitySet="Regions" />
-            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Workflows__Targe__4277DAAA" Association="Self.FK__Workflows__Targe__4277DAAA">
-            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
-            <End Role="Workflows" EntitySet="Workflows" />
-          </AssociationSet>
-          <AssociationSet Name="FK__UserUsers__Regio__395884C4" Association="Self.FK__UserUsers__Regio__395884C4">
-            <End Role="Regions" EntitySet="Regions" />
-            <End Role="UserUsers" EntitySet="UserUsers" />
-          </AssociationSet>
-          <AssociationSet Name="FK__WorkflowH__Workf__477199F1" Association="Self.FK__WorkflowH__Workf__477199F1">
-            <End Role="Workflows" EntitySet="Workflows" />
-            <End Role="WorkflowHistory" EntitySet="WorkflowHistories" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Regions__ZoneId__30C33EC3" Association="Self.FK__Regions__ZoneId__30C33EC3">
-            <End Role="Zones" EntitySet="Zones" />
-            <End Role="Regions" EntitySet="Regions" />
-          </AssociationSet>
-          <AssociationSet Name="FK_HangFire_JobParameter_Job" Association="Self.FK_HangFire_JobParameter_Job">
-            <End Role="Job" EntitySet="Jobs" />
-            <End Role="JobParameter" EntitySet="JobParameters" />
-          </AssociationSet>
-          <AssociationSet Name="FK_HangFire_State_Job" Association="Self.FK_HangFire_State_Job">
-            <End Role="Job" EntitySet="Jobs" />
-            <End Role="State" EntitySet="States" />
-          </AssociationSet>
-          <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
-            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
-            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
-          </AssociationSet>
-          <FunctionImport Name="CreateULOAndAssignWf">
-            <Parameter Name="reviewId" Mode="In" Type="Int32" />
-            <Parameter Name="workflowDefinitionId" Mode="In" Type="Int32" />
-            <Parameter Name="reviewDate" Mode="In" Type="DateTime" />
-          </FunctionImport>
-          <FunctionImport Name="GetMyGroups" ReturnType="Collection(GSA.UnliquidatedObligations.BusinessLayer.Data.GetMyGroups_Result)">
-          <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
-          </FunctionImport>
-          <FunctionImport Name="GetNextLevelOwnerId">
-            <Parameter Name="proposedOwnerId" Mode="In" Type="String" />
-            <Parameter Name="workflowId" Mode="In" Type="Int32" />
-            <Parameter Name="nextActivityKey" Mode="In" Type="String" />
-            <Parameter Name="ownerProhibitedPreviousActivityNamesCsv" Mode="In" Type="String" />
-            <Parameter Name="nextOwnerId" Mode="InOut" Type="String" />
-          </FunctionImport>
-        </EntityContainer>
-        <ComplexType Name="GetMyGroups_Result">
-          <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
-          <Property Type="String" Name="UserName" Nullable="true" MaxLength="256" />
-        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="GSAUnliquidatedObligationsBusinessLayerDataStoreContainer" CdmEntityContainer="ULODBEntities">
+          <FunctionImportMapping FunctionImportName="CreateULOAndAssignWf" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.CreateULOAndAssignWf" />
+          <FunctionImportMapping FunctionImportName="GetMyGroups" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetMyGroups">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.GetMyGroups_Result">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetNextLevelOwnerId" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetNextLevelOwnerId" />
           <EntitySetMapping Name="C__MigrationHistory">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.C__MigrationHistory">
               <MappingFragment StoreEntitySet="__MigrationHistory">
-                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
-                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
-                <ScalarProperty Name="Model" ColumnName="Model" />
                 <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
+                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetRoles">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetRole">
               <MappingFragment StoreEntitySet="AspNetRoles">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserClaims">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserClaim">
               <MappingFragment StoreEntitySet="AspNetUserClaims">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
                 <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
+                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserLogins">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserLogin">
               <MappingFragment StoreEntitySet="AspNetUserLogins">
-                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
-                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
+                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspNetUsers">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser">
               <MappingFragment StoreEntitySet="AspNetUsers">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
-                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
-                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
-                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
-                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
-                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
-                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
-                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="UserType" ColumnName="UserType" />
                 <ScalarProperty Name="AutoAssignUser" ColumnName="AutoAssignUser" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Attachments">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Attachment">
               <MappingFragment StoreEntitySet="Attachments">
-                <ScalarProperty Name="AttachmentsId" ColumnName="AttachmentsId" />
-                <ScalarProperty Name="FileName" ColumnName="FileName" />
-                <ScalarProperty Name="FilePath" ColumnName="FilePath" />
-                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
-                <ScalarProperty Name="FileSize" ColumnName="FileSize" />
                 <ScalarProperty Name="ContentType" ColumnName="ContentType" />
+                <ScalarProperty Name="FileSize" ColumnName="FileSize" />
+                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+                <ScalarProperty Name="FilePath" ColumnName="FilePath" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="AttachmentsId" ColumnName="AttachmentsId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DocumentDocumentTypes">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.DocumentDocumentType">
+              <MappingFragment StoreEntitySet="DocumentDocumentTypes">
+                <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
+                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+                <ScalarProperty Name="DocumentDocumentTypeId" ColumnName="DocumentDocumentTypeId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Documents">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Document">
               <MappingFragment StoreEntitySet="Documents">
-                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
-                <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
-                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
-                <ScalarProperty Name="UploadedByUserId" ColumnName="UploadedByUserId" />
                 <ScalarProperty Name="DocumentName" ColumnName="DocumentName" />
-                <ScalarProperty Name="UploadDate" ColumnName="UploadDate" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="UploadedByUserId" ColumnName="UploadedByUserId" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2173,303 +2225,292 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.DocumentType">
               <MappingFragment StoreEntitySet="DocumentTypes">
                 <ScalarProperty Name="DocType" ColumnName="DocType" />
-                <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DocumentTypeId" ColumnName="DocumentTypeId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="EmailTemplates">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.EmailTemplate">
               <MappingFragment StoreEntitySet="EmailTemplates">
-                <ScalarProperty Name="EmailTemplateId" ColumnName="EmailTemplateId" />
-                <ScalarProperty Name="EmailBody" ColumnName="EmailBody" />
                 <ScalarProperty Name="EmailSubject" ColumnName="EmailSubject" />
+                <ScalarProperty Name="EmailBody" ColumnName="EmailBody" />
+                <ScalarProperty Name="EmailTemplateId" ColumnName="EmailTemplateId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Notes">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Note">
               <MappingFragment StoreEntitySet="Notes">
-                <ScalarProperty Name="NoteId" ColumnName="NoteId" />
-                <ScalarProperty Name="ParentNoteId" ColumnName="ParentNoteId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
-                <ScalarProperty Name="UloId" ColumnName="UloId" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
                 <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="UloId" ColumnName="UloId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ParentNoteId" ColumnName="ParentNoteId" />
+                <ScalarProperty Name="NoteId" ColumnName="NoteId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ReportDefinitions">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.ReportDefinition">
               <MappingFragment StoreEntitySet="ReportDefinitions">
-                <ScalarProperty Name="ReportDefinitionId" ColumnName="ReportDefinitionId" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="DescriptionJson" ColumnName="DescriptionJson" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ReportDefinitionId" ColumnName="ReportDefinitionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RequestForReassignments">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment">
               <MappingFragment StoreEntitySet="RequestForReassignment">
-                <ScalarProperty Name="RequestForReassignmentID" ColumnName="RequestForReassignmentID" />
-                <ScalarProperty Name="SuggestedReviewerId" ColumnName="SuggestedReviewerId" />
-                <ScalarProperty Name="UnliqudatedWorkflowQuestionsId" ColumnName="UnliqudatedWorkflowQuestionsId" />
-                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="UnliqudatedWorkflowQuestionsId" ColumnName="UnliqudatedWorkflowQuestionsId" />
+                <ScalarProperty Name="SuggestedReviewerId" ColumnName="SuggestedReviewerId" />
+                <ScalarProperty Name="RequestForReassignmentID" ColumnName="RequestForReassignmentID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Reviews">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Review">
               <MappingFragment StoreEntitySet="Reviews">
-                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
-                <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Comments" ColumnName="Comments" />
-                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
-                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
-                <ScalarProperty Name="ReviewTypeId" ColumnName="ReviewTypeId" />
-                <ScalarProperty Name="ReviewScopeId" ColumnName="ReviewScopeId" />
-                <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />
-                <ScalarProperty Name="ProjectDueDate" ColumnName="ProjectDueDate" />
                 <ScalarProperty Name="ReviewDateInitiated" ColumnName="ReviewDateInitiated" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="ProjectDueDate" ColumnName="ProjectDueDate" />
+                <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />
+                <ScalarProperty Name="ReviewScopeId" ColumnName="ReviewScopeId" />
+                <ScalarProperty Name="ReviewTypeId" ColumnName="ReviewTypeId" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
+                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UnliqudatedObjectsWorkflowQuestions">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion">
               <MappingFragment StoreEntitySet="UnliqudatedObjectsWorkflowQuestions">
-                <ScalarProperty Name="UnliqudatedWorkflowQuestionsId" ColumnName="UnliqudatedWorkflowQuestionsId" />
-                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Answer" ColumnName="Answer" />
-                <ScalarProperty Name="Comments" ColumnName="Comments" />
-                <ScalarProperty Name="Pending" ColumnName="Pending" />
-                <ScalarProperty Name="WorkflowRowVersion" ColumnName="WorkflowRowVersion" />
-                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
                 <ScalarProperty Name="JustificationKey" ColumnName="JustificationKey" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="WorkflowRowVersion" ColumnName="WorkflowRowVersion" />
+                <ScalarProperty Name="Pending" ColumnName="Pending" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Answer" ColumnName="Answer" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="UnliqudatedWorkflowQuestionsId" ColumnName="UnliqudatedWorkflowQuestionsId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UnliquidatedObligations">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation">
               <MappingFragment StoreEntitySet="UnliquidatedObligations">
-                <ScalarProperty Name="UloId" ColumnName="UloId" />
-                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
-                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
-                <ScalarProperty Name="Organization" ColumnName="Organization" />
-                <ScalarProperty Name="Fund" ColumnName="Fund" />
-                <ScalarProperty Name="Prog" ColumnName="Prog" />
-                <ScalarProperty Name="DocType" ColumnName="DocType" />
-                <ScalarProperty Name="PegasysDocumentNumber" ColumnName="PegasysDocumentNumber" />
-                <ScalarProperty Name="ItemsLineNumber" ColumnName="ItemsLineNumber" />
-                <ScalarProperty Name="AccountingLineNumber" ColumnName="AccountingLineNumber" />
-                <ScalarProperty Name="PegasysTitleNumber" ColumnName="PegasysTitleNumber" />
-                <ScalarProperty Name="BBFY" ColumnName="BBFY" />
-                <ScalarProperty Name="EBFY" ColumnName="EBFY" />
-                <ScalarProperty Name="Acty" ColumnName="Acty" />
-                <ScalarProperty Name="OC" ColumnName="OC" />
-                <ScalarProperty Name="SOC" ColumnName="SOC" />
-                <ScalarProperty Name="Project" ColumnName="Project" />
-                <ScalarProperty Name="Agreement" ColumnName="Agreement" />
-                <ScalarProperty Name="ContractNum" ColumnName="ContractNum" />
-                <ScalarProperty Name="Bldg" ColumnName="Bldg" />
-                <ScalarProperty Name="SysLoc" ColumnName="SysLoc" />
-                <ScalarProperty Name="VehTag" ColumnName="VehTag" />
-                <ScalarProperty Name="WI" ColumnName="WI" />
-                <ScalarProperty Name="LeaseNumber" ColumnName="LeaseNumber" />
-                <ScalarProperty Name="VendorName" ColumnName="VendorName" />
-                <ScalarProperty Name="ActgPd" ColumnName="ActgPd" />
-                <ScalarProperty Name="TotalLine" ColumnName="TotalLine" />
-                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
-                <ScalarProperty Name="Prepayments" ColumnName="Prepayments" />
-                <ScalarProperty Name="UndelOrders" ColumnName="UndelOrders" />
-                <ScalarProperty Name="Rcpt" ColumnName="Rcpt" />
-                <ScalarProperty Name="Accrual" ColumnName="Accrual" />
-                <ScalarProperty Name="TotalDO" ColumnName="TotalDO" />
-                <ScalarProperty Name="TotalUDOAndDO" ColumnName="TotalUDOAndDO" />
-                <ScalarProperty Name="PendPayments" ColumnName="PendPayments" />
-                <ScalarProperty Name="PymtsInTransit" ColumnName="PymtsInTransit" />
-                <ScalarProperty Name="PymtsConfirmed" ColumnName="PymtsConfirmed" />
-                <ScalarProperty Name="Holdbacks" ColumnName="Holdbacks" />
-                <ScalarProperty Name="TAFS" ColumnName="TAFS" />
-                <ScalarProperty Name="DUNSNum" ColumnName="DUNSNum" />
-                <ScalarProperty Name="DateOfLastActivity" ColumnName="DateOfLastActivity" />
-                <ScalarProperty Name="DaysSinceLastActivity" ColumnName="DaysSinceLastActivity" />
-                <ScalarProperty Name="DateOfFirstActivity" ColumnName="DateOfFirstActivity" />
-                <ScalarProperty Name="DaysSinceFirstActivity" ColumnName="DaysSinceFirstActivity" />
-                <ScalarProperty Name="TradingPartnerType" ColumnName="TradingPartnerType" />
-                <ScalarProperty Name="VendorAgencyCode" ColumnName="VendorAgencyCode" />
-                <ScalarProperty Name="VendorBureauCode" ColumnName="VendorBureauCode" />
-                <ScalarProperty Name="Valid" ColumnName="Valid" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="AwardNbr" ColumnName="AwardNbr" />
-                <ScalarProperty Name="ContractingOfficersName" ColumnName="ContractingOfficersName" />
-                <ScalarProperty Name="ReasonIncludedInReview" ColumnName="ReasonIncludedInReview" />
-                <ScalarProperty Name="RWA_Completion_Date" ColumnName="RWA Completion Date" />
-                <ScalarProperty Name="EASi_Base_Contract_Nbr" ColumnName="EASi Base Contract Nbr" />
-                <ScalarProperty Name="EASi_GSA_FSS_Other__" ColumnName="EASi GSA FSS/Other #" />
-                <ScalarProperty Name="EASi_Awd_Expiration_Dt" ColumnName="EASi Awd Expiration Dt" />
                 <ScalarProperty Name="ExpectedDateForCompletion" ColumnName="ExpectedDateForCompletion" />
+                <ScalarProperty Name="EASi_Awd_Expiration_Dt" ColumnName="EASi Awd Expiration Dt" />
+                <ScalarProperty Name="EASi_GSA_FSS_Other__" ColumnName="EASi GSA FSS/Other #" />
+                <ScalarProperty Name="EASi_Base_Contract_Nbr" ColumnName="EASi Base Contract Nbr" />
+                <ScalarProperty Name="RWA_Completion_Date" ColumnName="RWA Completion Date" />
+                <ScalarProperty Name="ReasonIncludedInReview" ColumnName="ReasonIncludedInReview" />
+                <ScalarProperty Name="ContractingOfficersName" ColumnName="ContractingOfficersName" />
+                <ScalarProperty Name="AwardNbr" ColumnName="AwardNbr" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Valid" ColumnName="Valid" />
+                <ScalarProperty Name="VendorBureauCode" ColumnName="VendorBureauCode" />
+                <ScalarProperty Name="VendorAgencyCode" ColumnName="VendorAgencyCode" />
+                <ScalarProperty Name="TradingPartnerType" ColumnName="TradingPartnerType" />
+                <ScalarProperty Name="DaysSinceFirstActivity" ColumnName="DaysSinceFirstActivity" />
+                <ScalarProperty Name="DateOfFirstActivity" ColumnName="DateOfFirstActivity" />
+                <ScalarProperty Name="DaysSinceLastActivity" ColumnName="DaysSinceLastActivity" />
+                <ScalarProperty Name="DateOfLastActivity" ColumnName="DateOfLastActivity" />
+                <ScalarProperty Name="DUNSNum" ColumnName="DUNSNum" />
+                <ScalarProperty Name="TAFS" ColumnName="TAFS" />
+                <ScalarProperty Name="Holdbacks" ColumnName="Holdbacks" />
+                <ScalarProperty Name="PymtsConfirmed" ColumnName="PymtsConfirmed" />
+                <ScalarProperty Name="PymtsInTransit" ColumnName="PymtsInTransit" />
+                <ScalarProperty Name="PendPayments" ColumnName="PendPayments" />
+                <ScalarProperty Name="TotalUDOAndDO" ColumnName="TotalUDOAndDO" />
+                <ScalarProperty Name="TotalDO" ColumnName="TotalDO" />
+                <ScalarProperty Name="Accrual" ColumnName="Accrual" />
+                <ScalarProperty Name="Rcpt" ColumnName="Rcpt" />
+                <ScalarProperty Name="UndelOrders" ColumnName="UndelOrders" />
+                <ScalarProperty Name="Prepayments" ColumnName="Prepayments" />
+                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
+                <ScalarProperty Name="TotalLine" ColumnName="TotalLine" />
+                <ScalarProperty Name="ActgPd" ColumnName="ActgPd" />
+                <ScalarProperty Name="VendorName" ColumnName="VendorName" />
+                <ScalarProperty Name="LeaseNumber" ColumnName="LeaseNumber" />
+                <ScalarProperty Name="WI" ColumnName="WI" />
+                <ScalarProperty Name="VehTag" ColumnName="VehTag" />
+                <ScalarProperty Name="SysLoc" ColumnName="SysLoc" />
+                <ScalarProperty Name="Bldg" ColumnName="Bldg" />
+                <ScalarProperty Name="ContractNum" ColumnName="ContractNum" />
+                <ScalarProperty Name="Agreement" ColumnName="Agreement" />
+                <ScalarProperty Name="Project" ColumnName="Project" />
+                <ScalarProperty Name="SOC" ColumnName="SOC" />
+                <ScalarProperty Name="OC" ColumnName="OC" />
+                <ScalarProperty Name="Acty" ColumnName="Acty" />
+                <ScalarProperty Name="EBFY" ColumnName="EBFY" />
+                <ScalarProperty Name="BBFY" ColumnName="BBFY" />
+                <ScalarProperty Name="PegasysTitleNumber" ColumnName="PegasysTitleNumber" />
+                <ScalarProperty Name="AccountingLineNumber" ColumnName="AccountingLineNumber" />
+                <ScalarProperty Name="ItemsLineNumber" ColumnName="ItemsLineNumber" />
+                <ScalarProperty Name="PegasysDocumentNumber" ColumnName="PegasysDocumentNumber" />
+                <ScalarProperty Name="DocType" ColumnName="DocType" />
+                <ScalarProperty Name="Prog" ColumnName="Prog" />
+                <ScalarProperty Name="Fund" ColumnName="Fund" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
+                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
+                <ScalarProperty Name="UloId" ColumnName="UloId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserUsers">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UserUser">
               <MappingFragment StoreEntitySet="UserUsers">
-                <ScalarProperty Name="UserUserId" ColumnName="UserUserId" />
-                <ScalarProperty Name="ParentUserId" ColumnName="ParentUserId" />
-                <ScalarProperty Name="ChildUserId" ColumnName="ChildUserId" />
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
+                <ScalarProperty Name="ChildUserId" ColumnName="ChildUserId" />
+                <ScalarProperty Name="ParentUserId" ColumnName="ParentUserId" />
+                <ScalarProperty Name="UserUserId" ColumnName="UserUserId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="WorkflowDefinitions">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowDefinition">
               <MappingFragment StoreEntitySet="WorkflowDefinitions">
-                <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />
-                <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
-                <ScalarProperty Name="Version" ColumnName="Version" />
-                <ScalarProperty Name="DescriptionXml" ColumnName="DescriptionXml" />
-                <ScalarProperty Name="WorkflowDefinitionName" ColumnName="WorkflowDefinitionName" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="WorkflowDefinitionName" ColumnName="WorkflowDefinitionName" />
+                <ScalarProperty Name="DescriptionXml" ColumnName="DescriptionXml" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
+                <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="WorkflowHistories">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowHistory">
               <MappingFragment StoreEntitySet="WorkflowHistory">
-                <ScalarProperty Name="WorkflowHistoryId" ColumnName="WorkflowHistoryId" />
-                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
-                <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
-                <ScalarProperty Name="Version" ColumnName="Version" />
-                <ScalarProperty Name="CurrentWorkflowActivityKey" ColumnName="CurrentWorkflowActivityKey" />
-                <ScalarProperty Name="OwnerUserId" ColumnName="OwnerUserId" />
-                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
-                <ScalarProperty Name="CurrentActivityEnteredAtUtc" ColumnName="CurrentActivityEnteredAtUtc" />
-                <ScalarProperty Name="TargetUloId" ColumnName="TargetUloId" />
-                <ScalarProperty Name="WorkflowRowVersion" ColumnName="WorkflowRowVersion" />
                 <ScalarProperty Name="CurrentActivityExitedAtUtc" ColumnName="CurrentActivityExitedAtUtc" />
+                <ScalarProperty Name="WorkflowRowVersion" ColumnName="WorkflowRowVersion" />
+                <ScalarProperty Name="TargetUloId" ColumnName="TargetUloId" />
+                <ScalarProperty Name="CurrentActivityEnteredAtUtc" ColumnName="CurrentActivityEnteredAtUtc" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="OwnerUserId" ColumnName="OwnerUserId" />
+                <ScalarProperty Name="CurrentWorkflowActivityKey" ColumnName="CurrentWorkflowActivityKey" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="WorkflowHistoryId" ColumnName="WorkflowHistoryId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Workflows">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow">
               <MappingFragment StoreEntitySet="Workflows">
-                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
-                <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
-                <ScalarProperty Name="Version" ColumnName="Version" />
-                <ScalarProperty Name="CurrentWorkflowActivityKey" ColumnName="CurrentWorkflowActivityKey" />
-                <ScalarProperty Name="OwnerUserId" ColumnName="OwnerUserId" />
-                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
-                <ScalarProperty Name="CurrentActivityEnteredAtUtc" ColumnName="CurrentActivityEnteredAtUtc" />
-                <ScalarProperty Name="TargetUloId" ColumnName="TargetUloId" />
-                <ScalarProperty Name="ExpectedDurationInSeconds" ColumnName="ExpectedDurationInSeconds" />
-                <ScalarProperty Name="DueAtUtc" ColumnName="DueAtUtc" />
                 <ScalarProperty Name="WorkflowRowVersion" ColumnName="WorkflowRowVersion" />
+                <ScalarProperty Name="DueAtUtc" ColumnName="DueAtUtc" />
+                <ScalarProperty Name="ExpectedDurationInSeconds" ColumnName="ExpectedDurationInSeconds" />
+                <ScalarProperty Name="TargetUloId" ColumnName="TargetUloId" />
+                <ScalarProperty Name="CurrentActivityEnteredAtUtc" ColumnName="CurrentActivityEnteredAtUtc" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="OwnerUserId" ColumnName="OwnerUserId" />
+                <ScalarProperty Name="CurrentWorkflowActivityKey" ColumnName="CurrentWorkflowActivityKey" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Regions">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Region">
               <MappingFragment StoreEntitySet="Regions">
-                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
-                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
-                <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
                 <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
+                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Zones">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Zone">
               <MappingFragment StoreEntitySet="Zones">
-                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
                 <ScalarProperty Name="ZoneName" ColumnName="ZoneName" />
+                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AggregatedCounters">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AggregatedCounter">
               <MappingFragment StoreEntitySet="AggregatedCounter">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Key" ColumnName="Key" />
-                <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Counters">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Counter">
               <MappingFragment StoreEntitySet="Counter">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Key" ColumnName="Key" />
-                <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Hashes">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Hash">
               <MappingFragment StoreEntitySet="Hash">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Key" ColumnName="Key" />
-                <ScalarProperty Name="Field" ColumnName="Field" />
-                <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Field" ColumnName="Field" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Jobs">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Job">
               <MappingFragment StoreEntitySet="Job">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="StateId" ColumnName="StateId" />
-                <ScalarProperty Name="StateName" ColumnName="StateName" />
-                <ScalarProperty Name="InvocationData" ColumnName="InvocationData" />
-                <ScalarProperty Name="Arguments" ColumnName="Arguments" />
-                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="Arguments" ColumnName="Arguments" />
+                <ScalarProperty Name="InvocationData" ColumnName="InvocationData" />
+                <ScalarProperty Name="StateName" ColumnName="StateName" />
+                <ScalarProperty Name="StateId" ColumnName="StateId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="JobParameters">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.JobParameter">
               <MappingFragment StoreEntitySet="JobParameter">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="JobId" ColumnName="JobId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="JobId" ColumnName="JobId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="JobQueues">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.JobQueue">
               <MappingFragment StoreEntitySet="JobQueue">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="JobId" ColumnName="JobId" />
-                <ScalarProperty Name="Queue" ColumnName="Queue" />
                 <ScalarProperty Name="FetchedAt" ColumnName="FetchedAt" />
+                <ScalarProperty Name="Queue" ColumnName="Queue" />
+                <ScalarProperty Name="JobId" ColumnName="JobId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Lists">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.List">
               <MappingFragment StoreEntitySet="List">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Key" ColumnName="Key" />
-                <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2483,94 +2524,84 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <EntitySetMapping Name="Servers">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Server">
               <MappingFragment StoreEntitySet="Server">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Data" ColumnName="Data" />
                 <ScalarProperty Name="LastHeartbeat" ColumnName="LastHeartbeat" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Sets">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Set">
               <MappingFragment StoreEntitySet="Set">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Key" ColumnName="Key" />
-                <ScalarProperty Name="Score" ColumnName="Score" />
-                <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="ExpireAt" ColumnName="ExpireAt" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Score" ColumnName="Score" />
+                <ScalarProperty Name="Key" ColumnName="Key" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="States">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.State">
               <MappingFragment StoreEntitySet="State">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="JobId" ColumnName="JobId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Reason" ColumnName="Reason" />
-                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="Data" ColumnName="Data" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="JobId" ColumnName="JobId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspnetUserApplicationPermissionClaims">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspnetUserApplicationPermissionClaim">
               <MappingFragment StoreEntitySet="AspnetUserApplicationPermissionClaims">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Region" ColumnName="Region" />
-                <ScalarProperty Name="PermissionName" ColumnName="PermissionName" />
                 <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
+                <ScalarProperty Name="PermissionName" ColumnName="PermissionName" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AspnetUserSubjectCategoryClaims">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspnetUserSubjectCategoryClaim">
               <MappingFragment StoreEntitySet="AspnetUserSubjectCategoryClaims">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Region" ColumnName="Region" />
-                <ScalarProperty Name="BACode" ColumnName="BACode" />
-                <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
-                <ScalarProperty Name="OrgCode" ColumnName="OrgCode" />
                 <ScalarProperty Name="ClaimId" ColumnName="ClaimId" />
+                <ScalarProperty Name="OrgCode" ColumnName="OrgCode" />
+                <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
+                <ScalarProperty Name="BACode" ColumnName="BACode" />
+                <ScalarProperty Name="Region" ColumnName="Region" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ReviewStats">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.ReviewStat">
               <MappingFragment StoreEntitySet="ReviewStats">
-                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
-                <ScalarProperty Name="EasiCnt" ColumnName="EasiCnt" />
-                <ScalarProperty Name="RetaCnt" ColumnName="RetaCnt" />
-                <ScalarProperty Name="PegasysObligations192Cnt" ColumnName="PegasysObligations192Cnt" />
-                <ScalarProperty Name="PegasysObligations442Cnt" ColumnName="PegasysObligations442Cnt" />
-                <ScalarProperty Name="UloCnt" ColumnName="UloCnt" />
-                <ScalarProperty Name="PersonCnt" ColumnName="PersonCnt" />
-                <ScalarProperty Name="GroupCnt" ColumnName="GroupCnt" />
-                <ScalarProperty Name="SystemCnt" ColumnName="SystemCnt" />
-                <ScalarProperty Name="PreAssignmentCnt" ColumnName="PreAssignmentCnt" />
                 <ScalarProperty Name="TheCloserCnt" ColumnName="TheCloserCnt" />
+                <ScalarProperty Name="PreAssignmentCnt" ColumnName="PreAssignmentCnt" />
+                <ScalarProperty Name="SystemCnt" ColumnName="SystemCnt" />
+                <ScalarProperty Name="GroupCnt" ColumnName="GroupCnt" />
+                <ScalarProperty Name="PersonCnt" ColumnName="PersonCnt" />
+                <ScalarProperty Name="UloCnt" ColumnName="UloCnt" />
+                <ScalarProperty Name="PegasysObligations442Cnt" ColumnName="PegasysObligations442Cnt" />
+                <ScalarProperty Name="PegasysObligations192Cnt" ColumnName="PegasysObligations192Cnt" />
+                <ScalarProperty Name="RetaCnt" ColumnName="RetaCnt" />
+                <ScalarProperty Name="EasiCnt" ColumnName="EasiCnt" />
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <AssociationSetMapping Name="AspNetUserRoles" TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
-            <EndProperty Name="AspNetRoles">
-              <ScalarProperty Name="Id" ColumnName="RoleId" />
-            </EndProperty>
-            <EndProperty Name="AspNetUsers">
+            <EndProperty Name="AspNetUser">
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
+            <EndProperty Name="AspNetRole">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
+            </EndProperty>
           </AssociationSetMapping>
-          <FunctionImportMapping FunctionImportName="CreateULOAndAssignWf" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.CreateULOAndAssignWf" />
-          <FunctionImportMapping FunctionImportName="GetMyGroups" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetMyGroups">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.GetMyGroups_Result">
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="GetNextLevelOwnerId" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetNextLevelOwnerId" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -26,7 +26,6 @@
 
 .document-modal select.document-type-choices {
     padding-left: 0;
-    height: 26px;
 }
 
     .document-modal select.document-type-choices:disabled {

@@ -41,6 +41,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             Manager = manager;
             UserManager = userManager;
+            PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
 
         private void PopulateWorkflowDescriptionInViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType)
@@ -219,7 +220,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         //TODO: Move to Manager?
         private async Task<Workflow> FindWorkflowAsync(int workflowId, bool checkOwner = true, bool checkReassignmentsGroup = false)
         {
-            var wf = await DB.Workflows.Include(q => q.AspNetUser).Include(q => q.UnliquidatedObligation).FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
+            var wf = await DB.Workflows
+                .Include(q => q.AspNetUser)
+                .Include(q => q.Documents)
+                .Include(q => q.Documents)
+                .Include(q => q.UnliquidatedObligation)
+                .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
             if (wf != null)
             {
                 if (checkOwner == false) return wf;

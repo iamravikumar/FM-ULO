@@ -15,14 +15,14 @@ namespace GSA.UnliquidatedObligations.Web
 {
     public static class AspHelpers
     {
-        public const string PleaseSelectOneDropdownItemText = "-- Please Select --";
+        public const string PleaseSelectOne = "-- Please Select --";
 
         public static SelectListItem CreatePleaseSelectListItem(bool selected=true)
             => new SelectListItem
             {
                 Disabled = true,
                 Selected = selected,
-                Text = PleaseSelectOneDropdownItemText,                    
+                Text = PleaseSelectOne,                    
             };
 
         public const string SortDirAscending = "asc";

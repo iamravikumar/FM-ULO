@@ -51,6 +51,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 UloHelpers.ShortCacheTimeout
                 );
 
+        protected IDictionary<int, string> PopulateDocumentTypeNameByDocumentTypeIdInViewBag()
+        {
+            var documentTypeNameByDocumentTypeId = Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(typeof(DocumentsController), "documentTypeNameByDocumentTypeId"),
+                () => DB.DocumentTypes.ToDictionary(z => z.DocumentTypeId, z => z.Name).AsReadOnly(),
+                UloHelpers.MediumCacheTimeout);
+            ViewBag.DocumentTypeNameByDocumentTypeId = documentTypeNameByDocumentTypeId;
+            return documentTypeNameByDocumentTypeId;
+        }
+
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
             ViewBag.TotalItemCount = q.Count();

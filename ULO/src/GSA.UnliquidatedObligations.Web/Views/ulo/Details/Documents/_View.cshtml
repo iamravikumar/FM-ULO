@@ -13,7 +13,7 @@
     var deleteConfLabel = deleteConfId + "Label";
     var deleteConfBody = deleteConfId + "Body";
     object docNameAttributes = Model.AllowDocumentEdit ? new { id = @documentName, @class = "col-md-8 document-name" } : (object)new { id = @documentName, @class = "col-md-8 document-name", @readonly = "readonly" };
-    object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "col-md-8 document-type-choices" } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", @disabled = "disabled" };
+    object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "col-md-8 document-type-choices", size=4 } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", size=4, @disabled = "disabled" };
     var isDisabled = !Model.AllowDocumentEdit ? "disabled" : "";
     var isReadOnly = !Model.AllowDocumentEdit ? "readonly" : "";
 }
@@ -32,8 +32,8 @@
                     @Html.TextBoxFor(model => model.DocumentName, htmlAttributes: docNameAttributes)
                 </div>
                 <div class="row">
-                    @Html.LabelFor(model => model.DocumentTypeId, "Document Type:", htmlAttributes: new {@class = "col-md-4"})
-                    @Html.DropDownListFor(model => model.DocumentTypeId, Model.DocumentTypes, "Select One..", htmlAttributes: docTypeAttributes)
+                    @Html.LabelFor(model => model.DocumentTypeIds, "Document Type:", htmlAttributes: new {@class = "col-md-4"})
+                    @Html.ListBoxFor(model => model.DocumentTypeIds, Model.DocumentTypes, htmlAttributes: docTypeAttributes)
                 </div>
                 <div class="row">
                     @Html.Partial("~/Views/Ulo/Details/Documents/Attachments/_Index.cshtml", Model.AttachmentsViewModel)

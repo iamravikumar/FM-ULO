@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using RevolutionaryStuff.Core;
@@ -24,39 +25,55 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             : base(db, componentContext, cacher)
         {
             UserManager = userManager;
+            PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
 
         // GET: Documents
         public async Task<ActionResult> Index()
         {
-            var documents = DB.Documents.Include(d => d.DocumentType).Include(d => d.Workflow);
+            var documents = DB.Documents.Include(d => d.DocumentDocumentTypes).Include(d => d.Workflow);
             return View(await documents.ToListAsync());
         }
 
         // GET: Documents/Details/5
-        public ActionResult View(int? documentId, bool allowDocumentEdit = false, string docType=null)
+        public ActionResult View(int? documentId, string docType, bool allowDocumentEdit = false)
         {
-            Document document;
-            if (documentId == 0)
+            if (docType == null && documentId.HasValue)
             {
-                document = new Document
-                {
-                    DocumentId = 0,
-                    DocumentTypeId = 0,
-                    Attachments = new List<Attachment>()
-                };
+                docType =
+                    (
+                        from z in DB.Documents
+                        where z.DocumentId == documentId.Value
+                        select z.Workflow.UnliquidatedObligation.DocType
+                    ).FirstOrDefault();
+            }
+            Requires.NonNull(docType, nameof(docType));
+            Document document;
+            if (documentId.GetValueOrDefault() == 0)
+            {
+                document = new Document();
             }
             else
             {
-                document = DB.Documents.FirstOrDefault(dt => dt.DocumentId == documentId);
+                document = DB.Documents.
+                    Include(z=>z.Attachments).
+                    Include(z=>z.AspNetUser).
+                    Include(z => z.DocumentDocumentTypes).
+                    FirstOrDefault(dt => dt.DocumentId == documentId);
                 if (document == null)
                 {
                     return HttpNotFound();
                 }
             }
-            var documentTypes = DB.DocumentTypes.Where(dt => dt.DocType == null || dt.DocType == docType).OrderBy(dt => dt.Name).ToList();
+            document.Attachments = document.Attachments ?? new List<Attachment>();
+            var documentTypes = Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(typeof(DocumentsController), "documentTypes", docType),
+                () => DB.DocumentTypes.Where(dt => dt.DocType == null || dt.DocType == docType).OrderBy(dt => dt.Name).ToList().AsReadOnly(),
+                UloHelpers.MediumCacheTimeout);
+
             var workflowAssignedTo = document.DocumentId == 0 ? true : checkOwner(document);
-            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document.DocumentId, document.DocumentName, document.DocumentTypeId, documentTypes, document.Attachments.ToList(), workflowAssignedTo));
+
+            return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document, documentTypes, workflowAssignedTo));
         }
 
         private bool checkOwner(Document document)
@@ -76,33 +93,44 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<JsonResult> Save(int? documentId, string documentName, int workflowId, int documentTypeId)
+        public async Task<JsonResult> Save(int? documentId, string documentName, int workflowId)
         {
-            if (ModelState.IsValid)
+            try
             {
+                if (!ModelState.IsValid) throw new ArgumentException(ModelState.ToString(), nameof(ModelState));
                 Document document;
-                if (documentId != 0)
+                if (documentId.GetValueOrDefault(0) > 0)
                 {
                     document = await DB.Documents.FindAsync(documentId);
-                    if (document != null)
+                    if (document == null)
                     {
-                        document.DocumentTypeId = documentTypeId;
-                        document.DocumentName = documentName;
+                        throw new KeyNotFoundException($"could not find documentId={documentId}");
                     }
+                    document.DocumentDocumentTypes.ToList().ForEach(dt => DB.DocumentDocumentTypes.Remove(dt));
                 }
                 else
                 {
                     document = new Document
                     {
                         UploadedByUserId = CurrentUserId,
-                        DocumentTypeId = documentTypeId,
                         WorkflowId = workflowId,
-                        DocumentName = documentName
+                        CreatedAtUtc = DateTime.UtcNow
                     };
                     DB.Documents.Add(document);
-
                 }
-                document.UploadDate = DateTime.Now;
+                document.DocumentName = StringHelpers.TrimOrNull(documentName);
+                var documentTypeIds = CSV.ParseIntegerRow(Request["documentTypeId"]);
+                var documentTypeNames = new List<string>();
+                var d = base.PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
+                foreach (var id in documentTypeIds)
+                {
+                    DB.DocumentDocumentTypes.Add(new DocumentDocumentType
+                    {
+                        DocumentTypeId = id,
+                        Document = document
+                    });
+                    documentTypeNames.Add(d.FindOrDefault(id));
+                }
                 await DB.SaveChangesAsync();
                 if (TempData["attachments"] != null)
                 {
@@ -125,18 +153,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     await DB.SaveChangesAsync();
                     TempData["attachments"] = null;
                 }
-
-                var documentType = await DB.DocumentTypes.FindAsync(documentTypeId);
                 return Json(new
                 {
                     Id = document.DocumentId,
                     UserName = User.Identity.Name,
-                    DocumentTypeName = documentType.Name,
                     Name = document.DocumentName,
-                    UploadedDate = document.UploadDate.ToString("MM/dd/yyyy")
+                    DocumentTypeNames = documentTypeNames.WhereNotNull().OrderBy().ToList(),
+                    AttachmentCount = document.Attachments.Count,
+                    UploadedDate = document.CreatedAtUtc.ToLocalTime().ToString("MM/dd/yyyy")
                 });
             }
-            return null;
+            catch (Exception ex)
+            {
+                return Json(new ExceptionError(ex));
+            }
         }
 
         public void Clear()

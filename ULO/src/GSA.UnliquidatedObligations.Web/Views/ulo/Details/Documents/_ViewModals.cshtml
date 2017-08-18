@@ -1,17 +1,14 @@
 ﻿@model GSA.UnliquidatedObligations.Web.Models.DocumentsViewModel
-
 <div id="document-edit-modals">
     @foreach (var document in Model.Documents)
     {
         <div id="modal-container-@document.DocumentId">
             @{
-                Html.RenderAction("View", "Documents", new { documentId = document.DocumentId, allowDocumentEdit = Model.AllowDocumentsEdit });
-            }
-            
+                Html.RenderAction("View", "Documents", new { documentId = document.DocumentId, allowDocumentEdit = Model.AllowDocumentsEdit, docType = Model.DocType });
+            }            
         </div>
     }
 </div>
-
 @{
     Html.RenderAction("View", "Documents", new { documentId = 0, allowDocumentEdit = true, docType=Model.DocType });
 }

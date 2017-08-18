@@ -23,9 +23,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int NoteId { get; set; }
         public Nullable<int> ParentNoteId { get; set; }
         public string UserId { get; set; }
-        public System.DateTime CreatedAt { get; set; }
         public int UloId { get; set; }
         public string Body { get; set; }
+        public System.DateTime CreatedAtUtc { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

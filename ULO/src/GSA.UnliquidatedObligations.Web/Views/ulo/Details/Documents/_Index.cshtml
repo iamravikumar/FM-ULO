@@ -1,4 +1,9 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.DocumentsViewModel
+﻿@using RevolutionaryStuff.Core
+@using System.Linq
+@model GSA.UnliquidatedObligations.Web.Models.DocumentsViewModel
+@{
+    var documentTypeNameByDocumentTypeId = (IDictionary<int, string>)ViewBag.DocumentTypeNameByDocumentTypeId;
+}
 <div class="row documents">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -13,7 +18,10 @@
                                 Name
                             </th>
                             <th>
-                                Document Type
+                                Document Types
+                            </th>
+                            <th>
+                                Attachments
                             </th>
                             <th>
                                 Uploaded By
@@ -33,19 +41,30 @@
                                     @document.DocumentName
                                 </td>
                                 <td>
-                                    @document.DocumentType.Name
+                                    @if (document.DocumentDocumentTypes != null && document.DocumentDocumentTypes.Count > 0)
+                                    {
+                                        <ul>
+                                            @foreach (var ddt in document.DocumentDocumentTypes)
+                                            {
+                                                <li>@documentTypeNameByDocumentTypeId.FindOrDefault(ddt.DocumentTypeId)</li>
+                                            }
+                                        </ul>
+                                    }
+                                </td>
+                                <td>
+                                    @((document.Attachments?.Count).GetValueOrDefault())
                                 </td>
                                 <td>
                                     @document.AspNetUser.UserName
                                 </td>
                                 <td>
-                                    @document.UploadDate.ToString("MM/dd/yyyy")
+                                    @document.CreatedAtUtc.ToLocalTime().ToString("MM/dd/yyyy")
                                 </td>
                                 <td>
                                     <a data-toggle="modal" data-target="@modalId" href="@modalId">View</a>
                                     @if (Model.AllowDocumentsEdit)
-                                    {    
-                                    
+                                    {
+
                                         @Html.Raw("| <a data-toggle='modal' data-target='" + @deleteModalId + "' href='" + @deleteModalId + "'>Delete</a>")
                                     }
                                 </td>
@@ -54,7 +73,7 @@
                     </table>
                     @if (Model.AllowDocumentsEdit)
                     {
-                    <button type="button" class="btn btn-primary document-add-btn" data-toggle="modal" data-target="#0Modal">Add Document</button>
+                        <button type="button" class="btn btn-primary document-add-btn" data-toggle="modal" data-target="#0Modal">Add Document</button>
                     }
                 </div>
             </div>

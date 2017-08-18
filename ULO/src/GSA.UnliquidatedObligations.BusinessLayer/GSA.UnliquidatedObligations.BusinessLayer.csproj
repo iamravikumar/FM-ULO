@@ -292,6 +292,9 @@
     <Compile Include="Data\Document.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\DocumentDocumentType.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\DocumentType.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -351,9 +354,6 @@
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\State.cs">
-      <DependentUpon>ULO.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Data\sysdiagram.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\ULO.Context.cs">
