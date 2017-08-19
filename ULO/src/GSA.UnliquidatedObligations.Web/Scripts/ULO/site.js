@@ -1,6 +1,25 @@
-﻿function popupConfirmHide() {
+﻿function debugAlert(msg) {
+    //alert("debugAlert: "+msg);
+}
+
+function popupConfirmHide() {
     $('#popup-confirm').popup('hide');
 };
+
+function toastAppearDisappear(element) {
+    if (element.is(':visible')) {
+        element.delay(4000).hide(500);
+    } else {
+        element.fadeIn(500).delay(4000).hide(500);
+    }
+}
+
+function showToast(itemText) {
+    var toast = $('#universal-alert');
+    var toastText = $('#universal-alert-item-text');
+    toastText.text(itemText);
+    toastAppearDisappear(toast);
+}
 
 $(document).ready(function () {
 

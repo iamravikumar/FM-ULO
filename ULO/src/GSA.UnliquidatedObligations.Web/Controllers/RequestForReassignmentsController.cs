@@ -4,6 +4,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Collections.Generic;
@@ -247,7 +248,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 if (checkOwner == false) return wf;
                 if (CurrentUserId != null)
                 {
-                    var groupsUserBelongsTo = await GetUsersGroups(CurrentUserId);
+                    var groupsUserBelongsTo = GetUserGroups().ConvertAll(z => z.UserId).ToSet();
                     if (wf.OwnerUserId == CurrentUserId || groupsUserBelongsTo.Contains(wf.OwnerUserId)) return wf;
                     if (wf.AspNetUser.UserType == UserTypes.Group.ToString())
                     {
@@ -285,12 +286,5 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             await DB.SaveChangesAsync();
             return ret;
         }
-
-
-        private async Task<List<string>> GetUsersGroups(string userId)
-        {
-            return await DB.UserUsers.Where(uu => uu.ChildUserId == userId).Select(uu => uu.ParentUserId).ToListAsync();
-        }
-
     }
 }

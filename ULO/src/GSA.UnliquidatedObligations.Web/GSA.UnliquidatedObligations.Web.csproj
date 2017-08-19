@@ -405,6 +405,7 @@
     <Compile Include="Models\UloModels.cs" />
     <Compile Include="Models\ReviewsModel.cs" />
     <Compile Include="Models\UsersModel.cs" />
+    <Compile Include="PageAlert.cs" />
     <Compile Include="PageKeys.cs" />
     <Compile Include="PortalHelpers.cs" />
     <Compile Include="PredicateBuilder.cs" />

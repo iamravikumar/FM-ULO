@@ -24,6 +24,26 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             System.Web.HttpContext.Current.Items["ComponentContext"] = ComponentContext;
         }
 
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            ViewData["PageAlerts"] = TempData["PageAlerts"];
+            base.OnActionExecuting(filterContext);
+        }
+
+        protected void AddPageAlert(string toastMessage, bool autoDismiss = false, PageAlert.AlertTypes pageAlertType = PageAlert.AlertTypes.Info, bool nextRequest = false)
+            => AddPageAlert(new PageAlert(toastMessage, autoDismiss, pageAlertType), nextRequest);
+
+        protected void AddPageAlert(PageAlert pa, bool nextRequest = false)
+        {
+            if (pa == null || string.IsNullOrEmpty(pa.Message)) return;
+            var d = nextRequest ? (IDictionary<string,object>) TempData : (IDictionary<string, object>) ViewData;
+            var pageAlerts = d["PageAlerts"] as IList<PageAlert>;
+            if (pageAlerts == null)
+            {
+                d["PageAlerts"] = pageAlerts = new List<PageAlert>();
+            }
+            pageAlerts.Add(pa);
+        }
 
         protected ActionResult RedirectToIndex()
             => RedirectToAction("Index");

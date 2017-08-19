@@ -92,6 +92,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 .Distinct()
                 .ToListAsync();
 
+            if (reassignGroupRegionIds.Count > 0)
+            {
+                AddPageAlert($"You have been assigned to the {Properties.Settings.Default.ReassignGroupUserName} group with {reassignGroupRegionIds.Count} regions", false, PageAlert.AlertTypes.Info);
+            }
+            else
+            {
+                AddPageAlert($"You have not been assigned to the {Properties.Settings.Default.ReassignGroupUserName} group", false, PageAlert.AlertTypes.Warning);
+            }
+
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
                 .Include(wf => wf.UnliquidatedObligation),

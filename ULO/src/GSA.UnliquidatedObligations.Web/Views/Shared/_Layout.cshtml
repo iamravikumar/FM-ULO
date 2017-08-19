@@ -1,4 +1,7 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@{ 
+    var pageAlerts = ViewData["PageAlerts"] as IList<PageAlert> ?? new List<PageAlert>();
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,15 +17,58 @@
     @Html.Partial("_Navigation")
 
     <div class="container body-content" style="margin-top: 30px">
-        @if (ViewBag.PageTitle != null)
+
+        @if (pageAlerts.Count > 0)
         {
+            <div style="margin-top:30px">
+                @foreach (var pa in pageAlerts)
+                {
+                    string alertClass;
+                    switch (pa.AlertType)
+                    {
+                        case PageAlert.AlertTypes.Danger:
+                            alertClass = "danger";
+                            break;
+                        case PageAlert.AlertTypes.Success:
+                            alertClass = "success";
+                            break;
+                        case PageAlert.AlertTypes.Warning:
+                            alertClass = "warning";
+                            break;
+                        case PageAlert.AlertTypes.Info:
+                        default:
+                            alertClass = "info";
+                            break;
+                    }
+                    <div class="alert alert-@alertClass alert-dismissable" id="universal-alert-@pa.AlertId">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <i class="fa fa-check" aria-hidden="true"></i> <span id="universal-alert-item-text"> @pa.Message </span>
+                    </div>
+                    if (pa.AutoDismiss)
+                    {
+                        <script type="text/javascript">
+                            $("#universal-alert-@pa.AlertId").fadeIn(500).delay(4000).hide(500);
+                        </script>
+                    }
+                    else
+                    {
+                        <script type="text/javascript">
+                            $("#universal-alert-@pa.AlertId").fadeIn(500).delay(4000);
+                        </script>
+                    }
+                }
+            </div>
+        }
+
+        @if (ViewBag.PageTitle != null)
+            {
             <div class="row">
                 <div class="col-xs-12">
                     <h1>@ViewBag.PageTitle</h1>
                     @if (ViewBag.PageSubTitle != null)
-                {
+            {
                         <p class="subheading">@ViewBag.PageSubTitle</p>
-                    }
+        }
                 </div>
             </div>
         }
