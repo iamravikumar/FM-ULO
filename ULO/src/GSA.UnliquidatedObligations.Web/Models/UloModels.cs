@@ -52,14 +52,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string QuestionLabel { get; set; }
 
-        //[Required(ErrorMessage = "Answer is required")]
         public string Answer { get; set; }
 
         public string JustificationKey { get; set; }
 
         public string Comments { get; set; }
-
-        public int WorkflowId { get; }
 
         public bool JustificationNeeded { get; set; }
 
@@ -83,7 +80,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Comments = question != null ? question.Comments : "";
             UnliqudatedWorkflowQuestionsId = question?.UnliqudatedWorkflowQuestionsId ?? 0;
             JustificationKey = question?.JustificationKey;
-            WorkflowId = workflowId;
             JustificationNeeded = justificationNeeded;
             ExpectedDateForCompletion = expectedDateForCompletion;
             ExpectedDateForCompletionEditable = expectedDateForCompletionEditable;
@@ -180,7 +176,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
             {
                 QuestionsViewModel = new UloWfQuestionsViewModel(workflowDescription.GetJustificationByKey(), questions);
                 WorkflowDescriptionViewModel =
-                    new WorkflowDescriptionViewModel(workflowDescription.WebActionWorkflowActivities.ToList(),
+                    new WorkflowDescriptionViewModel(
+                        workflow.WorkflowId,
+                        workflowDescription.WebActionWorkflowActivities.ToList(),
                         workflow.CurrentWorkflowActivityKey);
 
                 var unliqudatedObjectsWorkflowQuestionPending = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
@@ -206,17 +204,18 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class WorkflowDescriptionViewModel
     {
-        public List<WebActionWorkflowActivity> Activites { get; set; }
+        public int WorkflowId { get; set; }
+
+        public IList<WebActionWorkflowActivity> Activites { get; set; }
 
         public WebActionWorkflowActivity CurrentActivity { get; set; }
 
         public WorkflowDescriptionViewModel()
-        {
+        { }
 
-        }
-
-        public WorkflowDescriptionViewModel(List<WebActionWorkflowActivity> activities, string currentActivityKey)
+        public WorkflowDescriptionViewModel(int workflowId, IList<WebActionWorkflowActivity> activities, string currentActivityKey)
         {
+            WorkflowId = workflowId;
             Activites = new List<WebActionWorkflowActivity>(activities.OrderBy(a => a.SequenceNumber));
             CurrentActivity = activities.FirstOrDefault(a => a.WorkflowActivityKey == currentActivityKey);
         }

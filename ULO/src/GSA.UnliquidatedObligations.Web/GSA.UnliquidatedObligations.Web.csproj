@@ -549,7 +549,7 @@
     <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
-    <Content Include="Views\Ulo\Index.cshtml" />
+    <Content Include="Views\Ulo\MyTasks.cshtml" />
     <Content Include="Views\Ulo\_RecordsListing.cshtml" />
     <Content Include="Views\Ulo\Details\Index.cshtml" />
     <Content Include="Views\Ulo\Details\_Ulo.cshtml" />

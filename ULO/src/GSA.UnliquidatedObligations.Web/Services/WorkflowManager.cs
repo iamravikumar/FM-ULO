@@ -147,27 +147,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return await Task.FromResult(c.RedirectToAction("Index", "Ulo", routeValues));
         }
 
-        async Task IWorkflowManager.SaveQuestionAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
-        {
-            Requires.NonNull(wf, nameof(wf));
-            Requires.NonNull(question, nameof(question));
-
-            var questionFromDB = await DB.UnliqudatedObjectsWorkflowQuestions.FirstOrDefaultAsync(q => q.WorkflowId == wf.WorkflowId && q.Pending == true);
-            if (questionFromDB == null)
-            {
-                wf.UnliqudatedObjectsWorkflowQuestions.Add(question);
-            }
-            else
-            {
-                questionFromDB.Answer = questionFromDB.Answer;
-                questionFromDB.Comments = question.Comments;
-                questionFromDB.JustificationKey = question.JustificationKey;
-                questionFromDB.UserId = question.UserId;
-                questionFromDB.Pending = question.Pending;
-                questionFromDB.CreatedAtUtc = question.CreatedAtUtc;
-            }
-        }
-
         async Task<ActionResult> IWorkflowManager.ReassignAsync(Workflow wf, string userId, string actionName)
         {
             Requires.NonNull(wf, nameof(wf));

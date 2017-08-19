@@ -70,14 +70,18 @@ function showExpectedDate(showBool) {
     }
 }
 
-function ChoiceChange(value, model) {
+function ChoiceChange(value, pleaseSelect, justificationKey) {
+    debugAlert('ChoiceChange("' + value + '", "' + pleaseSelect + '", "' + justificationKey + '")');
     var q = questionChoiceByQuestionChoiceValue[value];
     var keys = q.justificationKeys;
 
+    var select = $("#justifications")[0];
     select.options.length = 0;
     var el = document.createElement("option");
-    el.textContent = "Select...";
+    el.textContent = pleaseSelect;
     el.value = "";
+    el.disabled = true;
+    el.selected = justificationKey==null;
     select.appendChild(el);
     
     var jc = 0;
@@ -87,13 +91,14 @@ function ChoiceChange(value, model) {
         var j = justificationByKey[key];
         if (j == null)
         {
-//            alert("missing key value for [" + key + "]");
+            debugAlert("missing key value for [" + key + "]");
             continue;
         }
         var desc = j.Description; 
         el = document.createElement("option");
         el.textContent = desc;
         el.value = key;
+        el.selected = key == justificationKey;
         select.appendChild(el);
         ++jc;
     }

@@ -26,10 +26,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public static class ActionNames
         {
-            public const string MyTasks = "Index";
+            public const string Index = "Index";
+            public const string MyTasks = "MyTasks";
             public const string Search = "Search";
             public const string RequestForReassignments = "RequestForReassignments";
             public const string Unassigned = "Unassigned";
+            public const string Save = "Save";
         }
 
         protected readonly IWorkflowManager Manager;
@@ -54,9 +56,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             wawa?.QuestionChoices?.WhereApplicable(docType).ForEach(z => d[z.Value] = z);
         }
 
+        [ActionName(ActionNames.Index)]
+        public ActionResult Index()
+            => RedirectToAction(ActionNames.MyTasks);
+
         [ActionName(ActionNames.MyTasks)]
-        // GET: Ulo
-        public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
+        [Route("Ulos/MyTasks")]
+        public ActionResult MyTasks(string sortCol, string sortDir, int? page, int? pageSize)
         {
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
             var workflows = ApplyBrowse(
@@ -69,6 +75,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.Unassigned)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
+        [Route("Ulos/Unassigned")]
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
@@ -82,6 +89,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.RequestForReassignments)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
+        [Route("Ulos/Reassignments")]
         public async Task<ActionResult> RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
             var reassignGroupUserId = PortalHelpers.ReassignGroupUserId;
@@ -113,7 +121,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.Search)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
-        [Route("Ulo/Search")]
+        [Route("Ulos/Search")]
         public async Task<ActionResult> Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
@@ -180,10 +188,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 UloHelpers.MediumCacheTimeout
                 );
 
-        public async Task<ActionResult> Details(int uloId, int workflowId)
+        [Route("Ulos/{uloId}/{workflowId}", Order = 1)]
+        [Route("Ulos/{uloId}", Order = 2)]
+        public async Task<ActionResult> Details(int uloId, int workflowId=0)
         {
             //TODO: check if current user is able to view
             var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
+            if (workflowId==0)
+            {
+                workflowId = (await DB.Workflows.SingleAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
+            }
 
             var comingFromReassignmentsPage = isReassignmentReferral();
 
@@ -203,10 +217,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private bool isUnassignedReferral()
         {
             return Request.UrlReferrer?.LocalPath == "/Ulo/Unassigned";
-        }
-        private bool isReassignment()
-        {
-            return Request.Url.Host == "/RequestForReassignments";
         }
 
         public async Task<ActionResult> RegionWorkflowDetails(int uloId, int workflowId)
@@ -231,7 +241,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var wf = await DB.Workflows
                 .Include(q => q.AspNetUser)
-                .Include(q => q.Documents)
                 .Include(q => q.Documents)
                 .Include(q => q.UnliquidatedObligation)
                 .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
@@ -262,71 +271,55 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(new FormAModel(wf));
         }
 
-        //TODO: be able to open either ULO or workflow
-        //TODO: Attributes will probably change
         [HttpPost]
-        [SubmitButtonSelector(Name = "Advance")]
-        public async Task<ActionResult> Advance(
-            int workflowId,
+        [ActionName(ActionNames.Save)]
+        [Route("Ulos/{uloId}/{workflowId}/Save")]
+        public async Task<ActionResult> Save(
             int uloId,
+            int workflowId,
             [Bind(Include = 
                 nameof(AdvanceViewModel.JustificationKey)+","+
                 nameof(AdvanceViewModel.Answer)+","+
                 nameof(AdvanceViewModel.ExpectedDateForCompletion)+","+
                 nameof(AdvanceViewModel.Comments)+","+
                 nameof(AdvanceViewModel.UnliqudatedWorkflowQuestionsId))]
-            AdvanceViewModel advanceModel)
+            AdvanceViewModel advanceModel=null)
         {
             var wf = await FindWorkflowAsync(workflowId);
             if (wf == null) return HttpNotFound();
             if (ModelState.IsValid)
             {
-                var question = new UnliqudatedObjectsWorkflowQuestion
+                var submit = Request["WhatNext"] == "Submit";
+                var question = await DB.UnliqudatedObjectsWorkflowQuestions.Where(z => z.WorkflowId == workflowId).OrderByDescending(z => z.UnliqudatedWorkflowQuestionsId).FirstOrDefaultAsync();
+                if (question == null || !question.Pending)
                 {
-                    JustificationKey = advanceModel.JustificationKey,
-                    UserId = CurrentUserId,
-                    Answer = advanceModel.Answer,
-                    WorkflowId = workflowId,
-                    Comments = advanceModel.Comments,
-                    Pending = false,
-                    UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId,
-                    WorkflowRowVersion = wf.WorkflowRowVersion,
-                    CreatedAtUtc = DateTime.UtcNow
-                };
+                    question = new UnliqudatedObjectsWorkflowQuestion
+                    {
+                        WorkflowId = workflowId
+                    };
+                    DB.UnliqudatedObjectsWorkflowQuestions.Add(question);
+                }
+                question.JustificationKey = advanceModel.JustificationKey;
+                question.UserId = CurrentUserId;
+                question.Answer = advanceModel.Answer;
+                question.Comments = advanceModel.Comments;
+                question.Pending = !submit;
+                question.UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId;
+                question.WorkflowRowVersion = wf.WorkflowRowVersion;
+                question.CreatedAtUtc = DateTime.UtcNow;
                 wf.UnliquidatedObligation.ExpectedDateForCompletion = advanceModel.ExpectedDateForCompletion;
-                return await AdvanceAsync(wf, question);
+                await DB.SaveChangesAsync();
+                if (submit)
+                {
+                    var ret = await Manager.AdvanceAsync(wf, question);
+                    await DB.SaveChangesAsync();
+                    return ret;
+                }
+                else
+                {
+                    return RedirectToIndex();
+                }
             }
-            return await Details(uloId, workflowId);
-        }
-
-        [HttpPost]
-        [SubmitButtonSelector(Name = "Save")]
-        public async Task<ActionResult> SaveQuestion(int workflowId, int uloId,
-            [Bind(Include =
-                nameof(AdvanceViewModel.JustificationKey)+","+
-                nameof(AdvanceViewModel.Answer)+","+
-                nameof(AdvanceViewModel.Comments)+","+
-                nameof(AdvanceViewModel.ExpectedDateForCompletion)+","+
-                nameof(AdvanceViewModel.UnliqudatedWorkflowQuestionsId))]
-        AdvanceViewModel advanceModel)
-        {
-            var wf = await FindWorkflowAsync(workflowId);
-            if (wf == null) return HttpNotFound();
-            var question = new UnliqudatedObjectsWorkflowQuestion
-            {
-                JustificationKey = advanceModel.JustificationKey,
-                UserId = CurrentUserId,
-                Answer = advanceModel.Answer,
-                WorkflowId = workflowId,
-                Comments = advanceModel.Comments,
-                Pending = true,
-                UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId,
-                WorkflowRowVersion = wf.WorkflowRowVersion,
-                CreatedAtUtc = DateTime.UtcNow
-            };
-            wf.UnliquidatedObligation.ExpectedDateForCompletion = advanceModel.ExpectedDateForCompletion;
-            await Manager.SaveQuestionAsync(wf, question);
-            await DB.SaveChangesAsync();
             return await Details(uloId, workflowId);
         }
 
@@ -342,14 +335,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 ids = GetUserGroups(userId).ConvertAll(z => z.UserId);
             }
             return Task.FromResult(ids);
-        }
-
-        private async Task<ActionResult> AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question)
-        {
-            await Manager.SaveQuestionAsync(wf, question);
-            var ret = await Manager.AdvanceAsync(wf, question);
-            await DB.SaveChangesAsync();
-            return ret;
         }
     }
 }

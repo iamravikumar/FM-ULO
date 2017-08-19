@@ -757,6 +757,16 @@ namespace GSA.UnliquidatedObligations.Web
                 UloHelpers.MediumCacheTimeout
                 );
 
+        public static IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
+            => items.OrderBy(z=>z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
+
+        public static IList<SelectListItem> PleaseSelect(this IList<SelectListItem> items)
+        {
+            bool alreadySelected = items.FirstOrDefault(z => z.Selected) != null;
+            items.Insert(0, new SelectListItem { Text = AspHelpers.PleaseSelectOne, Disabled = true, Selected=!alreadySelected, Value="" });
+            return items;
+        }
+
         public static IList<SelectListItem> CreateZoneSelectListItems()
             => Cacher.FindOrCreateValWithSimpleKey(
                 nameof(CreateZoneSelectListItems),

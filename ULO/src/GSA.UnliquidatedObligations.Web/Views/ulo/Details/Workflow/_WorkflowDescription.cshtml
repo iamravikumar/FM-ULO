@@ -1,20 +1,17 @@
 ﻿@model GSA.UnliquidatedObligations.Web.Models.WorkflowDescriptionViewModel
 <div class="row workflow-description">
-    <h3>Review Status</h3>
+    <h3>Workflow @Model.WorkflowId Status</h3>
     <ul>
         @{
             foreach (var activity in Model.Activites)
             {
-
                 var isCurrentActivity = activity.WorkflowActivityKey == Model.CurrentActivity.WorkflowActivityKey;
                 <li>
                     <div class="activity @(@isCurrentActivity ? "current" : "")">
                         @activity.ActivityName
                     </div>
                 </li>
-
             }
         }
     </ul>
-
 </div>
