@@ -102,7 +102,7 @@
 
 <table class="hidden" id="SCClaimTemplateRowContainer">
     <tr>
-        <td>@Html.DropDownList("scc.docType", PortalHelpers.ConvertNamesToSelectList<SubjectCatagoryNames>())</td>
+        <td>@Html.DropDownList("scc.docType", PortalHelpers.CreateDocumentTypeSelectListItems())</td>
         <td><input type="text" name="scc.bacode" required="required" /></td>
         <td><input type="text" name="scc.orgcode" required="required" /></td>
         <td>@Html.DropDownList("scc.region", PortalHelpers.CreateRegionSelectListItems(true))</td>

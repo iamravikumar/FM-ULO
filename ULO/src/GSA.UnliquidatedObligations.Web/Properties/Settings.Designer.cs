@@ -12,7 +12,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -83,6 +83,17 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public bool UseHangfireDashboards {
             get {
                 return ((bool)(this["UseHangfireDashboards"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("*,*\r\nAR,AR\t\r\nCL,CL\t\r\nCT,CT\t\r\nEJ,EJ\t\r\nEK,EK\t\r\nEN,EN\t\r\nEP,EP\t\r\nEQ,EQ\t\r\nGP,GP\t\r\nGX,G" +
+            "X\t\r\nIX,IX\t\r\nLO,LO\t\r\nLR,LR\t\r\nLU,LU\t\r\nLY,LY\t\r\n1B,1B\t\r\nPJ,PJ\t\r\nPN,PN\t\r\nPS,PS\t\r\nPX,P" +
+            "X\t\r\nPY,PY\t\r\nQP,QP\t\r\nRB,RB\t\r\nRO,RO\t\r\nS2,S2\t\r\nUE,UE\t\r\n")]
+        public string DocTypesCsv {
+            get {
+                return ((string)(this["DocTypesCsv"]));
             }
         }
     }

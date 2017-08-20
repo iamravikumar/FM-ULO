@@ -142,13 +142,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 Include(wf => wf.AspNetUser),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToListAsync();
 
-            var allSubjectCategoryClaimsValues =
-                Enum.GetValues(typeof(SubjectCatagoryNames))
-                    .Cast<SubjectCatagoryNames>()
-                    .Select(scc => scc.GetDisplayName())
-                    .OrderBy(scc => scc)
-                    .ToList();
-
             var baCodes = Cacher.FindOrCreateValWithSimpleKey(
                     Cache.CreateKey(nameof(Search), "baCodes"),
                     () => DB.UnliquidatedObligations.Select(u => u.Prog).Distinct().OrderBy(p => p).ToList().AsReadOnly(),
@@ -163,7 +156,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 "~/Views/Ulo/Search/Index.cshtml", 
                 new FilterViewModel(
                     workflows, 
-                    allSubjectCategoryClaimsValues, 
+                    PortalHelpers.CreateDocumentTypeSelectListItems(),
                     PortalHelpers.CreateZoneSelectListItems(),
                     PortalHelpers.CreateRegionSelectListItems(),
                     baCodes,

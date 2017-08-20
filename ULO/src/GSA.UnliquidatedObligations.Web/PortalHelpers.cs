@@ -757,6 +757,10 @@ namespace GSA.UnliquidatedObligations.Web
                 UloHelpers.MediumCacheTimeout
                 );
 
+        public static IList<SelectListItem> CreateDocumentTypeSelectListItems()
+            => CSV.ParseText(Properties.Settings.Default.DocTypesCsv).Where(r => r.Length == 2).ConvertAll(
+                r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) });
+
         public static IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
             => items.OrderBy(z=>z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
 

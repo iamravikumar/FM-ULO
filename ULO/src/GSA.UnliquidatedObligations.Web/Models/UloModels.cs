@@ -242,10 +242,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public IEnumerable<SelectListItem> Regions { get; set; }
         public IEnumerable<SelectListItem> BaCodes { get; set; }
         public IEnumerable<SelectListItem> Statuses { get; set; }
-        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<string> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> statuses)
+        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> statuses)
         {
             Workflows = workflows;
-            DocTypes = docTypes.ConvertToSelectList();
+            DocTypes = docTypes;
             Zones = zones;
             Regions = regions;
             BaCodes = baCodes.ConvertToSelectList();
