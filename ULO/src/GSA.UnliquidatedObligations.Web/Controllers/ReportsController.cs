@@ -9,10 +9,12 @@ using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using GSA.UnliquidatedObligations.BusinessLayer;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -43,7 +45,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [ActionName(ActionNames.ConfigureReport)]
-        [Route("Reports/{name}/Configure")]
+        [Route("Reports/{name}")]
         [HttpGet]
         public async Task<ActionResult> ConfigureReport(string name)
         {
@@ -72,7 +74,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     {
                         var sval = pd.IsHardcoded ? pd.HardCodedValue : Request.Form[pd.SqlParameterName];
                         var oval = Convert.ChangeType(sval, pd.ClrType);
-                        cmd.Parameters.Add(new SqlParameter("@"+pd.SqlParameterName, oval));
+                        cmd.Parameters.Add(new SqlParameter("@" + pd.SqlParameterName, oval));
                     }
                     var ds = cmd.ExecuteReadDataSet();
                     var st = new MemoryStream();
@@ -81,7 +83,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     var cd = new System.Net.Mime.ContentDisposition
                     {
                         FileName = report.Name + MimeType.Application.SpreadSheet.Xlsx.PrimaryFileExtension,
-                        Inline = false,                         
+                        Inline = false,
                     };
                     Response.AppendHeader("Content-Disposition", cd.ToString());
                     return File(st, MimeType.Application.SpreadSheet.Xlsx);
@@ -90,10 +92,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         private Task<IQueryable<ReportDescription>> GetAllReportsAsync()
-        {
-            return Task.FromResult(
-                DB.ReportDefinitions.Where(rd => rd.IsActive == true).ConvertAll(rd => rd.Description).ToList().AsQueryable()
-            );
-        }
+            => Task.FromResult(Cacher.FindOrCreateValWithSimpleKey(
+                nameof(GetAllReportsAsync),
+                () => DB.ReportDefinitions.Where(rd => rd.IsActive == true).ConvertAll(rd => rd.Description).WhereNotNull().ToList().AsReadOnly(),
+                UloHelpers.MediumCacheTimeout).AsQueryable()
+                );
     }
 }

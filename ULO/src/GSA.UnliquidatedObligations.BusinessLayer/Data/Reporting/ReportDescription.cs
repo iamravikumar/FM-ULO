@@ -12,6 +12,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting
             return JsonConvert.SerializeObject(this);
         }
 
+        public override string ToString()
+            => $"Title={this.Title} Sproc={SprocSchema}.{SprocName}";
+
         private static readonly Regex NonWordChars = new Regex(@"\W", RegexOptions.Compiled | RegexOptions.Singleline);
 
         [JsonIgnore]

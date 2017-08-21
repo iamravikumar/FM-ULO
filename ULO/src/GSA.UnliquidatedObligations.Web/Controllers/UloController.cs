@@ -192,9 +192,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 workflowId = (await DB.Workflows.SingleAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
             }
 
-            var comingFromReassignmentsPage = isReassignmentReferral();
-
-            var workflow = await FindWorkflowAsync(workflowId, !isUnassignedReferral(), checkReassignmentsGroup: comingFromReassignmentsPage);
+            var workflow = await FindWorkflowAsync(workflowId);
             var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
 
             var workflowDesc = await FindWorkflowDescAsync(workflow);
@@ -202,21 +200,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser));
         }
 
-        private bool isReassignmentReferral()
-        {
-            return Request.UrlReferrer?.LocalPath == "/Ulo/RequestForReassignments";
-        }
-
-        private bool isUnassignedReferral()
-        {
-            return Request.UrlReferrer?.LocalPath == "/Ulo/Unassigned";
-        }
-
         public async Task<ActionResult> RegionWorkflowDetails(int uloId, int workflowId)
         {
             //TODO: check if current user is able to view
             var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
-            var workflow = await FindWorkflowAsync(workflowId, false);
+            var workflow = await FindWorkflowAsync(workflowId);
             var workflowDesc = await FindWorkflowDescAsync(workflow);
             var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser));
@@ -230,28 +218,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         //TODO: Move to Manager?
-        private async Task<Workflow> FindWorkflowAsync(int workflowId, bool checkOwner = true, bool checkReassignmentsGroup = false)
-        {
-            var wf = await DB.Workflows
+        private async Task<Workflow> FindWorkflowAsync(int workflowId)
+            => await DB.Workflows
                 .Include(q => q.AspNetUser)
                 .Include(q => q.Documents)
                 .Include(q => q.UnliquidatedObligation)
                 .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
-            if (wf != null)
-            {
-                if (checkOwner == false) return wf;
-                if (CurrentUserId != null)
-                {
-                    var groupsUserBelongsTo = await GetUsersGroupsAsync(CurrentUserId, checkReassignmentsGroup);
-                    if (wf.OwnerUserId == CurrentUserId || groupsUserBelongsTo.Contains(wf.OwnerUserId)) return wf;
-                    if (wf.AspNetUser.UserType == UserTypes.Group.ToString())
-                    {
-                        //TODO: Write recursive then call recursive sproc to see if current user is in the group
-                    }
-                }
-            }
-            return null;
-        }
 
         //Referred to by WebActionWorkflowActivity
         //TODO: Attributes will probably change
