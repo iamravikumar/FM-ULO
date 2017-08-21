@@ -186,7 +186,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Details(int uloId, int workflowId=0)
         {
             //TODO: check if current user is able to view
-            var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
+            var ulo = await DB.UnliquidatedObligations.
+                Include(u => u.Notes).
+                Include(u => u.Region).
+                Include(u => u.Region.Zone).
+                FirstOrDefaultAsync(u => u.UloId == uloId);
             if (workflowId==0)
             {
                 workflowId = (await DB.Workflows.SingleAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;

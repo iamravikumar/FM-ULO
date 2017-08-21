@@ -1,4 +1,8 @@
-﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation
+﻿@model GSA.UnliquidatedObligations.Web.Models.UloViewModel
+@{ 
+    var ulo = Model.CurretUnliquidatedObligation;
+    var wf = Model.WorkflowViewModel.Workflow;
+}
 <div class="ulo-details">
     <hr />
     <div class="row">
@@ -8,7 +12,7 @@
                     ULO ID:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.UloId)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.UloId)
                 </dd>
             </dl>
         </div>
@@ -18,7 +22,7 @@
                     Workflow ID:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Workflows.First().WorkflowId)
+                    @(wf?.WorkflowId)
                 </dd>
             </dl>
         </div>
@@ -28,7 +32,7 @@
                     Zone:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Region.Zone.ZoneName)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Region.Zone.ZoneName)
                 </dd>
             </dl>
         </div>
@@ -36,7 +40,7 @@
             <dl class="dl-horizontal">
                 <dt>Region:</dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Region.RegionName)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Region.RegionName)
                 </dd>
             </dl>
         </div>
@@ -48,7 +52,7 @@
                     Reason in Review:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.ReasonIncludedInReview)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ReasonIncludedInReview)
                 </dd>
             </dl>
         </div>
@@ -58,7 +62,7 @@
                     Date of Last Activity:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.DateOfLastActivity)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.DateOfLastActivity)
                 </dd>
             </dl>
         </div>
@@ -68,7 +72,7 @@
                     Accounting Period:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.ActgPd)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ActgPd)
                 </dd>
             </dl>
         </div>
@@ -80,7 +84,7 @@
                     Pegasys Document Number:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.PegasysDocumentNumber)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.PegasysDocumentNumber)
                 </dd>
             </dl>
         </div>
@@ -90,7 +94,7 @@
                     Pegasys Title Number:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.PegasysTitleNumber)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.PegasysTitleNumber)
                 </dd>
             </dl>
         </div>
@@ -100,7 +104,7 @@
                     Pegasys Contract Number:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.ContractNum)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ContractNum)
                 </dd>
             </dl>
         </div>
@@ -112,7 +116,7 @@
                     Budget Activity:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Prog)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Prog)
                 </dd>
             </dl>
         </div>
@@ -122,7 +126,7 @@
                     Fund:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Fund)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Fund)
                 </dd>
             </dl>
         </div>
@@ -132,7 +136,7 @@
                     Organization:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Organization)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Organization)
                 </dd>
             </dl>
         </div>
@@ -146,7 +150,7 @@
                     Agreement:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Agreement)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Agreement)
                 </dd>
             </dl>
         </div>
@@ -156,7 +160,7 @@
                     RWA Completion Date:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.RWA_Completion_Date)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.RWA_Completion_Date)
                 </dd>
             </dl>
         </div>
@@ -169,7 +173,7 @@
                     Vendor Name:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.VendorName)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.VendorName)
                 </dd>
             </dl>
         </div>
@@ -179,7 +183,7 @@
                     Contracting Officers Name:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.ContractingOfficersName)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ContractingOfficersName)
                 </dd>
             </dl>
         </div>
@@ -191,7 +195,7 @@
                     Award Number:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.AwardNbr)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.AwardNbr)
                 </dd>
             </dl>
         </div>
@@ -201,7 +205,7 @@
                     Award Expiration Date:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.EASi_Awd_Expiration_Dt)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.EASi_Awd_Expiration_Dt)
                 </dd>
             </dl>
         </div>
@@ -211,7 +215,7 @@
                     GSA FSS/Other #:
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.EASi_GSA_FSS_Other__)
+                    @Html.DisplayFor(model => model.CurretUnliquidatedObligation.EASi_GSA_FSS_Other__)
                 </dd>
             </dl>
         </div>
@@ -224,7 +228,7 @@
                 </dt>
                 <dd>
                     @*@Html.Currency(Model.TotalLine)*@
-                    @Html.Currency(Convert.ToDecimal(Model.TotalLine))
+                    @Html.Currency(Convert.ToDecimal(ulo.TotalLine))
                 </dd>
             </dl>
         </div>
@@ -236,7 +240,7 @@
                     Receipt:
                 </dt>
                 <dd>
-                    @Html.Currency(Convert.ToDecimal(Model.Rcpt))
+                    @Html.Currency(Convert.ToDecimal(ulo.Rcpt))
                 </dd>
             </dl>
         </div>
@@ -248,7 +252,7 @@
                     Accrual:
                 </dt>
                 <dd>
-                    @Html.Currency(Convert.ToDecimal(Model.Accrual))
+                    @Html.Currency(Convert.ToDecimal(ulo.Accrual))
                 </dd>
             </dl>
         </div>
@@ -260,7 +264,7 @@
                     Pending Payment:
                 </dt>
                 <dd>
-                    @Html.Currency(Convert.ToDecimal(Model.PendPayments))
+                    @Html.Currency(Convert.ToDecimal(ulo.PendPayments))
                 </dd>
             </dl>
         </div>
@@ -272,7 +276,7 @@
                     Payments(In Transit):
                 </dt>
                 <dd>
-                    @Html.Currency(Convert.ToDecimal(Model.PymtsInTransit))
+                    @Html.Currency(Convert.ToDecimal(ulo.PymtsInTransit))
                 </dd>
             </dl>
         </div>
@@ -284,7 +288,7 @@
                     Payments(Confirmed):
                 </dt>
                 <dd>
-                    @Html.Currency(Convert.ToDecimal(Model.PymtsConfirmed))
+                    @Html.Currency(Convert.ToDecimal(ulo.PymtsConfirmed))
                 </dd>
             </dl>
         </div>
@@ -296,7 +300,7 @@
                     Holdbacks:
                 </dt>
                 <dd>
-                    @Html.Currency(Convert.ToDecimal(Model.Holdbacks))
+                    @Html.Currency(Convert.ToDecimal(ulo.Holdbacks))
                 </dd>
             </dl>
         </div>
@@ -308,7 +312,7 @@
                     Total Delivered Orders (DO):
                 </dt>
                 <dd>
-                    @Html.Currency(Convert.ToDecimal(Model.TotalDO))
+                    @Html.Currency(Convert.ToDecimal(ulo.TotalDO))
                 </dd>
             </dl>
         </div>
@@ -318,7 +322,7 @@
                     Total Undelivered Orders (UDO):
                 </dt>
                 <dd>
-                    @Html.Currency(Convert.ToDecimal(Model.UndelOrders))
+                    @Html.Currency(Convert.ToDecimal(ulo.UndelOrders))
                 </dd>
             </dl>
         </div>
@@ -328,7 +332,7 @@
                     Total Orders:
                 </dt>
                 <dd>
-                    @Html.Currency(Convert.ToDecimal(Model.TotalUDOAndDO))
+                    @Html.Currency(Convert.ToDecimal(ulo.TotalUDOAndDO))
                 </dd>
             </dl>
         </div>

@@ -57,21 +57,21 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var workflow = DB.Workflows.FirstOrDefault(wf => wf.WorkflowId == workflowId);
             var wfDesc = Manager.GetWorkflowDescriptionAsync(workflow).Result;
-            AspNetUser groupOwnerUser;
+
+            string groupOwnerId;
             if (wfDefintionOwnerName == "")
             {
                 var currentActivity = wfDesc.WebActionWorkflowActivities
                     .FirstOrDefault(a => a.WorkflowActivityKey == workflow.CurrentWorkflowActivityKey);
-                groupOwnerUser = DB.AspNetUsers.FirstOrDefault(u => u.UserName == currentActivity.OwnerUserName);
+                groupOwnerId = PortalHelpers.GetUserId(currentActivity.OwnerUserName);
             }
             else
             {
-                groupOwnerUser = DB.AspNetUsers.FirstOrDefault(u => u.UserName == wfDefintionOwnerName);   
+                groupOwnerId = PortalHelpers.GetUserId(wfDefintionOwnerName);
             }
             
-
             var usersIds = DB.UserUsers
-                .Where(uu => uu.ParentUserId == groupOwnerUser.Id && uu.RegionId == uloRegionId)
+                .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId)
                 .Select(uu => uu.ChildUserId).ToList();
             var users = DB.AspNetUsers
                 .Where(u => u.UserType == AspNetUser.UserTypes.Person && usersIds.Contains(u.Id)).OrderBy(u => u.UserName).ToList();
