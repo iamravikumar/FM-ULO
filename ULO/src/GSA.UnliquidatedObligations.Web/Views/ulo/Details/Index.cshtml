@@ -2,20 +2,18 @@
 @using GSA.UnliquidatedObligations.BusinessLayer.Data
 @using GSA.UnliquidatedObligations.Web.Models
 @model GSA.UnliquidatedObligations.Web.Models.UloViewModel
-
 @{
     ViewBag.Title = Model.CurretUnliquidatedObligation.PegasysDocumentNumber;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var currentUloId = Convert.ToInt32(ViewContext.RouteData.Values["uloId"]);
-    var currentworkflowId = Convert.ToInt32(ViewContext.RouteData.Values["workflowId"]);
+    var currentWorkflowId = Convert.ToInt32(ViewContext.RouteData.Values["workflowId"]);
 }
-
 <h2>ULO @currentUloId Details</h2>
 @Html.Partial("Details/Workflow/_WorkflowDescription", Model.WorkflowViewModel.WorkflowDescriptionViewModel)
 <br />
 @Html.Partial("Details/Workflow/Assignment/_AssignedTo", Model.WorkflowViewModel)
 
-@using (Html.BeginForm(UloController.ActionNames.Save, UloController.Name, new { uloId = @currentUloId, workflowId = @currentworkflowId }, FormMethod.Post, new { id = "uloDetailsForm"}))
+@using (Html.BeginForm(UloController.ActionNames.Save, UloController.Name, new { uloId = @currentUloId, workflowId = @currentWorkflowId }, FormMethod.Post, new { id = "uloDetailsForm"}))
 {
     @Html.AntiForgeryToken()
     @Html.Partial("Details/_Ulo", Model.CurretUnliquidatedObligation)
@@ -41,7 +39,11 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jqueryform")
 
-    <script>
+    <script type="text/javascript">
+        var currentUloId = @currentUloId;
+        var currentWorkflowId = @currentWorkflowId;
+
+
         function loadDocumentModal(documentId) {
             var url = '@Url.Action("View", "Documents")';
             url += '/?documentId=' + documentId;
@@ -59,5 +61,4 @@
             });
         }
     </script>
-
 }

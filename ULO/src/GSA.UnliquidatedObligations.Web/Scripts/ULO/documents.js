@@ -1,9 +1,5 @@
 ﻿var preventDismiss = false;
 $(document).ready(function () {
-    //$(".document-modal").on("hidden.bs.modal", function () {
-       
-    //});
-
     addDocumentDeleteClick();
     addDocumentSaveClick();
 });
@@ -34,7 +30,7 @@ function addDocumentSaveClick() {
         setButtonActions(false);
         
         var documentId = $(this).data("target");
-        var workflowId = getParameterByName("workflowId");
+        var workflowId = currentWorkflowId;
         var documentTypeId = $("#" + documentId + "ModalDocumentType").val();
         var documentName = $("#" + documentId + "ModalDocumentName").val();
         if (documentTypeId === "") {
@@ -125,6 +121,7 @@ function saveDocument(documentId, documentName, workflowId, documentTypeId) {
     url += "&documentName=" + documentName;
     url += "&workflowId=" + workflowId;
     url += "&documentTypeId=" + documentTypeId;
+    debugAlert(url);
     $.ajax({
         type: "POST",
         url: url,
@@ -142,16 +139,6 @@ function saveDocument(documentId, documentName, workflowId, documentTypeId) {
         }
     });
     return false;
-}
-
-function getParameterByName(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return "";
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 function showErrMsg(msg, location) {
