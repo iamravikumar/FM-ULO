@@ -157,6 +157,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     DB.AspNetUserClaims.Remove(c);
                 }
+                var allRegions = Cacher.FindOrCreateValWithSimpleKey("allRegionsHashSet", () => DB.Regions.Select(z => z.RegionId).ToSet());
                 foreach (var p in m.Permissions)
                 {
                     DB.AspNetUserClaims.Add(new AspNetUserClaim
@@ -166,7 +167,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         AspNetUser = u,
                         ClaimValue = new ApplicationPermissionClaimValue
                         {
-                            ApplicationPermissionName = Parse.ParseEnum<ApplicationPermissionNames>(p)
+                            ApplicationPermissionName = Parse.ParseEnum<ApplicationPermissionNames>(p),
+                            Regions = allRegions
                         }.ToXml()
                     });
                 }
