@@ -3,11 +3,6 @@
 
 $(document).ready(function() {
 
-    if (justificationNeeded()) {
-        select = document.getElementById("justifications");
-        if (select && select.length === 1) { select.selectedIndex = 0; }
-    }
-
     $("#validateAnswerMessage").hide();
     $("#validateJustificationMessage").hide();
     $("#validateExpectedDateMessage").hide();
@@ -31,21 +26,28 @@ $(document).ready(function() {
     });
 
     $form.submit(function () {
-        if (submitActor.name === "Advance") {
+        var justificationVal = $("#justifications").val();
+        debugAlert("submitActor.name=" + submitActor.name + "; submitActor.value=" + submitActor.value + "; needed=" + justificationNeeded() + "; J_len=" + $("#justifications").children().length + "; j_val=[" + justificationVal + "]");
+        if (submitActor.value === "Submit") {
             if ($("#Answer").val() === "") {
+                debugAlert("inputError: case1");
                 $("#validateAnswerMessage").show();
                 return false;
             }
-            if (justificationNeeded() && $("#justifications").val() === "") {
-                $("#validateJustificationMessage").show();
-                return false;
+            if (justificationNeeded()) {
+                if (justificationVal == null || justificationVal == "") {
+                    debugAlert("inputError: case2");
+                    $("#validateJustificationMessage").show();
+                    return false;
+                }
             }
             if ($("#ExpectedDateForCompletionNeeded").val() === "True" && ($("#Answer").val() === "Valid" || $("#Answer").val() === "Approve") && $("#ExpectedDateForCompletion").val() === "") {
+                debugAlert("inputError: case3");
                 $("#validateExpectedDateMessage").show();
                 return false;
             }
-
             if ($("#justifications option:selected").text() === "Other" && $("#Comments").val() == "") {
+                debugAlert("inputError: case4");
                 $("#validateCommentMessage").show();
                 return false;
             }
@@ -57,7 +59,7 @@ $(document).ready(function() {
 });
 
 function justificationNeeded() {
-    return $("#justifications").length > 0;
+    return $("#justifications").children().length > 1;
 }
 
 function showExpectedDate(showBool) {
@@ -74,6 +76,7 @@ function ChoiceChange(value, pleaseSelect, justificationKey) {
     debugAlert('ChoiceChange("' + value + '", "' + pleaseSelect + '", "' + justificationKey + '")');
     var q = questionChoiceByQuestionChoiceValue[value];
     var keys = q.justificationKeys;
+    debugAlert(keys.length+" keys of [" + keys+"]");
 
     var select = $("#justifications")[0];
     select.options.length = 0;
@@ -91,7 +94,7 @@ function ChoiceChange(value, pleaseSelect, justificationKey) {
         var j = justificationByKey[key];
         if (j == null)
         {
-            debugAlert("missing key value for [" + key + "]");
+            alert("missing key value for [" + key + "]");
             continue;
         }
         var desc = j.Description; 
@@ -106,9 +109,11 @@ function ChoiceChange(value, pleaseSelect, justificationKey) {
     while (el.tagName != "DIV" && el != null) {
         el = el.parentElement;
     }
-    //alert("jc=" + jc+"; el.tagName="+el.tagName+"; el.id="+el.id);
+
+    debugAlert("jc=" + jc + "; el.tagName=" + el.tagName + "; el.id=" + el.id);
+
     if (el != null) {
-        if (jc < 3) {
+        if (jc == 0) {
             $(el.parentElement).hide();
         }
         else {

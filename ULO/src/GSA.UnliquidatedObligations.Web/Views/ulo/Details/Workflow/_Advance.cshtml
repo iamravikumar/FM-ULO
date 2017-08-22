@@ -19,12 +19,9 @@
                 </div>
                 <div class="row row-space-top" style="display:none">
                     <div class="col-md-12">
-                        @if (Model.JustificationNeeded)
-                        {
-                            @Html.LabelFor(model => model.JustificationKey, "Justification:", htmlAttributes: new { @class = "control-label" })
-                            @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications" })<br />
-                            @Html.ValidationMessageFor(model => model.JustificationKey, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
-                        }
+                        @Html.LabelFor(model => model.JustificationKey, "Justification:", htmlAttributes: new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications" })<br />
+                        @Html.ValidationMessageFor(model => model.JustificationKey, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
                         @if (!string.IsNullOrEmpty(Model.JustificationKey))
                         {
                         <script type="text/javascript">

@@ -42,9 +42,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         [DataMember(Name = "AllowDocumentsEdit")]
         public bool AllowDocumentEdit { get; set; }
 
-        [DataMember(Name = "JustificationNeeded")]
-        public bool JustificationNeeded { get; set; }
-
         [DataMember(Name = "ExpectedDateForCompletionEditable")]
         public bool ExpectedDateForCompletionEditable { get; set; }
 
