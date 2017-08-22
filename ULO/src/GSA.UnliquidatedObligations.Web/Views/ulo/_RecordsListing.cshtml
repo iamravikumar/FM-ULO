@@ -1,5 +1,5 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Models
-@using RevolutionaryStuff.Core
+@using GSA.UnliquidatedObligations.Web.Controllers
 @using System.Linq
 @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
 @{
@@ -52,7 +52,7 @@
     {
         <tr class="active-workflows-record" data-id="@item.WorkflowId">
             <td>
-                @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), "Details", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+                @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)

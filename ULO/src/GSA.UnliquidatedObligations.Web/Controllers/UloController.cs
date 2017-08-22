@@ -32,6 +32,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string RequestForReassignments = "RequestForReassignments";
             public const string Unassigned = "Unassigned";
             public const string Save = "Save";
+            public const string Details = "Details";
         }
 
         protected readonly IWorkflowManager Manager;
@@ -190,6 +191,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [Route("Ulos/{uloId}/{workflowId}", Order = 1)]
         [Route("Ulos/{uloId}", Order = 2)]
+        [ActionName(ActionNames.Details)]
         public async Task<ActionResult> Details(int uloId, int workflowId=0)
         {
             //TODO: check if current user is able to view

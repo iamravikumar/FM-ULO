@@ -48,11 +48,11 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.UploadIntoSqlServer(CreateSqlConnection);
         }
 
-        public void Email(string subject, string recipient, string template, object model)
+        public void Email(string subjectTemplate, string recipient, string bodyTemplate, object model)
         {
-            var tempName = Guid.NewGuid().ToString();
-            var compiledEmailBody = Engine.Razor.RunCompile(template, tempName, null, model);
-            EmailServer.SendEmail(subject, compiledEmailBody, recipient);
+            var subject = Engine.Razor.RunCompile(subjectTemplate, Guid.NewGuid().ToString(), null, model);
+            var body = Engine.Razor.RunCompile(bodyTemplate, Guid.NewGuid().ToString(), null, model);
+            EmailServer.SendEmail(subject, body, recipient);
         }
 
         //TODO: Email on exception or let user know what happened
@@ -95,17 +95,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
         //TODO: Email on exception or let user know what happened.
         public async Task AssignWorkFlows(int reviewId)
         {
-            var systemUserType = UserTypes.System.ToString();
-
-            var systemUser =
-                DB.AspNetUsers.
-                FirstOrDefault(u => u.UserType == systemUserType);
-
-            var systemUserId = systemUser.Id;
-
             var workflows = 
                 DB.Workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.AspNetUser).
-                Where(wf => wf.OwnerUserId== systemUserId).
+                Where(wf => wf.OwnerUserId==PortalHelpers.PreAssignmentUserUserId).
                 OrderBy(wf => wf.UnliquidatedObligation.ReviewId == reviewId ? 0 : 1).
                 ToList();
 

@@ -105,5 +105,14 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((string)(this["ReviewScopeWorkflowMapCsv"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PreAssignment")]
+        public string PreAssignmentUserUsername {
+            get {
+                return ((string)(this["PreAssignmentUserUsername"]));
+            }
+        }
     }
 }

@@ -57,5 +57,8 @@ UE,UE
       <Value Profile="(Default)">Region,Region Workflow
 WholeAgency,ULO Workflow</Value>
     </Setting>
+    <Setting Name="PreAssignmentUserUsername" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PreAssignment</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

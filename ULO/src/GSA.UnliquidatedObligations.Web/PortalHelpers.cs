@@ -115,6 +115,9 @@ namespace GSA.UnliquidatedObligations.Web
             return null;
         }
 
+        public static string PreAssignmentUserUserId
+            => GetUserId(Properties.Settings.Default.PreAssignmentUserUsername);
+
         public static string ReassignGroupUserId
             => GetUserId(Properties.Settings.Default.ReassignGroupUserName);
 

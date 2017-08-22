@@ -189,11 +189,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     };
                     if (null == StringHelpers.TrimOrNull(sccv.DocType)) continue;
                     int regionId = Parse.ParseInt32(sccRegions[z]);
-                    if (regionId > 0)
-                    {
-                        sccv.Regions = sccv.Regions ?? new HashSet<int>();
-                        sccv.Regions.Add(regionId);
-                    }
+                    sccv.Regions = sccv.Regions ?? new HashSet<int>();
+                    sccv.Regions.Add(regionId);
                     DB.AspNetUserClaims.Add(new AspNetUserClaim
                     {
                         ClaimType = SubjectCatagoryClaimValue.ClaimType,

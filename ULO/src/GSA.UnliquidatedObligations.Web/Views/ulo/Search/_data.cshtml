@@ -1,5 +1,6 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Models
 @using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.Web.Controllers
 @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
 @{
     var todaysDate = DateTime.Today;
@@ -65,7 +66,7 @@
     {
         <tr class="active-workflows-record" data-id="@item.WorkflowId">
             <td>
-                @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), "RegionWorkflowDetails", "Ulo", new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+                @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneName)
