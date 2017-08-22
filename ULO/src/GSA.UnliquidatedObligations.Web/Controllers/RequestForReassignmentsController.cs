@@ -108,7 +108,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             )]
             RequestForReassignmentViewModel requestForReassignmentViewModel)
         {
-            var pageToRedirectTo = Request.UrlReferrer.AbsolutePath.Replace("/Ulo/", "");
             if (ModelState.IsValid)
             {
                 var wf = await FindWorkflowAsync(workflowId, false);
@@ -123,12 +122,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     WorkflowRowVersion = wf.WorkflowRowVersion,
                     CreatedAtUtc = DateTime.UtcNow
                 };
-                var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, pageToRedirectTo);
+                var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, UloController.ActionNames.Index);
                 await DB.SaveChangesAsync();
-                return ret;
+//                return ret;
             }
-            
-            return RedirectToAction(pageToRedirectTo, "Ulo");
+            return Redirect(Request.UrlReferrer?.ToString());
         }
 
 

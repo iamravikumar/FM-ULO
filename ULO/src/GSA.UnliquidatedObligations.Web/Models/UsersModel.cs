@@ -29,6 +29,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public IList<string> Groups { get; set; } = new List<string>();
 
+        public IList<int> GroupMembershipRegionIds { get; set; } = new List<int>();
+
         public UserModel() { }
 
         public UserModel(AspNetUser user, IEnumerable<UserUser> groups, IEnumerable<AspnetUserApplicationPermissionClaim> applicationPermissionClaim, IEnumerable<AspnetUserSubjectCategoryClaim> subjectCategoryClaims)
@@ -38,6 +40,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Email = user.Email;
             UserType = user.UserType;
             Groups = groups.ConvertAll(z => z.ParentUser.UserName).Distinct().OrderBy().ToList();
+            GroupMembershipRegionIds = groups.Where(z=>z.RegionId!=null).ConvertAll(z => z.RegionId.Value).Distinct().ToList();
             SubjectCategoryClaims = subjectCategoryClaims.ToList();
             Claims = SubjectCategoryClaims.ConvertAll(z=>z.ToFriendlyString()).Distinct().OrderBy().ToList();
             Permissions = applicationPermissionClaim.ConvertAll(z => z.PermissionName).Distinct().OrderBy().ToList();

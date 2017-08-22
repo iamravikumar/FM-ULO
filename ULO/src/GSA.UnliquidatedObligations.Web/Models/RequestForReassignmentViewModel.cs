@@ -1,6 +1,8 @@
 ﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using RevolutionaryStuff.Core;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Models
@@ -26,7 +28,12 @@ namespace GSA.UnliquidatedObligations.Web.Models
             RequestForReassignmentId = requestForReassignmentId;
             SuggestedReviewerId = suggestedReviewerId;
             JustificationKey = justificationKey;
-            Users = PortalHelpers.CreateSelectList(users);
+            var d = new Dictionary<string, AspNetUser>();
+            foreach (var u in users)
+            {
+                d[u.Id] = u;
+            }
+            Users = PortalHelpers.CreateSelectList(d.Values.OrderBy(z=>z.UserName));
             Comments = comments;
             Justifications = PortalHelpers.CreateSelectList(justifications);
             WorkflowId = workflowId;

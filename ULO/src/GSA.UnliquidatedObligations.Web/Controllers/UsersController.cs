@@ -49,7 +49,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var users = aspNetUsers.ToList();
             var userIds = users.ConvertAll(u => u.Id);
-            var groups = DB.UserUsers.Include(uu=>uu.ParentUser).Where(uu => userIds.Contains(uu.ChildUserId));
+            var groups = DB.UserUsers.Include(uu=>uu.ParentUser).Where(uu => userIds.Contains(uu.ChildUserId)).ToList();
             var applicationPermissionClaims = await DB.AspnetUserApplicationPermissionClaims.Where(c => userIds.Contains(c.UserId)).ToListAsync();
             var subjectCategoryClaims = await DB.AspnetUserSubjectCategoryClaims.Where(c => userIds.Contains(c.UserId)).ToListAsync();
             var groupsByUserId = groups.ToMultipleValueDictionary(z => z.ChildUserId);
@@ -97,12 +97,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 nameof(UserModel.UserType)+","+
                 nameof(UserModel.Claims)+","+
                 nameof(UserModel.Permissions)+","+
+                nameof(UserModel.GroupMembershipRegionIds)+","+
                 nameof(UserModel.Groups)+","+
                 nameof(UserModel.SubjectCategoryClaims)+","+
                 nameof(UserModel.SubjectCategoryClaims)+"."+nameof(SubjectCatagoryClaimValue.BACode)+","+
                 nameof(UserModel.SubjectCategoryClaims)+"."+nameof(SubjectCatagoryClaimValue.DocType)+","+
                 nameof(UserModel.SubjectCategoryClaims)+"."+nameof(SubjectCatagoryClaimValue.OrgCode)+","+
-                nameof(UserModel.SubjectCategoryClaims)+"."+nameof(SubjectCatagoryClaimValue.Regions)
+                nameof(UserModel.SubjectCategoryClaims)+"."+nameof(SubjectCatagoryClaimValue.Regions) 
             )]
             UserModel m)
         {
@@ -152,7 +153,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     DB.UserUsers.Remove(uu);
                 }
-                myGroups.ForEach(g => DB.UserUsers.Add(new UserUser { ParentUser = g, ChildUser = u }));
+                m.GroupMembershipRegionIds.ForEach(rid=>myGroups.ForEach(g => DB.UserUsers.Add(new UserUser { ParentUser = g, ChildUser = u, RegionId = rid })));
                 foreach (var c in u.AspNetUserClaims.Where(z => z.ClaimType == ApplicationPermissionClaimValue.ClaimType || z.ClaimType == SubjectCatagoryClaimValue.ClaimType).ToList())
                 {
                     DB.AspNetUserClaims.Remove(c);

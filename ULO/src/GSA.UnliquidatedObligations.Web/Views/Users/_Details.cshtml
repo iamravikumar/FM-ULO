@@ -49,6 +49,14 @@
         </div>
         <div class="form-row">
             <div class="col-sm-2">
+                Group Membership Regions
+            </div>
+            <div class="col-sm-10">
+                @Html.ListBoxFor(z=>z.GroupMembershipRegionIds, PortalHelpers.CreateRegionSelectListItems(), new { size=12 })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
                 @Html.DisplayNameFor(model => model.Groups)
             </div>
             <div class="col-sm-10">

@@ -1,13 +1,14 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Models
-@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using RevolutionaryStuff.Core
+@using System.Linq
 @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
 @{
     var workflowDescription = (GSA.UnliquidatedObligations.BusinessLayer.Workflow.IWorkflowDescription)ViewBag.WorkflowDescription;
     var todaysDate = DateTime.Today;
-    var showReassignmentButton = ViewBag.ShowReassignButton;
+    var showReassignmentButton = ViewBag.ShowReassignButton is bool ? (bool)ViewBag.ShowReassignButton : false;
     var userReassignRegions = User.GetReassignmentGroupRegions();
+    bool anyReassignmentsApplicable = false;
 }
-
 <table class="table table-responsive active-workflows">
     <tr>
         <th>
@@ -94,32 +95,27 @@
                 }
             </td>
             <td>
-                @if (showReassignmentButton && User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(item.UnliquidatedObligation.RegionId))
+                @if (showReassignmentButton)
                 {
-
+                    anyReassignmentsApplicable = true;
                     @Html.Partial("~/Views/Ulo/Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList.cshtml", new WorkflowViewModel(item, true, workflowDescription))
                 }
             </td>
-            @*<td>
-                    @Html.ActionLink("Edit", "Edit", new { id=item.WorkflowId }) |
-                    @Html.ActionLink("Details", "Details", new { id=item.WorkflowId }) |
-                    @Html.ActionLink("Delete", "Delete", new { id=item.WorkflowId })
-                </td>*@
         </tr>
                     }
-
 </table>
-@if (showReassignmentButton)
+@if (showReassignmentButton && anyReassignmentsApplicable)
 {
     foreach (var item in Model)
     {
-        if (item.RequestForReassignments.Count == 0)
+        var rfr = item.RequestForReassignments.FirstOrDefault();
+        if (rfr == null)
         {
             Html.RenderAction("Details", "RequestForReassignments", new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true });
         }
         else
         {
-            Html.RenderAction("Details", "RequestForReassignments", new { id = item.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true });
+            Html.RenderAction("Details", "RequestForReassignments", new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true, id = rfr.RequestForReassignmentID });
         }
     }
 }

@@ -104,28 +104,30 @@ namespace GSA.UnliquidatedObligations.Web
         public static string ReassignGroupUserId
             => GetUserId(Properties.Settings.Default.ReassignGroupUserName);
 
-        public static IList<int?> GetReassignmentGroupRegions(this IPrincipal user)
+        public static IList<int?> GetUserGroupRegions(this IPrincipal user, string groupNameOrId)
             => Cacher.FindOrCreateValWithSimpleKey(
-                Cache.CreateKey(nameof(GetReassignmentGroupRegions), user.Identity.Name),
+                Cache.CreateKey(nameof(GetReassignmentGroupRegions), user.Identity.Name, groupNameOrId),
                 () =>
                 {
                     using (var db = UloDbCreator())
                     {
-                        var groupRegions = new List<int?>();
-                        var aspNetUser = db.AspNetUsers.Include(u => u.ChildUserUsers).FirstOrDefault(u => u.UserName == user.Identity.Name);
+                        var groupId = PortalHelpers.GetUserId(groupNameOrId);
 
-                        if (aspNetUser != null)
-                        {
-                            groupRegions = aspNetUser.ChildUserUsers
-                                .Where(uu => uu.ParentUserId == ReassignGroupUserId)
-                                .Select(uu => uu.RegionId).ToList();
-                        }
+                        var userId = GetUserId(user?.Identity?.Name);
 
-                        return groupRegions.AsReadOnly();
+                        return db.UserUsers
+                            .Where(uu => (uu.ParentUserId == groupId || uu.ParentUserId == groupNameOrId) && uu.ChildUserId == userId)
+                            .Select(uu => uu.RegionId)
+                            .Distinct()
+                            .ToList()
+                            .AsReadOnly();
                     }
                 },
-                UloHelpers.ShortCacheTimeout
+                UloHelpers.MediumCacheTimeout
                 );
+
+        public static IList<int?> GetReassignmentGroupRegions(this IPrincipal user)
+            => user.GetUserGroupRegions(Properties.Settings.Default.ReassignGroupUserName);
 
         public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, int? uloId, string pegasysDocumentNumber, string organization,
            int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId)
@@ -735,6 +737,11 @@ namespace GSA.UnliquidatedObligations.Web
                 AspNetUser.UserTypes.Group,
                 creatableOnly ? null : AspNetUser.UserTypes.System,
             }.WhereNotNull().OrderBy().ConvertToSelectList();
+
+        public static string GetRegionName(int regionId)
+            => Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(nameof(GetRegionName), regionId),
+                () => CreateRegionSelectListItems(false).FirstOrDefault(i => i.Value == regionId.ToString())?.Text);
 
         public static IList<SelectListItem> CreateRegionSelectListItems(bool includeAllRegions=false, string allRegionsValue="*")
             => Cacher.FindOrCreateValWithSimpleKey(

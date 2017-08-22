@@ -74,9 +74,6 @@ function showExpectedDate(showBool) {
 
 function ChoiceChange(value, pleaseSelect, justificationKey) {
     debugAlert('ChoiceChange("' + value + '", "' + pleaseSelect + '", "' + justificationKey + '")');
-    var q = questionChoiceByQuestionChoiceValue[value];
-    var keys = q.justificationKeys;
-    debugAlert(keys.length+" keys of [" + keys+"]");
 
     var select = $("#justifications")[0];
     select.options.length = 0;
@@ -86,24 +83,28 @@ function ChoiceChange(value, pleaseSelect, justificationKey) {
     el.disabled = true;
     el.selected = justificationKey==null;
     select.appendChild(el);
-    
+
     var jc = 0;
-    for (x = 0; x < keys.length; ++x)
-    {
-        var key = keys[x];
-        var j = justificationByKey[key];
-        if (j == null)
-        {
-            alert("missing key value for [" + key + "]");
-            continue;
+    var q = questionChoiceByQuestionChoiceValue[value];
+    var keys = q.justificationKeys;
+    if (keys != null) {
+        debugAlert(keys.length + " keys of [" + keys + "]");
+
+        for (x = 0; x < keys.length; ++x) {
+            var key = keys[x];
+            var j = justificationByKey[key];
+            if (j == null) {
+                alert("missing key value for [" + key + "]");
+                continue;
+            }
+            var desc = j.Description;
+            el = document.createElement("option");
+            el.textContent = desc;
+            el.value = key;
+            el.selected = key == justificationKey;
+            select.appendChild(el);
+            ++jc;
         }
-        var desc = j.Description; 
-        el = document.createElement("option");
-        el.textContent = desc;
-        el.value = key;
-        el.selected = key == justificationKey;
-        select.appendChild(el);
-        ++jc;
     }
 
     while (el.tagName != "DIV" && el != null) {

@@ -68,55 +68,62 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).Include(wf => wf.UnliquidatedObligation).Include(wf=>wf.UnliquidatedObligation.Region),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
-            //TODO: A little hacky
-            ViewBag.ShowReassignButton = false;
             return View(workflows);
         }
 
         [ActionName(ActionNames.Unassigned)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
         [Route("Ulos/Unassigned")]
-        public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
+        public ActionResult Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
-            var userIds = await GetUsersGroupsAsync(CurrentUserId);
-            var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => userIds.Contains(wf.OwnerUserId)).Include(wf => wf.UnliquidatedObligation),
-                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             ViewBag.ShowReassignButton = true;
+
+            var predicate = PredicateBuilder.Create<Workflow>(wf => false);
+
+            foreach (var g in GetUserGroups(CurrentUserId))
+            {
+                var regionIds = User.GetUserGroupRegions(g.UserName);
+                predicate = predicate.Or(wf => wf.OwnerUserId == g.UserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId));
+                ShowGroupRegionMembershipAlert(g.UserName, regionIds);
+            }
+
+            var workflows = ApplyBrowse(
+                DB.Workflows.Where(predicate)
+                .Include(wf => wf.UnliquidatedObligation),
+                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             return View(workflows);
         }
 
         [ActionName(ActionNames.RequestForReassignments)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
         [Route("Ulos/Reassignments")]
-        public async Task<ActionResult> RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
+        public ActionResult RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
+            ViewBag.ShowReassignButton = true;
+            var regionIds = User.GetReassignmentGroupRegions();
             var reassignGroupUserId = PortalHelpers.ReassignGroupUserId;
-
-            var reassignGroupRegionIds = await DB.UserUsers
-                .Where(uu => uu.ParentUserId == reassignGroupUserId && uu.ChildUserId == CurrentUserId)
-                .Select(uu => uu.RegionId)
-                .Distinct()
-                .ToListAsync();
-
-            if (reassignGroupRegionIds.Count > 0)
-            {
-                AddPageAlert($"You have been assigned to the {Properties.Settings.Default.ReassignGroupUserName} group with {reassignGroupRegionIds.Count} regions", false, PageAlert.AlertTypes.Info);
-            }
-            else
-            {
-                AddPageAlert($"You have not been assigned to the {Properties.Settings.Default.ReassignGroupUserName} group", false, PageAlert.AlertTypes.Warning);
-            }
+            ShowGroupRegionMembershipAlert(Properties.Settings.Default.ReassignGroupUserName, regionIds);
 
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
+                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId))
                 .Include(wf => wf.UnliquidatedObligation),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
 
-            ViewBag.ShowReassignButton = true;
-
             return View(workflows);
+        }
+
+        private bool ShowGroupRegionMembershipAlert(string groupName, ICollection<int?> regionIds)
+        {
+            if (regionIds.Count > 0)
+            {
+                var myRegions = regionIds.ConvertAll(rid => PortalHelpers.GetRegionName(rid.GetValueOrDefault())).WhereNotNull().Format(", ");
+                AddPageAlert($"You're a member of the {groupName} group with regions: {myRegions}", false, PageAlert.AlertTypes.Info);
+            }
+            else
+            {
+                AddPageAlert($"You're a member of the {groupName} group but haven't been assigned any regions", false, PageAlert.AlertTypes.Warning);
+            }
+            return true;
         }
 
         [ActionName(ActionNames.Search)]
@@ -290,20 +297,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
             }
             return await Details(uloId, workflowId);
-        }
-
-        private Task<IEnumerable<string>> GetUsersGroupsAsync(string userId, bool includeReassignmentGroup=false)
-        {
-            IEnumerable<string> ids;
-            if (!includeReassignmentGroup)
-            {
-                ids = GetUserGroups(userId).ConvertAll(z => z.UserId).Where(z => z != PortalHelpers.ReassignGroupUserId);
-            }
-            else
-            {
-                ids = GetUserGroups(userId).ConvertAll(z => z.UserId);
-            }
-            return Task.FromResult(ids);
         }
     }
 }
