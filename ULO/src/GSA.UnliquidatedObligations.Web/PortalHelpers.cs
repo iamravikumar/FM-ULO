@@ -26,6 +26,20 @@ namespace GSA.UnliquidatedObligations.Web
         private static readonly ICacher Cacher = Cache.DataCacher;
         private static Func<ULODBEntities> UloDbCreator = () => new ULODBEntities();
 
+        static PortalHelpers()
+        {
+            var d = new Dictionary<ReviewScopeEnum, string>();
+            foreach (var row in CSV.ParseText(Properties.Settings.Default.ReviewScopeWorkflowMapCsv))
+            {
+                if (row.Length != 2) continue;
+                var scope = Parse.ParseEnum<ReviewScopeEnum>(row[0]);
+                d[scope] = StringHelpers.TrimOrNull(row[1]);
+            }
+            WorkflowDefinitionNameByReviewScope = d.AsReadOnly();
+        }
+
+        public static readonly IDictionary<ReviewScopeEnum, string> WorkflowDefinitionNameByReviewScope;
+
         public static string GetStorageFolderPath(string relativePath, bool createFolderInNotExists=true)
         {
             relativePath = relativePath ?? "";

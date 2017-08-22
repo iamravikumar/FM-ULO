@@ -52,26 +52,22 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         [Required(ErrorMessage = "Review Type is required")]
         public int? ReviewTypeId { get; set; }
+
         public IList<SelectListItem> ReviewTypes { get; set; }
 
         [Required(ErrorMessage = "Review Scope is required")]
         public int? ReviewScopeId { get; set; }
+
         public IList<SelectListItem> ReviewScopes { get; set; }
 
-        [Required(ErrorMessage = "Workflow Definition is required")]
-        public int? WorkflowDefinitionId { get; set; }
-        public IList<SelectListItem> WorkflowDefinitions { get; set; }
-        [Required(ErrorMessage = "Review Name is required")]
         public string ReviewName { get; set; }
 
         [Required(ErrorMessage = "Review Date is required")]
         [DataType(DataType.Date)]
         public DateTime ReviewDateInitiated { get; set; }
+
         public string Comments { get; set; }
 
-        //[Required(ErrorMessage = "Project Due Date is required")]
-        //[DataType(DataType.Date)]
-        //public DateTime? ProjectDueDate { get; set; }
 
         public ReviewModel()
         {
@@ -79,12 +75,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
             ReviewScopes = Enum.GetValues(typeof(ReviewScopeEnum)).Cast<ReviewScopeEnum>().ToList().ConvertToSelectList();
         }
 
-        public ReviewModel(IList<int> permissableRegionIds, IList<WorkflowDefinition> workflowDefinitions)
+        public ReviewModel(IList<int> permissableRegionIds)
             : this()
         {
             var permissibleVals = permissableRegionIds.ConvertAll(r => r.ToString()).Distinct().ToDictionary(z => z, z=>true);
             RegionChoices = PortalHelpers.CreateRegionSelectListItems().Where(s => permissibleVals.ContainsKey(s.Value)).ToList();
-            WorkflowDefinitions = workflowDefinitions.ConvertToSelectList();
             ReviewDateInitiated = DateTime.Today;
         }
     }
@@ -99,7 +94,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Review = review;
             ReviewUploadStats = new ReviewUploadStatsModel(reviewStats);
         }
-
     }
 
     public class ReviewUploadStatsModel

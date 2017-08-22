@@ -81,8 +81,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private async Task<ReviewModel> CreateReviewModelAsync()
         {
             var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
-            var workflowDefinitions = await DB.WorkflowDefinitions.Where(wd => wd.IsActive).OrderBy(wfd => wfd.WorkflowDefinitionName).ToListAsync();
-            return new ReviewModel(claimRegionIds, workflowDefinitions);
+            return new ReviewModel(claimRegionIds);
         }
 
         // GET: Review/Create
@@ -105,8 +104,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 nameof(ReviewModel.Comments)+","+
                 //nameof(ReviewModel.Review)+","+
                 nameof(ReviewModel.RegionChoices)+","+
-                nameof(ReviewModel.WorkflowDefinitions)+","+
-                nameof(ReviewModel.WorkflowDefinitionId)+","+
                 nameof(ReviewModel.ReviewDateInitiated))]
             ReviewModel reviewModel)
         {
@@ -130,8 +127,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 ModelState.AddModelError("Files", "You must upload at least one of each type of file.");
                 errors = true;
             }
+            var reviewScope = (ReviewScopeEnum)reviewModel.ReviewScopeId.Value;
+            string workflowDefinitionName;
+            if (!PortalHelpers.WorkflowDefinitionNameByReviewScope.TryGetValue(reviewScope, out workflowDefinitionName))
+            {
+                ModelState.AddModelError("", $"Can't find workflowDefinitionName for scope={reviewScope}");
+                errors = true;
+            }
             if (ModelState.IsValid && !errors)
             {
+                var wd = await DB.WorkflowDefinitions.Where(z => z.IsActive && z.WorkflowDefinitionName == workflowDefinitionName).OrderByDescending(z => z.WorkflowDefinitionId).FirstOrDefaultAsync();
+
                 //content += "before review object create<br />";
                 var review = new Review
                 {
@@ -141,11 +147,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     ReviewTypeId = reviewModel.ReviewTypeId.Value,
                     Comments = reviewModel.Comments,
                     ReviewScopeId = reviewModel.ReviewScopeId.Value,
-                    WorkflowDefinitionId = reviewModel.WorkflowDefinitionId.Value,
+                    WorkflowDefinitionId = wd.WorkflowDefinitionId,
                     CreatedAtUtc = DateTime.UtcNow,
                     ReviewDateInitiated = reviewModel.ReviewDateInitiated
                     //ProjectDueDate = reviewModel.ProjectDueDate.Value,
-
                 };
                 DB.Reviews.Add(review);
                 await DB.SaveChangesAsync();
@@ -194,7 +199,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             reviewModel.RegionChoices = m.RegionChoices;
             reviewModel.ReviewTypes = m.ReviewTypes;
             reviewModel.ReviewScopes = m.ReviewScopes;
-            reviewModel.WorkflowDefinitions = m.WorkflowDefinitions;
             return View(reviewModel);
         }
 

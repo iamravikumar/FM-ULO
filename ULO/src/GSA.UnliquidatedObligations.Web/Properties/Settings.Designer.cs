@@ -96,5 +96,14 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((string)(this["DocTypesCsv"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Region,Region Workflow\r\nWholeAgency,ULO Workflow")]
+        public string ReviewScopeWorkflowMapCsv {
+            get {
+                return ((string)(this["ReviewScopeWorkflowMapCsv"]));
+            }
+        }
     }
 }

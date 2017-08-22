@@ -1,4 +1,5 @@
 ﻿@model GSA.UnliquidatedObligations.Web.Models.ReviewModel
+@using Newtonsoft.Json
 
 @{
     ViewBag.Title = "Create";
@@ -53,15 +54,6 @@
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.RegionId, Model.RegionChoices, "Select One..", htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.WorkflowDefinitionId, "Workflow:", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBox("WorkflowDefintionName", null, new { @id = "workflowDefintionName", @class = "form-control", @readonly = "readonly" })
-                @Html.HiddenFor(model => model.WorkflowDefinitionId)
-                @*@Html.DropDownList("WorkflowDefinitionId", Model.WorkflowDefinitions, "Select One..", htmlAttributes: new { @class = "form-control" })*@
-                @Html.ValidationMessageFor(model => model.WorkflowDefinitionId, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
