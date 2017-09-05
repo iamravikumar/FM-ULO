@@ -51,32 +51,7 @@
             <td class="label-container"><label for="awardNumber">Award Number:</label></td>
             <td><input type="text" name="awardNumber" id="awardNumber" value="@Context.Request["awardNumber"]" /></td>
             <td class="label-container"><label for="reasonIncludedInReview">Reason Included In Review:</label></td>
-            <td>
-                <select id="reasonIncludedInReview" name="reasonIncludedInReview" class="form-control">
-                    <option></option>
-                    <option value="Accrual (AR; EE):  No Activity in 3 Months">Accrual (AR; EE):  No Activity in 3 Months</option>
-                    <option value="Credit Card Log/Training Log (CL; CT):  No Activity in 3 Months">Credit Card Log/Training Log (CL; CT):  No Activity in 3 Months</option>
-                    <option value="Direct Entered Order (PP) - No Activity in 6 Months">Direct Entered Order (PP) - No Activity in 6 Months</option>
-                    <option value="FAS Orders/Fedstrip Acquisition (IY):  No Activity in 3 Months">FAS Orders/Fedstrip Acquisition (IY):  No Activity in 3 Months</option>
-                    <option value="FAS Purchase Order (QP) - No Activity in 3 months">FAS Purchase Order (QP) - No Activity in 3 months</option>
-                    <option value="Financed Order (BW):  No Activity in 3 Months">Financed Order (BW):  No Activity in 3 Months</option>
-                    <option value="FTS Purchase Order (TP) - No Activity in 3 months">FTS Purchase Order (TP) - No Activity in 3 months</option>
-                    <option value="GMA Order (GP; GD)  No Activity in 3 Months">GMA Order (GP; GD)  No Activity in 3 Months</option>
-                    <option value="Inter/Intra Agency Agreements (GX; IX; PX; EJ):  No Activity in 3 Months">Inter/Intra Agency Agreements (GX; IX; PX; EJ):  No Activity in 3 Months</option>
-                    <option value="Lease Accrual (LR; LU):  No Activity in 3 Months">Lease Accrual (LR; LU):  No Activity in 3 Months</option>
-                    <option value="Lease Purchase Request (LO):  No Activity in 3 months">Lease Purchase Request (LO):  No Activity in 3 months</option>
-                    <option value="Lease Tax Accrual (LY):  No Activity in 6 Months">Lease Tax Accrual (LY):  No Activity in 6 Months</option>
-                    <option value="Purchase Order/Contract (Task/Delivery; Stand-Alone)( EP; PJ) and Construction (EN; PN):  No Activity in 6 Months">Purchase Order/Contract (Task/Delivery; Stand-Alone)( EP; PJ) and Construction (EN; PN):  No Activity in 6 Months</option>
-                    <option value="Purchase Order/Contract (Task/Delivery; Stand-Alone)( EP; PJ) and Construction (EN; PN):  No Expiration Date in EASi or No Activity in 6 Months or Award Expiration Date Greater Than 6 Months Past">Purchase Order/Contract (Task/Delivery; Stand-Alone)( EP; PJ) and Construction (EN; PN):  No Expiration Date in EASi or No Activity in 6 Months or Award Expiration Date Greater Than 6 Months Past</option>
-                    <option value="Purchase Request (RWAs) (RR) - No activity in 6 months">Purchase Request (RWAs) (RR) - No activity in 6 months</option>
-                    <option value="Recurring Service (RO):  No Activity in 3 Months">Recurring Service (RO):  No Activity in 3 Months</option>
-                    <option value="Recurring Services - non LOGO (RB; EK) - No Activity in 3 Months">Recurring Services - non LOGO (RB; EK) - No Activity in 3 Months</option>
-                    <option value="Relocation (LT):  No Activity in 3 Months">Relocation (LT):  No Activity in 3 Months</option>
-                    <option value="SLA (PS):  No Activity in 1 Year">SLA (PS):  No Activity in 1 Year</option>
-                    <option value="Training (PY):  No Activity in 3 Months">Training (PY):  No Activity in 3 Months</option>
-                    <option value="Utility (UE):  No Activity in 3 Months">Utility (UE):  No Activity in 3 Months</option>
-                </select>
-            </td>
+            <td>@Html.DropDownList("reasons", Model.Reasons, "", new { @class = "form-control" })</td>
         </tr>
         <tr>
             <td class="label-container"><label for="valid">Valid:</label></td>

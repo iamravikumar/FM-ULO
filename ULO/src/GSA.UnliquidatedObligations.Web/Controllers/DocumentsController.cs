@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using RevolutionaryStuff.Core;
@@ -17,6 +18,8 @@ using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class DocumentsController : BaseController
     {
         private readonly ApplicationUserManager UserManager;

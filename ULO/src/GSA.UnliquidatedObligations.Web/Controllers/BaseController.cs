@@ -16,12 +16,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected readonly IComponentContext ComponentContext;
         protected readonly ICacher Cacher;
 
-        public BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+        protected BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
         {
             DB = db;
             ComponentContext = componentContext;
             Cacher = cacher;
             System.Web.HttpContext.Current.Items["ComponentContext"] = ComponentContext;
+        }
+
+        protected void OnlySupportedInDevelopmentEnvironment()
+        {
+            if (!PortalHelpers.UseDevAuthentication) throw new NotSupportedException();
         }
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -92,7 +97,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, Type enumType, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
             ViewBag.TotalItemCount = q.Count();
-            q = q.OrderByField(sortCol, enumType, AspHelpers.IsSortDirAscending(sortDir));
+            bool isAscending = AspHelpers.IsSortDirAscending(sortDir);
+            ViewBag.SortCol = sortCol;
+            ViewBag.SortDir = sortDir;
+            q = q.OrderByField(sortCol, enumType, isAscending);
             q = ApplyPagination(q, page, pageSize);
             return q;
         }

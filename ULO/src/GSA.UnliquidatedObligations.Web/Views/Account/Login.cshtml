@@ -31,6 +31,11 @@
         </section>
     </div>
     <div class="col-md-8">
+        @if (User.Identity.IsAuthenticated && !User.HasPermission(ApplicationPermissionNames.ApplicationUser))
+        {
+            @Html.Partial("~/Views/Shared/_AuthenticatedNotAuthorized.cshtml")
+            <hr />
+        }
         @Html.Partial("~/Views/Shared/_ApplicationDescription.cshtml")
     </div>
 </div>

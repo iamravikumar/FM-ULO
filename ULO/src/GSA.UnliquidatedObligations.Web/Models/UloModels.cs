@@ -239,7 +239,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public IEnumerable<SelectListItem> Regions { get; set; }
         public IEnumerable<SelectListItem> BaCodes { get; set; }
         public IEnumerable<SelectListItem> Statuses { get; set; }
-        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> statuses)
+        public IEnumerable<SelectListItem> Reasons { get; set; }
+        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> activityNames, IEnumerable<string> statuses, IEnumerable<string> reasons)
         {
             Workflows = workflows;
             DocTypes = docTypes;
@@ -247,6 +248,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Regions = regions;
             BaCodes = baCodes.ConvertToSelectList();
             Statuses = statuses.ConvertToSelectList();
+            Reasons = reasons.ConvertToSelectList();
         }
     }
 

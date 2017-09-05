@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
@@ -11,6 +12,8 @@ using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class AttachmentsController : BaseController
     {
         public AttachmentsController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)

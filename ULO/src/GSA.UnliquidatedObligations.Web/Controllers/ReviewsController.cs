@@ -5,7 +5,6 @@ using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
 using RevolutionaryStuff.Core.Caching;
-using RevolutionaryStuff.Core;
 using System;
 using System.Data.Entity;
 using System.Linq;
@@ -15,6 +14,8 @@ using System.Collections.Generic;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class ReviewsController : BaseController
     {
         public const string Name = "Reviews";
@@ -51,12 +52,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             else
             {
                 reviews = ApplyBrowse(
-               DB.Reviews,
-               sortCol ?? nameof(Review.CreatedAt), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
-
+                    DB.Reviews,
+                    sortCol ?? nameof(Review.CreatedAt), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             }
-
-            return View("", reviews);
+            return View(reviews);
         }
 
         private string convertToString(ReviewTypeEnum reviewTypeEnum)

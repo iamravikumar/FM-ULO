@@ -18,6 +18,8 @@ using GSA.UnliquidatedObligations.BusinessLayer;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanExecuteReports)]
     public class ReportsController : BaseController
     {

@@ -18,7 +18,7 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review ID")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region, overrideDisplayName: "Region")
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")

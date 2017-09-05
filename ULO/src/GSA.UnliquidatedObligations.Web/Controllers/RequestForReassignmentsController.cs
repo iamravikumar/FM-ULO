@@ -17,6 +17,8 @@ using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class RequestForReassignmentsController : BaseController
     {
         protected readonly IWorkflowManager Manager;

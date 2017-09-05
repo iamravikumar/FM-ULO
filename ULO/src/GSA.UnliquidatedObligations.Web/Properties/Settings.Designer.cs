@@ -114,5 +114,32 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((string)(this["PreAssignmentUserUsername"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("United")]
+        public string SprintName {
+            get {
+                return ((string)(this["SprintName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx")]
+        public string SecureAuthUrl {
+            get {
+                return ((string)(this["SecureAuthUrl"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("jonathan.chen@gsa.gov")]
+        public string AdminstratorEmail {
+            get {
+                return ((string)(this["AdminstratorEmail"]));
+            }
+        }
     }
 }

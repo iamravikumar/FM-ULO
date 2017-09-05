@@ -19,7 +19,7 @@ using System.Web.Mvc;
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class UloController : BaseController
     {
         public const string Name = "Ulo";
@@ -130,16 +130,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ActionName(ActionNames.Search)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulos/Search")]
-        public async Task<ActionResult> Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId,
+        public async Task<ActionResult> Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
             var wfPredicate =
                 PredicateBuilder.Create<Workflow>(
                     wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId));
-            var test = HttpUtility.UrlEncode(reasonIncludedInReview);
+            var test = HttpUtility.UrlEncode(reasons);
             wfPredicate = wfPredicate.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
-              baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasonIncludedInReview, valid, status, reviewId);
+              baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId);
 
             var workflows = await ApplyBrowse(
                 DB.Workflows.Where(wfPredicate).
@@ -156,9 +156,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     UloHelpers.MediumCacheTimeout
                     );
 
-            var wd = await DB.WorkflowDefinitions.Where(wfd => wfd.WorkflowDefinitionName == "ULO Workflow" && wfd.IsActive == true).OrderByDescending(wfd=>wfd.Version).FirstOrDefaultAsync();
             var activityNames = GetOrderedActivityNameByWorkflowName().AtomEnumerable.ConvertAll(z => z.Value).Distinct().OrderBy().ToList();
-            var statuses = wd.Description.WebActionWorkflowActivities.OrderBy(a => a.SequenceNumber).Select(a => a.ActivityName).ToList();
+
+            var statuses = Cacher.FindOrCreateValWithSimpleKey(
+                "AllWorkflowStatusNames",
+                () => 
+                {
+                    var names = new List<string>();
+                    foreach (var wd in DB.WorkflowDefinitions.Where(wfd => wfd.IsActive == true))
+                    {
+                        names.AddRange(wd.Description.WebActionWorkflowActivities.Select(z => z.ActivityName));
+                    }
+                    return names.Distinct().OrderBy();
+                },
+                UloHelpers.MediumCacheTimeout);
 
             return View(
                 "~/Views/Ulo/Search/Index.cshtml", 
@@ -168,7 +179,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     PortalHelpers.CreateZoneSelectListItems(),
                     PortalHelpers.CreateRegionSelectListItems(),
                     baCodes,
-                    activityNames));
+                    activityNames,
+                    statuses,
+                    Cacher.FindOrCreateValWithSimpleKey(
+                        "ReasonsIncludedInReview",
+                        () => DB.UnliquidatedObligations.Select(z => z.ReasonIncludedInReview).Distinct().WhereNotNull().OrderBy().AsReadOnly(),
+                        UloHelpers.MediumCacheTimeout)
+                ));
         }
 
         private MultipleValueDictionary<string, string> GetOrderedActivityNameByWorkflowName()

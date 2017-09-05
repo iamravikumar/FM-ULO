@@ -44,7 +44,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ActionName(ActionNames.Login)]
         public ActionResult Login(string returnUrl)
         {
-            if (Properties.Settings.Default.UseDevAuthentication)
+            if (PortalHelpers.UseDevAuthentication)
             {
                 ViewBag.ReturnUrl = returnUrl;
                 return View("DevLogin");
@@ -64,11 +64,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Login(DevLoginViewModel model, string returnUrl)
-        {
-            var redirectUrl = "https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx" +
+        {            
+            var redirectUrl = Properties.Settings.Default.SecureAuthUrl +
                             new QueryString(
                                 "ReturnUrl",
-                                "https://dev-ulo.gsa.gov/Account/ExternalLoginCallback");
+                                $"https://{Request.Url.Host}/Account/ExternalLoginCallback");
             return ExternalLogin(DefaultAuthenticationTypes.ExternalCookie, redirectUrl);
         }
 
@@ -79,6 +79,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DevLogin(DevLoginViewModel model, string returnUrl)
         {
+            OnlySupportedInDevelopmentEnvironment();
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -108,6 +110,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
+            OnlySupportedInDevelopmentEnvironment();
+
             // Require that the user has already logged in via username/password or external login
             if (!await SignInManager.HasBeenVerifiedAsync())
             {
@@ -123,6 +127,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
         {
+            OnlySupportedInDevelopmentEnvironment();
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -151,6 +157,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            OnlySupportedInDevelopmentEnvironment();
             return View();
         }
 
@@ -161,6 +168,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+            OnlySupportedInDevelopmentEnvironment();
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
@@ -189,6 +197,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
+            OnlySupportedInDevelopmentEnvironment();
             if (userId == null || code == null)
             {
                 return View("Error");
@@ -202,6 +211,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
+            OnlySupportedInDevelopmentEnvironment();
             return View();
         }
 
@@ -212,6 +222,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
+            OnlySupportedInDevelopmentEnvironment();
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
@@ -238,6 +249,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
+            OnlySupportedInDevelopmentEnvironment();
             return View();
         }
 
@@ -246,6 +258,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
+            OnlySupportedInDevelopmentEnvironment();
             return code == null ? View("Error") : View();
         }
 
@@ -256,6 +269,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
+            OnlySupportedInDevelopmentEnvironment();
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -280,6 +294,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
+            OnlySupportedInDevelopmentEnvironment();
             return View();
         }
 
@@ -301,6 +316,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
+            OnlySupportedInDevelopmentEnvironment();
             var userId = await SignInManager.GetVerifiedUserIdAsync();
             if (userId == null)
             {
@@ -318,6 +334,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SendCode(SendCodeViewModel model)
         {
+            OnlySupportedInDevelopmentEnvironment();
             if (!ModelState.IsValid)
             {
                 return View();

@@ -3,15 +3,15 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <h1 class="navbar-brand" style="padding:0;height:auto">
-                <img src="~/Content/ULO/GSAlogo.png" width="92" height="92" alt="GSA Logo" style="display:inline" />
+            <h1 class="navbar-brand" style="padding:0;margin-right:10px">
+                <img src="~/Content/ULO/GSAlogo.png" width="71" height="71" alt="GSA Logo" style="display:inline" />
                 ULO
             </h1>
         </div>
         <div class="navbar-collapse collapse">
-            &nbsp;
-            <div>
-                @if (User.Identity.IsAuthenticated)
+            <div style="height:57px; margin: 7px;">
+                &nbsp;
+                @if (User.Identity.IsAuthenticated && User.HasPermission(ApplicationPermissionNames.ApplicationUser))
             {
                     <ul class="nav navbar-nav">
                         @{
