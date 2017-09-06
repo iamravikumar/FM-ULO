@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -86,19 +87,24 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     var nextUser = Cacher.FindOrCreateValWithSimpleKey(
                         wf.OwnerUserId,
                         () => DB.AspNetUsers.Find(wf.OwnerUserId));
-                    var emailTemplate = Cacher.FindOrCreateValWithSimpleKey(
-                        nextActivity.EmailTemplateId,
-                        () => DB.EmailTemplates.Find(nextActivity.EmailTemplateId));
-                    var emailModel = new EmailViewModel
+                    if (nextUser.IsPerson && RegexHelpers.Common.EmailAddress.IsMatch(nextUser.Email))
                     {
-                        UserName = nextUser.UserName,
-                        PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
-                        WorkflowId = wf.WorkflowId,
-                        UloId = wf.UnliquidatedObligation.UloId
-                    };
-                    //TODO: What happens if it crashes?
-                    BackgroundJobClient.Enqueue<IBackgroundTasks>(
-                    bt => bt.Email(emailTemplate.EmailSubject, nextUser.Email, emailTemplate.EmailBody, emailModel));
+                        var emailTemplate = Cacher.FindOrCreateValWithSimpleKey(
+                            nextActivity.EmailTemplateId,
+                            () => DB.EmailTemplates.Find(nextActivity.EmailTemplateId));
+                        var emailModel = new EmailViewModel
+                        {
+                            UserName = nextUser.UserName,
+                            PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
+                            WorkflowId = wf.WorkflowId,
+                            UloId = wf.UnliquidatedObligation.UloId
+                        };
+                        BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(emailTemplate.EmailSubject, nextUser.Email, emailTemplate.EmailBody, emailModel));
+                    }
+                    else
+                    {
+                        Trace.WriteLine($"Will not send email to {nextUser}");
+                    }
                 }
                 wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
 

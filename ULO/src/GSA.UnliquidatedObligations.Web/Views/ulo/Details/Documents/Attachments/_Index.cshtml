@@ -1,11 +1,11 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.AttachmentsViewModel
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@model GSA.UnliquidatedObligations.Web.Models.AttachmentsViewModel
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">Attachments</h4>
     </div>
     <div class="panel-body">
         <div class="row">
-
             <table class="table table-responsive table-striped attachments">
 
                     <tr class="attachments-heading-row @(@Model.Attachments.Count > 0 ? "show" : "hide")">
@@ -24,12 +24,15 @@
                             @attachment.FileName
                         </td>
                         <td class="actions">
-                            <a class="attachments-view" href="/Attachments/Download?attachmentId=@attachment.AttachmentsId" data-target="@attachment.AttachmentsId" download>View</a> 
-
+                            @Html.ActionLink("Download", AttachmentsController.ActionNames.Download, AttachmentsController.Name, new { attachmentId = attachment.AttachmentsId }, null)
+                            |
+                            @Html.ActionLink("View", AttachmentsController.ActionNames.View, AttachmentsController.Name, new { attachmentId = attachment.AttachmentsId }, new { target="_blank" })
                             @if (Model.AllowDocumentEdit)
                             {
-
-                                @Html.Raw("| <a class='attachments-delete' data-target='" + @attachment.AttachmentsId + "'>Delete</a>")
+                                <text>
+                                |
+                                <a class='attachments-delete' data-target='@attachment.AttachmentsId'>Delete</a>
+                                </text>
                             }
                         </td>
                     </tr>
@@ -43,7 +46,6 @@
             {
                 <button type="button" class="btn btn-primary attachments-add-btn">Add Attachment</button>
             }
-
         </div>
     </div>
 </div>

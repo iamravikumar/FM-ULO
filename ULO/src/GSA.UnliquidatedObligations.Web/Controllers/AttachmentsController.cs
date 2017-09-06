@@ -16,6 +16,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class AttachmentsController : BaseController
     {
+        public const string Name = "Attachments";
+
+        public static class ActionNames
+        {
+            public const string Download = "Download";
+            public const string View = "View";
+        }
+
         public AttachmentsController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
             : base(db, componentContext, cacher)
         { }
@@ -109,6 +117,18 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [HttpGet]
+        [ActionName(ActionNames.View)]
+        [Route("attachments/{attachmentId}/view")]
+        public async Task<FileResult> View(int attachmentId)
+        {
+            var attachment = await DB.Attachments.FindAsync(attachmentId);
+            var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath, false);
+            return File(System.IO.File.OpenRead(path), attachment.ContentType);
+        }
+
+        [HttpGet]
+        [ActionName(ActionNames.Download)]
+        [Route("attachments/{attachmentId}/download")]
         public async Task<FileResult> Download(int attachmentId)
         {
             var attachment = await DB.Attachments.FindAsync(attachmentId);

@@ -288,6 +288,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var question = await DB.UnliqudatedObjectsWorkflowQuestions.Where(z => z.WorkflowId == workflowId).OrderByDescending(z => z.UnliqudatedWorkflowQuestionsId).FirstOrDefaultAsync();
                 if (question == null || !question.Pending)
                 {
+                    if (question != null)
+                    {
+                        question.Pending = false;
+                    }
                     question = new UnliqudatedObjectsWorkflowQuestion
                     {
                         WorkflowId = workflowId

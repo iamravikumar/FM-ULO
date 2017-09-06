@@ -9,7 +9,7 @@
     var suggestedReviwerId = currentworkflowId + "SuggestedReviewerId";
     var commentsId = currentworkflowId + "RequestComments";
     var isActiveReassignment = Model.RequestForReassignmentId != null;
-    var reviewerLabelText = "Suggeted Reviewer:";
+    var reviewerLabelText = "Suggested Reviewer:";
     var buttonText = "Request Reassignment";
     var actionName = "RequestReassign";
     var userReassignRegions = User.GetReassignmentGroupRegions();
@@ -41,8 +41,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">@buttonText</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

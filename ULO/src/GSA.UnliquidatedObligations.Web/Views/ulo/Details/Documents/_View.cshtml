@@ -41,11 +41,11 @@
             </div>
             <div class="modal-footer">
                 <div class="document-error-msg">This is an Errors</div>
-                <button type="button" class="btn btn-secondary close-document-modal" data-dismiss="modal">Close</button>
-
-                @if (Model.AllowDocumentEdit) {
+                @if (Model.AllowDocumentEdit)
+                {
                     <button type="button" data-target="@Model.DocumentId" class="btn btn-primary save-document">Save Document</button>
                 }
+                <button type="button" class="btn btn-secondary close-document-modal" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

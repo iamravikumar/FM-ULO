@@ -165,36 +165,27 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Requires.NonNull(workflow, nameof(workflow));
 
             Workflow = workflow;
-            var questions = workflow.UnliqudatedObjectsWorkflowQuestions.Where(q => q.Pending == false).ToList();
+            var questions = workflow.UnliqudatedObjectsWorkflowQuestions.OrderBy(q=>q.UnliqudatedWorkflowQuestionsId).ToList();
             WorkflowAssignedToCurrentUser = workflowAssignedToCurrentUser;
             bool allowDocumentEdits = workflowAssignedToCurrentUser;
             var expectedDateForCompletion = workflow.UnliquidatedObligation.ExpectedDateForCompletion;
             if (workflowDescription != null)
             {
-                QuestionsViewModel = new UloWfQuestionsViewModel(workflowDescription.GetJustificationByKey(), questions);
+                QuestionsViewModel = new UloWfQuestionsViewModel(workflowDescription.GetJustificationByKey(), questions.Where(q=>!q.Pending).ToList());
                 WorkflowDescriptionViewModel =
                     new WorkflowDescriptionViewModel(
                         workflow.WorkflowId,
                         workflowDescription.WebActionWorkflowActivities.ToList(),
                         workflow.CurrentWorkflowActivityKey);
 
-                var unliqudatedObjectsWorkflowQuestionPending = workflow.UnliqudatedObjectsWorkflowQuestions.FirstOrDefault(q => q.Pending == true);
-                if (unliqudatedObjectsWorkflowQuestionPending == null && questions.Count > 0)
-                {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, questions[questions.Count - 1], workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded);
-                }
-                else
-                {
-                    AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, unliqudatedObjectsWorkflowQuestionPending, workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded);
-                }
+                var pending = questions.Count > 0 && questions.Last().Pending ? questions.Last() : null;
+                AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, pending, workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded);
                 allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
 
             RequestForReassignmentsActive = workflow.RequestForReassignments.ToList().Count > 0 &&
                                                          Workflow.RequestForReassignments.FirstOrDefault() != null &&
                                                          Workflow.RequestForReassignments.First().IsActive;
-
-
             DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList(), allowDocumentEdits, workflow.UnliquidatedObligation.DocType);
         }
     }
