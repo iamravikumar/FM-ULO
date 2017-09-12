@@ -59,25 +59,21 @@ namespace GSA.UnliquidatedObligations.Web.Services
         public void UploadFiles(UploadFilesModel files)
         {
             var reviewId = files.ReviewId;
-
-            foreach (var csvFilePath in files.PegasysFilePathsList)
+            foreach (var fn in files.PegasysFilePathsList)
             {
-                UploadCSVTable(reviewId, csvFilePath);
+                UploadCSVTable(reviewId, fn);
             }
-
-            foreach (var retaFilePath in files.RetaFileList)
+            foreach (var fn in files.RetaFileList)
             {
-                UploadRetaTable(reviewId, retaFilePath);
+                UploadRetaTable(reviewId, fn);
             }
-
-            foreach (var easiFile in files.EasiFileList)
+            foreach (var fn in files.EasiFileList)
             {
-                UploadEasiTable(reviewId, easiFile);
+                UploadEasiTable(reviewId, fn);
             }
-
-            foreach (var One92File in files.One92FileList)
+            foreach (var fn in files.One92FileList)
             {
-                Upload192Table(reviewId, One92File);
+                Upload192Table(reviewId, fn);
             }
         }
 

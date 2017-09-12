@@ -81,11 +81,18 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var predicate = PredicateBuilder.Create<Workflow>(wf => false);
 
+            var m = new MultipleValueDictionary<string, Tuple<List<int?>, string>>();
             foreach (var g in GetUserGroups(CurrentUserId))
             {
-                var regionIds = User.GetUserGroupRegions(g.UserName);
+                var regionIds = User.GetUserGroupRegions(g.UserName).OrderBy(z => z.GetValueOrDefault()).ToList();
                 predicate = predicate.Or(wf => wf.OwnerUserId == g.UserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId));
-                ShowGroupRegionMembershipAlert(g.UserName, regionIds);
+                m.Add(Cache.CreateKey(regionIds), Tuple.Create(regionIds, g.UserName));
+            }
+            foreach (var k in m.Keys)
+            {
+                var tuples = m[k];
+                var groupNames = tuples.Select(z => z.Item2).OrderBy();
+                ShowGroupRegionMembershipAlert(groupNames, tuples.First().Item1);
             }
 
             var workflows = ApplyBrowse(
@@ -103,7 +110,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ViewBag.ShowReassignButton = true;
             var regionIds = User.GetReassignmentGroupRegions();
             var reassignGroupUserId = PortalHelpers.ReassignGroupUserId;
-            ShowGroupRegionMembershipAlert(Properties.Settings.Default.ReassignGroupUserName, regionIds);
+            ShowGroupRegionMembershipAlert(new[] { Properties.Settings.Default.ReassignGroupUserName }, regionIds);
 
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId))
@@ -113,16 +120,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(workflows);
         }
 
-        private bool ShowGroupRegionMembershipAlert(string groupName, ICollection<int?> regionIds)
+        private bool ShowGroupRegionMembershipAlert(IEnumerable<string> groupNames, ICollection<int?> regionIds)
         {
             if (regionIds.Count > 0)
             {
                 var myRegions = regionIds.ConvertAll(rid => PortalHelpers.GetRegionName(rid.GetValueOrDefault())).WhereNotNull().Format(", ");
-                AddPageAlert($"You're a member of the {groupName} group with regions: {myRegions}", false, PageAlert.AlertTypes.Info);
+                AddPageAlert($"You're a member of the groups: {groupNames.Format(", ")}; with regions: {myRegions}", false, PageAlert.AlertTypes.Info);
             }
             else
             {
-                AddPageAlert($"You're a member of the {groupName} group but haven't been assigned any regions", false, PageAlert.AlertTypes.Warning);
+                AddPageAlert($"You're a member of the groups: {groupNames.Format(", ")}; but haven't been assigned any regions", false, PageAlert.AlertTypes.Warning);
             }
             return true;
         }
@@ -227,17 +234,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var workflowDesc = await FindWorkflowDescAsync(workflow);
 
-            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser));
-        }
+            var others = DB.GetUloSummariesByPdn(ulo.PegasysDocumentNumber).ToList().Where(z => z.WorkflowId != workflowId).OrderBy(z => z.WorkflowId).ToList();
 
-        public async Task<ActionResult> RegionWorkflowDetails(int uloId, int workflowId)
-        {
-            //TODO: check if current user is able to view
-            var ulo = await DB.UnliquidatedObligations.Include(u => u.Notes).FirstOrDefaultAsync(u => u.UloId == uloId);
-            var workflow = await FindWorkflowAsync(workflowId);
-            var workflowDesc = await FindWorkflowDescAsync(workflow);
-            var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
-            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser));
+            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others));
         }
 
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)

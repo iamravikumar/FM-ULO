@@ -113,12 +113,6 @@
           <Property Name="EmailBody" Type="varchar" MaxLength="500" />
           <Property Name="EmailSubject" Type="varchar" MaxLength="200" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6013: The table/view 'ULODB.dbo.FiscalMonthMapping' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
-        <EntityType Name="FiscalMonthMapping">
-          <Property Name="CalendarMonth" Type="int" />
-          <Property Name="FiscalMonth" Type="varchar" MaxLength="5" />
-        </EntityType>-->
         <EntityType Name="Notes">
           <Key>
             <PropertyRef Name="NoteId" />
@@ -867,6 +861,9 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Parameter Name="ownerProhibitedPreviousActivityNamesCsv" Type="nvarchar" Mode="In" />
           <Parameter Name="nextOwnerId" Type="varchar" Mode="InOut" />
         </Function>
+        <Function Name="GetUloSummariesByPdn" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="pegasysDocumentNumber" Type="varchar" Mode="In" />
+        </Function>
         <EntityContainer Name="GSAUnliquidatedObligationsBusinessLayerDataStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
@@ -1246,6 +1243,9 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <End Role="AspNetRole" EntitySet="AspNetRoles" />
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
           </AssociationSet>
+          <FunctionImport Name="GetUloSummariesByPdn" ReturnType="Collection(GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result)">
+            <Parameter Name="pegasysDocumentNumber" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -2116,6 +2116,16 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetRole" Role="AspNetRole" Multiplicity="*" />
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="*" />
         </Association>
+        <ComplexType Name="GetUloSummariesByPdn_Result">
+          <Property Type="Int32" Name="UloId" Nullable="false" />
+          <Property Type="Int32" Name="WorkflowId" Nullable="false" />
+          <Property Type="String" Name="ReviewName" Nullable="true" MaxLength="100" />
+          <Property Type="DateTime" Name="ReviewCreatedAtUtc" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="DocumentCount" Nullable="true" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="256" />
+          <Property Type="String" Name="Answer" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="WorkflowActivityName" Nullable="true" MaxLength="100" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2602,6 +2612,20 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
               <ScalarProperty Name="Id" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="GetUloSummariesByPdn" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetUloSummariesByPdn">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result">
+                <ScalarProperty Name="UloId" ColumnName="UloId" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
+                <ScalarProperty Name="ReviewCreatedAtUtc" ColumnName="ReviewCreatedAtUtc" />
+                <ScalarProperty Name="DocumentCount" ColumnName="DocumentCount" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Answer" ColumnName="Answer" />
+                <ScalarProperty Name="WorkflowActivityName" ColumnName="WorkflowActivityName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

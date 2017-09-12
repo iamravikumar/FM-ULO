@@ -213,12 +213,15 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public UnliquidatedObligation CurretUnliquidatedObligation { get; set; }
         public WorkflowViewModel WorkflowViewModel { get; set; }
+        public IList<Workflow> OtherWorkflows { get; private set; }
+        public IList<GetUloSummariesByPdn_Result> Others { get; private set; }
         public UloViewModel()
         { }
-        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDescription, bool workflowAsignedToCurrentUser)
+        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDescription, bool workflowAsignedToCurrentUser, IList<GetUloSummariesByPdn_Result> others)
         {
             CurretUnliquidatedObligation = ulo;
             WorkflowViewModel = new WorkflowViewModel(workflow, workflowAsignedToCurrentUser, workflowDescription);
+            Others = others;
         }
     }
 

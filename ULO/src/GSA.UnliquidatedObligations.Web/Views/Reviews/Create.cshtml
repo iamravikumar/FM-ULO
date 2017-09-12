@@ -1,5 +1,5 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.ReviewModel
-@using Newtonsoft.Json
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@model GSA.UnliquidatedObligations.Web.Models.ReviewModel
 
 @{
     ViewBag.Title = "Create";
@@ -59,25 +59,25 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, "Upload 442 Files:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" name="pegasysFiles" class="form-control" multiple />
+                <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysFiles" class="form-control" multiple />
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, "Upload Reta Files:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" name="retaFiles" class="form-control" multiple />
+                <input type="file" name="@ReviewsController.ReviewFileDesignators.RetaFiles" class="form-control" multiple />
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, "Upload Easi Files:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" name="easiFiles" class="form-control" multiple />
+                <input type="file" name="@ReviewsController.ReviewFileDesignators.EasiFiles" class="form-control" multiple />
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Comments, "Upload 192 Files:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" name="One92Files" class="form-control" multiple />
+                <input type="file" name="@ReviewsController.ReviewFileDesignators.One92Files" class="form-control" multiple />
             </div>
         </div>
         <div class="form-group">

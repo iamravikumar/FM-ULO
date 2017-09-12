@@ -4,6 +4,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Data.Entity;
@@ -25,6 +26,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string Index = "Index";
         }
 
+        public static class ReviewFileDesignators
+        {
+            public const string PegasysFiles = "PegasysFiles";
+            public const string RetaFiles = "retaFiles";
+            public const string EasiFiles = "easiFiles";
+            public const string One92Files = "One92Files";
+        }
+
         private readonly IBackgroundJobClient BackgroundJobClient;
 
         public ReviewsController(IBackgroundJobClient backgroundJobClient, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
@@ -37,17 +46,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
             IQueryable reviews;
-            if (sortCol == "ReviewTypeId")
+            if (sortCol == nameof(ReviewModel.ReviewTypeId))
             {
                 reviews = ApplyBrowse(
                    DB.Reviews,
-                   "ReviewTypeId", typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+                   nameof(ReviewModel.ReviewTypeId), typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             }
-            else if (sortCol == "ReviewScopeId")
+            else if (sortCol == nameof(ReviewModel.ReviewScopeId))
             {
                 reviews = ApplyBrowse(
                    DB.Reviews,
-                   "ReviewScopeId", typeof(ReviewScopeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+                   nameof(ReviewModel.ReviewScopeId), typeof(ReviewScopeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             }
             else
             {
@@ -168,20 +177,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         }
                         switch (file)
                         {
-                            case "pegasysFiles":
+                            case ReviewFileDesignators.PegasysFiles:
                                 uploadFiles.PegasysFilePathsList.Add(path);
                                 break;
-                            case "retaFiles":
+                            case ReviewFileDesignators.RetaFiles:
                                 uploadFiles.RetaFileList.Add(path);
                                 break;
-                            case "easiFiles":
+                            case ReviewFileDesignators.EasiFiles:
                                 uploadFiles.EasiFileList.Add(path);
                                 break;
-                            case "One92Files":
+                            case ReviewFileDesignators.One92Files:
                                 uploadFiles.One92FileList.Add(path);
                                 break;
                             default:
-                                break;
+                                throw new UnexpectedSwitchValueException(file);
                         }
                     }
                 }

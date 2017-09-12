@@ -110,5 +110,14 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNextLevelOwnerId", proposedOwnerIdParameter, workflowIdParameter, nextActivityKeyParameter, ownerProhibitedPreviousActivityNamesCsvParameter, nextOwnerId);
         }
+    
+        public virtual ObjectResult<GetUloSummariesByPdn_Result> GetUloSummariesByPdn(string pegasysDocumentNumber)
+        {
+            var pegasysDocumentNumberParameter = pegasysDocumentNumber != null ?
+                new ObjectParameter("pegasysDocumentNumber", pegasysDocumentNumber) :
+                new ObjectParameter("pegasysDocumentNumber", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetUloSummariesByPdn_Result>("GetUloSummariesByPdn", pegasysDocumentNumberParameter);
+        }
     }
 }

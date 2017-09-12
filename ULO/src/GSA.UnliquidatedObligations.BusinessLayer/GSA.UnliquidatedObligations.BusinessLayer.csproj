@@ -304,6 +304,9 @@
     <Compile Include="Data\GetMyGroups_Result.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\GetUloSummariesByPdn_Result.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\Hash.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
