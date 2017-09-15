@@ -75,3 +75,9 @@ h1.navbar-brand {
   color: #000;
   padding: 25px 20px;
 }
+
+.form-row:after
+{
+    content:"\00a0"
+}
+

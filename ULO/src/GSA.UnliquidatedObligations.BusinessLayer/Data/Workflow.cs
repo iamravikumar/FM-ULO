@@ -42,8 +42,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual ICollection<RequestForReassignment> RequestForReassignments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
-        public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkflowHistory> WorkflowHistories { get; set; }
+        public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }
     }
 }

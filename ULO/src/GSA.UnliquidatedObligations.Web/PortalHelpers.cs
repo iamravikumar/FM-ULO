@@ -578,6 +578,12 @@ namespace GSA.UnliquidatedObligations.Web
         }
 
         public static string GetDisplayName(this Enum value)
+            => value.GetDisplayAttribute()?.GetName() ?? value.ToString();
+
+        public static string GetDescription(this Enum value)
+            => value.GetDisplayAttribute()?.GetDescription();
+
+        private static DisplayAttribute GetDisplayAttribute(this Enum value)
         {
             var type = value.GetType();
             if (!type.IsEnum) throw new ArgumentException(String.Format("Type '{0}' is not Enum", type));
@@ -587,10 +593,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             var member = members[0];
             var attributes = member.GetCustomAttributes(typeof(DisplayAttribute), false);
-            if (attributes.Length == 0) throw new ArgumentException(String.Format("'{0}.{1}' doesn't have DisplayAttribute", type.Name, value));
-
-            var attribute = (DisplayAttribute)attributes[0];
-            return attribute.GetName();
+            return (DisplayAttribute)attributes.FirstOrDefault();
         }
 
         public static SelectListItem CreateSelectListItem(Justification j)
@@ -685,6 +688,7 @@ namespace GSA.UnliquidatedObligations.Web
             {
                 var e = (Enum)Enum.Parse(typeof(T), enu.ToString());
                 var displayName = e.GetDisplayName();
+                var desc = e.GetDescription();
                 string value;
                 if (names)
                 {
@@ -694,7 +698,7 @@ namespace GSA.UnliquidatedObligations.Web
                 {
                     value = ((int)Enum.Parse(typeof(T), enu.ToString())).ToString();
                 }
-                eNumsSelect.Add(new SelectListItem { Text = displayName, Value = value });
+                eNumsSelect.Add(new ExtendedSelectListItem { Text = displayName, Value = value, Description = desc });
             }
             return eNumsSelect;
         }

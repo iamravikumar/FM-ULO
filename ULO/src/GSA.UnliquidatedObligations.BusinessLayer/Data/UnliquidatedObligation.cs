@@ -29,13 +29,10 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string Prog { get; set; }
         public string DocType { get; set; }
         public string PegasysDocumentNumber { get; set; }
-        public int ItemsLineNumber { get; set; }
-        public int AccountingLineNumber { get; set; }
         public string PegasysTitleNumber { get; set; }
         public string BBFY { get; set; }
         public string EBFY { get; set; }
         public string Acty { get; set; }
-        public int OC { get; set; }
         public string SOC { get; set; }
         public string Project { get; set; }
         public string Agreement { get; set; }
@@ -47,23 +44,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string LeaseNumber { get; set; }
         public string VendorName { get; set; }
         public string ActgPd { get; set; }
-        public string TotalLine { get; set; }
-        public string Commitments { get; set; }
-        public string Prepayments { get; set; }
-        public string UndelOrders { get; set; }
-        public string Rcpt { get; set; }
-        public string Accrual { get; set; }
-        public string TotalDO { get; set; }
-        public string TotalUDOAndDO { get; set; }
-        public string PendPayments { get; set; }
-        public string PymtsInTransit { get; set; }
-        public string PymtsConfirmed { get; set; }
-        public string Holdbacks { get; set; }
         public string TAFS { get; set; }
         public string DUNSNum { get; set; }
-        public Nullable<System.DateTime> DateOfLastActivity { get; set; }
         public Nullable<int> DaysSinceLastActivity { get; set; }
-        public Nullable<System.DateTime> DateOfFirstActivity { get; set; }
         public Nullable<int> DaysSinceFirstActivity { get; set; }
         public string TradingPartnerType { get; set; }
         public string VendorAgencyCode { get; set; }
@@ -73,11 +56,28 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string AwardNbr { get; set; }
         public string ContractingOfficersName { get; set; }
         public string ReasonIncludedInReview { get; set; }
-        public Nullable<System.DateTime> RWA_Completion_Date { get; set; }
         public string EASi_Base_Contract_Nbr { get; set; }
         public string EASi_GSA_FSS_Other__ { get; set; }
-        public Nullable<System.DateTime> EASi_Awd_Expiration_Dt { get; set; }
         public Nullable<System.DateTime> ExpectedDateForCompletion { get; set; }
+        public Nullable<decimal> TotalLine { get; set; }
+        public Nullable<decimal> Commitments { get; set; }
+        public Nullable<decimal> Prepayments { get; set; }
+        public Nullable<decimal> UndelOrders { get; set; }
+        public Nullable<decimal> Rcpt { get; set; }
+        public Nullable<decimal> Accrual { get; set; }
+        public Nullable<decimal> TotalDO { get; set; }
+        public Nullable<decimal> TotalUDOAndDO { get; set; }
+        public Nullable<decimal> PendPayments { get; set; }
+        public Nullable<decimal> PymtsInTransit { get; set; }
+        public Nullable<decimal> PymtsConfirmed { get; set; }
+        public Nullable<decimal> Holdbacks { get; set; }
+        public Nullable<System.DateTime> DateOfLastActivity { get; set; }
+        public Nullable<System.DateTime> DateOfFirstActivity { get; set; }
+        public Nullable<System.DateTime> RWACompletionDate { get; set; }
+        public Nullable<System.DateTime> EASiAwdExpirationDate { get; set; }
+        public Nullable<int> ItemsLineNumber { get; set; }
+        public Nullable<int> AccountingLineNumber { get; set; }
+        public Nullable<int> OC { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }

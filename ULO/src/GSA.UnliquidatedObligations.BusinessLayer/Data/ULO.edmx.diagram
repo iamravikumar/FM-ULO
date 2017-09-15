@@ -20,7 +20,6 @@
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment" Width="1.5" PointX="7.5" PointY="20" />
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" Width="1.5" PointX="0.75" PointY="26.25" />
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion" Width="1.5" PointX="10.5" PointY="19.625" />
-        <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Width="1.5" PointX="3" PointY="21.875" />
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UserUser" Width="1.5" PointX="8.25" PointY="12" />
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowDefinition" Width="1.5" PointX="1.5" PointY="36" />
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowHistory" Width="1.5" PointX="5.25" PointY="11.5" />
@@ -56,22 +55,23 @@
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__DocumentD__Docum__63A3C44B" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Document_ToWorkflow" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__ParentNot__52793849" />
-        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Unliq__74444068" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestForReassignment_WorkflowId" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Review__RegionId__0EF836A4" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__RegionI__1699586C" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Workflo__45544755" />
-        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" />
-        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" />
-        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Regio__395884C4" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowH__Workf__477199F1" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Regions__ZoneId__30C33EC3" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_HangFire_JobParameter_Job" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_HangFire_State_Job" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserRoles" />
+        <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Width="1.5" PointX="13.25" PointY="12.625" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

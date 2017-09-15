@@ -1,23 +1,19 @@
-﻿@using GSA.UnliquidatedObligations.Web.Models;
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.Web.Models;
 @using RevolutionaryStuff.Core;
 @model IEnumerable<UserModel>
 @{
     this.SetTitles(PageKeys.ManageUsers, "Manage Users");
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var canMakeChanges = User.HasPermission(ApplicationPermissionNames.ManageUsers);
 }
 
-<p>
-    @Html.ActionLink("Create User", "Create", null, new { @classZ = "btn btn-primary create-user" })
-</p>
-
-@*
-    <div class="row user-options">
-        <div class="col-md-3">
-            @Html.LabelFor(model => model.RegionId, "Select Region:", htmlAttributes: new { @class = "control-label" })
-            @Html.DropDownListFor(model => model.RegionId, Model.Regions, new { @class = "form-control" })
-        </div>
-    </div>
-*@
+@if (canMakeChanges)
+{
+    <p>
+        @Html.ActionLink("Create User", "Create", null, new { @classZ = "btn btn-primary create-user" })
+    </p>
+}
 
 <table class="table table-responsive users-data">
     <tr>

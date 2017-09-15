@@ -8,11 +8,11 @@ namespace GSA.UnliquidatedObligations.Web
 {
     public class ApplicationPermissionAuthorizeAttribute : AuthorizeAttribute
     {
-        private readonly ApplicationPermissionNames ApplicationPermission;
+        private readonly ApplicationPermissionNames[] ApplicationPermissions;
 
-        public ApplicationPermissionAuthorizeAttribute(ApplicationPermissionNames applicationPermission)
+        public ApplicationPermissionAuthorizeAttribute(params ApplicationPermissionNames[] applicationPermissions)
         {
-            ApplicationPermission = applicationPermission;
+            ApplicationPermissions = applicationPermissions;
         }
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
@@ -20,12 +20,14 @@ namespace GSA.UnliquidatedObligations.Web
             try
             {
                 var user = httpContext.GetOwinContext().Authentication.User;
-                return HasPermission(user, ApplicationPermission);
+                foreach (var p in ApplicationPermissions)
+                {
+                    if (HasPermission(user, p)) return true;
+                }
             }
             catch (Exception)
-            {
-                return false;
-            }
+            { }
+            return false;
         }
 
         public static bool HasPermission(ClaimsPrincipal user, ApplicationPermissionNames permission)

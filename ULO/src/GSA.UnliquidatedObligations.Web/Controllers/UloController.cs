@@ -84,15 +84,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var m = new MultipleValueDictionary<string, Tuple<List<int?>, string>>();
             foreach (var g in GetUserGroups(CurrentUserId))
             {
+                if (g.UserId == PortalHelpers.ReassignGroupUserId) continue;
                 var regionIds = User.GetUserGroupRegions(g.UserName).OrderBy(z => z.GetValueOrDefault()).ToList();
                 predicate = predicate.Or(wf => wf.OwnerUserId == g.UserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId));
                 m.Add(Cache.CreateKey(regionIds), Tuple.Create(regionIds, g.UserName));
             }
-            foreach (var k in m.Keys)
+
+            if (m.Count > 0)
             {
-                var tuples = m[k];
-                var groupNames = tuples.Select(z => z.Item2).OrderBy();
-                ShowGroupRegionMembershipAlert(groupNames, tuples.First().Item1);
+                foreach (var k in m.Keys)
+                {
+                    var tuples = m[k];
+                    var groupNames = tuples.Select(z => z.Item2).OrderBy();
+                    ShowGroupRegionMembershipAlert(groupNames, tuples.First().Item1);
+                }
+            }
+            else
+            {
+                AddPageAlert($"You're not a member of any related groups and will not have any unassigned items.", false, PageAlert.AlertTypes.Warning);
             }
 
             var workflows = ApplyBrowse(
@@ -108,10 +117,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
             ViewBag.ShowReassignButton = true;
-            var regionIds = User.GetReassignmentGroupRegions();
+            var regionIds = (IList<int?>) new List<int?>();
             var reassignGroupUserId = PortalHelpers.ReassignGroupUserId;
-            ShowGroupRegionMembershipAlert(new[] { Properties.Settings.Default.ReassignGroupUserName }, regionIds);
 
+            foreach (var g in GetUserGroups(CurrentUserId))
+            {
+                if (g.UserId != reassignGroupUserId) continue;
+                regionIds = User.GetReassignmentGroupRegions();
+                ShowGroupRegionMembershipAlert(new[] { Properties.Settings.Default.ReassignGroupUserName }, regionIds);
+                goto Browse;
+            }
+            AddPageAlert($"You're not a member of the reassignments group and will not see any items.", false, PageAlert.AlertTypes.Warning);
+
+            Browse:
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId))
                 .Include(wf => wf.UnliquidatedObligation),
@@ -135,16 +153,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [ActionName(ActionNames.Search)]
-        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewOtherWorkflows)]
         [Route("Ulos/Search")]
         public async Task<ActionResult> Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
-            var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanViewOtherWorkflows);
-            var wfPredicate =
-                PredicateBuilder.Create<Workflow>(
-                    wf => claimRegionIds.Contains((int)wf.UnliquidatedObligation.RegionId));
             var test = HttpUtility.UrlEncode(reasons);
+            var wfPredicate = PredicateBuilder.Create<Workflow>(wf => true);
             wfPredicate = wfPredicate.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
               baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId);
 

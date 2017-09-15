@@ -1,14 +1,15 @@
-﻿@using GSA.UnliquidatedObligations.BusinessLayer.Data
-@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
 @model GSA.UnliquidatedObligations.Web.Models.UserModel
 @{
     var createMode = Model.UserId == null;
+    var canMakeChanges = User.HasPermission(ApplicationPermissionNames.ManageUsers);
     var readonlyHtmlAttributes = new { @readonly = "readonly" };
+    var disabledHtmlAttributes = new { @disabled = "disabled" };
+    var textboxHtmlAttributes = canMakeChanges ? (object) new { } : (object) readonlyHtmlAttributes;
+    var checkboxHtmlAttributes = canMakeChanges ? (object)new { } : (object) disabledHtmlAttributes;
     var groupNameSelectItems = ((IList<string>)ViewBag.GroupNames).ConvertToSelectList();
     var applicationPermissionSelectItems = PortalHelpers.ConvertNamesToSelectList<ApplicationPermissionNames>();
 }
-
-
 @using (Html.BeginForm("Save", "Users", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
@@ -21,7 +22,7 @@
                 @Html.DisplayNameFor(model => model.UserName)
             </div>
             <div class="col-sm-10">
-                @Html.TextBoxFor(model => model.UserName)
+                @Html.TextBoxFor(model => model.UserName, textboxHtmlAttributes)
             </div>
         </div>
         <div class="form-row">
@@ -29,7 +30,7 @@
                 @Html.DisplayNameFor(model => model.Email)
             </div>
             <div class="col-sm-10">
-                @Html.TextBoxFor(model => model.Email)
+                @Html.TextBoxFor(model => model.Email, textboxHtmlAttributes)
             </div>
         </div>
         <div class="form-row">
@@ -43,7 +44,7 @@
                 }
                 else
                 {
-                    @Html.TextBoxFor(model => model.UserType, readonlyHtmlAttributes)
+                    @Html.TextBoxFor(model => model.UserType, textboxHtmlAttributes)
                 }
             </div>
         </div>
@@ -52,7 +53,7 @@
                 Group Membership Regions
             </div>
             <div class="col-sm-10">
-                @Html.ListBoxFor(z=>z.GroupMembershipRegionIds, PortalHelpers.CreateRegionSelectListItems(), new { size=12 })
+                @Html.ListBoxFor(z=>z.GroupMembershipRegionIds, PortalHelpers.CreateRegionSelectListItems(), canMakeChanges ? (object) new { size=12 } : (object)new { size = 12, @disabled = "disabled" })
             </div>
         </div>
         <div class="form-row">
@@ -60,7 +61,7 @@
                 @Html.DisplayNameFor(model => model.Groups)
             </div>
             <div class="col-sm-10">
-                @Html.CheckBoxListFor(z => z.Groups, groupNameSelectItems)
+                @Html.CheckBoxListFor(z => z.Groups, groupNameSelectItems, htmlAttributes: checkboxHtmlAttributes)
             </div>
         </div>
         <div class="form-row">
@@ -68,7 +69,7 @@
                 @Html.DisplayNameFor(model => model.Permissions)
             </div>
             <div class="col-sm-10">
-                @Html.CheckBoxListFor(z => z.Permissions, applicationPermissionSelectItems)
+                @Html.CheckBoxListFor(z => z.Permissions, applicationPermissionSelectItems, htmlAttributes: checkboxHtmlAttributes)
             </div>
         </div>
         <div class="form-row">
@@ -93,18 +94,29 @@
                             <td>@Html.TextBox("scc.bacode", claim.BACode, readonlyHtmlAttributes)</td>
                             <td>@Html.TextBox("scc.orgcode", claim.OrgCode, readonlyHtmlAttributes)</td>
                             <td>@Html.TextBox("scc.region", claim.Region, readonlyHtmlAttributes)</td>
-                            <td><a href="#" onclick="DeleteMyRow(event, this)">Delete</a></td>
+                            <td>
+@if (canMakeChanges)
+{
+                                <a href="#" onclick="DeleteMyRow(event, this)">Delete</a>
+}
+                            </td>
                         </tr>
                     }
                 </table>
+@if (canMakeChanges)
+{
                 <button type="button" class="btn" onclick="AddNewClaim(event)">Add New Claim</button>
+}
             </div>
         </div>
     </div>
 
+    if (canMakeChanges)
+    {
     <p>
         <button type="submit" class="btn btn-primary">@ViewBag.SubmitButtonText</button>
     </p>
+    }
 }
 
 <table class="hidden" id="SCClaimTemplateRowContainer">
@@ -116,7 +128,6 @@
         <td><a href="#" onclick="DeleteMyRow(event, this)">Delete</a></td>
     </tr>
 </table>
-
 
 <script type="text/javascript">
     function DeleteMyRow(event, el) {

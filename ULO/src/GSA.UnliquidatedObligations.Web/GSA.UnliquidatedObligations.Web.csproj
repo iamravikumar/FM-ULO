@@ -392,6 +392,7 @@
     <Compile Include="Controllers\ReviewsController.cs" />
     <Compile Include="Controllers\UloController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="ExtendedSelectListItem.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

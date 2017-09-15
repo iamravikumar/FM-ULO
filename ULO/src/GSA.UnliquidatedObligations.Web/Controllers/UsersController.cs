@@ -15,7 +15,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers, ApplicationPermissionNames.ViewUsers)]
     public class UsersController : BaseController
     {
         public const string Name = "Users";
@@ -33,7 +33,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             UserManager = userManager;
         }
 
-        [Route("Users")]
+        [Route("users")]
         [ActionName(ActionNames.Index)]
         public async Task<ActionResult> Index(string username, string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -69,7 +69,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return Task.CompletedTask;
         }
 
-        [Route("Users/{username}", Order =2)]
+        [Route("users/{username}", Order =2)]
         public async Task<ActionResult> Details(string username)
         {
             var users = await DB.AspNetUsers.Where(u => u.UserName == username).ToListAsync();
@@ -79,15 +79,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(m.Single());
         }
 
-        [Route("Users/Create", Order =1)]
+        [Route("users/create", Order =1)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
         public async Task<ActionResult> Create()
         {
             await PopulateDetailsViewBag();
             return View(new UserModel());
         }
 
-        [Route("Users/Save")]
+        [Route("users/save")]
         [HttpPost]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(
             [Bind(Include =
@@ -210,7 +212,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 await DB.SaveChangesAsync();
                 return RedirectToIndex();
             }
-            Mulligan:
             await PopulateDetailsViewBag();
             if (m.UserId == null) return View("Create", m);
             else return View("Details", m);

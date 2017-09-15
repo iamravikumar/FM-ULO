@@ -49,8 +49,8 @@
                 {
                             <li>@Html.ActionLink("Reviews", UsersController.ActionNames.Index, ReviewsController.Name, null, pageKey == PageKeys.ManageReviews ? apka : ipka)</li>
                         }
-                        @if (User.HasPermission(ApplicationPermissionNames.ManageUsers))
-                {
+                        @if (User.HasPermission(ApplicationPermissionNames.ManageUsers)|| User.HasPermission(ApplicationPermissionNames.ViewUsers))
+                        {
                             <li>@Html.ActionLink("Users", UsersController.ActionNames.Index, UsersController.Name, null, pageKey == PageKeys.ManageUsers ? apka : ipka)</li>
                         }
                     </ul>

@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 
@@ -131,7 +132,8 @@ namespace GSA.UnliquidatedObligations.Web
         public static MvcHtmlString CheckBoxListFor<TModelItem>(
             this HtmlHelper<TModelItem> hh,
             Expression<Func<TModelItem, IEnumerable<string>>> columnExpression,
-            IEnumerable<SelectListItem> items)
+            IEnumerable<SelectListItem> items,
+            object htmlAttributes=null)
         {
             var vals = new HashSet<string>();
             foreach (var val in columnExpression.Compile().Invoke(hh.ViewData.Model))
@@ -142,11 +144,21 @@ namespace GSA.UnliquidatedObligations.Web
             var sb = new StringBuilder();
             int z = 0;
             foreach (var item in items)
-            {
+            {                
+                var desc = ExtendedSelectListItem.GetDescription(item);
                 var id = name + "_" + (z++).ToString();
                 sb.AppendLine("<div>");
-                sb.AppendLine($"<input name=\"{name}\" id=\"{id}\" type=\"checkbox\" value=\"{item.Value}\"{(vals.Contains(item.Value)? " checked=\"checked\"":"")}>");
-                sb.AppendLine($"<label for=\"{id}\">{item.Text}</label>");
+                sb.Append($"<input name=\"{name}\" id=\"{id}\" type=\"checkbox\" value=\"{item.Value}\"{(vals.Contains(item.Value)? " checked=\"checked\"":"")}");
+                if (htmlAttributes != null) {
+                    foreach (var p in htmlAttributes.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                    {
+                        var val = StringHelpers.TrimOrNull(Stuff.ObjectToString(p.GetValue(htmlAttributes)));
+                        if (val == null) continue;
+                        sb.Append($" {p.Name}=\"{HttpUtility.HtmlAttributeEncode(val)}\"");
+                    }
+                }
+                sb.AppendLine(">");
+                sb.AppendLine($"<label for=\"{id}\"{(desc==null?"":$" title=\"{HttpUtility.HtmlAttributeEncode(desc)}\"")}>{item.Text}</label>");
                 sb.AppendLine("</div>");
             }
             return new MvcHtmlString(sb.ToString());

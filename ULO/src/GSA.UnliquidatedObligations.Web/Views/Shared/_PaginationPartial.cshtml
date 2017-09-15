@@ -2,17 +2,17 @@
 @using System.Text.RegularExpressions
 @if (ViewBag.PaginationSupported == true)
 {
-    var queryString = this.Context.Request.QueryString.ToString();
-    if (queryString.Length == 0 || queryString[0] != '?') { queryString = "?" + queryString; }
-    var regexPattern = new Regex(@"^\W(page=\d+&?)", RegexOptions.IgnoreCase);
+    var queryString = this.Context.Request.QueryString.ToString() ?? "";
+    queryString = queryString.StartsWith("?") ? queryString.Substring(1) : queryString;
+    var regexPattern = new Regex(@"(\W?page=\d+)", RegexOptions.IgnoreCase);
     var match = regexPattern.Match(queryString);
     if (match.Success)
     {
         var firstMatchGroup = match.Groups[1];
         queryString = queryString.Left(firstMatchGroup.Index) + queryString.Substring(firstMatchGroup.Length + firstMatchGroup.Index);
     }
-    if (queryString.Length > 1) { queryString = queryString + "&"; }
-    queryString = queryString + "page";
+    if (queryString.Length > 0) { queryString = queryString + "&"; }
+    queryString = "?" + queryString + "page";
     var pageNumber = (int)ViewBag.PageNum;
     var rowsPerPage = 10;
     if (ViewBag.PageSize != null)

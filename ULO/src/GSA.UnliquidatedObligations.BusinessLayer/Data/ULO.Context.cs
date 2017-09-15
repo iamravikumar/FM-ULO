@@ -42,7 +42,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<RequestForReassignment> RequestForReassignments { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
         public virtual DbSet<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
-        public virtual DbSet<UnliquidatedObligation> UnliquidatedObligations { get; set; }
         public virtual DbSet<UserUser> UserUsers { get; set; }
         public virtual DbSet<WorkflowDefinition> WorkflowDefinitions { get; set; }
         public virtual DbSet<WorkflowHistory> WorkflowHistories { get; set; }
@@ -63,6 +62,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<AspnetUserApplicationPermissionClaim> AspnetUserApplicationPermissionClaims { get; set; }
         public virtual DbSet<AspnetUserSubjectCategoryClaim> AspnetUserSubjectCategoryClaims { get; set; }
         public virtual DbSet<ReviewStat> ReviewStats { get; set; }
+        public virtual DbSet<UnliquidatedObligation> UnliquidatedObligations { get; set; }
     
         public virtual int CreateULOAndAssignWf(Nullable<int> reviewId, Nullable<int> workflowDefinitionId, Nullable<System.DateTime> reviewDate)
         {

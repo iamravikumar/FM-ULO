@@ -184,13 +184,10 @@
           <Property Name="Prog" Type="varchar" MaxLength="50" />
           <Property Name="DocType" Type="varchar" MaxLength="50" />
           <Property Name="PegasysDocumentNumber" Type="varchar" MaxLength="50" />
-          <Property Name="ItemsLineNumber" Type="int" Nullable="false" />
-          <Property Name="AccountingLineNumber" Type="int" Nullable="false" />
           <Property Name="PegasysTitleNumber" Type="varchar" MaxLength="100" />
           <Property Name="BBFY" Type="varchar" MaxLength="10" />
           <Property Name="EBFY" Type="varchar" MaxLength="10" />
           <Property Name="Acty" Type="varchar" MaxLength="10" />
-          <Property Name="OC" Type="int" Nullable="false" />
           <Property Name="SOC" Type="varchar" MaxLength="100" />
           <Property Name="Project" Type="varchar" MaxLength="100" />
           <Property Name="Agreement" Type="varchar" MaxLength="50" />
@@ -202,23 +199,9 @@
           <Property Name="LeaseNumber" Type="varchar" MaxLength="50" />
           <Property Name="VendorName" Type="varchar" MaxLength="100" />
           <Property Name="ActgPd" Type="varchar" MaxLength="50" />
-          <Property Name="TotalLine" Type="varchar" MaxLength="50" />
-          <Property Name="Commitments" Type="varchar" MaxLength="50" />
-          <Property Name="Prepayments" Type="varchar" MaxLength="50" />
-          <Property Name="UndelOrders" Type="varchar" MaxLength="50" />
-          <Property Name="Rcpt" Type="varchar" MaxLength="50" />
-          <Property Name="Accrual" Type="varchar" MaxLength="50" />
-          <Property Name="TotalDO" Type="varchar" MaxLength="50" />
-          <Property Name="TotalUDOAndDO" Type="varchar" MaxLength="50" />
-          <Property Name="PendPayments" Type="varchar" MaxLength="50" />
-          <Property Name="PymtsInTransit" Type="varchar" MaxLength="50" />
-          <Property Name="PymtsConfirmed" Type="varchar" MaxLength="50" />
-          <Property Name="Holdbacks" Type="varchar" MaxLength="50" />
           <Property Name="TAFS" Type="varchar" MaxLength="50" />
           <Property Name="DUNSNum" Type="varchar" MaxLength="50" />
-          <Property Name="DateOfLastActivity" Type="datetime" />
           <Property Name="DaysSinceLastActivity" Type="int" />
-          <Property Name="DateOfFirstActivity" Type="datetime" />
           <Property Name="DaysSinceFirstActivity" Type="int" />
           <Property Name="TradingPartnerType" Type="varchar" MaxLength="50" />
           <Property Name="VendorAgencyCode" Type="varchar" MaxLength="50" />
@@ -228,11 +211,28 @@
           <Property Name="AwardNbr" Type="varchar" MaxLength="50" />
           <Property Name="ContractingOfficersName" Type="varchar" MaxLength="50" />
           <Property Name="ReasonIncludedInReview" Type="nvarchar" MaxLength="500" />
-          <Property Name="RWA Completion Date" Type="datetime" />
           <Property Name="EASi Base Contract Nbr" Type="varchar" MaxLength="50" />
           <Property Name="EASi GSA FSS/Other #" Type="varchar" MaxLength="50" />
-          <Property Name="EASi Awd Expiration Dt" Type="datetime" />
           <Property Name="ExpectedDateForCompletion" Type="date" />
+          <Property Name="TotalLine" Type="money" />
+          <Property Name="Commitments" Type="money" />
+          <Property Name="Prepayments" Type="money" />
+          <Property Name="UndelOrders" Type="money" />
+          <Property Name="Rcpt" Type="money" />
+          <Property Name="Accrual" Type="money" />
+          <Property Name="TotalDO" Type="money" />
+          <Property Name="TotalUDOAndDO" Type="money" />
+          <Property Name="PendPayments" Type="money" />
+          <Property Name="PymtsInTransit" Type="money" />
+          <Property Name="PymtsConfirmed" Type="money" />
+          <Property Name="Holdbacks" Type="money" />
+          <Property Name="DateOfLastActivity" Type="date" />
+          <Property Name="DateOfFirstActivity" Type="date" />
+          <Property Name="RWACompletionDate" Type="date" />
+          <Property Name="EASiAwdExpirationDate" Type="date" />
+          <Property Name="ItemsLineNumber" Type="int" />
+          <Property Name="AccountingLineNumber" Type="int" />
+          <Property Name="OC" Type="int" />
         </EntityType>
         <EntityType Name="UserUsers">
           <Key>
@@ -1098,7 +1098,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <EntitySet Name="RequestForReassignments" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment" />
           <EntitySet Name="Reviews" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" />
           <EntitySet Name="UnliqudatedObjectsWorkflowQuestions" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion" />
-          <EntitySet Name="UnliquidatedObligations" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" />
           <EntitySet Name="UserUsers" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UserUser" />
           <EntitySet Name="WorkflowDefinitions" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowDefinition" />
           <EntitySet Name="WorkflowHistories" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowHistory" />
@@ -1179,10 +1178,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <End Role="Note" EntitySet="Notes" />
             <End Role="Note1" EntitySet="Notes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notes__UloId__5555A4F4" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4">
-            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
-            <End Role="Note" EntitySet="Notes" />
-          </AssociationSet>
           <AssociationSet Name="FK__RequestFo__Unliq__74444068" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Unliq__74444068">
             <End Role="UnliqudatedObjectsWorkflowQuestion" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
             <End Role="RequestForReassignment" EntitySet="RequestForReassignments" />
@@ -1203,21 +1198,9 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <End Role="WorkflowDefinition" EntitySet="WorkflowDefinitions" />
             <End Role="Review" EntitySet="Reviews" />
           </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Revie__4183B671" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671">
-            <End Role="Review" EntitySet="Reviews" />
-            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
-          </AssociationSet>
           <AssociationSet Name="FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows">
             <End Role="Workflow" EntitySet="Workflows" />
             <End Role="UnliqudatedObjectsWorkflowQuestion" EntitySet="UnliqudatedObjectsWorkflowQuestions" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Unliquida__Regio__408F9238" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238">
-            <End Role="Region" EntitySet="Regions" />
-            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Workflows__Targe__4277DAAA" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA">
-            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
-            <End Role="Workflow" EntitySet="Workflows" />
           </AssociationSet>
           <AssociationSet Name="FK__UserUsers__Regio__395884C4" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Regio__395884C4">
             <End Role="Region" EntitySet="Regions" />
@@ -1244,8 +1227,25 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
           </AssociationSet>
           <FunctionImport Name="GetUloSummariesByPdn" ReturnType="Collection(GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result)">
-            <Parameter Name="pegasysDocumentNumber" Mode="In" Type="String" />
+          <Parameter Name="pegasysDocumentNumber" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="UnliquidatedObligations" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" />
+          <AssociationSet Name="FK__Notes__UloId__5555A4F4" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4">
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+            <End Role="Note" EntitySet="Notes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Revie__4183B671" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671">
+            <End Role="Review" EntitySet="Reviews" />
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Regio__408F9238" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238">
+            <End Role="Region" EntitySet="Regions" />
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Workflows__Targe__4277DAAA" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA">
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+            <End Role="Workflow" EntitySet="Workflows" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -1446,72 +1446,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <NavigationProperty Name="RequestForReassignments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Unliq__74444068" FromRole="UnliqudatedObjectsWorkflowQuestion" ToRole="RequestForReassignment" />
           <NavigationProperty Name="Workflow" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="UnliqudatedObjectsWorkflowQuestion" ToRole="Workflow" />
         </EntityType>
-        <EntityType Name="UnliquidatedObligation">
-          <Key>
-            <PropertyRef Name="UloId" />
-          </Key>
-          <Property Name="UloId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RegionId" Type="Int32" />
-          <Property Name="ReviewId" Type="Int32" Nullable="false" />
-          <Property Name="Organization" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Fund" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Prog" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DocType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PegasysDocumentNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ItemsLineNumber" Type="Int32" Nullable="false" />
-          <Property Name="AccountingLineNumber" Type="Int32" Nullable="false" />
-          <Property Name="PegasysTitleNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="BBFY" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="EBFY" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="Acty" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="OC" Type="Int32" Nullable="false" />
-          <Property Name="SOC" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Project" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Agreement" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ContractNum" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Bldg" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SysLoc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="VehTag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="WI" Type="Int32" />
-          <Property Name="LeaseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="VendorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="ActgPd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="TotalLine" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Commitments" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Prepayments" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="UndelOrders" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Rcpt" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Accrual" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="TotalDO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="TotalUDOAndDO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PendPayments" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PymtsInTransit" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PymtsConfirmed" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Holdbacks" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="TAFS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DUNSNum" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateOfLastActivity" Type="DateTime" Precision="3" />
-          <Property Name="DaysSinceLastActivity" Type="Int32" />
-          <Property Name="DateOfFirstActivity" Type="DateTime" Precision="3" />
-          <Property Name="DaysSinceFirstActivity" Type="Int32" />
-          <Property Name="TradingPartnerType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="VendorAgencyCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="VendorBureauCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Valid" Type="Boolean" />
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="AwardNbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ContractingOfficersName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ReasonIncludedInReview" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="RWA_Completion_Date" Type="DateTime" Precision="3" />
-          <Property Name="EASi_Base_Contract_Nbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="EASi_GSA_FSS_Other__" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="EASi_Awd_Expiration_Dt" Type="DateTime" Precision="3" />
-          <Property Name="ExpectedDateForCompletion" Type="DateTime" Precision="0" />
-          <NavigationProperty Name="Notes" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4" FromRole="UnliquidatedObligation" ToRole="Note" />
-          <NavigationProperty Name="Review" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" FromRole="UnliquidatedObligation" ToRole="Review" />
-          <NavigationProperty Name="Region" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" FromRole="UnliquidatedObligation" ToRole="Region" />
-          <NavigationProperty Name="Workflows" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" FromRole="UnliquidatedObligation" ToRole="Workflow" />
-        </EntityType>
         <EntityType Name="UserUser">
           <Key>
             <PropertyRef Name="UserUserId" />
@@ -1573,8 +1507,8 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <NavigationProperty Name="Documents" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Document_ToWorkflow" FromRole="Workflow" ToRole="Document" />
           <NavigationProperty Name="RequestForReassignments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestForReassignment_WorkflowId" FromRole="Workflow" ToRole="RequestForReassignment" />
           <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="Workflow" ToRole="UnliqudatedObjectsWorkflowQuestion" />
-          <NavigationProperty Name="UnliquidatedObligation" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" FromRole="Workflow" ToRole="UnliquidatedObligation" />
           <NavigationProperty Name="WorkflowHistories" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowH__Workf__477199F1" FromRole="Workflow" ToRole="WorkflowHistory" />
+          <NavigationProperty Name="UnliquidatedObligation" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" FromRole="Workflow" ToRole="UnliquidatedObligation" />
         </EntityType>
         <EntityType Name="Region">
           <Key>
@@ -1586,9 +1520,9 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="RegionName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Reviews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Review__RegionId__0EF836A4" FromRole="Region" ToRole="Review" />
           <NavigationProperty Name="Reviews1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__RegionI__1699586C" FromRole="Region" ToRole="Review" />
-          <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" FromRole="Region" ToRole="UnliquidatedObligation" />
           <NavigationProperty Name="UserUsers" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Regio__395884C4" FromRole="Region" ToRole="UserUser" />
           <NavigationProperty Name="Zone" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Regions__ZoneId__30C33EC3" FromRole="Region" ToRole="Zone" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" FromRole="Region" ToRole="UnliquidatedObligation" />
         </EntityType>
         <EntityType Name="Zone">
           <Key>
@@ -1928,18 +1862,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notes__UloId__5555A4F4">
-          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
-          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Note" Role="Note" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UnliquidatedObligation">
-              <PropertyRef Name="UloId" />
-            </Principal>
-            <Dependent Role="Note">
-              <PropertyRef Name="UloId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__RequestFo__Unliq__74444068">
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion" Role="UnliqudatedObjectsWorkflowQuestion" Multiplicity="0..1" />
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.RequestForReassignment" Role="RequestForReassignment" Multiplicity="*" />
@@ -2000,18 +1922,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Unliquida__Revie__4183B671">
-          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" Role="Review" Multiplicity="1" />
-          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Review">
-              <PropertyRef Name="ReviewId" />
-            </Principal>
-            <Dependent Role="UnliquidatedObligation">
-              <PropertyRef Name="ReviewId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows">
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="1" />
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion" Role="UnliqudatedObjectsWorkflowQuestion" Multiplicity="*" />
@@ -2021,30 +1931,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             </Principal>
             <Dependent Role="UnliqudatedObjectsWorkflowQuestion">
               <PropertyRef Name="WorkflowId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Unliquida__Regio__408F9238">
-          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Region" Role="Region" Multiplicity="0..1" />
-          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Region">
-              <PropertyRef Name="RegionId" />
-            </Principal>
-            <Dependent Role="UnliquidatedObligation">
-              <PropertyRef Name="RegionId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Workflows__Targe__4277DAAA">
-          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
-          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UnliquidatedObligation">
-              <PropertyRef Name="UloId" />
-            </Principal>
-            <Dependent Role="Workflow">
-              <PropertyRef Name="TargetUloId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2126,6 +2012,120 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Type="String" Name="Answer" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="WorkflowActivityName" Nullable="true" MaxLength="100" />
         </ComplexType>
+        <EntityType Name="UnliquidatedObligation">
+          <Key>
+            <PropertyRef Name="UloId" />
+          </Key>
+          <Property Name="UloId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RegionId" Type="Int32" />
+          <Property Name="ReviewId" Type="Int32" Nullable="false" />
+          <Property Name="Organization" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Fund" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Prog" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DocType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PegasysDocumentNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PegasysTitleNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="BBFY" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="EBFY" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Acty" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="SOC" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Project" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Agreement" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContractNum" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Bldg" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SysLoc" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VehTag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="WI" Type="Int32" />
+          <Property Name="LeaseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VendorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ActgPd" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TAFS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DUNSNum" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DaysSinceLastActivity" Type="Int32" />
+          <Property Name="DaysSinceFirstActivity" Type="Int32" />
+          <Property Name="TradingPartnerType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VendorAgencyCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VendorBureauCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Valid" Type="Boolean" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AwardNbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContractingOfficersName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ReasonIncludedInReview" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="EASi_Base_Contract_Nbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EASi_GSA_FSS_Other__" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ExpectedDateForCompletion" Type="DateTime" Precision="0" />
+          <Property Name="TotalLine" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Commitments" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Prepayments" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="UndelOrders" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Rcpt" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Accrual" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="TotalDO" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="TotalUDOAndDO" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="PendPayments" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="PymtsInTransit" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="PymtsConfirmed" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Holdbacks" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="DateOfLastActivity" Type="DateTime" Precision="0" />
+          <Property Name="DateOfFirstActivity" Type="DateTime" Precision="0" />
+          <Property Name="RWACompletionDate" Type="DateTime" Precision="0" />
+          <Property Name="EASiAwdExpirationDate" Type="DateTime" Precision="0" />
+          <Property Name="ItemsLineNumber" Type="Int32" />
+          <Property Name="AccountingLineNumber" Type="Int32" />
+          <Property Name="OC" Type="Int32" />
+          <NavigationProperty Name="Notes" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4" FromRole="UnliquidatedObligation" ToRole="Note" />
+          <NavigationProperty Name="Review" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" FromRole="UnliquidatedObligation" ToRole="Review" />
+          <NavigationProperty Name="Region" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" FromRole="UnliquidatedObligation" ToRole="Region" />
+          <NavigationProperty Name="Workflows" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" FromRole="UnliquidatedObligation" ToRole="Workflow" />
+        </EntityType>
+        <Association Name="FK__Notes__UloId__5555A4F4">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Note" Role="Note" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnliquidatedObligation">
+              <PropertyRef Name="UloId" />
+            </Principal>
+            <Dependent Role="Note">
+              <PropertyRef Name="UloId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Unliquida__Revie__4183B671">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" Role="Review" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Review">
+              <PropertyRef Name="ReviewId" />
+            </Principal>
+            <Dependent Role="UnliquidatedObligation">
+              <PropertyRef Name="ReviewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Unliquida__Regio__408F9238">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Region" Role="Region" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Region">
+              <PropertyRef Name="RegionId" />
+            </Principal>
+            <Dependent Role="UnliquidatedObligation">
+              <PropertyRef Name="RegionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Workflows__Targe__4277DAAA">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnliquidatedObligation">
+              <PropertyRef Name="UloId" />
+            </Principal>
+            <Dependent Role="Workflow">
+              <PropertyRef Name="TargetUloId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2310,69 +2310,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
                 <ScalarProperty Name="UnliqudatedWorkflowQuestionsId" ColumnName="UnliqudatedWorkflowQuestionsId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UnliquidatedObligations">
-            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation">
-              <MappingFragment StoreEntitySet="UnliquidatedObligations">
-                <ScalarProperty Name="ExpectedDateForCompletion" ColumnName="ExpectedDateForCompletion" />
-                <ScalarProperty Name="EASi_Awd_Expiration_Dt" ColumnName="EASi Awd Expiration Dt" />
-                <ScalarProperty Name="EASi_GSA_FSS_Other__" ColumnName="EASi GSA FSS/Other #" />
-                <ScalarProperty Name="EASi_Base_Contract_Nbr" ColumnName="EASi Base Contract Nbr" />
-                <ScalarProperty Name="RWA_Completion_Date" ColumnName="RWA Completion Date" />
-                <ScalarProperty Name="ReasonIncludedInReview" ColumnName="ReasonIncludedInReview" />
-                <ScalarProperty Name="ContractingOfficersName" ColumnName="ContractingOfficersName" />
-                <ScalarProperty Name="AwardNbr" ColumnName="AwardNbr" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Valid" ColumnName="Valid" />
-                <ScalarProperty Name="VendorBureauCode" ColumnName="VendorBureauCode" />
-                <ScalarProperty Name="VendorAgencyCode" ColumnName="VendorAgencyCode" />
-                <ScalarProperty Name="TradingPartnerType" ColumnName="TradingPartnerType" />
-                <ScalarProperty Name="DaysSinceFirstActivity" ColumnName="DaysSinceFirstActivity" />
-                <ScalarProperty Name="DateOfFirstActivity" ColumnName="DateOfFirstActivity" />
-                <ScalarProperty Name="DaysSinceLastActivity" ColumnName="DaysSinceLastActivity" />
-                <ScalarProperty Name="DateOfLastActivity" ColumnName="DateOfLastActivity" />
-                <ScalarProperty Name="DUNSNum" ColumnName="DUNSNum" />
-                <ScalarProperty Name="TAFS" ColumnName="TAFS" />
-                <ScalarProperty Name="Holdbacks" ColumnName="Holdbacks" />
-                <ScalarProperty Name="PymtsConfirmed" ColumnName="PymtsConfirmed" />
-                <ScalarProperty Name="PymtsInTransit" ColumnName="PymtsInTransit" />
-                <ScalarProperty Name="PendPayments" ColumnName="PendPayments" />
-                <ScalarProperty Name="TotalUDOAndDO" ColumnName="TotalUDOAndDO" />
-                <ScalarProperty Name="TotalDO" ColumnName="TotalDO" />
-                <ScalarProperty Name="Accrual" ColumnName="Accrual" />
-                <ScalarProperty Name="Rcpt" ColumnName="Rcpt" />
-                <ScalarProperty Name="UndelOrders" ColumnName="UndelOrders" />
-                <ScalarProperty Name="Prepayments" ColumnName="Prepayments" />
-                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
-                <ScalarProperty Name="TotalLine" ColumnName="TotalLine" />
-                <ScalarProperty Name="ActgPd" ColumnName="ActgPd" />
-                <ScalarProperty Name="VendorName" ColumnName="VendorName" />
-                <ScalarProperty Name="LeaseNumber" ColumnName="LeaseNumber" />
-                <ScalarProperty Name="WI" ColumnName="WI" />
-                <ScalarProperty Name="VehTag" ColumnName="VehTag" />
-                <ScalarProperty Name="SysLoc" ColumnName="SysLoc" />
-                <ScalarProperty Name="Bldg" ColumnName="Bldg" />
-                <ScalarProperty Name="ContractNum" ColumnName="ContractNum" />
-                <ScalarProperty Name="Agreement" ColumnName="Agreement" />
-                <ScalarProperty Name="Project" ColumnName="Project" />
-                <ScalarProperty Name="SOC" ColumnName="SOC" />
-                <ScalarProperty Name="OC" ColumnName="OC" />
-                <ScalarProperty Name="Acty" ColumnName="Acty" />
-                <ScalarProperty Name="EBFY" ColumnName="EBFY" />
-                <ScalarProperty Name="BBFY" ColumnName="BBFY" />
-                <ScalarProperty Name="PegasysTitleNumber" ColumnName="PegasysTitleNumber" />
-                <ScalarProperty Name="AccountingLineNumber" ColumnName="AccountingLineNumber" />
-                <ScalarProperty Name="ItemsLineNumber" ColumnName="ItemsLineNumber" />
-                <ScalarProperty Name="PegasysDocumentNumber" ColumnName="PegasysDocumentNumber" />
-                <ScalarProperty Name="DocType" ColumnName="DocType" />
-                <ScalarProperty Name="Prog" ColumnName="Prog" />
-                <ScalarProperty Name="Fund" ColumnName="Fund" />
-                <ScalarProperty Name="Organization" ColumnName="Organization" />
-                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
-                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
-                <ScalarProperty Name="UloId" ColumnName="UloId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2626,6 +2563,69 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="UnliquidatedObligations">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation">
+              <MappingFragment StoreEntitySet="UnliquidatedObligations">
+                <ScalarProperty Name="OC" ColumnName="OC" />
+                <ScalarProperty Name="AccountingLineNumber" ColumnName="AccountingLineNumber" />
+                <ScalarProperty Name="ItemsLineNumber" ColumnName="ItemsLineNumber" />
+                <ScalarProperty Name="EASiAwdExpirationDate" ColumnName="EASiAwdExpirationDate" />
+                <ScalarProperty Name="RWACompletionDate" ColumnName="RWACompletionDate" />
+                <ScalarProperty Name="DateOfFirstActivity" ColumnName="DateOfFirstActivity" />
+                <ScalarProperty Name="DateOfLastActivity" ColumnName="DateOfLastActivity" />
+                <ScalarProperty Name="Holdbacks" ColumnName="Holdbacks" />
+                <ScalarProperty Name="PymtsConfirmed" ColumnName="PymtsConfirmed" />
+                <ScalarProperty Name="PymtsInTransit" ColumnName="PymtsInTransit" />
+                <ScalarProperty Name="PendPayments" ColumnName="PendPayments" />
+                <ScalarProperty Name="TotalUDOAndDO" ColumnName="TotalUDOAndDO" />
+                <ScalarProperty Name="TotalDO" ColumnName="TotalDO" />
+                <ScalarProperty Name="Accrual" ColumnName="Accrual" />
+                <ScalarProperty Name="Rcpt" ColumnName="Rcpt" />
+                <ScalarProperty Name="UndelOrders" ColumnName="UndelOrders" />
+                <ScalarProperty Name="Prepayments" ColumnName="Prepayments" />
+                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
+                <ScalarProperty Name="TotalLine" ColumnName="TotalLine" />
+                <ScalarProperty Name="ExpectedDateForCompletion" ColumnName="ExpectedDateForCompletion" />
+                <ScalarProperty Name="EASi_GSA_FSS_Other__" ColumnName="EASi GSA FSS/Other #" />
+                <ScalarProperty Name="EASi_Base_Contract_Nbr" ColumnName="EASi Base Contract Nbr" />
+                <ScalarProperty Name="ReasonIncludedInReview" ColumnName="ReasonIncludedInReview" />
+                <ScalarProperty Name="ContractingOfficersName" ColumnName="ContractingOfficersName" />
+                <ScalarProperty Name="AwardNbr" ColumnName="AwardNbr" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Valid" ColumnName="Valid" />
+                <ScalarProperty Name="VendorBureauCode" ColumnName="VendorBureauCode" />
+                <ScalarProperty Name="VendorAgencyCode" ColumnName="VendorAgencyCode" />
+                <ScalarProperty Name="TradingPartnerType" ColumnName="TradingPartnerType" />
+                <ScalarProperty Name="DaysSinceFirstActivity" ColumnName="DaysSinceFirstActivity" />
+                <ScalarProperty Name="DaysSinceLastActivity" ColumnName="DaysSinceLastActivity" />
+                <ScalarProperty Name="DUNSNum" ColumnName="DUNSNum" />
+                <ScalarProperty Name="TAFS" ColumnName="TAFS" />
+                <ScalarProperty Name="ActgPd" ColumnName="ActgPd" />
+                <ScalarProperty Name="VendorName" ColumnName="VendorName" />
+                <ScalarProperty Name="LeaseNumber" ColumnName="LeaseNumber" />
+                <ScalarProperty Name="WI" ColumnName="WI" />
+                <ScalarProperty Name="VehTag" ColumnName="VehTag" />
+                <ScalarProperty Name="SysLoc" ColumnName="SysLoc" />
+                <ScalarProperty Name="Bldg" ColumnName="Bldg" />
+                <ScalarProperty Name="ContractNum" ColumnName="ContractNum" />
+                <ScalarProperty Name="Agreement" ColumnName="Agreement" />
+                <ScalarProperty Name="Project" ColumnName="Project" />
+                <ScalarProperty Name="SOC" ColumnName="SOC" />
+                <ScalarProperty Name="Acty" ColumnName="Acty" />
+                <ScalarProperty Name="EBFY" ColumnName="EBFY" />
+                <ScalarProperty Name="BBFY" ColumnName="BBFY" />
+                <ScalarProperty Name="PegasysTitleNumber" ColumnName="PegasysTitleNumber" />
+                <ScalarProperty Name="PegasysDocumentNumber" ColumnName="PegasysDocumentNumber" />
+                <ScalarProperty Name="DocType" ColumnName="DocType" />
+                <ScalarProperty Name="Prog" ColumnName="Prog" />
+                <ScalarProperty Name="Fund" ColumnName="Fund" />
+                <ScalarProperty Name="Organization" ColumnName="Organization" />
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
+                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
+                <ScalarProperty Name="UloId" ColumnName="UloId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -7,46 +7,34 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
     /// </summary>
     public enum ApplicationPermissionNames
     {
-        /// <summary>
-        /// Can access the application
-        /// </summary>
-        [Display(Name = "Application User")]
+        [Display(Name = "Application User", Description = "Required in order to use this ULO application.")]
         ApplicationUser,
 
-        /// <summary>
-        /// Can manage other users
-        /// </summary>
-        [Display(Name = "Manage Users")]
+        [Display(Name = "Manage Users", Description = "Create and edit users and privileges.")]
         ManageUsers,
 
-        /// <summary>
-        /// Can view workflows assigned to others
-        /// </summary>
-        [Display(Name = "Can View Workflows Assigned to Other Users")]
-        CanViewOtherWorkflows,
+        [Display(Name = "View Users", Description = "View users and priviliges.")]
+        ViewUsers,
 
-        /// <summary>
-        /// Can view the Reviews
-        /// </summary>
-        [Display(Name = "Can View Review")]
+        [Display(Name = "View Reviews", Description = "Access to the \"Reviews\" screen.")]
         CanViewReviews,
 
-        /// <summary>
-        /// Can create Reviews
-        /// </summary>
-        [Display(Name = "Can Create Review")]
+        [Display(Name = "Search", Description = "Access to the \"Search\" screen.")]
+        CanViewOtherWorkflows,
+
+        [Display(Name = "Manage Reviews", Description ="Launch new reviews.")]
         CanCreateReviews,
 
-        [Display(Name = "Can Execute Reports")]
+        [Display(Name = "Execute Reports", Description ="Run reports from the \"Reports\" screen.")]
         CanExecuteReports,
 
-        [Display(Name = "Can use the background job dashboard")]
+        [Display(Name = "Manage Jobs", Description = "System administrative functions.")]
         BackgroundJobDashboard,
 
-        [Display(Name = "Reassign Workflows")]
+        [Display(Name = "Reassign ULOs", Description = "View the \"Reassignments\" screen and choose a specific person to own the workload.")]
         CanReassign,
 
-        [Display(Name = "View Unassigned")]
+        [Display(Name = "View Unassigned", Description = "Access to the \"Unassigned\" screen.")]
         CanViewUnassigned,
     }
 }
