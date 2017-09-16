@@ -17,8 +17,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly ApplicationUserManager UserManager;
         private readonly IAuthenticationManager AuthenticationManager;
 
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
-            : base(db, componentContext, cacher) 
+        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+            : base(db, componentContext, cacher, logger) 
         {
             UserManager = userManager;
             SignInManager = signInManager;

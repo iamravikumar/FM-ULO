@@ -361,33 +361,9 @@ namespace GSA.UnliquidatedObligations.Web
 
             if (docType!=null)
             {
-                var criteria = pegasysVendorName.Replace(Wildcard, "");
-                if (docType.StartsWith(Wildcard) && docType.EndsWith(Wildcard))
-                {
-                    predicate =
-                       predicate.And(
-                           wf => wf.UnliquidatedObligation.DocType.Contains(criteria));
-                }
-                else if (docType.StartsWith(Wildcard))
-                {
-                    predicate =
-                        predicate.And(
-                            wf => wf.UnliquidatedObligation.DocType.Trim().EndsWith(criteria));
-                }
-                else if (docType.EndsWith(Wildcard))
-                {
-                    predicate =
-                        predicate.And(
-                            wf => wf.UnliquidatedObligation.DocType.StartsWith(criteria));
-                }
-                else
-                {
-                    predicate =
-                        predicate.And(
-                            wf =>
-                                wf.UnliquidatedObligation.DocType.Trim() ==
-                                criteria);
-                }
+                predicate =
+                   predicate.And(
+                       wf => wf.UnliquidatedObligation.DocType == docType);
             }
 
             if (contractingOfficersName!=null)
@@ -800,5 +776,16 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static string ToFriendlyString(this AspnetUserSubjectCategoryClaim claim)
             => ToFriendlySubjectCategoryClaimString(claim.DocumentType, claim.BACode, claim.OrgCode, claim.Region);
+
+        private const string CorrelationIdHeaderString = "X-Correlation-ID";
+        public static string CorrelationId(this HttpContext ctx)
+        {
+            string correlationId = ctx.Response.Headers[CorrelationIdHeaderString];
+            if (correlationId == null)
+            {
+                correlationId = ctx.Response.Headers[CorrelationIdHeaderString] = ctx.Request.Headers[CorrelationIdHeaderString] ?? "XCID" + Guid.NewGuid().ToString();                
+            }
+            return correlationId;
+        }
     }
 }

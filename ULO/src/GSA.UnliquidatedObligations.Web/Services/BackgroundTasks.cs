@@ -163,7 +163,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 var settings = new LoadTablesFromSpreadsheetSettings()
                 {
                     CreateDataTable = CreateEasiTable,
-
                 };
                 ds.LoadSheetsFromExcel(st, settings);
                 dt = MergeIntoSingleTable(ds, CreateEasiTable);
@@ -344,6 +343,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.Columns.Add("ACT/PDN", typeof(string));
             dt.Columns.Add("Data Source", typeof(string));
             dt.Columns.Add("Region Cd", typeof(string));
+            dt.Columns.Add("Contracting Officer Email", typeof(string));
+            dt.Columns.Add("Contracting Specialist Name", typeof(string));
+            dt.Columns.Add("Contracting Specialist Email", typeof(string));
+            dt.Columns.Add("Budget Analyst Email", typeof(string));
             return dt;
         }
 

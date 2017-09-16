@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
@@ -7,7 +8,6 @@ using GSA.UnliquidatedObligations.Web.Services;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -21,11 +21,18 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class RequestForReassignmentsController : BaseController
     {
+        public const string Name = "RequestForReassignments";
+
+        public static class ActionNames
+        {
+            public const string Details = "Details";
+        }
+
         protected readonly IWorkflowManager Manager;
         private readonly ApplicationUserManager UserManager;
 
-        public RequestForReassignmentsController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
-            : base(db, componentContext, cacher)
+        public RequestForReassignmentsController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+            : base(db, componentContext, cacher, logger)
         {
             Manager = manager;
             UserManager = userManager;
@@ -52,7 +59,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View();
         }
 
-        // GET: RequestForReassignments/Details/5
+        [ActionName(ActionNames.Details)]
         public ActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false)
         {
             var requestForReassignment = DB.RequestForReassignments.Where(rr => rr.IsActive).FirstOrDefault(r => r.RequestForReassignmentID == id);
@@ -72,14 +79,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 groupOwnerId = PortalHelpers.GetUserId(wfDefintionOwnerName);
             }
             
-            var usersIds = DB.UserUsers
-                .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId)
-                .Select(uu => uu.ChildUserId).ToList();
-            var users = DB.AspNetUsers
-                .Where(u => u.UserType == AspNetUser.UserTypes.Person && usersIds.Contains(u.Id)).OrderBy(u => u.UserName).ToList();
+            var users = DB.UserUsers
+                .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId && uu.ChildUser.UserType== AspNetUser.UserTypes.Person)
+                .Select(uu => uu.ChildUser).ToList();
 
-            var userReassignRegions = User.GetReassignmentGroupRegions();
-            if (User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId))
+            if (Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(uloRegionId, User.Identity.Name),
+                () => 
+                {
+                    var userReassignRegions = User.GetReassignmentGroupRegions();
+                    return User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId);
+                },
+                UloHelpers.MediumCacheTimeout
+                ))
             {
                 users.Add(CurrentUser);
             }

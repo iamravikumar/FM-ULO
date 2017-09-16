@@ -32,13 +32,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IBackgroundJobClient BackgroundJobClient;
         protected readonly ULODBEntities DB;
         private readonly ICacher Cacher = new BasicCacher();
+        private readonly Serilog.ILogger Log;
 
-        public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, ULODBEntities db)
+        public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, ULODBEntities db, Serilog.ILogger log)
         {
             ComponentContext = componentContext;
             Finder = finder;
             BackgroundJobClient = backgroundJobClient;
             DB = db;
+            Log = log;
         }
 
         private class RedirectingController : Controller
@@ -59,85 +61,92 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
             //if question is null stays in current activity
             string nextActivityKey = "";
-            WorkflowActivity nextActivity;
-            if (question != null)
+
+            try
             {
-                var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
-                nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig) ?? wf.CurrentWorkflowActivityKey;
-                nextActivity = desc.Activities.First(z => z.WorkflowActivityKey == nextActivityKey) ?? currentActivity;
-            }
-            else
-            {
-                nextActivity = currentActivity;
-            }
-
-            //TODO: Handle null case which says stay where you are.
-
-            wf.CurrentWorkflowActivityKey = nextActivity.WorkflowActivityKey;
-
-
-            //TODO: Updata other info like the owner, date
-            //TODO: Add logic for handling groups of users.
-            if (nextActivity is WebActionWorkflowActivity)
-            {
-                if ((wf.CurrentWorkflowActivityKey != currentActivity.WorkflowActivityKey && wf.AspNetUser.UserName != nextActivity.OwnerUserName) || forceAdvance == true)
+                WorkflowActivity nextActivity;
+                if (question != null)
                 {
-                    nextOwnerId = await GetNextOwnerUserIdAsync(nextActivity.OwnerUserName, wf, nextActivity.WorkflowActivityKey, nextActivity.OwnerProhibitedPreviousActivityNames);
-                    wf.OwnerUserId = nextOwnerId;
-                    var nextUser = Cacher.FindOrCreateValWithSimpleKey(
-                        wf.OwnerUserId,
-                        () => DB.AspNetUsers.Find(wf.OwnerUserId));
-                    if (nextUser.IsPerson && RegexHelpers.Common.EmailAddress.IsMatch(nextUser.Email))
+                    var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
+                    nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig) ?? wf.CurrentWorkflowActivityKey;
+                    nextActivity = desc.Activities.First(z => z.WorkflowActivityKey == nextActivityKey) ?? currentActivity;
+                }
+                else
+                {
+                    nextActivity = currentActivity;
+                }
+
+                //TODO: Handle null case which says stay where you are.
+
+                wf.CurrentWorkflowActivityKey = nextActivity.WorkflowActivityKey;
+
+                //TODO: Updata other info like the owner, date
+                //TODO: Add logic for handling groups of users.
+                if (nextActivity is WebActionWorkflowActivity)
+                {
+                    if ((wf.CurrentWorkflowActivityKey != currentActivity.WorkflowActivityKey && wf.AspNetUser.UserName != nextActivity.OwnerUserName) || forceAdvance == true)
                     {
-                        var emailTemplate = Cacher.FindOrCreateValWithSimpleKey(
-                            nextActivity.EmailTemplateId,
-                            () => DB.EmailTemplates.Find(nextActivity.EmailTemplateId));
-                        var emailModel = new EmailViewModel
+                        nextOwnerId = await GetNextOwnerUserIdAsync(nextActivity.OwnerUserName, wf, nextActivity.WorkflowActivityKey, nextActivity.OwnerProhibitedPreviousActivityNames);
+                        wf.OwnerUserId = nextOwnerId;
+                        var nextUser = Cacher.FindOrCreateValWithSimpleKey(
+                            wf.OwnerUserId,
+                            () => DB.AspNetUsers.Find(wf.OwnerUserId));
+                        if (nextUser.IsPerson && RegexHelpers.Common.EmailAddress.IsMatch(nextUser.Email))
                         {
-                            UserName = nextUser.UserName,
-                            PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
-                            WorkflowId = wf.WorkflowId,
-                            UloId = wf.UnliquidatedObligation.UloId
-                        };
-                        BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(emailTemplate.EmailSubject, nextUser.Email, emailTemplate.EmailBody, emailModel));
+                            var emailTemplate = Cacher.FindOrCreateValWithSimpleKey(
+                                nextActivity.EmailTemplateId,
+                                () => DB.EmailTemplates.Find(nextActivity.EmailTemplateId));
+                            var emailModel = new EmailViewModel
+                            {
+                                UserName = nextUser.UserName,
+                                PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
+                                WorkflowId = wf.WorkflowId,
+                                UloId = wf.UnliquidatedObligation.UloId
+                            };
+                            BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(emailTemplate.EmailSubject, nextUser.Email, emailTemplate.EmailBody, emailModel));
+                        }
+                        else
+                        {
+                            Trace.WriteLine($"Will not send email to {nextUser}");
+                        }
                     }
-                    else
+                    wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
+
+                    if (nextActivity.DueIn != null)
+                        wf.ExpectedDurationInSeconds = (long?)nextActivity.DueIn.Value.TotalSeconds;
+
+                    if (question != null && question.Answer == "Valid")
                     {
-                        Trace.WriteLine($"Will not send email to {nextUser}");
+                        wf.UnliquidatedObligation.Valid = true;
                     }
+                    else if (question != null && question.Answer == "Invalid")
+                    {
+                        wf.UnliquidatedObligation.Valid = false;
+                    }
+
+                    if (ignoreActionResult)
+                    {
+                        return null;
+                    }
+
+                    //TODO: if owner changes, look at other ways of redirecting.
+
+                    var next = (WebActionWorkflowActivity)nextActivity;
+                    var c = new RedirectingController();
+
+                    var routeValues = new RouteValueDictionary(next.RouteValueByName);
+                    //routeValues[WorkflowIdRouteValueName] = wf.WorkflowId;
+                    return c.RedirectToAction(next.ActionName, next.ControllerName, routeValues);
                 }
-                wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
-
-                if (nextActivity.DueIn != null)
-                    wf.ExpectedDurationInSeconds = (long?)nextActivity.DueIn.Value.TotalSeconds;
-
-                if (question != null && question.Answer == "Valid")
+                else
                 {
-                    wf.UnliquidatedObligation.Valid = true;
+                    //TODO: handle background hangfire.
+                    throw new NotImplementedException();
                 }
-                else if (question != null && question.Answer == "Invalid")
-                {
-                    wf.UnliquidatedObligation.Valid = false;
-                }
-
-                if (ignoreActionResult)
-                {
-                    return null;
-                }
-
-                //TODO: if owner changes, look at other ways of redirecting.
-
-                var next = (WebActionWorkflowActivity)nextActivity;
-                var c = new RedirectingController();
-
-                var routeValues = new RouteValueDictionary(next.RouteValueByName);
-                //routeValues[WorkflowIdRouteValueName] = wf.WorkflowId;
-                return c.RedirectToAction(next.ActionName, next.ControllerName, routeValues);
             }
-            else
+            finally
             {
-                //TODO: handle background hangfire.
-                throw new NotImplementedException();
+                Log.Information("Workflow {WorkflowId} with {WorkflowKey} changing from activity {OldWorkflowActivityKey} to activity {NewWorkflowActivityKey} owned By {NewOwnerId}", wf.WorkflowId, wf.WorkflowKey, currentActivity, wf.CurrentWorkflowActivityKey, nextOwnerId);
             }
         }
 

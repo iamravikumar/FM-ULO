@@ -16,6 +16,8 @@ using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 using RevolutionaryStuff.Core.Caching;
+using Serilog;
+using System;
 
 [assembly: OwinStartupAttribute(typeof(GSA.UnliquidatedObligations.Web.Startup))]
 namespace GSA.UnliquidatedObligations.Web
@@ -66,6 +68,20 @@ namespace GSA.UnliquidatedObligations.Web
             builder.RegisterType<BackgroundJobClient>().As<IBackgroundJobClient>().InstancePerLifetimeScope();
 
             builder.Register(ctx => new EmailServer(new SmtpClient())).As<IEmailServer>();
+
+            builder.Register<ILogger>((c, p) =>
+            {
+                return new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.WithProperty("ApplicationName", Properties.Settings.Default.ApplicationName)
+                .Enrich.WithProperty("ApplicationStartupTimeUtc", DateTime.UtcNow)
+                .Enrich.WithProperty("MachineName", Environment.MachineName)
+                .Enrich.With<RequestEnricher>()
+                .Enrich.FromLogContext()
+                .WriteTo.Trace()
+                .WriteTo.MSSqlServer(PortalHelpers.DefaultUloConnectionString, "Logs", period: TimeSpan.FromSeconds(5))
+                .CreateLogger();
+            }).SingleInstance();
 
             //May need to add more if we add more choosers.
             //If it gets to where there are A LOT, we could look more into http://docs.autofac.org/en/latest/register/scanning.html

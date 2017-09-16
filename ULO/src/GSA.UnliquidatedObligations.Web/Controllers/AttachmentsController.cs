@@ -24,8 +24,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string View = "View";
         }
 
-        public AttachmentsController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
-            : base(db, componentContext, cacher)
+        public AttachmentsController(ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+            : base(db, componentContext, cacher, logger)
         { }
 
         public JsonResult Throw(string message)

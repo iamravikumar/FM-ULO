@@ -1,16 +1,13 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
 
 @{
-
-
-
     if (Model.Workflow.RequestForReassignments.Count == 0)
     {
-        Html.RenderAction("Details", "RequestForReassignments", new {workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.UnliquidatedObligation.RegionId, wfDefintionOwnerName = Model.WorkflowDescriptionViewModel.CurrentActivity.OwnerUserName });
+        Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new {workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.UnliquidatedObligation.RegionId, wfDefintionOwnerName = Model.WorkflowDescriptionViewModel.CurrentActivity.OwnerUserName });
     }
     else
     {
-        Html.RenderAction("Details", "RequestForReassignments", new { id = Model.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.UnliquidatedObligation.RegionId });
+        Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { id = Model.Workflow.RequestForReassignments.FirstOrDefault().RequestForReassignmentID, workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.UnliquidatedObligation.RegionId });
     }
-
 }

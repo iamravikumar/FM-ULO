@@ -5,21 +5,10 @@ $(document).ready(function() {
 
     $("#validateAnswerMessage").hide();
     $("#validateJustificationMessage").hide();
-    $("#validateExpectedDateMessage").hide();
     $("#validateCommentMessage").hide();
-
-    if ($("#ExpectedDateForCompletionEditable").val() == "False") {
-        $("#ExpectedDateForCompletion").attr('type', 'text');
-        $("#ExpectedDateForCompletion").attr('readonly', true);
-    }
 
     var $form = $('#uloDetailsForm');
     var $submitActors = $form.find('input[type=submit]');
-
-    var showExpectedDateBool = $("#ExpectedDateAlwaysShow").val() == "True" || $("#Answer").val() === "Valid" || $("#Answer").val() === "Approve" || $("#ExpectedDateForCompletion").val() !== "";
-
-    showExpectedDate(showExpectedDateBool);
-
 
     $submitActors.click(function () {
         submitActor = this;
@@ -41,11 +30,6 @@ $(document).ready(function() {
                     return false;
                 }
             }
-            if ($("#ExpectedDateForCompletionNeeded").val() === "True" && ($("#Answer").val() === "Valid" || $("#Answer").val() === "Approve") && $("#ExpectedDateForCompletion").val() === "") {
-                debugAlert("inputError: case3");
-                $("#validateExpectedDateMessage").show();
-                return false;
-            }
             if ($("#justifications option:selected").text() === "Other" && $("#Comments").val() == "") {
                 debugAlert("inputError: case4");
                 $("#validateCommentMessage").show();
@@ -60,16 +44,6 @@ $(document).ready(function() {
 
 function justificationNeeded() {
     return $("#justifications").children().length > 1;
-}
-
-function showExpectedDate(showBool) {
-    if (showBool) {
-        $("#expectedDateForCompletionContainer").show();     
-    }
-    else {
-        $("#expectedDateForCompletionContainer").hide();
-        $("#expectedDate").val("");
-    }
 }
 
 function ChoiceChange(value, pleaseSelect, justificationKey) {
@@ -121,6 +95,4 @@ function ChoiceChange(value, pleaseSelect, justificationKey) {
             $(el.parentElement).show();
         }
     }
-
-    showExpectedDate(q.expectedDateAlwaysShow);
 }

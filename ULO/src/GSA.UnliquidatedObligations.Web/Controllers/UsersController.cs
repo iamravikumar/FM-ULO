@@ -27,8 +27,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private readonly ApplicationUserManager UserManager;
 
-        public UsersController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext context, ICacher cacher)
-            : base(db, context, cacher)
+        public UsersController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext context, ICacher cacher, Serilog.ILogger logger)
+            : base(db, context, cacher, logger)
         {
             UserManager = userManager;
         }

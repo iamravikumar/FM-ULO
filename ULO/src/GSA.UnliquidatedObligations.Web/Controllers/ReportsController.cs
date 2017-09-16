@@ -32,8 +32,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string ExecuteReport = "ExecuteReport";
         }
 
-        public ReportsController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
-            : base(db, componentContext, cacher)
+        public ReportsController(ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+            : base(db, componentContext, cacher, logger)
         { }
 
         [ActionName(ActionNames.ListReports)]
@@ -65,6 +65,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (report == null) return HttpNotFound();
             using (var conn = new SqlConnection(PortalHelpers.DefaultUloConnectionString))
             {
+                Log.Information("Executing report {ReportName} with {SprocSchema}.{SprocName}", name, report.SprocSchema, report.SprocName);
                 conn.Open();
                 using (var cmd = new SqlCommand($"[{report.SprocSchema}].[{report.SprocName}]", conn)
                 {

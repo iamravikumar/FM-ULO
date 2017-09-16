@@ -29,9 +29,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private ApplicationUserManager UserManager;
         private readonly IAuthenticationManager AuthenticationManager;
 
-
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
-            : base(db, componentContext, cacher)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IAuthenticationManager authenticationManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+            : base(db, componentContext, cacher, logger)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -92,6 +91,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    Log.Information("Dev Login success");
                     return RedirectToLocal(returnUrl);
                 //case SignInStatus.LockedOut:
                 //    return View("Lockout");
@@ -451,10 +451,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 if (Properties.Settings.Default.UseDevAuthentication)
                 {
+                    Log.Information("Dev LogOff");
                     AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
                 }
                 else
                 {
+                    Log.Information("GSA LogOff");
                     Request.GetOwinContext()
                            .Authentication
                            .SignOut(HttpContext.GetOwinContext()

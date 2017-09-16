@@ -69,5 +69,8 @@ WholeAgency,ULO Workflow</Value>
     <Setting Name="AdminstratorEmail" Type="System.String" Scope="Application">
       <Value Profile="(Default)">jonathan.chen@gsa.gov</Value>
     </Setting>
+    <Setting Name="ApplicationName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ULO</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

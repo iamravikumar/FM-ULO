@@ -39,8 +39,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly ApplicationUserManager UserManager;
 
 
-        public UloController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
-            : base(db, componentContext, cacher)
+        public UloController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+            : base(db, componentContext, cacher, logger)
         {
             Manager = manager;
             UserManager = userManager;
@@ -163,12 +163,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
               baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId);
 
             var workflows = await ApplyBrowse(
-                DB.Workflows.Where(wfPredicate).
-                Include(wf => wf.UnliquidatedObligation).
-                Include(wf => wf.UnliquidatedObligation.Region).
-                Include(wf => wf.UnliquidatedObligation.Region.Zone).
-                Include(wf => wf.RequestForReassignments).
-                Include(wf => wf.AspNetUser),
+                DB.Workflows.AsNoTracking().Where(wfPredicate).
+                Include(wf => wf.UnliquidatedObligation).AsNoTracking().
+                Include(wf => wf.UnliquidatedObligation.Region).AsNoTracking().
+                Include(wf => wf.UnliquidatedObligation.Region.Zone).AsNoTracking().
+                Include(wf => wf.RequestForReassignments).AsNoTracking().
+                Include(wf => wf.AspNetUser).AsNoTracking(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToListAsync();
 
             var baCodes = Cacher.FindOrCreateValWithSimpleKey(
@@ -243,6 +243,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 workflowId = (await DB.Workflows.SingleAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
             }
 
+            Log.Information("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
+
             var workflow = await FindWorkflowAsync(workflowId);
             var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
 
@@ -297,6 +299,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (wf == null) return HttpNotFound();
             if (ModelState.IsValid)
             {
+                Log.Information("Altering ULO {UloId} with Workflow {WorkflowId} via command {AlterCommand}", uloId, workflowId, Request["WhatNext"]);
+
                 var submit = Request["WhatNext"] == "Submit";
                 var question = await DB.UnliqudatedObjectsWorkflowQuestions.Where(z => z.WorkflowId == workflowId).OrderByDescending(z => z.UnliqudatedWorkflowQuestionsId).FirstOrDefaultAsync();
                 if (question == null || !question.Pending)

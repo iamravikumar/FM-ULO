@@ -141,5 +141,14 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((string)(this["AdminstratorEmail"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ULO")]
+        public string ApplicationName {
+            get {
+                return ((string)(this["ApplicationName"]));
+            }
+        }
     }
 }

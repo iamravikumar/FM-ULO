@@ -95,11 +95,11 @@
         var rfr = item.RequestForReassignments.FirstOrDefault();
         if (rfr == null)
         {
-            Html.RenderAction("Details", "RequestForReassignments", new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true });
+            Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true });
         }
         else
         {
-            Html.RenderAction("Details", "RequestForReassignments", new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true, id = rfr.RequestForReassignmentID });
+            Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true, id = rfr.RequestForReassignmentID });
         }
     }
 }

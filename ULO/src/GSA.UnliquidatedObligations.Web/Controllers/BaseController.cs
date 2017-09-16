@@ -3,6 +3,7 @@ using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected readonly ULODBEntities DB;
         protected readonly IComponentContext ComponentContext;
         protected readonly ICacher Cacher;
+        protected readonly ILogger Log;
 
-        protected BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
+        protected BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher, ILogger logger)
         {
             DB = db;
             ComponentContext = componentContext;
             Cacher = cacher;
-            System.Web.HttpContext.Current.Items["ComponentContext"] = ComponentContext;
+            Log = logger;
+            var ctx = System.Web.HttpContext.Current;
+            if (ctx != null)
+            {
+                ctx.Items["ComponentContext"] = ComponentContext;
+                var u = ctx.Request?.Url;
+                if (u != null)
+                {
+                    Log.Debug("Page request to {Controller} with {RequestUrl}", this.GetType().Name, u);
+                }
+            }
         }
 
         protected void OnlySupportedInDevelopmentEnvironment()

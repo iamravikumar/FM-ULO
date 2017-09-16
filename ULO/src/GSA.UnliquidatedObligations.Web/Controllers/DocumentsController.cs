@@ -22,10 +22,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class DocumentsController : BaseController
     {
+        public const string Name = "Documents";
+
+        public static class ActionNames
+        {
+            public const string View = "View";
+        }
+
         private readonly ApplicationUserManager UserManager;
 
-        public DocumentsController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
-            : base(db, componentContext, cacher)
+        public DocumentsController(ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+            : base(db, componentContext, cacher, logger)
         {
             UserManager = userManager;
             PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
@@ -38,7 +45,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(await documents.ToListAsync());
         }
 
-        // GET: Documents/Details/5
+        [ActionName(ActionNames.View)]
         public ActionResult View(int? documentId, string docType, bool allowDocumentEdit = false)
         {
             if (docType == null && documentId.HasValue)

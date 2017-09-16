@@ -36,8 +36,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private readonly IBackgroundJobClient BackgroundJobClient;
 
-        public ReviewsController(IBackgroundJobClient backgroundJobClient, ULODBEntities db, IComponentContext componentContext, ICacher cacher)
-            : base(db, componentContext, cacher)
+        public ReviewsController(IBackgroundJobClient backgroundJobClient, ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+            : base(db, componentContext, cacher, logger)
         {
             BackgroundJobClient = backgroundJobClient;
         }

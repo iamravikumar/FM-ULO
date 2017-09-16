@@ -14,8 +14,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string About = "About";
         }
 
-        public HomeController(ULODBEntities db, IComponentContext componentContext, ICacher cacher)
-            : base(db, componentContext, cacher)
+        public HomeController(ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+            : base(db, componentContext, cacher, logger)
         { }
 
         [AllowAnonymous]
