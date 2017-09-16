@@ -15,7 +15,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             if (ctx == null) return;
             p = propertyFactory.CreateProperty("CorrelationId", ctx.CorrelationId());
             logEvent.AddPropertyIfAbsent(p);
-            p = propertyFactory.CreateProperty("User", ctx.User?.Identity?.Name);
+            p = propertyFactory.CreateProperty("RequestorUserName", ctx.User?.Identity?.Name);
             logEvent.AddPropertyIfAbsent(p);
         }
     }
