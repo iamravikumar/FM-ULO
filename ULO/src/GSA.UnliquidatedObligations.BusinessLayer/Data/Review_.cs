@@ -4,6 +4,14 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     public partial class Review
     {
+        public static class StatusNames
+        {
+            public const string Creating = "Creating";
+            public const string Assigning = "Assigning";
+            public const string Open = "Open";
+            public const string Closed = "Closed";
+        }
+
         public DateTime CreatedAt
             => CreatedAtUtc.ToLocalTime();
 
@@ -17,6 +25,12 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         {
             get { return (ReviewTypeEnum)ReviewTypeId; }
             set { ReviewTypeId = (int)value; }
+        }
+
+        public void SetStatusDependingOnClosedBit(bool? isClosed=null)
+        {
+            IsClosed = isClosed.GetValueOrDefault(IsClosed);
+            Status = IsClosed ? StatusNames.Closed : StatusNames.Open;
         }
     }
 }

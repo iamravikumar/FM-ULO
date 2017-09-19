@@ -23,6 +23,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public static class ActionNames
         {
             public const string Index = "Index";
+            public const string Save = "Save";
         }
 
         private readonly ApplicationUserManager UserManager;
@@ -91,6 +92,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [Route("users/save")]
         [HttpPost]
+        [ActionName(ActionNames.Save)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(

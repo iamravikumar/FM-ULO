@@ -17,6 +17,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewReviews)]
     public class ReviewsController : BaseController
     {
         public const string Name = "Reviews";
@@ -26,6 +27,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string Index = "Index";
             public const string Details = "Details";
             public const string Create = "Create";
+            public const string Save = "Save";
         }
 
         public static class ReviewFileDesignators
@@ -74,11 +76,56 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("reviews/{id}")]
         public async Task<ActionResult> Details(int id)
         {
-            var review = await DB.Reviews.FindAsync(id);
-            var reviewStats = await DB.ReviewStats.FindAsync(id);
-            var reviewDetailsModel = new ReviewDetailsModel(review, reviewStats);
-            return View(reviewDetailsModel);
+            var m = await CreateReviewDetailsModelAsync(id);
+            return View(m);
         }
+
+        private async Task<ReviewDetailsModel> CreateReviewDetailsModelAsync(int reviewId)
+        {
+            var review = await DB.Reviews.FindAsync(reviewId);
+            var reviewStats = await DB.ReviewStats.FindAsync(reviewId);
+            var reviewDetailsModel = new ReviewDetailsModel(review, reviewStats);
+            return reviewDetailsModel;
+        }
+
+
+        [Route("reviews/save")]
+        [HttpPost]
+        [ActionName(ActionNames.Save)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Save(
+            [Bind(Include =
+                nameof(ReviewDetailsModel.Review)+","+
+                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewId)+","+
+                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.IsClosed)+","+
+                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewName)
+            )]
+            ReviewDetailsModel m)
+        {
+            var reviewId = m.Review.ReviewId;
+            bool errors = false;
+            if (DB.Reviews.Any(r => r.ReviewName == m.Review.ReviewName && r.ReviewId!=reviewId))
+            {
+                ModelState.AddModelError("ReviewName", "The name of this review is already in use.");
+                errors = true;
+            }
+            if (!errors && ModelState.IsValid)
+            {
+                var r = await DB.Reviews.FirstOrDefaultAsync(z => z.ReviewId == reviewId);
+                if (r == null) return HttpNotFound();
+                r.ReviewName = m.Review.ReviewName;
+                r.SetStatusDependingOnClosedBit(m.Review.IsClosed);
+                await DB.SaveChangesAsync();
+                return RedirectToIndex();
+            }
+            
+            var mulligan = await CreateReviewDetailsModelAsync(reviewId);
+            mulligan.Review.ReviewName = m.Review.ReviewName;
+            mulligan.Review.IsClosed = m.Review.IsClosed;
+            return RedirectToAction(ActionNames.Details, mulligan);
+        }
+
 
         private async Task<ReviewModel> CreateReviewModelAsync()
         {
@@ -148,7 +195,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     RegionId = reviewModel.RegionId,
                     ReviewName = reviewModel.ReviewName,
-                    Status = "Open",
+                    Status = Review.StatusNames.Creating,
                     ReviewTypeId = reviewModel.ReviewTypeId.Value,
                     Comments = reviewModel.Comments,
                     ReviewScopeId = reviewModel.ReviewScopeId.Value,

@@ -508,7 +508,6 @@
     <Content Include="Scripts\_references.js" />
     <Content Include="Content\ULO\Workflows\workflows.css" />
     <Content Include="Views\Reviews\Create.cshtml" />
-    <Content Include="Views\Reviews\Delete.cshtml" />
     <Content Include="Views\Reviews\Details.cshtml" />
     <Content Include="Views\Reviews\Edit.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />

@@ -89,6 +89,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public Review Review { get; set; }
         public ReviewUploadStatsModel ReviewUploadStats { get; set; }
 
+        public ReviewDetailsModel()
+        { }
+
         public ReviewDetailsModel(Review review, ReviewStat reviewStats)
         {
             Review = review;
@@ -108,6 +111,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public int AssignedToSystemStats { get; set; }
         public int AssignedToSystemTheCloserStats { get; set; }
         public int AssignedToSystePreAssignmentStats { get; set; }
+
+        public ReviewUploadStatsModel()
+        { }
+
         public ReviewUploadStatsModel(ReviewStat reviewStat)
         {
             PO442UploadStats = reviewStat.PegasysObligations442Cnt.GetValueOrDefault();

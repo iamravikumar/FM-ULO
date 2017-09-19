@@ -1,4 +1,5 @@
 ﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.Web.Controllers
 @model GSA.UnliquidatedObligations.Web.Models.UserModel
 @{
     var createMode = Model.UserId == null;
@@ -10,7 +11,7 @@
     var groupNameSelectItems = ((IList<string>)ViewBag.GroupNames).ConvertToSelectList();
     var applicationPermissionSelectItems = PortalHelpers.ConvertNamesToSelectList<ApplicationPermissionNames>();
 }
-@using (Html.BeginForm("Save", "Users", FormMethod.Post))
+@using (Html.BeginForm(UsersController.ActionNames.Save, UsersController.Name, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(Model => Model.UserId)

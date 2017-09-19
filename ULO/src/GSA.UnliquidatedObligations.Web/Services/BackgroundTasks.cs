@@ -97,6 +97,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 OrderBy(wf => wf.UnliquidatedObligation.ReviewId == reviewId ? 0 : 1).
                 ToList();
 
+            var review = DB.Reviews.Single(q => q.ReviewId == reviewId);
+            review.Status = Review.StatusNames.Assigning;
+            await DB.SaveChangesAsync();
+
             int z = 0;
             foreach (var workflow in workflows)
             {
@@ -106,6 +110,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     await DB.SaveChangesAsync();
                 }
             }
+            review.SetStatusDependingOnClosedBit();
             await DB.SaveChangesAsync();
         }
 

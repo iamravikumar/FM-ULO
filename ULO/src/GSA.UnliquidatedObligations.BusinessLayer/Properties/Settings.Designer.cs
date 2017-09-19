@@ -12,7 +12,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -38,6 +38,15 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Properties {
         public global::System.TimeSpan MediumCacheTimeout {
             get {
                 return ((global::System.TimeSpan)(this["MediumCacheTimeout"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:10:00")]
+        public global::System.TimeSpan LongCacheTimeout {
+            get {
+                return ((global::System.TimeSpan)(this["LongCacheTimeout"]));
             }
         }
     }

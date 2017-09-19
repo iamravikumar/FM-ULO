@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
@@ -197,15 +198,19 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 Requires.Text(nextActivityKey, nameof(nextActivityKey));
             }
 
-            var u = Cacher.FindOrCreateValWithSimpleKey(proposedOwnerUserName, () => DB.AspNetUsers.FirstOrDefault(z => z.UserName == proposedOwnerUserName));
+            var uid = Cacher.FindOrCreateValWithSimpleKey(
+                proposedOwnerUserName, 
+                () => DB.AspNetUsers.FirstOrDefault(z => z.UserName == proposedOwnerUserName)?.Id,
+                UloHelpers.LongCacheTimeout
+                );
 
             //TODO: check if null, return proposedOwnserId
             var output = new ObjectParameter("nextOwnerId", typeof(string));
             //DB.Database.Log = s => Trace.WriteLine(s);
-            DB.GetNextLevelOwnerId(u.Id, wf.WorkflowId, nextActivityKey, CSV.FormatLine(ownerProhibitedPreviousActivityNames??Empty.StringArray, false), output);
+            DB.GetNextLevelOwnerId(uid, wf.WorkflowId, nextActivityKey, CSV.FormatLine(ownerProhibitedPreviousActivityNames??Empty.StringArray, false), output);
             if (output.Value == DBNull.Value)
             {
-                return await Task.FromResult(u.Id);
+                return await Task.FromResult(uid);
             }
             return await Task.FromResult(output.Value.ToString());
         }

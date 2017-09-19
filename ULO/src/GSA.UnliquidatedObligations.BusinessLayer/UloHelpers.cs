@@ -13,5 +13,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer
 
         public static TimeSpan MediumCacheTimeout
             => Properties.Settings.Default.MediumCacheTimeout;
+        public static TimeSpan LongCacheTimeout
+            => Properties.Settings.Default.LongCacheTimeout;
     }
 }
