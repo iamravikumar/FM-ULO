@@ -20,7 +20,12 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public Nullable<int> DocumentId { get; set; }
         public long FileSize { get; set; }
         public string ContentType { get; set; }
+        public System.DateTime CreatedAtUtc { get; set; }
+        public string CreatedByUserId { get; set; }
+        public string DeletedByUserId { get; set; }
     
         public virtual Document Document { get; set; }
+        public virtual AspNetUser AspNetUser { get; set; }
+        public virtual AspNetUser AspNetUser1 { get; set; }
     }
 }

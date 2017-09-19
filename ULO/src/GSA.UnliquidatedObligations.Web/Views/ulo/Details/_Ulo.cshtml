@@ -12,53 +12,56 @@
         </div>
         <div class="panel-body ulo-details">
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
                             ULO ID:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.UloId)
+                            @ulo.UloId
                         </dd>
                     </dl>
                 </div>
-                <div class="col-md-2">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Workflow ID:
-                        </dt>
-                        <dd>
-                            @(wf?.WorkflowId)
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Zone:
-                        </dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Region.Zone.ZoneName)
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>Region:</dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Region.RegionName)
-                        </dd>
-                    </dl>
-                </div>
+                @if (wf != null)
+                {
+                    <div class="col-md-4">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                Workflow ID:
+                            </dt>
+                            <dd>
+                                @(wf.WorkflowId)
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-4">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                Assigned To:
+                            </dt>
+                            <dd>
+                                @if (wf.AspNetUser?.UserType == "Group")
+                                {
+                                    <text>Unassigned</text>
+                                }
+                                else
+                                {
+                                    <text>@wf.AspNetUser.UserName</text>
+                                }
+                                @Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButton", Model.WorkflowViewModel)
+                            </dd>
+                        </dl>
+                    </div>
+                }
             </div>
-            <div class="row row-space-bottom">
+            <div class="row">
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
                             Reason in Review:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ReasonIncludedInReview)
+                            @ulo.ReasonIncludedInReview
                         </dd>
                     </dl>
                 </div>
@@ -68,7 +71,7 @@
                             Date of Last Activity:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.DateOfLastActivity)
+                            @ulo.DateOfLastActivity
                         </dd>
                     </dl>
                 </div>
@@ -78,7 +81,27 @@
                             Accounting Period:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ActgPd)
+                            @ulo.ActgPd
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Zone:
+                        </dt>
+                        <dd>
+                            @ulo.Region.Zone.ZoneName
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>Region:</dt>
+                        <dd>
+                            @ulo.Region.RegionName
                         </dd>
                     </dl>
                 </div>
@@ -90,7 +113,7 @@
                             Pegasys Document Number:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.PegasysDocumentNumber)
+                            @ulo.PegasysDocumentNumber
                         </dd>
                     </dl>
                 </div>
@@ -100,7 +123,7 @@
                             Pegasys Title Number:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.PegasysTitleNumber)
+                            @ulo.PegasysTitleNumber
                         </dd>
                     </dl>
                 </div>
@@ -110,7 +133,7 @@
                             Pegasys Contract Number:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ContractNum)
+                            @ulo.ContractNum
                         </dd>
                     </dl>
                 </div>
@@ -122,7 +145,7 @@
                             Budget Activity:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Prog)
+                            @ulo.Prog
                         </dd>
                     </dl>
                 </div>
@@ -132,7 +155,7 @@
                             Fund:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Fund)
+                            @ulo.Fund
                         </dd>
                     </dl>
                 </div>
@@ -142,20 +165,29 @@
                             Organization:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Organization)
+                            @ulo.Organization
                         </dd>
                     </dl>
                 </div>
-
             </div>
             <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Vendor Name:
+                        </dt>
+                        <dd>
+                            @ulo.VendorName
+                        </dd>
+                    </dl>
+                </div>
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
                             Agreement:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.Agreement)
+                            @ulo.Agreement
                         </dd>
                     </dl>
                 </div>
@@ -165,30 +197,7 @@
                             RWA Completion Date:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.RWACompletionDate)
-                        </dd>
-                    </dl>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Vendor Name:
-                        </dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.VendorName)
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-8">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Contracting Officers Name:
-                        </dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.ContractingOfficersName)
+                            @ulo.RWACompletionDate
                         </dd>
                     </dl>
                 </div>
@@ -200,7 +209,7 @@
                             Award Number:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.AwardNbr)
+                            @ulo.AwardNbr
                         </dd>
                     </dl>
                 </div>
@@ -210,7 +219,7 @@
                             Award Expiration Date:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.EASiAwdExpirationDate)
+                            @ulo.EASiAwdExpirationDate
                         </dd>
                     </dl>
                 </div>
@@ -220,127 +229,151 @@
                             GSA FSS/Other #:
                         </dt>
                         <dd>
-                            @Html.DisplayFor(model => model.CurretUnliquidatedObligation.EASi_GSA_FSS_Other__)
-                        </dd>
-                    </dl>
-                </div>
-            </div>
-            <div class="row row-space-top">
-                <div class="col-md-12">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Total Line:
-                        </dt>
-                        <dd>
-                            @*@Html.Currency(Model.TotalLine)*@
-                            @Html.Currency(Convert.ToDecimal(ulo.TotalLine))
+                            @ulo.EASi_GSA_FSS_Other__
                         </dd>
                     </dl>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <dl class="dl-horizontal">
                         <dt>
-                            Receipt:
+                            Contracting Officers Name:
                         </dt>
                         <dd>
-                            @Html.Currency(Convert.ToDecimal(ulo.Rcpt))
+                            @ulo.ContractingOfficersName
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Contracting Officers Email:
+                        </dt>
+                        <dd>
+                            @ulo.ContractingOfficerEmail
                         </dd>
                     </dl>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <dl class="dl-horizontal">
                         <dt>
-                            Accrual:
+                            Contracting Specialist Name:
                         </dt>
                         <dd>
-                            @Html.Currency(Convert.ToDecimal(ulo.Accrual))
+                            @ulo.ContractingSpecialistName
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Contracting Specialist Email:
+                        </dt>
+                        <dd>
+                            @ulo.ContractingSpecialistEmail
                         </dd>
                     </dl>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
+                    <dl class="dl-horizontal hidden">
+                        <dt>
+                            Budget Analyst Name:
+                        </dt>
+                        <dd class="huh">
+                            ___FUTURE___
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
                     <dl class="dl-horizontal">
                         <dt>
-                            Pending Payment:
+                            Budget Analyst Email:
                         </dt>
                         <dd>
-                            @Html.Currency(Convert.ToDecimal(ulo.PendPayments))
+                            @ulo.BudgetAnalystEmail
                         </dd>
                     </dl>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <dl class="dl-horizontal">
                         <dt>
-                            Payments(In Transit):
+                            Credit Card Holder Username:
                         </dt>
-                        <dd>
-                            @Html.Currency(Convert.ToDecimal(ulo.PymtsInTransit))
+                        <dd class="huh">
+                            ___FUTURE___
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Credit Card Holder Email:
+                        </dt>
+                        <dd class="huh">
+                            ___FUTURE___
                         </dd>
                     </dl>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Payments(Confirmed):
-                        </dt>
-                        <dd>
-                            @Html.Currency(Convert.ToDecimal(ulo.PymtsConfirmed))
-                        </dd>
-                    </dl>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Holdbacks:
-                        </dt>
-                        <dd>
-                            @Html.Currency(Convert.ToDecimal(ulo.Holdbacks))
-                        </dd>
-                    </dl>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Total Delivered Orders (DO):
-                        </dt>
-                        <dd>
-                            @Html.Currency(Convert.ToDecimal(ulo.TotalDO))
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Total Undelivered Orders (UDO):
-                        </dt>
-                        <dd>
-                            @Html.Currency(Convert.ToDecimal(ulo.UndelOrders))
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Total Orders:
-                        </dt>
-                        <dd>
-                            @Html.Currency(Convert.ToDecimal(ulo.TotalUDOAndDO))
-                        </dd>
-                    </dl>
-                </div>
+                <table class="table table-responsive table-striped">
+                    <tbody>
+                        <tr>
+                            <th>Pending Payment</th>
+                            <td>@Html.Currency(ulo.PendPayments.GetValueOrDefault())</td>
+                            <th>Total Payments</th>
+                            <td class="huh">???</td>
+                        </tr>
+                        <tr>
+                            <th>Payments (In Transit)</th>
+                            <td>@Html.Currency(ulo.PymtsInTransit.GetValueOrDefault())</td>
+                            <th>Receipt</th>
+                            <td>@Html.Currency(ulo.Rcpt.GetValueOrDefault())</td>
+                        </tr>
+                        <tr>
+                            <th>Payments (Confirmed)</th>
+                            <td>@Html.Currency(ulo.PymtsConfirmed.GetValueOrDefault())</td>
+                            <th>Accrual</th>
+                            <td>@Html.Currency(ulo.Accrual.GetValueOrDefault())</td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td></td>
+                            <th>Holdbacks</th>
+                            <td>@Html.Currency(ulo.Holdbacks.GetValueOrDefault())</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr style="border-top: 2px solid black">
+                            <th>Total Payments</th>
+                            <td class="huh">???</td>
+                            <th>Total Delivered Orders (DO)</th>
+                            <td>@Html.Currency(ulo.TotalDO.GetValueOrDefault())</td>
+                            <th>Total Undelivered Orders (UDO)</th>
+                            <td>@Html.Currency(ulo.UndelOrders.GetValueOrDefault())</td>
+                            <th>Total Orders</th>
+                            <td>@Html.Currency(ulo.TotalUDOAndDO.GetValueOrDefault())</td>
+                        </tr>
+                        <tr style="border-top: 1px dashed black">
+                            <th>Commitments</th>
+                            <td>@Html.Currency(ulo.Commitments.GetValueOrDefault())</td>
+                            <th>Prepayments</th>
+                            <td>@Html.Currency(ulo.Prepayments.GetValueOrDefault())</td>
+                            <th>Total Orders</th>
+                            <td>@Html.Currency(ulo.TotalUDOAndDO.GetValueOrDefault())</td>
+                            <th>Total Line</th>
+                            <td>@Html.Currency(ulo.TotalLine.GetValueOrDefault())</td>
+                        </tr>
+                    </tfoot>
+
+                </table>
             </div>
         </div>
     </div>
@@ -363,6 +396,7 @@
                         <th>Review Date</th>
                         <th>Current Activity</th>
                         <th>Reviewer</th>
+                        <th>Justification</th>
                         <th>Disposition</th>
                         <th># Documents</th>
                     </tr>
@@ -385,6 +419,9 @@
                             </td>
                             <td>
                                 @o.UserName
+                            </td>
+                            <td>
+                                @o.JustificationDescription
                             </td>
                             <td>
                                 @o.Answer

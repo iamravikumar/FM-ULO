@@ -21,5 +21,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string UserName { get; set; }
         public string Answer { get; set; }
         public string WorkflowActivityName { get; set; }
+        public string JustificationKey { get; set; }
+        public string JustificationDescription { get; set; }
     }
 }

@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="25233a9a2b51402194a46e0cd95810d5" Name="Diagram1" ZoomLevel="53">
+      <Diagram DiagramId="25233a9a2b51402194a46e0cd95810d5" Name="Diagram1" ZoomLevel="89">
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.C__MigrationHistory" Width="1.5" PointX="5.75" PointY="0.75" />
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetRole" Width="1.5" PointX="0.75" PointY="16.375" />
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="37.875" />
@@ -72,6 +72,9 @@
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Creat__0CA5D9DE" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Delet__0D99FE17" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Documents__Delet__0F824689" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

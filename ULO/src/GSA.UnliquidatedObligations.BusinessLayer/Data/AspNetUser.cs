@@ -28,6 +28,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.Workflows = new HashSet<Workflow>();
             this.UnliqudatedObjectsWorkflowQuestions = new HashSet<UnliqudatedObjectsWorkflowQuestion>();
             this.AspNetRoles = new HashSet<AspNetRole>();
+            this.Attachments = new HashSet<Attachment>();
+            this.Attachments1 = new HashSet<Attachment>();
+            this.Documents1 = new HashSet<Document>();
         }
     
         public string Id { get; set; }
@@ -67,5 +70,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual ICollection<UnliqudatedObjectsWorkflowQuestion> UnliqudatedObjectsWorkflowQuestions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AspNetRole> AspNetRoles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Attachment> Attachments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Attachment> Attachments1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Document> Documents1 { get; set; }
     }
 }

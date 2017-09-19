@@ -105,78 +105,72 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<JsonResult> Save(int? documentId, string documentName, int workflowId)
         {
-            try
+            if (!ModelState.IsValid) throw new ArgumentException(ModelState.ToString(), nameof(ModelState));
+            Document document;
+            if (documentId.GetValueOrDefault(0) > 0)
             {
-                if (!ModelState.IsValid) throw new ArgumentException(ModelState.ToString(), nameof(ModelState));
-                Document document;
-                if (documentId.GetValueOrDefault(0) > 0)
+                document = await DB.Documents.FindAsync(documentId);
+                if (document == null)
                 {
-                    document = await DB.Documents.FindAsync(documentId);
-                    if (document == null)
-                    {
-                        throw new KeyNotFoundException($"could not find documentId={documentId}");
-                    }
-                    document.DocumentDocumentTypes.ToList().ForEach(dt => DB.DocumentDocumentTypes.Remove(dt));
+                    throw new KeyNotFoundException($"could not find documentId={documentId}");
                 }
-                else
+                document.DocumentDocumentTypes.ToList().ForEach(dt => DB.DocumentDocumentTypes.Remove(dt));
+            }
+            else
+            {
+                document = new Document
                 {
-                    document = new Document
+                    UploadedByUserId = CurrentUserId,
+                    WorkflowId = workflowId,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+                DB.Documents.Add(document);
+            }
+            document.DocumentName = StringHelpers.TrimOrNull(documentName);
+            var documentTypeIds = CSV.ParseIntegerRow(Request["documentTypeId"]);
+            var documentTypeNames = new List<string>();
+            var d = base.PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
+            foreach (var id in documentTypeIds)
+            {
+                DB.DocumentDocumentTypes.Add(new DocumentDocumentType
+                {
+                    DocumentTypeId = id,
+                    Document = document
+                });
+                documentTypeNames.Add(d.FindOrDefault(id));
+            }
+            await DB.SaveChangesAsync();
+            if (TempData["attachments"] != null)
+            {
+                var attachmentsTempData = (List<Attachment>)TempData["attachments"];
+                foreach (var tempAttachment in attachmentsTempData)
+                {
+                    var attachment = new Attachment
                     {
-                        UploadedByUserId = CurrentUserId,
-                        WorkflowId = workflowId,
-                        CreatedAtUtc = DateTime.UtcNow
+                        FileName = tempAttachment.FileName,
+                        FilePath = $"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat",
+                        DocumentId = document.DocumentId,
+                        FileSize = tempAttachment.FileSize,
+                        ContentType = tempAttachment.ContentType,
+                        CreatedByUserId = tempAttachment.CreatedByUserId
                     };
-                    DB.Documents.Add(document);
-                }
-                document.DocumentName = StringHelpers.TrimOrNull(documentName);
-                var documentTypeIds = CSV.ParseIntegerRow(Request["documentTypeId"]);
-                var documentTypeNames = new List<string>();
-                var d = base.PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
-                foreach (var id in documentTypeIds)
-                {
-                    DB.DocumentDocumentTypes.Add(new DocumentDocumentType
-                    {
-                        DocumentTypeId = id,
-                        Document = document
-                    });
-                    documentTypeNames.Add(d.FindOrDefault(id));
+                    var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
+                    System.IO.File.Copy(tempAttachment.FilePath, path);
+                    DB.Attachments.Add(attachment);
+                    Stuff.FileTryDelete(tempAttachment.FileName);
                 }
                 await DB.SaveChangesAsync();
-                if (TempData["attachments"] != null)
-                {
-                    var attachmentsTempData = (List<Attachment>)TempData["attachments"];
-                    foreach (var tempAttachment in attachmentsTempData)
-                    {
-                        var attachment = new Attachment
-                        {
-                            FileName = tempAttachment.FileName,
-                            FilePath = $"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat",
-                            DocumentId = document.DocumentId,
-                            FileSize = tempAttachment.FileSize,
-                            ContentType = tempAttachment.ContentType
-                        };
-                        var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
-                        System.IO.File.Copy(tempAttachment.FilePath, path);
-                        DB.Attachments.Add(attachment);
-                        Stuff.FileTryDelete(tempAttachment.FileName);
-                    }
-                    await DB.SaveChangesAsync();
-                    TempData["attachments"] = null;
-                }
-                return Json(new
-                {
-                    Id = document.DocumentId,
-                    UserName = User.Identity.Name,
-                    Name = document.DocumentName,
-                    DocumentTypeNames = documentTypeNames.WhereNotNull().OrderBy().ToList(),
-                    AttachmentCount = document.Attachments.Count,
-                    UploadedDate = document.CreatedAtUtc.ToLocalTime().ToString("MM/dd/yyyy")
-                });
+                TempData["attachments"] = null;
             }
-            catch (Exception ex)
+            return Json(new
             {
-                return Json(new ExceptionError(ex));
-            }
+                Id = document.DocumentId,
+                UserName = User.Identity.Name,
+                Name = document.DocumentName,
+                DocumentTypeNames = documentTypeNames.WhereNotNull().OrderBy().ToList(),
+                AttachmentCount = document.Attachments.Count,
+                UploadedDate = document.CreatedAtUtc.ToLocalTime().ToString("MM/dd/yyyy")
+            });
         }
 
         public void Clear()
@@ -201,7 +195,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Document document = await DB.Documents.FindAsync(id);
+            var document = await DB.Documents.FindAsync(id);
             if (document == null)
             {
                 return HttpNotFound();
@@ -212,24 +206,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // POST: Documents/Delete/5
         [HttpPost, ActionName("Delete")]
         //[ValidateAntiForgeryToken]
-        public async Task<JsonResult> DeleteConfirmed(int documentId)
+        public async Task<ActionResult> DeleteConfirmed(int documentId)
         {
             var document = await DB.Documents.FindAsync(documentId);
-            var attachments = await DB.Attachments.Where(a => a.DocumentId == documentId).ToListAsync();
-
-            //TODO: look into hangfire for this
-            if (attachments != null)
+            if (document == null)
             {
-                foreach (var attachment in attachments)
-                {
-                    var fileName = Path.GetFileName(attachment.FilePath);
-                    var physicalPath = Path.Combine(HostingEnvironment.MapPath("~/Content/DocStorage"), fileName);
-
-                    System.IO.File.Delete(physicalPath);
-                }
+                return HttpNotFound();
             }
-            DB.Documents.Remove(document);
+            document.Delete(CurrentUserId);
             await DB.SaveChangesAsync();
+            Log.Information("Document {DocumentId} was soft deleted", document.DocumentId);
             return Json(new
             {
                 Id = documentId

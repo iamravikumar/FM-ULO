@@ -119,5 +119,18 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetUloSummariesByPdn_Result>("GetUloSummariesByPdn", pegasysDocumentNumberParameter);
         }
+    
+        public virtual int SoftDelete(string tableKey, string entityKey)
+        {
+            var tableKeyParameter = tableKey != null ?
+                new ObjectParameter("tableKey", tableKey) :
+                new ObjectParameter("tableKey", typeof(string));
+    
+            var entityKeyParameter = entityKey != null ?
+                new ObjectParameter("entityKey", entityKey) :
+                new ObjectParameter("entityKey", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SoftDelete", tableKeyParameter, entityKeyParameter);
+        }
     }
 }

@@ -26,6 +26,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string UploadedByUserId { get; set; }
         public System.DateTime CreatedAtUtc { get; set; }
         public string DocumentName { get; set; }
+        public string DeletedByUserId { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -33,5 +34,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DocumentDocumentType> DocumentDocumentTypes { get; set; }
         public virtual Workflow Workflow { get; set; }
+        public virtual AspNetUser AspNetUser1 { get; set; }
     }
 }

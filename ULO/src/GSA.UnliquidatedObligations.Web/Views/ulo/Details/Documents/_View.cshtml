@@ -1,7 +1,5 @@
-﻿@using System.Net.Mail
-@using GSA.UnliquidatedObligations.Web.Models
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
 @model GSA.UnliquidatedObligations.Web.Models.DocumentModalViewModel
-
 @{
     var id = Model.DocumentId + "Modal";
     var label = id + "Label";
@@ -13,11 +11,10 @@
     var deleteConfLabel = deleteConfId + "Label";
     var deleteConfBody = deleteConfId + "Body";
     object docNameAttributes = Model.AllowDocumentEdit ? new { id = @documentName, @class = "col-md-8 document-name" } : (object)new { id = @documentName, @class = "col-md-8 document-name", @readonly = "readonly" };
-    object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "col-md-8 document-type-choices", size=4 } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", size=4, @disabled = "disabled" };
+    object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4 } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4, @disabled = "disabled" };
     var isDisabled = !Model.AllowDocumentEdit ? "disabled" : "";
     var isReadOnly = !Model.AllowDocumentEdit ? "readonly" : "";
 }
-
 <div class="modal fade document-modal" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
     @*TODO: Add antiforgery token*@
     @*@Html.AntiForgeryToken()*@
@@ -32,11 +29,57 @@
                     @Html.TextBoxFor(model => model.DocumentName, htmlAttributes: docNameAttributes)
                 </div>
                 <div class="row">
-                    @Html.LabelFor(model => model.DocumentTypeIds, "Document Type:", htmlAttributes: new {@class = "col-md-4"})
+                    @Html.LabelFor(model => model.DocumentTypeIds, "Document Type:", htmlAttributes: new { @class = "col-md-4" })
                     @Html.ListBoxFor(model => model.DocumentTypeIds, Model.DocumentTypes, htmlAttributes: docTypeAttributes)
                 </div>
                 <div class="row">
-                    @Html.Partial("~/Views/Ulo/Details/Documents/Attachments/_Index.cshtml", Model.AttachmentsViewModel)
+                    <label class="col-md-4">Attachments:</label>
+                    @{ 
+                        var avm = Model.AttachmentsViewModel;
+                    }
+                    <div class="col-md-8" style="padding:0">
+                        <table class="table table-responsive table-striped attachments">
+                            <thead>
+                                <tr class="attachments-heading-row @(@avm.Attachments.Count > 0 ? "show" : "hide")">
+                                    <th>
+                                        File
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var attachment in avm.Attachments)
+                                {
+                                    <tr class="attachment-row" id="attachment@(@attachment.AttachmentsId)">
+                                        <td class="file-name">
+                                            @attachment.FileName
+                                        </td>
+                                        <td class="actions">
+                                            @Html.ActionLink("Download", AttachmentsController.ActionNames.Download, AttachmentsController.Name, new { attachmentId = attachment.AttachmentsId }, null)
+                                            @*
+                            |
+                            @Html.ActionLink("View", AttachmentsController.ActionNames.View, AttachmentsController.Name, new { attachmentId = attachment.AttachmentsId }, new { target="_blank" })
+                                            *@
+                                            @if (Model.AllowDocumentEdit)
+                {
+                                                <text>
+                                                    |
+                                                    <a class='attachments-delete' data-target='@attachment.AttachmentsId'>Delete</a>
+                                                </text>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        @Html.Hidden("documentId" + Model.DocumentId + "Hidden", Model.DocumentId, htmlAttributes: new { @class = "document-id-hidden" })
+
+                        @if (Model.AllowDocumentEdit)
+                        {
+                            <button type="button" class="btn btn-primary attachments-add-btn">Add Attachment</button>
+                        }
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -61,12 +104,10 @@
                 <div class="row">
                    Are you sure you want to delete this document?
                 </div>
-
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-
-                <button type="button" data-target="@Model.DocumentId" class="btn btn-danger delete-document" data-dismiss="modal">Delete Document</button>
+                <button type="button" data-target="@Model.DocumentId" class="btn btn-danger delete-document" data-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

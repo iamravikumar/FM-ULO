@@ -78,6 +78,10 @@
           <Property Name="DocumentId" Type="int" />
           <Property Name="FileSize" Type="bigint" Nullable="false" />
           <Property Name="ContentType" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" StoreGeneratedPattern="Computed" />
+          <Property Name="CreatedByUserId" Type="nvarchar" MaxLength="128" />
+          <Property Name="DeletedAtUtc" Type="datetime" />
+          <Property Name="DeletedByUserId" Type="nvarchar" MaxLength="128" />
         </EntityType>
         <EntityType Name="DocumentDocumentTypes">
           <Key>
@@ -94,8 +98,10 @@
           <Property Name="DocumentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="UploadedByUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
+          <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" StoreGeneratedPattern="Computed" />
           <Property Name="DocumentName" Type="nvarchar" MaxLength="255" />
+          <Property Name="DeletedAtUtc" Type="datetime" />
+          <Property Name="DeletedByUserId" Type="nvarchar" MaxLength="128" />
         </EntityType>
         <EntityType Name="DocumentTypes">
           <Key>
@@ -233,6 +239,10 @@
           <Property Name="ItemsLineNumber" Type="int" />
           <Property Name="AccountingLineNumber" Type="int" />
           <Property Name="OC" Type="int" />
+          <Property Name="ContractingOfficerEmail" Type="varchar" MaxLength="254" />
+          <Property Name="ContractingSpecialistName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ContractingSpecialistEmail" Type="varchar" MaxLength="254" />
+          <Property Name="BudgetAnalystEmail" Type="varchar" MaxLength="254" />
         </EntityType>
         <EntityType Name="UserUsers">
           <Key>
@@ -450,6 +460,30 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="PreAssignmentCnt" Type="int" />
           <Property Name="TheCloserCnt" Type="int" />
         </EntityType>
+        <Association Name="FK__Attachmen__Creat__153B1FDF">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+          <End Role="Attachments" Type="Self.Attachments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Attachments">
+              <PropertyRef Name="CreatedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Attachmen__Delet__18178C8A">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+          <End Role="Attachments" Type="Self.Attachments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Attachments">
+              <PropertyRef Name="DeletedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Document__Upload__7BE56230">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
@@ -483,6 +517,18 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             </Principal>
             <Dependent Role="DocumentDocumentTypes">
               <PropertyRef Name="DocumentTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documents__Delet__125EB334">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+          <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Documents">
+              <PropertyRef Name="DeletedByUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -864,6 +910,10 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
         <Function Name="GetUloSummariesByPdn" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="pegasysDocumentNumber" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="SoftDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="tableKey" Type="nvarchar" Mode="In" />
+          <Parameter Name="entityKey" Type="nvarchar" Mode="In" />
+        </Function>
         <EntityContainer Name="GSAUnliquidatedObligationsBusinessLayerDataStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
@@ -934,6 +984,14 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
     [ReviewStats].[TheCloserCnt] AS [TheCloserCnt]
     FROM [dbo].[ReviewStats] AS [ReviewStats]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK__Attachmen__Creat__153B1FDF" Association="Self.FK__Attachmen__Creat__153B1FDF">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Attachments" EntitySet="Attachments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Attachmen__Delet__18178C8A" Association="Self.FK__Attachmen__Delet__18178C8A">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Attachments" EntitySet="Attachments" />
+          </AssociationSet>
           <AssociationSet Name="FK__Document__Upload__7BE56230" Association="Self.FK__Document__Upload__7BE56230">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Documents" EntitySet="Documents" />
@@ -945,6 +1003,10 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <AssociationSet Name="FK__DocumentD__Docum__63A3C44B" Association="Self.FK__DocumentD__Docum__63A3C44B">
             <End Role="DocumentTypes" EntitySet="DocumentTypes" />
             <End Role="DocumentDocumentTypes" EntitySet="DocumentDocumentTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Documents__Delet__125EB334" Association="Self.FK__Documents__Delet__125EB334">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
           <AssociationSet Name="FK__Notes__ParentNot__52793849" Association="Self.FK__Notes__ParentNot__52793849">
             <End Role="Notes" EntitySet="Notes" />
@@ -1226,9 +1288,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <End Role="AspNetRole" EntitySet="AspNetRoles" />
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
           </AssociationSet>
-          <FunctionImport Name="GetUloSummariesByPdn" ReturnType="Collection(GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result)">
-          <Parameter Name="pegasysDocumentNumber" Mode="In" Type="String" />
-          </FunctionImport>
           <EntitySet Name="UnliquidatedObligations" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" />
           <AssociationSet Name="FK__Notes__UloId__5555A4F4" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4">
             <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
@@ -1245,6 +1304,25 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <AssociationSet Name="FK__Workflows__Targe__4277DAAA" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA">
             <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
             <End Role="Workflow" EntitySet="Workflows" />
+          </AssociationSet>
+          <FunctionImport Name="GetUloSummariesByPdn" ReturnType="Collection(GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result)">
+          <Parameter Name="pegasysDocumentNumber" Mode="In" Type="String" />
+          </FunctionImport>
+          <AssociationSet Name="FK__Attachmen__Creat__0CA5D9DE" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Creat__0CA5D9DE">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Attachment" EntitySet="Attachments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Attachmen__Delet__0D99FE17" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Delet__0D99FE17">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Attachment" EntitySet="Attachments" />
+          </AssociationSet>
+          <FunctionImport Name="SoftDelete">
+            <Parameter Name="tableKey" Mode="In" Type="String" />
+            <Parameter Name="entityKey" Mode="In" Type="String" />
+          </FunctionImport>
+          <AssociationSet Name="FK__Documents__Delet__0F824689" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Documents__Delet__0F824689">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Document" EntitySet="Documents" />
           </AssociationSet>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
@@ -1319,6 +1397,9 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <NavigationProperty Name="Workflows" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Owner__40058253" FromRole="AspNetUser" ToRole="Workflow" />
           <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="AspNetUser" ToRole="UnliqudatedObjectsWorkflowQuestion" />
           <NavigationProperty Name="AspNetRoles" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
+          <NavigationProperty Name="Attachments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Creat__0CA5D9DE" FromRole="AspNetUser" ToRole="Attachment" />
+          <NavigationProperty Name="Attachments1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Delet__0D99FE17" FromRole="AspNetUser" ToRole="Attachment" />
+          <NavigationProperty Name="Documents1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Documents__Delet__0F824689" FromRole="AspNetUser" ToRole="Document" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -1331,6 +1412,11 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="FileSize" Type="Int64" Nullable="false" />
           <Property Name="ContentType" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Document" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Attachments_ToDocument" FromRole="Attachment" ToRole="Document" />
+          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="CreatedByUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="DeletedByUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Creat__0CA5D9DE" FromRole="Attachment" ToRole="AspNetUser" />
+          <NavigationProperty Name="AspNetUser1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Delet__0D99FE17" FromRole="Attachment" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="DocumentDocumentType">
           <Key>
@@ -1349,12 +1435,14 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="DocumentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <Property Name="UploadedByUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="DocumentName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Document__Upload__7BE56230" FromRole="Document" ToRole="AspNetUser" />
           <NavigationProperty Name="Attachments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Attachments_ToDocument" FromRole="Document" ToRole="Attachment" />
           <NavigationProperty Name="DocumentDocumentTypes" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__DocumentD__Docum__62AFA012" FromRole="Document" ToRole="DocumentDocumentType" />
           <NavigationProperty Name="Workflow" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_Document_ToWorkflow" FromRole="Document" ToRole="Workflow" />
+          <Property Name="DeletedByUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Documents__Delet__0F824689" FromRole="Document" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="DocumentType">
           <Key>
@@ -2002,16 +2090,6 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetRole" Role="AspNetRole" Multiplicity="*" />
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="*" />
         </Association>
-        <ComplexType Name="GetUloSummariesByPdn_Result">
-          <Property Type="Int32" Name="UloId" Nullable="false" />
-          <Property Type="Int32" Name="WorkflowId" Nullable="false" />
-          <Property Type="String" Name="ReviewName" Nullable="true" MaxLength="100" />
-          <Property Type="DateTime" Name="ReviewCreatedAtUtc" Nullable="false" Precision="23" />
-          <Property Type="Int32" Name="DocumentCount" Nullable="true" />
-          <Property Type="String" Name="UserName" Nullable="true" MaxLength="256" />
-          <Property Type="String" Name="Answer" Nullable="true" MaxLength="100" />
-          <Property Type="String" Name="WorkflowActivityName" Nullable="true" MaxLength="100" />
-        </ComplexType>
         <EntityType Name="UnliquidatedObligation">
           <Key>
             <PropertyRef Name="UloId" />
@@ -2077,6 +2155,10 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <NavigationProperty Name="Review" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" FromRole="UnliquidatedObligation" ToRole="Review" />
           <NavigationProperty Name="Region" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" FromRole="UnliquidatedObligation" ToRole="Region" />
           <NavigationProperty Name="Workflows" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" FromRole="UnliquidatedObligation" ToRole="Workflow" />
+          <Property Name="ContractingOfficerEmail" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="ContractingSpecialistName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ContractingSpecialistEmail" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="BudgetAnalystEmail" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK__Notes__UloId__5555A4F4">
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
@@ -2123,6 +2205,54 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             </Principal>
             <Dependent Role="Workflow">
               <PropertyRef Name="TargetUloId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="GetUloSummariesByPdn_Result">
+          <Property Type="Int32" Name="UloId" Nullable="false" />
+          <Property Type="Int32" Name="WorkflowId" Nullable="false" />
+          <Property Type="String" Name="ReviewName" Nullable="true" MaxLength="100" />
+          <Property Type="DateTime" Name="ReviewCreatedAtUtc" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="DocumentCount" Nullable="true" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="256" />
+          <Property Type="String" Name="Answer" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="WorkflowActivityName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="JustificationKey" Nullable="true" MaxLength="80" />
+          <Property Type="String" Name="JustificationDescription" Nullable="true" MaxLength="1024" />
+        </ComplexType>
+        <Association Name="FK__Attachmen__Creat__0CA5D9DE">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Attachment" Role="Attachment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Attachment">
+              <PropertyRef Name="CreatedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Attachmen__Delet__0D99FE17">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Attachment" Role="Attachment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Attachment">
+              <PropertyRef Name="DeletedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documents__Delet__0F824689">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Document" Role="Document" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Document">
+              <PropertyRef Name="DeletedByUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2202,12 +2332,16 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <EntitySetMapping Name="Attachments">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Attachment">
               <MappingFragment StoreEntitySet="Attachments">
+                <ScalarProperty Name="DeletedByUserId" ColumnName="DeletedByUserId" />
+                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
                 <ScalarProperty Name="ContentType" ColumnName="ContentType" />
                 <ScalarProperty Name="FileSize" ColumnName="FileSize" />
                 <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
                 <ScalarProperty Name="FilePath" ColumnName="FilePath" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="AttachmentsId" ColumnName="AttachmentsId" />
+                <Condition ColumnName="DeletedAtUtc" IsNull="true" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2223,11 +2357,13 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <EntitySetMapping Name="Documents">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Document">
               <MappingFragment StoreEntitySet="Documents">
+                <ScalarProperty Name="DeletedByUserId" ColumnName="DeletedByUserId" />
                 <ScalarProperty Name="DocumentName" ColumnName="DocumentName" />
                 <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
                 <ScalarProperty Name="UploadedByUserId" ColumnName="UploadedByUserId" />
                 <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
                 <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+                <Condition ColumnName="DeletedAtUtc" IsNull="true" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2549,23 +2685,13 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
               <ScalarProperty Name="Id" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
-          <FunctionImportMapping FunctionImportName="GetUloSummariesByPdn" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetUloSummariesByPdn">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result">
-                <ScalarProperty Name="UloId" ColumnName="UloId" />
-                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
-                <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
-                <ScalarProperty Name="ReviewCreatedAtUtc" ColumnName="ReviewCreatedAtUtc" />
-                <ScalarProperty Name="DocumentCount" ColumnName="DocumentCount" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="Answer" ColumnName="Answer" />
-                <ScalarProperty Name="WorkflowActivityName" ColumnName="WorkflowActivityName" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="UnliquidatedObligations">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation">
               <MappingFragment StoreEntitySet="UnliquidatedObligations">
+                <ScalarProperty Name="BudgetAnalystEmail" ColumnName="BudgetAnalystEmail" />
+                <ScalarProperty Name="ContractingSpecialistEmail" ColumnName="ContractingSpecialistEmail" />
+                <ScalarProperty Name="ContractingSpecialistName" ColumnName="ContractingSpecialistName" />
+                <ScalarProperty Name="ContractingOfficerEmail" ColumnName="ContractingOfficerEmail" />
                 <ScalarProperty Name="OC" ColumnName="OC" />
                 <ScalarProperty Name="AccountingLineNumber" ColumnName="AccountingLineNumber" />
                 <ScalarProperty Name="ItemsLineNumber" ColumnName="ItemsLineNumber" />
@@ -2626,6 +2752,23 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetUloSummariesByPdn" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetUloSummariesByPdn">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result">
+                <ScalarProperty Name="UloId" ColumnName="UloId" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
+                <ScalarProperty Name="ReviewCreatedAtUtc" ColumnName="ReviewCreatedAtUtc" />
+                <ScalarProperty Name="DocumentCount" ColumnName="DocumentCount" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Answer" ColumnName="Answer" />
+                <ScalarProperty Name="WorkflowActivityName" ColumnName="WorkflowActivityName" />
+                <ScalarProperty Name="JustificationKey" ColumnName="JustificationKey" />
+                <ScalarProperty Name="JustificationDescription" ColumnName="JustificationDescription" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SoftDelete" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.SoftDelete" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
