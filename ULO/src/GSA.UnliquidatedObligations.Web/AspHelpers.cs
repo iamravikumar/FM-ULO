@@ -129,6 +129,47 @@ namespace GSA.UnliquidatedObligations.Web
             return hs;
         }
 
+        private const string BREAK_TOKEN = "^^ BrEaKer bReaKER 123 vv";
+        private const int FORCE_BREAK_LEN = 16;
+
+        public static IHtmlString ToBreakableString(this HtmlHelper hh, string s)
+        {
+            s = StringHelpers.TrimOrNull(s) ?? "";
+            if (s.Length > FORCE_BREAK_LEN)
+            {
+                var sb = new StringBuilder();
+                int lastBreak = 0;
+                bool forcedBreaks = false;
+                for (int z = 0; z < s.Length; ++z)
+                {
+                    bool breakIt = false;
+                    char ch = s[z];
+                    if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n')
+                    {
+                        lastBreak = z;
+                    }
+                    else if (!char.IsLetterOrDigit(ch) || (z - lastBreak) >= FORCE_BREAK_LEN)
+                    {
+                        breakIt = true;
+                    }
+                    sb.Append(ch);
+                    if (breakIt)
+                    {
+                        forcedBreaks = true;
+                        sb.Append(BREAK_TOKEN);
+                        lastBreak = z;
+                    }
+                }
+                if (forcedBreaks)
+                {
+                    string html = HttpUtility.HtmlEncode(sb.ToString());
+                    html = html.Replace(BREAK_TOKEN, "<span class=\"wordBreaker\"> &nbsp; </span>");
+                    return new HtmlString($"<span class=\"wordBreakerContainer\">{html}</span>");
+                }
+            }
+            return new HtmlString(HttpUtility.HtmlEncode(s));
+        }
+
         public static MvcHtmlString CheckBoxListFor<TModelItem>(
             this HtmlHelper<TModelItem> hh,
             Expression<Func<TModelItem, IEnumerable<string>>> columnExpression,

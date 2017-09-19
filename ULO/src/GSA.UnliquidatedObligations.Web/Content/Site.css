@@ -81,3 +81,21 @@ h1.navbar-brand {
     content:"\00a0"
 }
 
+.huh {
+    background-color: yellow;
+    color:black;
+    font-weight:bold;
+}
+
+.panel-title,.modal-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.wordBreaker {
+    font-size:1px;
+}
+
+.modal-dialog {
+    width: 640px;
+}

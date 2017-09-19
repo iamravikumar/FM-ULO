@@ -52,7 +52,7 @@
                                 {
                                     <tr class="attachment-row" id="attachment@(@attachment.AttachmentsId)">
                                         <td class="file-name">
-                                            @attachment.FileName
+                                            @Html.ToBreakableString(attachment.FileName)
                                         </td>
                                         <td class="actions">
                                             @Html.ActionLink("Download", AttachmentsController.ActionNames.Download, AttachmentsController.Name, new { attachmentId = attachment.AttachmentsId }, null)
