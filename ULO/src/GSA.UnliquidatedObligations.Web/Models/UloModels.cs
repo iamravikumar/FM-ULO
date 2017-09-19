@@ -154,12 +154,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public AdvanceViewModel AdvanceViewModel { get; set; }
         public WorkflowDescriptionViewModel WorkflowDescriptionViewModel { get; set; }
         public DocumentsViewModel DocumentsViewModel { get; set; }
-        public bool RequestForReassignmentsActive { get; set; }
         public bool WorkflowAssignedToCurrentUser { get; set; }
-        public WorkflowViewModel()
-        {
+        public RequestForReassignment RequestForReassignment { get; private set; }
+        public bool IsRequestForReassignmentsActive
+            => RequestForReassignment != null && RequestForReassignment.IsActive;
 
-        }
         public WorkflowViewModel(Workflow workflow, bool workflowAssignedToCurrentUser, IWorkflowDescription workflowDescription=null)
         {
             Requires.NonNull(workflow, nameof(workflow));
@@ -182,10 +181,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, pending, workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded);
                 allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
-
-            RequestForReassignmentsActive = workflow.RequestForReassignments.ToList().Count > 0 &&
-                                                         Workflow.RequestForReassignments.FirstOrDefault() != null &&
-                                                         Workflow.RequestForReassignments.First().IsActive;
+            RequestForReassignment = Workflow.GetReassignmentRequest();
             DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList(), allowDocumentEdits, workflow.UnliquidatedObligation.DocType);
         }
     }
@@ -211,17 +207,17 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class UloViewModel
     {
-        public UnliquidatedObligation CurretUnliquidatedObligation { get; set; }
-        public WorkflowViewModel WorkflowViewModel { get; set; }
+        public UnliquidatedObligation CurretUnliquidatedObligation { get; private set; }
+        public WorkflowViewModel WorkflowViewModel { get; private set; }
         public IList<Workflow> OtherWorkflows { get; private set; }
         public IList<GetUloSummariesByPdn_Result> Others { get; private set; }
-        public UloViewModel()
-        { }
-        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDescription, bool workflowAsignedToCurrentUser, IList<GetUloSummariesByPdn_Result> others)
+        public bool BelongsToMyUnassignmentGroup { get; private set; }
+        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDescription, bool workflowAsignedToCurrentUser, IList<GetUloSummariesByPdn_Result> others, bool belongs)
         {
             CurretUnliquidatedObligation = ulo;
             WorkflowViewModel = new WorkflowViewModel(workflow, workflowAsignedToCurrentUser, workflowDescription);
             Others = others;
+            BelongsToMyUnassignmentGroup = belongs;
         }
     }
 

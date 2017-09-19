@@ -67,9 +67,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).Include(wf => wf.UnliquidatedObligation).Include(wf=>wf.UnliquidatedObligation.Region),
+                DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             return View(workflows);
+        }
+
+        private bool BelongsToMyUnassignmentGroup(string ownerUserId, int regionId)
+        {
+            foreach (var g in GetUserGroups(CurrentUserId))
+            {
+                if (g.UserId == PortalHelpers.ReassignGroupUserId) continue;
+                var regionIds = User.GetUserGroupRegions(g.UserName).OrderBy(z => z.GetValueOrDefault()).ToList();
+                if (ownerUserId == g.UserId && regionIds.Contains(regionId)) return true;
+            }
+            return false;
         }
 
         [ActionName(ActionNames.Unassigned)]
@@ -77,7 +88,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("Ulos/Unassigned")]
         public ActionResult Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            ViewBag.ShowReassignButton = true;
+            ViewBag.AllAreUnassigned = true;         
 
             var predicate = PredicateBuilder.Create<Workflow>(wf => false);
 
@@ -105,8 +116,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
 
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(predicate)
-                .Include(wf => wf.UnliquidatedObligation),
+                DB.Workflows.Where(predicate).ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             return View(workflows);
         }
@@ -132,7 +142,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             Browse:
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId))
-                .Include(wf => wf.UnliquidatedObligation),
+                .ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
 
             return View(workflows);
@@ -248,11 +258,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var workflow = await FindWorkflowAsync(workflowId);
             var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
 
+            var belongs =
+                workflow.AspNetUser.UserType == AspNetUser.UserTypes.Group &&
+                BelongsToMyUnassignmentGroup(workflow.OwnerUserId, ulo.RegionId.GetValueOrDefault(-1));
+
             var workflowDesc = await FindWorkflowDescAsync(workflow);
 
             var others = DB.GetUloSummariesByPdn(ulo.PegasysDocumentNumber).ToList().Where(z => z.WorkflowId != workflowId).OrderBy(z => z.WorkflowId).ToList();
 
-            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others));
+            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, belongs));
         }
 
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)

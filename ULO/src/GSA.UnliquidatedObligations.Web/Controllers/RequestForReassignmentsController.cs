@@ -38,31 +38,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             UserManager = userManager;
         }
 
-        // GET: RequestForReassignments
-        public async Task<ActionResult> Index(string sortCol, string sortDir, int? page, int? pageSize)
-        {
-            //var currentUser = await UserManager.FindByNameAsync(this.User.Identity.Name);
-            //var reassignGroupUser = await UserManager.FindByNameAsync(Properties.Settings.Default.ReassignGroupUserName);
-
-            //var reassignGroupRegionIds = await DB.UserUsers
-            //    .Where(uu => uu.ParentUserId == reassignGroupUser.Id && uu.ChildUserId == currentUser.Id)
-            //    .Select(uu => uu.RegionId)
-            //    .Distinct()
-            //    .ToListAsync();
-
-            //var workflows = ApplyBrowse(
-            //    DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUser.Id && reassignGroupRegionIds.Contains(wf.UnliquidatedObligation.RegionId))
-            //    .Include(wf => wf.UnliquidatedObligation),
-            //    sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
-            //ViewBag.ShowReassignButton = true;
-            //return View("~/Views/Ulo/Index.cshtml", workflows);
-            return View();
-        }
-
         [ActionName(ActionNames.Details)]
         public ActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false)
         {
-            var requestForReassignment = DB.RequestForReassignments.Where(rr => rr.IsActive).FirstOrDefault(r => r.RequestForReassignmentID == id);
+            RequestForReassignment requestForReassignment = null;
+            if (id.HasValue)
+            {
+                requestForReassignment = DB.RequestForReassignments.Include(z=>z.UnliqudatedObjectsWorkflowQuestion).FirstOrDefault(r => r.RequestForReassignmentID == id.Value);
+            }
 
             var workflow = DB.Workflows.FirstOrDefault(wf => wf.WorkflowId == workflowId);
             var wfDesc = Manager.GetWorkflowDescriptionAsync(workflow).Result;
@@ -78,10 +61,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 groupOwnerId = PortalHelpers.GetUserId(wfDefintionOwnerName);
             }
-            
-            var users = DB.UserUsers
-                .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId && uu.ChildUser.UserType== AspNetUser.UserTypes.Person)
-                .Select(uu => uu.ChildUser).ToList();
+
+            var userSelectItems = Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(groupOwnerId, uloRegionId, "fdsfdsaf"),
+                () => DB.UserUsers
+                    .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId && uu.ChildUser.UserType == AspNetUser.UserTypes.Person)
+                    .Select(uu => new { UserName = uu.ChildUser.UserName, UserId = uu.ChildUserId }).ConvertAll(z=>PortalHelpers.CreateUserSelectListItem(z.UserId, z.UserName)).AsReadOnly(),
+                UloHelpers.MediumCacheTimeout
+                    ).ToList();
 
             if (Cacher.FindOrCreateValWithSimpleKey(
                 Cache.CreateKey(uloRegionId, User.Identity.Name),
@@ -93,10 +80,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 UloHelpers.MediumCacheTimeout
                 ))
             {
-                users.Add(CurrentUser);
+                userSelectItems.Add(CurrentUser.ToSelectListItem());
             }
 
-            users = users.OrderBy(u => u.UserName).ToList();
+            userSelectItems = userSelectItems.OrderBy(z => z.Text).ToList();
 
             var requestForReassignmentId = requestForReassignment?.RequestForReassignmentID;
             var suggestedReviewerId = requestForReassignment != null ? requestForReassignment.SuggestedReviewerId : "";
@@ -108,7 +95,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var detailsView = isAdmin ? "_DetailsMasterList.cshtml" : "_Details.cshtml"; 
             return PartialView(
                 "~/Views/Ulo/Details/Workflow/RequestForReassignments/" + detailsView, 
-                new RequestForReassignmentViewModel(suggestedReviewerId, justificationKey, requestForReassignmentId, comments, workflowId, uloRegionId, users, wfDesc.GetResassignmentJustifications()));
+                new RequestForReassignmentViewModel(suggestedReviewerId, justificationKey, requestForReassignmentId, comments, workflowId, uloRegionId, userSelectItems, wfDesc.GetResassignmentJustifications()));
         }
 
         [HttpPost]

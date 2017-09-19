@@ -4,7 +4,6 @@
     var ulo = Model.CurretUnliquidatedObligation;
     var wf = Model.WorkflowViewModel.Workflow;
 }
-
 <div class="row documents">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -40,7 +39,7 @@
                                 Assigned To:
                             </dt>
                             <dd>
-                                @if (wf.AspNetUser?.UserType == "Group")
+                                @if (wf.AspNetUser==null || wf.AspNetUser.IsGroup)
                                 {
                                     <text>Unassigned</text>
                                 }
@@ -48,7 +47,30 @@
                                 {
                                     <text>@wf.AspNetUser.UserName</text>
                                 }
-                                @Html.Partial("Details/Workflow/RequestForReassignments/_ReassignButton", Model.WorkflowViewModel)
+                                @{
+                                    string reassignButtonText = null;
+                                    if (wf.OwnerUserId == PortalHelpers.GetUserId(User?.Identity?.Name))
+                                    {
+                                        reassignButtonText = "Request Reassignment";
+                                    }
+                                    else if (Model.BelongsToMyUnassignmentGroup)
+                                    {
+                                        reassignButtonText = "Reassign";
+                                    }
+                                    else if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanReassign))
+                                    {
+                                        var userReassignRegions = User.GetReassignmentGroupRegions();
+                                        if (userReassignRegions.Contains(ulo.RegionId))
+                                        {
+                                            reassignButtonText = "Reassign";
+                                        }
+                                    }
+                                    if (reassignButtonText != null)
+                                    {
+                                        var modalId = "#" + wf.WorkflowId + "RequestForReassignModal";
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">@reassignButtonText</button>
+                                    }
+                                }
                             </dd>
                         </dl>
                     </div>

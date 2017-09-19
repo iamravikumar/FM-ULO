@@ -1,8 +1,0 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
-
-@{
-    var modalId = "#" + Model.Workflow.WorkflowId + "RequestForReassignModal";
-}
-<button type="button" class="btn btn-primary master @(Model.RequestForReassignmentsActive ? "request-active" : "")" data-toggle="modal" data-target="@modalId">
-    Reassign
-</button>

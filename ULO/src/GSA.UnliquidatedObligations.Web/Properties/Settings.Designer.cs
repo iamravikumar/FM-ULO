@@ -61,7 +61,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("reassignGroup")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Reassign Group")]
         public string ReassignGroupUserName {
             get {
                 return ((string)(this["ReassignGroupUserName"]));

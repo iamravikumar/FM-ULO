@@ -582,8 +582,6 @@
     <Content Include="Views\Ulo\Details\Documents\_ViewModals.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_Details.cshtml" />
     <Content Include="Views\Shared\_Navigation.cshtml" />
-    <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_ReassignButton.cshtml" />
-    <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_ReassignButtonForMasterList.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\RequestForReassignments\_DetailsMasterList.cshtml" />
     <Content Include="Views\Ulo\Search\Index.cshtml" />
     <Content Include="Views\Ulo\Search\_Data.cshtml" />

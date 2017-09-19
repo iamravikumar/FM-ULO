@@ -1,13 +1,14 @@
-﻿@using GSA.UnliquidatedObligations.Web.Models
-@using GSA.UnliquidatedObligations.Web.Controllers
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@using GSA.UnliquidatedObligations.BusinessLayer.Data
 @using System.Linq
-@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+@model IEnumerable<Workflow>
 @{
     var workflowDescription = (GSA.UnliquidatedObligations.BusinessLayer.Workflow.IWorkflowDescription)ViewBag.WorkflowDescription;
     var todaysDate = DateTime.Today;
-    var showReassignmentButton = ViewBag.ShowReassignButton is bool ? (bool)ViewBag.ShowReassignButton : false;
+    var allAreUnassigned = ViewBag.AllAreUnassigned is bool ? (bool)ViewBag.AllAreUnassigned : false;
+    var showReassignmentButton = allAreUnassigned || (ViewBag.ShowReassignButton is bool ? (bool)ViewBag.ShowReassignButton : false);
     var userReassignRegions = User.GetReassignmentGroupRegions();
-    bool anyReassignmentsApplicable = false;
+    var rfrIdByWorkflow = new Dictionary<Workflow, int?>();
 }
 <table class="table table-responsive active-workflows">
     <tr>
@@ -81,26 +82,27 @@
             <td>
                 @if (showReassignmentButton)
                 {
-                    anyReassignmentsApplicable = true;
-                    @Html.Partial("~/Views/Ulo/Details/Workflow/RequestForReassignments/_ReassignButtonForMasterList.cshtml", new WorkflowViewModel(item, true, workflowDescription))
+                    int? rfrId = allAreUnassigned ? null : item.GetReassignmentRequest()?.RequestForReassignmentID;
+                    if (allAreUnassigned || rfrId != null)
+                    {
+                        rfrIdByWorkflow[item] = rfrId;
+                        var modalId = "#" + item.WorkflowId + "RequestForReassignModal";
+                        <button type="button" class="btn btn-primary master request-active" data-toggle="modal" data-target="@modalId">
+                            Reassign
+                        </button>
+                    }
                 }
             </td>
         </tr>
-                    }
+    }
 </table>
-@if (showReassignmentButton && anyReassignmentsApplicable)
+@if (showReassignmentButton && rfrIdByWorkflow.Count>0)
 {
-    foreach (var item in Model)
+    foreach (var kvp in rfrIdByWorkflow)
     {
-        var rfr = item.RequestForReassignments.FirstOrDefault();
-        if (rfr == null)
-        {
-            Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true });
-        }
-        else
-        {
-            Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = item.WorkflowId, uloRegionId = item.UnliquidatedObligation.RegionId, isAdmin = true, id = rfr.RequestForReassignmentID });
-        }
+        var rfrId = kvp.Value;
+        var wf = kvp.Key;
+        Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = wf.WorkflowId, uloRegionId = wf.UnliquidatedObligation.RegionId, isAdmin = true, id = rfrId });
     }
 }
 @Html.Partial("_PaginationPartial")

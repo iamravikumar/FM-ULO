@@ -45,14 +45,14 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ReviewScopeId, "Review Scope:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.ReviewScopeId, Model.ReviewScopes, "Select One..", htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.ReviewScopeId, Model.ReviewScopes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ReviewScopeId, "", new { @class = "text-danger" })
             </div>
         </div>
         <div id="reviewRegionContainer" class="form-group">
             @Html.LabelFor(model => model.RegionId, "Region:", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.RegionId, Model.RegionChoices, "Select One..", htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.RegionId, Model.RegionChoices, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
             </div>
         </div>

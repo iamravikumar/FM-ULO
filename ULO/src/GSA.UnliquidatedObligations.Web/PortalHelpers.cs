@@ -579,14 +579,17 @@ namespace GSA.UnliquidatedObligations.Web
             => justifications.ConvertAll(j => CreateSelectListItem(j)).ToList();
 
         public static IList<SelectListItem> CreateSelectList(IEnumerable<AspNetUser> aspNetUsers)
-        {
-            return aspNetUsers
-                .Select(u => new SelectListItem
-                {
-                    Text = u.UserName,
-                    Value = u.Id
-                }).ToList();
-        }
+            => aspNetUsers.Select(z => CreateUserSelectListItem(z.Id, z.UserName)).ToList();
+
+        public static SelectListItem ToSelectListItem(this AspNetUser u)
+            => CreateUserSelectListItem(u.Id, u.UserName);
+
+        public static SelectListItem CreateUserSelectListItem(string userId, string username)
+            => new SelectListItem
+            {
+                Text = username,
+                Value = userId
+            };
 
         public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<string> stringsToConvert)
         {
@@ -787,5 +790,11 @@ namespace GSA.UnliquidatedObligations.Web
             }
             return correlationId;
         }
+
+        public static RequestForReassignment GetReassignmentRequest(this Workflow wf)
+            => wf.RequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault();
+
+        internal static IQueryable<Workflow> ApplyStandardIncludes(this IQueryable<Workflow> workflows)
+            => workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region);
     }
 }

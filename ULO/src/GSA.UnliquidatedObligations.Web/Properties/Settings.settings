@@ -15,7 +15,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ReassignGroupUserName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">reassignGroup</Value>
+      <Value Profile="(Default)">Reassign Group</Value>
     </Setting>
     <Setting Name="RunHangfireServer" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
