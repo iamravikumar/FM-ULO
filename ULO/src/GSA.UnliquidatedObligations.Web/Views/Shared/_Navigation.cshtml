@@ -47,7 +47,7 @@
                         }
                         @if (User.HasPermission(ApplicationPermissionNames.CanViewReviews))
                 {
-                            <li>@Html.ActionLink("Reviews", UsersController.ActionNames.Index, ReviewsController.Name, null, pageKey == PageKeys.ManageReviews ? apka : ipka)</li>
+                            <li>@Html.ActionLink("Reviews", ReviewsController.ActionNames.Index, ReviewsController.Name, null, pageKey == PageKeys.ManageReviews ? apka : ipka)</li>
                         }
                         @if (User.HasPermission(ApplicationPermissionNames.ManageUsers)|| User.HasPermission(ApplicationPermissionNames.ViewUsers))
                         {

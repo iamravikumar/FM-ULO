@@ -12,6 +12,7 @@ namespace GSA.UnliquidatedObligations.Utility
         public int? SkipRawRows { get; set; }
         public Func<IList<object>, bool> SkipWhileTester { get; set; }
         public bool TreatAllValuesAsText { get; set; }
+        public bool ThrowOnMissingSheet { get; set; }
 
         public LoadRowsFromSpreadsheetSettings() { }
 

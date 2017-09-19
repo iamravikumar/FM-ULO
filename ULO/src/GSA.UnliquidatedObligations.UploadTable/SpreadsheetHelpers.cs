@@ -65,8 +65,10 @@ namespace GSA.UnliquidatedObligations.Utility
                 foreach (var ss in sheetSettings)
                 {
                     var dt = settings.CreateDataTable == null ? new DataTable() : settings.CreateDataTable();
-                    dt.LoadRowsFromExcel(sd, ss);
-                    ds.Tables.Add(dt);
+                    if (dt.LoadRowsFromExcel(sd, ss))
+                    {
+                        ds.Tables.Add(dt);
+                    }
                 }
             }
         }
@@ -79,7 +81,7 @@ namespace GSA.UnliquidatedObligations.Utility
             }
         }
 
-        private static void LoadRowsFromExcel(this DataTable dt, SpreadsheetDocument sd, LoadRowsFromSpreadsheetSettings settings)
+        private static bool LoadRowsFromExcel(this DataTable dt, SpreadsheetDocument sd, LoadRowsFromSpreadsheetSettings settings)
         {
             DataTableHelpers.RequiresZeroRows(dt, nameof(dt));
             Requires.NonNull(sd, nameof(sd));
@@ -135,13 +137,17 @@ namespace GSA.UnliquidatedObligations.Utility
                         positionnedRows = rows;
                     }
                     dt.LoadRows(positionnedRows, settings);
-                    return;
+                    return true;
                 }
                 ++sheetNumber;
             }
-            throw new Exception(string.Format(
-                "Sheet [{0}] was not found",
-                (object)settings.SheetNumber ?? (object)settings.SheetName));
+            if (settings.ThrowOnMissingSheet)
+            {
+                throw new Exception(string.Format(
+                    "Sheet [{0}] was not found",
+                    (object)settings.SheetNumber ?? (object)settings.SheetName));
+            }
+            return false;
         }
 
         private static readonly Regex ColRowExpr = new Regex(@"\s*([A-Z]+)(\d+)\s*", RegexOptions.IgnoreCase | RegexOptions.Compiled);

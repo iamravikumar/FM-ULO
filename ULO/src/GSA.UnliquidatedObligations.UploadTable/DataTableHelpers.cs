@@ -318,9 +318,20 @@ namespace GSA.UnliquidatedObligations.Utility
                         {
                             val = DBNull.Value;
                         }
-                        else if (val.GetType() != c.DataType)
+                        else
                         {
-                            val = settings.TypeConverter(val, c.DataType);
+                            var t = val.GetType();
+                            if (t != c.DataType)
+                            {
+                                if (c.AllowDBNull && c.DataType.IsNumber() && null == StringHelpers.TrimOrNull(Stuff.ObjectToString(val)))
+                                {
+                                    val = DBNull.Value;
+                                }
+                                else
+                                {
+                                    val = settings.TypeConverter(val, c.DataType);
+                                }
+                            }
                         }
                         fields[c.Ordinal] = val;
                     }

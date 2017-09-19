@@ -61,7 +61,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             var reviewId = files.ReviewId;
             foreach (var fn in files.PegasysFilePathsList)
             {
-                UploadCSVTable(reviewId, fn);
+                Upload442Table(reviewId, fn);
             }
             foreach (var fn in files.RetaFileList)
             {
@@ -109,7 +109,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             await DB.SaveChangesAsync();
         }
 
-        private void UploadCSVTable(int reviewId, string uploadPath)
+        private void Upload442Table(int reviewId, string uploadPath)
         {
             var dt = CreatePegasysOpenObligationsDataTable();
             using (var st = File.OpenRead(uploadPath))
@@ -144,7 +144,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
                         SheetName = sheetName,
                         TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
                         UseSheetNameForTableName = true,
-                        RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore
+                        RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore,
+                        ThrowOnMissingSheet = false,
                     });
                 }
 

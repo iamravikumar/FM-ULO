@@ -163,6 +163,7 @@
           <Property Name="WorkflowDefinitionId" Type="int" Nullable="false" />
           <Property Name="ProjectDueDate" Type="datetime" />
           <Property Name="ReviewDateInitiated" Type="date" />
+          <Property Name="IsClosed" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestions">
           <Key>
@@ -1516,6 +1517,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <NavigationProperty Name="Region1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__RegionI__1699586C" FromRole="Review" ToRole="Region" />
           <NavigationProperty Name="WorkflowDefinition" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Workflo__45544755" FromRole="Review" ToRole="WorkflowDefinition" />
           <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" FromRole="Review" ToRole="UnliquidatedObligation" />
+          <Property Name="IsClosed" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestion">
           <Key>
@@ -2420,6 +2422,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <EntitySetMapping Name="Reviews">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Review">
               <MappingFragment StoreEntitySet="Reviews">
+                <ScalarProperty Name="IsClosed" ColumnName="IsClosed" />
                 <ScalarProperty Name="ReviewDateInitiated" ColumnName="ReviewDateInitiated" />
                 <ScalarProperty Name="ProjectDueDate" ColumnName="ProjectDueDate" />
                 <ScalarProperty Name="WorkflowDefinitionId" ColumnName="WorkflowDefinitionId" />

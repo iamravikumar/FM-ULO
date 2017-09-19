@@ -24,6 +24,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public static class ActionNames
         {
             public const string Index = "Index";
+            public const string Details = "Details";
+            public const string Create = "Create";
         }
 
         public static class ReviewFileDesignators
@@ -43,41 +45,33 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [ActionName(ActionNames.Index)]
+        [Route("reviews")]
         public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            IQueryable reviews;
+            var reviews = DB.Reviews.Include(z => z.Region);
             if (sortCol == nameof(ReviewModel.ReviewTypeId))
             {
                 reviews = ApplyBrowse(
-                   DB.Reviews,
+                   reviews,
                    nameof(ReviewModel.ReviewTypeId), typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             }
             else if (sortCol == nameof(ReviewModel.ReviewScopeId))
             {
                 reviews = ApplyBrowse(
-                   DB.Reviews,
+                   reviews,
                    nameof(ReviewModel.ReviewScopeId), typeof(ReviewScopeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             }
             else
             {
                 reviews = ApplyBrowse(
-                    DB.Reviews,
+                    reviews,
                     sortCol ?? nameof(Review.CreatedAt), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             }
             return View(reviews);
         }
 
-        private string convertToString(ReviewTypeEnum reviewTypeEnum)
-        {
-            return reviewTypeEnum.GetDisplayName();
-        }
-
-        private string convertToString(ReviewScopeEnum reviewScopeEnum)
-        {
-            return reviewScopeEnum.GetDisplayName();
-        }
-
-        // GET: Review/Details/5
+        [ActionName(ActionNames.Details)]
+        [Route("reviews/{id}")]
         public async Task<ActionResult> Details(int id)
         {
             var review = await DB.Reviews.FindAsync(id);
@@ -94,6 +88,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // GET: Review/Create
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
+        [ActionName(ActionNames.Create)]
+        [Route("reviews/create")]
         public async Task<ActionResult> Create()
         {
             var m = await CreateReviewModelAsync();
@@ -102,6 +98,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Review/Create
         [HttpPost]
+        [Route("reviews/create")]
         public async Task<ActionResult> Create(
             [Bind(Include =
                 nameof(ReviewModel.RegionId)+","+
@@ -210,8 +207,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(reviewModel);
         }
 
-
-        // GET: Review/Edit/5
         public ActionResult Edit(int id)
         {
             var review = DB.Reviews.Find(id);

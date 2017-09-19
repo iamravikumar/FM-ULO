@@ -62,7 +62,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             => RedirectToAction(ActionNames.MyTasks);
 
         [ActionName(ActionNames.MyTasks)]
-        [Route("Ulos/MyTasks")]
+        [Route("ulos/myTasks")]
         public ActionResult MyTasks(string sortCol, string sortDir, int? page, int? pageSize)
         {
             //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
@@ -85,7 +85,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.Unassigned)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
-        [Route("Ulos/Unassigned")]
+        [Route("ulos/unassigned")]
         public ActionResult Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
             ViewBag.AllAreUnassigned = true;         
@@ -123,7 +123,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.RequestForReassignments)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
-        [Route("Ulos/Reassignments")]
+        [Route("ulos/reassignments")]
         public ActionResult RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
             ViewBag.ShowReassignButton = true;
@@ -163,7 +163,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [ActionName(ActionNames.Search)]
-        [Route("Ulos/Search")]
+        [Route("ulos/search")]
         public async Task<ActionResult> Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
@@ -237,8 +237,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 UloHelpers.MediumCacheTimeout
                 );
 
-        [Route("Ulos/{uloId}/{workflowId}", Order = 1)]
-        [Route("Ulos/{uloId}", Order = 2)]
+        [Route("ulos/{uloId}/{workflowId}", Order = 1)]
+        [Route("ulos/{uloId}", Order = 2)]
         [ActionName(ActionNames.Details)]
         public async Task<ActionResult> Details(int uloId, int workflowId=0)
         {
@@ -297,7 +297,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [HttpPost]
         [ActionName(ActionNames.Save)]
-        [Route("Ulos/{uloId}/{workflowId}/Save")]
+        [Route("ulos/{uloId}/{workflowId}/Save")]
         public async Task<ActionResult> Save(
             int uloId,
             int workflowId,

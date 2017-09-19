@@ -31,6 +31,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int WorkflowDefinitionId { get; set; }
         public Nullable<System.DateTime> ProjectDueDate { get; set; }
         public Nullable<System.DateTime> ReviewDateInitiated { get; set; }
+        public bool IsClosed { get; set; }
     
         public virtual Region Region { get; set; }
         public virtual Region Region1 { get; set; }

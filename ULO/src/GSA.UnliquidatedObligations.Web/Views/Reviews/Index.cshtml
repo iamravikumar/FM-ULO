@@ -1,5 +1,6 @@
 ﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
 @using GSA.UnliquidatedObligations.BusinessLayer.Data
+@using GSA.UnliquidatedObligations.Web.Controllers
 @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Review>
 
     @{
@@ -10,7 +11,7 @@
     @if (User.HasPermission(ApplicationPermissionNames.CanCreateReviews))
     {
         <p>
-            <input type="button" value="Create New" class="btn btn-primary" onclick="location.href='@Url.Action("Create")'" />
+            <input type="button" value="Create New" class="btn btn-primary" onclick="location.href='@Url.Action(ReviewsController.ActionNames.Create)'" />
         </p>
     }
     <table class="table">
@@ -53,7 +54,7 @@
         {
             <tr>
                 <td>
-                    @Html.ActionLink("View Review " + item.ReviewId, "Details", new { id = item.ReviewId })
+                    @Html.ActionLink("View Review " + item.ReviewId, ReviewsController.ActionNames.Details, new { id = item.ReviewId })
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreatedAt)
