@@ -20,6 +20,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string Comments { get; set; }
         public IList<SelectListItem> Justifications { get; set; }
 
+        public RequestForReassignmentViewModel()
+        { }
+
         public RequestForReassignmentViewModel(string suggestedReviewerId, string justificationKey, int? requestForReassignmentId, string comments, int workflowId, int regionId, IList<SelectListItem> userSelectItems, IList<Justification> justifications)
         {
             RequestForReassignmentId = requestForReassignmentId;

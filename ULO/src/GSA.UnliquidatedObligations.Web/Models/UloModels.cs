@@ -9,10 +9,12 @@ using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
-    //TODO. May need to break these up a bit.
     public class UloWfQuestionsViewModel
     {
         public List<UloWfQuestionViewModel> Questions { get; set; }
+
+        public UloWfQuestionsViewModel()
+        { }
 
         public UloWfQuestionsViewModel(IDictionary<string, Justification> justificationByKey, List<UnliqudatedObjectsWorkflowQuestion> questions)
         {
@@ -32,6 +34,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string Justification { get; set; }
         public string Comments { get; set; }
         public DateTime CreatedDate { get; set; }
+
+        public UloWfQuestionViewModel()
+        { }
 
         public UloWfQuestionViewModel(IDictionary<string, Justification> justificationByKey, UnliqudatedObjectsWorkflowQuestion question)
         {
@@ -155,9 +160,12 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public WorkflowDescriptionViewModel WorkflowDescriptionViewModel { get; set; }
         public DocumentsViewModel DocumentsViewModel { get; set; }
         public bool WorkflowAssignedToCurrentUser { get; set; }
-        public RequestForReassignment RequestForReassignment { get; private set; }
+        public RequestForReassignment RequestForReassignment { get; set; }
         public bool IsRequestForReassignmentsActive
             => RequestForReassignment != null && RequestForReassignment.IsActive;
+
+        public WorkflowViewModel()
+        { }
 
         public WorkflowViewModel(Workflow workflow, bool workflowAssignedToCurrentUser, IWorkflowDescription workflowDescription=null)
         {
@@ -207,11 +215,15 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
     public class UloViewModel
     {
-        public UnliquidatedObligation CurretUnliquidatedObligation { get; private set; }
-        public WorkflowViewModel WorkflowViewModel { get; private set; }
-        public IList<Workflow> OtherWorkflows { get; private set; }
-        public IList<GetUloSummariesByPdn_Result> Others { get; private set; }
-        public bool BelongsToMyUnassignmentGroup { get; private set; }
+        public UnliquidatedObligation CurretUnliquidatedObligation { get; set; }
+        public WorkflowViewModel WorkflowViewModel { get; set; }
+        public IList<Workflow> OtherWorkflows { get; set; }
+        public IList<GetUloSummariesByPdn_Result> Others { get; set; }
+        public bool BelongsToMyUnassignmentGroup { get; set; }
+
+        public UloViewModel()
+        { }
+
         public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDescription, bool workflowAsignedToCurrentUser, IList<GetUloSummariesByPdn_Result> others, bool belongs)
         {
             CurretUnliquidatedObligation = ulo;
@@ -230,6 +242,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public IEnumerable<SelectListItem> BaCodes { get; set; }
         public IEnumerable<SelectListItem> Statuses { get; set; }
         public IEnumerable<SelectListItem> Reasons { get; set; }
+
+        public FilterViewModel()
+        { }
+
         public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> activityNames, IEnumerable<string> statuses, IEnumerable<string> reasons)
         {
             Workflows = workflows;
@@ -253,6 +269,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string SiteUrl { get; set; }
 
         public int WorkflowId { get; set; }
+
         public EmailViewModel()
         {
             SiteUrl = Properties.Settings.Default.SiteUrl;
