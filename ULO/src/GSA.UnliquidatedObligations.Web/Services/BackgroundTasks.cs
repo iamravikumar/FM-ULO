@@ -4,12 +4,14 @@ using GSA.UnliquidatedObligations.Utility;
 using GSA.UnliquidatedObligations.Web.Models;
 using RazorEngine;
 using RazorEngine.Templating;
+using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web.Services
@@ -48,10 +50,45 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.UploadIntoSqlServer(CreateSqlConnection);
         }
 
+        private static readonly object EmptyModel = new object();
+        private static readonly IDictionary<string, string> RazorNameByKey = new Dictionary<string, string>();
+        private static string GetRazorName(string template, object model)
+        {
+            model = model ?? EmptyModel;
+            var names = new List<string>();
+            names.Add(template);
+            foreach (var p in model.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                names.Add(p.Name);
+                names.Add(p.PropertyType.Name);
+            }
+            var key = Cache.CreateKey(names);
+            lock (RazorNameByKey)
+            {
+                string rn;
+                if (!RazorNameByKey.TryGetValue(key, out rn))
+                {
+                    RazorNameByKey[key] = rn = $"N{RazorNameByKey.Count}";
+                }
+                return rn;
+            }
+        }
+
+        private static readonly object ProcessRazorTemplateLocker = new object();
+        private static string ProcessRazorTemplate(string template, object model)
+        {
+            var name = GetRazorName(template, model);
+            lock (ProcessRazorTemplateLocker)
+            {
+                return Engine.Razor.RunCompile(template, name, null, model);
+            }
+        }
+
+
         public void Email(string subjectTemplate, string recipient, string bodyTemplate, object model)
         {
-            var subject = Engine.Razor.RunCompile(subjectTemplate, Guid.NewGuid().ToString(), null, model);
-            var body = Engine.Razor.RunCompile(bodyTemplate, Guid.NewGuid().ToString(), null, model);
+            var subject = ProcessRazorTemplate(subjectTemplate, model);
+            var body = ProcessRazorTemplate(bodyTemplate, model);
             EmailServer.SendEmail(subject, body, recipient);
         }
 

@@ -201,7 +201,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             var uid = Cacher.FindOrCreateValWithSimpleKey(
                 proposedOwnerUserName, 
                 () => DB.AspNetUsers.FirstOrDefault(z => z.UserName == proposedOwnerUserName)?.Id,
-                UloHelpers.LongCacheTimeout
+                UloHelpers.MediumCacheTimeout
                 );
 
             //TODO: check if null, return proposedOwnserId

@@ -40,14 +40,5 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Properties {
                 return ((global::System.TimeSpan)(this["MediumCacheTimeout"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("00:10:00")]
-        public global::System.TimeSpan LongCacheTimeout {
-            get {
-                return ((global::System.TimeSpan)(this["LongCacheTimeout"]));
-            }
-        }
     }
 }
