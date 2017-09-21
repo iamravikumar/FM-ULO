@@ -276,7 +276,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return workflowDescription;
         }
 
-        //TODO: Move to Manager?
         private async Task<Workflow> FindWorkflowAsync(int workflowId)
             => await DB.Workflows
                 .Include(q => q.AspNetUser)

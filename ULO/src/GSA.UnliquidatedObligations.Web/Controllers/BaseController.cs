@@ -18,12 +18,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected readonly ICacher Cacher;
         protected readonly ILogger Log;
 
-        protected BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher, ILogger logger)
+        protected BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher, ILogger log)
         {
             DB = db;
             ComponentContext = componentContext;
             Cacher = cacher;
-            Log = logger;
+            Log = log.ForContext(GetType());
             var ctx = System.Web.HttpContext.Current;
             if (ctx != null)
             {

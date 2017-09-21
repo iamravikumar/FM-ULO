@@ -2,15 +2,14 @@
 using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -18,12 +17,6 @@ using System.Web.Routing;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
-    /// <remarks>
-    /// Caching in here is present because when we're being called from Background.AssignWorkFlows thousands of times,
-    /// we need to prevent unnecesary database calls and slow EntityFramework in memory Find commands.
-    /// The caching is local only, as opposed to being injected as we're not worried about being called from different user threads, 
-    /// just background ones, AND we're caching EF objects, so at most, this would have had to have been injected with caller scope
-    /// </remarks>
     public class WorkflowManager : IWorkflowManager
     {
         public const string WorkflowIdRouteValueName = "workflowId";
@@ -31,17 +24,18 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IComponentContext ComponentContext;
         private readonly IWorkflowDescriptionFinder Finder;
         private readonly IBackgroundJobClient BackgroundJobClient;
-        protected readonly ULODBEntities DB;
-        private readonly ICacher Cacher = new BasicCacher();
+        private readonly ULODBEntities DB;
+        private readonly ICacher Cacher;
         private readonly Serilog.ILogger Log;
 
-        public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, ULODBEntities db, Serilog.ILogger log)
+        public WorkflowManager(IComponentContext componentContext, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, ULODBEntities db, Serilog.ILogger log, ICacher cacher)
         {
             ComponentContext = componentContext;
             Finder = finder;
             BackgroundJobClient = backgroundJobClient;
             DB = db;
-            Log = log;
+            Log = log.ForContext<WorkflowManager>();
+            Cacher = cacher;
         }
 
         private class RedirectingController : Controller
@@ -78,7 +72,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 }
 
                 //TODO: Handle null case which says stay where you are.
-
                 wf.CurrentWorkflowActivityKey = nextActivity.WorkflowActivityKey;
 
                 //TODO: Updata other info like the owner, date
@@ -89,40 +82,25 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     {
                         nextOwnerId = await GetNextOwnerUserIdAsync(nextActivity.OwnerUserName, wf, nextActivity.WorkflowActivityKey, nextActivity.OwnerProhibitedPreviousActivityNames);
                         wf.OwnerUserId = nextOwnerId;
-                        var nextUser = Cacher.FindOrCreateValWithSimpleKey(
-                            wf.OwnerUserId,
-                            () => DB.AspNetUsers.Find(wf.OwnerUserId));
-                        if (nextUser.IsPerson && RegexHelpers.Common.EmailAddress.IsMatch(nextUser.Email))
-                        {
-                            var emailTemplate = Cacher.FindOrCreateValWithSimpleKey(
-                                nextActivity.EmailTemplateId,
-                                () => DB.EmailTemplates.Find(nextActivity.EmailTemplateId));
-                            var emailModel = new EmailViewModel
-                            {
-                                UserName = nextUser.UserName,
-                                PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
-                                WorkflowId = wf.WorkflowId,
-                                UloId = wf.UnliquidatedObligation.UloId
-                            };
-                            BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(emailTemplate.EmailSubject, nextUser.Email, emailTemplate.EmailBody, emailModel));
-                        }
-                        else
-                        {
-                            Trace.WriteLine($"Will not send email to {nextUser}");
-                        }
+
+                        await NotifyNewAssigneeAsync(wf, nextOwnerId, nextActivity.EmailTemplateId);
                     }
                     wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
 
                     if (nextActivity.DueIn != null)
                         wf.ExpectedDurationInSeconds = (long?)nextActivity.DueIn.Value.TotalSeconds;
 
-                    if (question != null && question.Answer == "Valid")
+                    if (question != null && question.IsValid)
                     {
                         wf.UnliquidatedObligation.Valid = true;
                     }
-                    else if (question != null && question.Answer == "Invalid")
+                    else if (question != null && question.IsInvalid)
                     {
                         wf.UnliquidatedObligation.Valid = false;
+                    }
+                    else
+                    {
+                        wf.UnliquidatedObligation.Valid = null;
                     }
 
                     if (ignoreActionResult)
@@ -141,7 +119,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 }
                 else
                 {
-                    //TODO: handle background hangfire.
                     throw new NotImplementedException();
                 }
             }
@@ -160,7 +137,46 @@ namespace GSA.UnliquidatedObligations.Web.Services
             wf.OwnerUserId = reassignGroupId;
             var c = new RedirectingController();
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
-            return await Task.FromResult(c.RedirectToAction("Index", "Ulo", routeValues));
+            return await Task.FromResult(c.RedirectToAction(UloController.ActionNames.Index, UloController.Name, routeValues));
+        }
+
+        private Task NotifyNewAssigneeAsync(Workflow wf, string userId, int emailTemplateId)
+        {
+            var u = Cacher.FindOrCreateValWithSimpleKey(
+                userId,
+                () => DB.AspNetUsers.Select(z => new { UserId = z.Id, UserType = z.UserType, UserName = z.UserName, Email = z.Email }).FirstOrDefault(z => z.UserId == userId),
+                UloHelpers.MediumCacheTimeout);
+            if (u == null)
+            {
+                Log.Error($"Cannot find {userId}", userId);
+            }
+            else if (u.UserType==AspNetUser.UserTypes.Person && RegexHelpers.Common.EmailAddress.IsMatch(u.Email))
+            {
+                var emailTemplate = Cacher.FindOrCreateValWithSimpleKey(
+                    emailTemplateId,
+                    () => DB.EmailTemplates.Select(z=>new { EmailBody = z.EmailBody, EmailSubject = z.EmailSubject, EmailTemplateId = z.EmailTemplateId }).FirstOrDefault(z => z.EmailTemplateId == emailTemplateId),
+                    UloHelpers.MediumCacheTimeout);
+                if (emailTemplate == null)
+                {
+                    Log.Error($"Cannot find emailTemplateId={emailTemplateId}");
+                }
+                else
+                {
+                    var emailModel = new EmailViewModel
+                    {
+                        UserName = u.UserName,
+                        PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
+                        WorkflowId = wf.WorkflowId,
+                        UloId = wf.UnliquidatedObligation.UloId
+                    };
+                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(emailTemplate.EmailSubject, u.Email, emailTemplate.EmailBody, emailModel));
+                }
+            }
+            else
+            {
+                Log.Information($"Will not send email to {u}");
+            }
+            return Task.CompletedTask;
         }
 
         async Task<ActionResult> IWorkflowManager.ReassignAsync(Workflow wf, string userId, string actionName)
@@ -168,24 +184,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
             Requires.NonNull(wf, nameof(wf));
             Requires.Text(userId, nameof(userId));
 
-            //TODO: Get programatically based on user's region
-            //TODO: split up into two for redirect and reassign.
             wf.OwnerUserId = userId;
-            var c = new RedirectingController();
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
-            var nextUser = await DB.AspNetUsers.FindAsync(wf.OwnerUserId);
-            var emailTemplate = await DB.EmailTemplates.FindAsync(1);
-            var emailModel = new EmailViewModel
-            {
-                UserName = nextUser.UserName,
-                PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
-                WorkflowId = wf.WorkflowId,
-                UloId = wf.UnliquidatedObligation.UloId
-            };
-            //TODO: What happens if it crashes?
-            BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(emailTemplate.EmailSubject, nextUser.Email, emailTemplate.EmailBody, emailModel));
 
-            return await Task.FromResult(c.RedirectToAction(actionName, "Ulo", routeValues));
+            await NotifyNewAssigneeAsync(wf, userId, Properties.Settings.Default.ManualReassignmentEmailTemplateId);
+
+            var c = new RedirectingController();
+            return await Task.FromResult(c.RedirectToAction(actionName, UloController.Name, routeValues));
         }
 
         private async Task<string> GetNextOwnerUserIdAsync(string proposedOwnerUserName, Workflow wf, string nextActivityKey, IEnumerable<string> ownerProhibitedPreviousActivityNames=null)
@@ -193,32 +198,39 @@ namespace GSA.UnliquidatedObligations.Web.Services
             Requires.Text(proposedOwnerUserName, nameof(proposedOwnerUserName));
             Requires.NonNull(wf, nameof(wf));
 
-            if (proposedOwnerUserName != Properties.Settings.Default.ReassignGroupUserName)
-            {
-                Requires.Text(nextActivityKey, nameof(nextActivityKey));
-            }
-
-            var uid = Cacher.FindOrCreateValWithSimpleKey(
+            var u = Cacher.FindOrCreateValWithSimpleKey(
                 proposedOwnerUserName, 
-                () => DB.AspNetUsers.FirstOrDefault(z => z.UserName == proposedOwnerUserName)?.Id,
+                () => DB.AspNetUsers.Select(z=>new {UserId=z.Id, UserType=z.UserType, UserName=z.UserName}).FirstOrDefault(z => z.UserName == proposedOwnerUserName),
                 UloHelpers.MediumCacheTimeout
                 );
 
-            //TODO: check if null, return proposedOwnserId
-            var output = new ObjectParameter("nextOwnerId", typeof(string));
-            //DB.Database.Log = s => Trace.WriteLine(s);
-            DB.GetNextLevelOwnerId(uid, wf.WorkflowId, nextActivityKey, CSV.FormatLine(ownerProhibitedPreviousActivityNames??Empty.StringArray, false), output);
-            if (output.Value == DBNull.Value)
+            if (u.UserType == AspNetUser.UserTypes.Person)
             {
-                return await Task.FromResult(uid);
+                return await Task.FromResult(u.UserType);
             }
-            return await Task.FromResult(output.Value.ToString());
+            else
+            {
+                if (proposedOwnerUserName != Properties.Settings.Default.ReassignGroupUserName)
+                {
+                    Requires.Text(nextActivityKey, nameof(nextActivityKey));
+                }
+
+                var output = new ObjectParameter("nextOwnerId", typeof(string));
+                //DB.Database.Log = s => Trace.WriteLine(s);
+                DB.GetNextLevelOwnerId(u.UserId, wf.WorkflowId, nextActivityKey, CSV.FormatLine(ownerProhibitedPreviousActivityNames ?? Empty.StringArray, false), output);
+                if (output.Value == DBNull.Value)
+                {
+                    return await Task.FromResult(u.UserId);
+                }
+                return await Task.FromResult(output.Value.ToString());
+            }
         }
 
         Task<IWorkflowDescription> IWorkflowManager.GetWorkflowDescriptionAsync(Workflow wf)
             => Cacher.FindOrCreateValWithSimpleKeyAsync(
                 Cache.CreateKey(wf.WorkflowKey, wf.Version),
-                () => Finder.FindAsync(wf.WorkflowKey, wf.Version)
+                () => Finder.FindAsync(wf.WorkflowKey, wf.Version),
+                UloHelpers.MediumCacheTimeout
                 );        
     }
 }

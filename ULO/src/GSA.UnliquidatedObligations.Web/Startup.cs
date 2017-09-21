@@ -18,6 +18,7 @@ using Hangfire.SqlServer;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
+using GSA.UnliquidatedObligations.BusinessLayer;
 
 [assembly: OwinStartupAttribute(typeof(GSA.UnliquidatedObligations.Web.Startup))]
 namespace GSA.UnliquidatedObligations.Web
@@ -75,7 +76,7 @@ namespace GSA.UnliquidatedObligations.Web
                 return new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .Enrich.WithProperty("ApplicationName", Properties.Settings.Default.ApplicationName)
-                .Enrich.WithProperty("ApplicationStartupTimeUtc", DateTime.UtcNow)
+                .Enrich.WithProperty("ApplicationStartupTimeUtc", DateTime.UtcNow.ToRfc8601())
                 .Enrich.WithProperty("MachineName", Environment.MachineName)
                 .Enrich.With<RequestEnricher>()
                 .Enrich.FromLogContext()

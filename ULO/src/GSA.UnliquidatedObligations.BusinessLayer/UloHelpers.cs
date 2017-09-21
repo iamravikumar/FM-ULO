@@ -13,5 +13,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer
 
         public static TimeSpan MediumCacheTimeout
             => Properties.Settings.Default.MediumCacheTimeout;
+
+        public static string ToRfc8601(this DateTime dt)
+            => dt.ToUniversalTime().ToString("o");
     }
 }

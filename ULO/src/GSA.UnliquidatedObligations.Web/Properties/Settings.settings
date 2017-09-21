@@ -72,5 +72,8 @@ WholeAgency,ULO Workflow</Value>
     <Setting Name="ApplicationName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">ULO</Value>
     </Setting>
+    <Setting Name="ManualReassignmentEmailTemplateId" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

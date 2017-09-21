@@ -12,7 +12,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         public EmailServer(SmtpClient emailClient, ILogger log)
         {
             EmailClient = emailClient;
-            Log = log;
+            Log = log.ForContext<EmailServer>();
         }
 
         public void SendEmail(string subject, string body, string recipient)
