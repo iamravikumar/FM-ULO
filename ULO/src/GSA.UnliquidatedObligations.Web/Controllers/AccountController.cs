@@ -91,7 +91,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    Log.Information("Dev Login success");
+                    Log.Information("Dev Login success for user {NewUserName}", model.Username);
                     return RedirectToLocal(returnUrl);
                 //case SignInStatus.LockedOut:
                 //    return View("Lockout");
@@ -361,13 +361,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             if (ticket == null)
             {
-                return RedirectToAction("Login");
+                return RedirectToAction(ActionNames.Login);
             }
 
             var result = SignInManager.PasswordSignIn(ticket.Name, "", true, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
+                    Log.Information("External Login success for user {NewUserName}", ticket.Name);
                     return RedirectToLocal(returnUrl);
                 //case SignInStatus.LockedOut:
                 //    return View("Lockout");
@@ -379,7 +380,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     //var createResult = UserManager.Create(user);
                     //if (createResult.Succeeded)
                     //{
-                    return View("Login", new LoginViewModel(true));
+                    return View(ActionNames.Login, new LoginViewModel(true));
                     //}
             }
 

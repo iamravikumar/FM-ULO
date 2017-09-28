@@ -796,6 +796,6 @@ namespace GSA.UnliquidatedObligations.Web
             => wf.RequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault();
 
         internal static IQueryable<Workflow> ApplyStandardIncludes(this IQueryable<Workflow> workflows)
-            => workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region);
+            => workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region).Include(wf => wf.UnliquidatedObligation.Review);
     }
 }

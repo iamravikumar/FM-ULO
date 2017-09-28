@@ -18,6 +18,7 @@
     @*@Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)*@
 
     @Html.Partial("Details/Workflow/_Index", Model.WorkflowViewModel)
+    @Html.Partial("Details/Workflow/_Others", Model.Others)
 }
 
 @Html.Partial("Details/Documents/Attachments/_Upload", new UploadViewModel())

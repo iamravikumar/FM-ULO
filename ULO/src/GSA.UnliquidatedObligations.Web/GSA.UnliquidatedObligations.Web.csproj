@@ -520,6 +520,7 @@
     <Content Include="Views\Users\_Details.cshtml" />
     <Content Include="Views\Shared\_ApplicationDescription.cshtml" />
     <Content Include="Views\Shared\_AuthenticatedNotAuthorized.cshtml" />
+    <Content Include="Views\Ulo\Details\Workflow\_Others.cshtml" />
     <None Include="Web.bak.config" />
     <None Include="Web.config">
       <SubType>Designer</SubType>

@@ -20,9 +20,9 @@
         <tr>
             <td class="label-container"><label for="docType">Document Type:</label></td>
             <td>@Html.DropDownList("docType", Model.DocTypes, "", new { @class = "form-control" })</td>
-            <td class="label-container"><label for="pegasysDocumentNumber">Pegasys Document Number:</label></td>
+            <td class="label-container"><label for="pegasysDocumentNumber">Pegasys Document #:</label></td>
             <td><input type="text" name="pegasysDocumentNumber" id="pegasysDocumentNumber" value="@Context.Request["pegasysDocumentNumber"]" /></td>
-            <td class="label-container"><label for="pegasysTitleNumber">Pegasys Title Number:</label></td>
+            <td class="label-container"><label for="pegasysTitleNumber">Pegasys Title #:</label></td>
             <td><input type="text" name="pegasysTitleNumber" id="pegasysTitleNumber" value="@Context.Request["pegasysTitleNumber"]" /></td>
 
         </tr>
@@ -48,7 +48,7 @@
         <tr>
             <td class="label-container"><label for="hasBeenAssignedto">Has been Assigned to:</label></td>
             <td><input type="text" name="hasBeenAssignedto" id="hasBeenAssignedto" value="@Context.Request["hasBeenAssignedto"]" /></td>
-            <td class="label-container"><label for="awardNumber">Award Number:</label></td>
+            <td class="label-container"><label for="awardNumber">Award #:</label></td>
             <td><input type="text" name="awardNumber" id="awardNumber" value="@Context.Request["awardNumber"]" /></td>
             <td class="label-container"><label for="reasonIncludedInReview">Reason Included In Review:</label></td>
             <td>@Html.DropDownList("reasons", Model.Reasons, "", new { @class = "form-control" })</td>

@@ -1,0 +1,57 @@
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result>
+
+<div class="row documents">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Other Reviews</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-responsive table-striped documents-list">
+                <thead>
+                    <tr>
+                        <th>Workflow ID</th>
+                        <th>Review</th>
+                        <th>Review Date</th>
+                        <th>Current Activity</th>
+                        <th>Reviewer</th>
+                        <th>Justification</th>
+                        <th>Disposition</th>
+                        <th># Documents</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.ActionLink(o.WorkflowId.ToString(), UloController.ActionNames.Details, new { uloId = o.UloId, workflowId = o.WorkflowId })
+                            </td>
+                            <td>
+                                @o.ReviewName
+                            </td>
+                            <td>
+                                @o.ReviewCreatedAtUtc.ToLocalTime().ToShortDateString()
+                            </td>
+                            <td>
+                                @o.WorkflowActivityName
+                            </td>
+                            <td>
+                                @o.UserName
+                            </td>
+                            <td>
+                                @o.JustificationDescription
+                            </td>
+                            <td>
+                                @o.Answer
+                            </td>
+                            <td>
+                                @o.DocumentCount
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

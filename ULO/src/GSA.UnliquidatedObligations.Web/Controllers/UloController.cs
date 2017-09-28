@@ -65,7 +65,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("ulos/myTasks")]
         public ActionResult MyTasks(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            //TODO: Due dates: calculate in model or add additional column in workflow table (ExpectedActivityDurationInSeconds, nullable, DueAt = null) 
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);

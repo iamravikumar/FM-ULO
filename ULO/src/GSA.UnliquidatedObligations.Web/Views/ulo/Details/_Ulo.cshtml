@@ -1,4 +1,4 @@
-﻿@using GSA.UnliquidatedObligations.Web.Controllers
+﻿@using GSA.UnliquidatedObligations.Web
 @model GSA.UnliquidatedObligations.Web.Models.UloViewModel
 @{
     var ulo = Model.CurretUnliquidatedObligation;
@@ -94,7 +94,7 @@
                             Date of Last Activity:
                         </dt>
                         <dd>
-                            @ulo.DateOfLastActivity
+                            @ulo.DateOfLastActivity.ToShortDateString()
                         </dd>
                     </dl>
                 </div>
@@ -116,7 +116,7 @@
                             Zone:
                         </dt>
                         <dd>
-                            @ulo.Region.Zone.ZoneName
+                            @ulo.Region.Zone.ZoneShortName
                         </dd>
                     </dl>
                 </div>
@@ -133,7 +133,7 @@
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
-                            Pegasys Document Number:
+                            Pegasys Document #:
                         </dt>
                         <dd>
                             @ulo.PegasysDocumentNumber
@@ -143,7 +143,7 @@
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
-                            Pegasys Title Number:
+                            Pegasys Title #:
                         </dt>
                         <dd>
                             @ulo.PegasysTitleNumber
@@ -153,7 +153,7 @@
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
-                            Pegasys Contract Number:
+                            Pegasys Contract #:
                         </dt>
                         <dd>
                             @ulo.ContractNum
@@ -220,7 +220,7 @@
                             RWA Completion Date:
                         </dt>
                         <dd>
-                            @ulo.RWACompletionDate
+                            @ulo.RWACompletionDate.ToShortDateString()
                         </dd>
                     </dl>
                 </div>
@@ -229,7 +229,7 @@
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
-                            Award Number:
+                            Award #:
                         </dt>
                         <dd>
                             @ulo.AwardNbr
@@ -242,7 +242,7 @@
                             Award Expiration Date:
                         </dt>
                         <dd>
-                            @ulo.EASiAwdExpirationDate
+                            @ulo.EASiAwdExpirationDate.ToShortDateString()
                         </dd>
                     </dl>
                 </div>
@@ -401,62 +401,3 @@
         </div>
     </div>
 </div>
-
-
-@if (Model.Others != null && Model.Others.Count > 0)
-{
-<div class="row documents">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Other Reviews</h3>
-        </div>
-        <div class="panel-body">
-            <table class="table table-responsive table-striped documents-list">
-                <thead>
-                    <tr>
-                        <th>Workflow ID</th>
-                        <th>Review</th>
-                        <th>Review Date</th>
-                        <th>Current Activity</th>
-                        <th>Reviewer</th>
-                        <th>Justification</th>
-                        <th>Disposition</th>
-                        <th># Documents</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var o in Model.Others)
-                    {
-                        <tr>
-                            <td>
-                                @Html.ActionLink(o.WorkflowId.ToString(), UloController.ActionNames.Details, new { uloId = o.UloId, workflowId=o.WorkflowId })
-                            </td>
-                            <td>
-                                @o.ReviewName
-                            </td>
-                            <td>
-                                @o.ReviewCreatedAtUtc.ToLocalTime().ToShortDateString()
-                            </td>
-                            <td>
-                                @o.WorkflowActivityName
-                            </td>
-                            <td>
-                                @o.UserName
-                            </td>
-                            <td>
-                                @o.JustificationDescription
-                            </td>
-                            <td>
-                                @o.Answer
-                            </td>
-                            <td>
-                                @o.DocumentCount
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-}

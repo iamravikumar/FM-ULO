@@ -313,6 +313,7 @@
           </Key>
           <Property Name="ZoneId" Type="int" Nullable="false" />
           <Property Name="ZoneName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ZoneShortName" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="AggregatedCounter">
           <Key>
@@ -1639,6 +1640,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="ZoneId" Type="Int32" Nullable="false" />
           <Property Name="ZoneName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Regions" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Regions__ZoneId__30C33EC3" FromRole="Zone" ToRole="Region" />
+          <Property Name="ZoneShortName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="AggregatedCounter">
           <Key>
@@ -2548,6 +2550,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="Zones">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Zone">
               <MappingFragment StoreEntitySet="Zones">
+                <ScalarProperty Name="ZoneShortName" ColumnName="ZoneShortName" />
                 <ScalarProperty Name="ZoneName" ColumnName="ZoneName" />
                 <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
               </MappingFragment>

@@ -22,6 +22,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
         public int ZoneId { get; set; }
         public string ZoneName { get; set; }
+        public string ZoneShortName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Region> Regions { get; set; }

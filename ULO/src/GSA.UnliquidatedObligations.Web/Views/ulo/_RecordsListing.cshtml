@@ -15,11 +15,16 @@
         <th>
             @Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")
         </th>
+        @*
+    <th>
+        @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review ID")
+    </th>
+        *@
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review ID")
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Review.ReviewName, overrideDisplayName: "Review")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionNumber, overrideDisplayName: "Region")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
@@ -51,11 +56,16 @@
             <td>
                 @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
+            @*
+    <td>
+        @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
+    </td>
+            *@
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Review.ReviewName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionName)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)

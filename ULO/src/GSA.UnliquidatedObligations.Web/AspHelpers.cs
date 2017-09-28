@@ -204,5 +204,8 @@ namespace GSA.UnliquidatedObligations.Web
             }
             return new MvcHtmlString(sb.ToString());
         }
+
+        public static string ToShortDateString(this DateTime? dt)
+            => dt.HasValue ? dt.Value.ToShortDateString() : "";
     }
 }
