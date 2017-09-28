@@ -82,6 +82,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string ContractingSpecialistName { get; set; }
         public string ContractingSpecialistEmail { get; set; }
         public string BudgetAnalystEmail { get; set; }
+        public Nullable<bool> C_Temp { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }

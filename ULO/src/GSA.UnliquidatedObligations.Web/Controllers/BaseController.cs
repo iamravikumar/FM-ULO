@@ -62,7 +62,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             pageAlerts.Add(pa);
         }
 
-        protected ActionResult RedirectToIndex()
+        protected virtual ActionResult RedirectToIndex()
             => RedirectToAction("Index");
 
         public string CurrentUserId
@@ -100,9 +100,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
-            ViewBag.TotalItemCount = q.Count();
-            q = ApplySort(q, sortCol, sortDir, colMapper);
-            q = ApplyPagination(q, page, pageSize);
+            var cnt = q.Count();
+            ViewBag.TotalItemCount = cnt;
+            if (cnt == 0)
+            {
+                q = (new T[0]).AsQueryable();
+            }
+            else
+            {
+                q = ApplySort(q, sortCol, sortDir, colMapper);
+                q = ApplyPagination(q, page, pageSize);
+            }
             return q;
         }
 

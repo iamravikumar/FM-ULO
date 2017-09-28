@@ -86,7 +86,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ActionName(ActionNames.Unassigned)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
         [Route("ulos/unassigned")]
-        public ActionResult Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
             ViewBag.AllAreUnassigned = true;         
 
@@ -115,8 +115,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 AddPageAlert($"You're not a member of any related groups and will not have any unassigned items.", false, PageAlert.AlertTypes.Warning);
             }
 
-            var workflows = ApplyBrowse(
-                DB.Workflows.Where(predicate).ApplyStandardIncludes(),
+            var prohibitedWorkflowIds = await DB.WorkflowProhibitedOwners.Where(z => z.ProhibitedOwnerUserId == CurrentUserId).Select(z => z.WorkflowId).ToListAsync();
+
+            var workflows = from wf in DB.Workflows.Where(predicate)
+                            where !prohibitedWorkflowIds.Contains(wf.WorkflowId)
+                            select wf;
+
+            workflows = ApplyBrowse(
+                workflows.ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             return View(workflows);
         }

@@ -62,13 +62,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 groupOwnerId = PortalHelpers.GetUserId(wfDefintionOwnerName);
             }
 
+            var prohibitedUserIds = DB.WorkflowProhibitedOwners.Where(z => z.WorkflowId == workflow.WorkflowId).Select(z => z.ProhibitedOwnerUserId).ToList();
+
             var userSelectItems = Cacher.FindOrCreateValWithSimpleKey(
                 Cache.CreateKey(groupOwnerId, uloRegionId, "fdsfdsaf"),
                 () => DB.UserUsers
                     .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId && uu.ChildUser.UserType == AspNetUser.UserTypes.Person)
-                    .Select(uu => new { UserName = uu.ChildUser.UserName, UserId = uu.ChildUserId }).ConvertAll(z=>PortalHelpers.CreateUserSelectListItem(z.UserId, z.UserName)).AsReadOnly(),
-                UloHelpers.MediumCacheTimeout
-                    ).ToList();
+                    .Select(uu => new { UserName = uu.ChildUser.UserName, UserId = uu.ChildUserId }).ToList(),
+                    UloHelpers.MediumCacheTimeout
+                    ).ConvertAll(z => PortalHelpers.CreateUserSelectListItem(z.UserId, z.UserName, prohibitedUserIds.Contains(z.UserId))).ToList();
 
             if (Cacher.FindOrCreateValWithSimpleKey(
                 Cache.CreateKey(uloRegionId, User.Identity.Name),
@@ -80,7 +82,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 UloHelpers.MediumCacheTimeout
                 ))
             {
-                userSelectItems.Add(CurrentUser.ToSelectListItem());
+                userSelectItems.Add(CurrentUser.ToSelectListItem(prohibitedUserIds.Contains(CurrentUserId)));
             }
 
             userSelectItems = userSelectItems.OrderBy(z => z.Text).ToList();

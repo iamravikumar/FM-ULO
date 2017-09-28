@@ -581,14 +581,15 @@ namespace GSA.UnliquidatedObligations.Web
         public static IList<SelectListItem> CreateSelectList(IEnumerable<AspNetUser> aspNetUsers)
             => aspNetUsers.Select(z => CreateUserSelectListItem(z.Id, z.UserName)).ToList();
 
-        public static SelectListItem ToSelectListItem(this AspNetUser u)
-            => CreateUserSelectListItem(u.Id, u.UserName);
+        public static SelectListItem ToSelectListItem(this AspNetUser u, bool disabled=false)
+            => CreateUserSelectListItem(u.Id, u.UserName, disabled);
 
-        public static SelectListItem CreateUserSelectListItem(string userId, string username)
+        public static SelectListItem CreateUserSelectListItem(string userId, string username, bool disabled=false)
             => new SelectListItem
             {
                 Text = username,
-                Value = userId
+                Value = userId,
+                Disabled = disabled
             };
 
         public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<string> stringsToConvert)

@@ -61,7 +61,7 @@ WholeAgency,ULO Workflow</Value>
       <Value Profile="(Default)">PreAssignment</Value>
     </Setting>
     <Setting Name="SprintName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">United</Value>
+      <Value Profile="(Default)">Vikings</Value>
     </Setting>
     <Setting Name="SecureAuthUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx</Value>

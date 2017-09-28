@@ -401,6 +401,9 @@
     <Compile Include="Data\WorkflowHistory.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\WorkflowProhibitedOwner.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\Workflow_.cs" />
     <Compile Include="Data\Zone.cs">
       <DependentUpon>ULO.tt</DependentUpon>

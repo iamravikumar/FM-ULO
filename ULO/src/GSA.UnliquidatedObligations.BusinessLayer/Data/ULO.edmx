@@ -213,7 +213,7 @@
           <Property Name="TradingPartnerType" Type="varchar" MaxLength="50" />
           <Property Name="VendorAgencyCode" Type="varchar" MaxLength="50" />
           <Property Name="VendorBureauCode" Type="varchar" MaxLength="50" />
-          <Property Name="Valid" Type="bit" />
+          <Property Name="_Temp" Type="bit" />
           <Property Name="Status" Type="varchar" MaxLength="50" />
           <Property Name="AwardNbr" Type="varchar" MaxLength="50" />
           <Property Name="ContractingOfficersName" Type="varchar" MaxLength="50" />
@@ -244,6 +244,7 @@
           <Property Name="ContractingSpecialistName" Type="nvarchar" MaxLength="100" />
           <Property Name="ContractingSpecialistEmail" Type="varchar" MaxLength="254" />
           <Property Name="BudgetAnalystEmail" Type="varchar" MaxLength="254" />
+          <Property Name="Valid" Type="bit" />
         </EntityType>
         <EntityType Name="UserUsers">
           <Key>
@@ -460,6 +461,16 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="SystemCnt" Type="int" />
           <Property Name="PreAssignmentCnt" Type="int" />
           <Property Name="TheCloserCnt" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="WorkflowProhibitedOwners">
+          <Key>
+            <PropertyRef Name="WorkflowId" />
+            <PropertyRef Name="ProhibitedOwnerUserId" />
+          </Key>
+          <Property Name="WorkflowId" Type="int" Nullable="false" />
+          <Property Name="ProhibitedOwnerUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <Association Name="FK__Attachmen__Creat__153B1FDF">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
@@ -985,6 +996,12 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
     [ReviewStats].[TheCloserCnt] AS [TheCloserCnt]
     FROM [dbo].[ReviewStats] AS [ReviewStats]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="WorkflowProhibitedOwners" EntityType="Self.WorkflowProhibitedOwners" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [WorkflowProhibitedOwners].[WorkflowId] AS [WorkflowId], 
+    [WorkflowProhibitedOwners].[ProhibitedOwnerUserId] AS [ProhibitedOwnerUserId]
+    FROM [dbo].[WorkflowProhibitedOwners] AS [WorkflowProhibitedOwners]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK__Attachmen__Creat__153B1FDF" Association="Self.FK__Attachmen__Creat__153B1FDF">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Attachments" EntitySet="Attachments" />
@@ -1325,6 +1342,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Document" EntitySet="Documents" />
           </AssociationSet>
+          <EntitySet Name="WorkflowProhibitedOwners" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowProhibitedOwner" />
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -2161,6 +2179,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="ContractingSpecialistName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ContractingSpecialistEmail" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
           <Property Name="BudgetAnalystEmail" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="C_Temp" Type="Boolean" />
         </EntityType>
         <Association Name="FK__Notes__UloId__5555A4F4">
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
@@ -2258,6 +2277,14 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="WorkflowProhibitedOwner">
+          <Key>
+            <PropertyRef Name="WorkflowId" />
+            <PropertyRef Name="ProhibitedOwnerUserId" />
+          </Key>
+          <Property Name="WorkflowId" Type="Int32" Nullable="false" />
+          <Property Name="ProhibitedOwnerUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2691,6 +2718,7 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <EntitySetMapping Name="UnliquidatedObligations">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation">
               <MappingFragment StoreEntitySet="UnliquidatedObligations">
+                <ScalarProperty Name="C_Temp" ColumnName="_Temp" />
                 <ScalarProperty Name="BudgetAnalystEmail" ColumnName="BudgetAnalystEmail" />
                 <ScalarProperty Name="ContractingSpecialistEmail" ColumnName="ContractingSpecialistEmail" />
                 <ScalarProperty Name="ContractingSpecialistName" ColumnName="ContractingSpecialistName" />
@@ -2772,6 +2800,14 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="SoftDelete" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.SoftDelete" />
+          <EntitySetMapping Name="WorkflowProhibitedOwners">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowProhibitedOwner">
+              <MappingFragment StoreEntitySet="WorkflowProhibitedOwners">
+                <ScalarProperty Name="ProhibitedOwnerUserId" ColumnName="ProhibitedOwnerUserId" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
