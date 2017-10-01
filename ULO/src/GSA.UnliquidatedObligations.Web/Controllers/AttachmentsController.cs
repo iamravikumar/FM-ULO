@@ -138,7 +138,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 attachment.Delete(CurrentUserId);
                 if (document.Attachments.Where(a => a.AttachmentsId != attachmentId).Count() == 0)
                 {
-                    Log.Information("Document {DocumentId} was soft deleted because it had not more attachments", document.DocumentId);
+                    Log.Information("Document {DocumentId} was soft deleted because it had no more attachments", document.DocumentId);
                     document.Delete(CurrentUserId);
                 }
                 await DB.SaveChangesAsync();

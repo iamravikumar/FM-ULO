@@ -44,7 +44,7 @@
                     @Html.SortableHeaderFor(model => model.Comments)
                 </th>
                 <th>
-                    @Html.SortableHeaderFor(model => model.Region.RegionName, overrideDisplayName: "Region")
+                    @Html.SortableHeaderFor(model => model.Region.RegionNumber, overrideDisplayName: "Region")
                 </th>
                 @*<th></th>*@
             </tr>
@@ -95,13 +95,8 @@
                     @Html.DisplayFor(modelItem => item.Comments)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Region.RegionName)
+                    @Html.DisplayFor(modelItem => item.Region.RegionNumber)
                 </td>
-                @*<td>
-                        @Html.ActionLink("Edit", "Edit", new { id=item.ReviewId }) |
-                        @Html.ActionLink("Details", "Details", new { id=item.ReviewId }) |
-                        @Html.ActionLink("Delete", "Delete", new { id=item.ReviewId })
-                    </td>*@
             </tr>
                         }
 

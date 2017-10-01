@@ -253,11 +253,5 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             reviewModel.ReviewScopes = m.ReviewScopes;
             return View(reviewModel);
         }
-
-        public ActionResult Edit(int id)
-        {
-            var review = DB.Reviews.Find(id);
-            return View(review);
-        }
     }
 }

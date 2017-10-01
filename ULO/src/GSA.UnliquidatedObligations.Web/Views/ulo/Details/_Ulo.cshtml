@@ -15,124 +15,6 @@
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
-                            ULO ID:
-                        </dt>
-                        <dd>
-                            @ulo.UloId
-                        </dd>
-                    </dl>
-                </div>
-                @if (wf != null)
-                {
-                    <div class="col-md-4">
-                        <dl class="dl-horizontal">
-                            <dt>
-                                Workflow ID:
-                            </dt>
-                            <dd>
-                                @(wf.WorkflowId)
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="col-md-4">
-                        <dl class="dl-horizontal">
-                            <dt>
-                                Assigned To:
-                            </dt>
-                            <dd>
-                                @if (wf.AspNetUser==null || wf.AspNetUser.IsGroup)
-                                {
-                                    <text>Unassigned</text>
-                                }
-                                else
-                                {
-                                    <text>@wf.AspNetUser.UserName</text>
-                                }
-                                @{
-                                    string reassignButtonText = null;
-                                    if (wf.OwnerUserId == PortalHelpers.GetUserId(User?.Identity?.Name))
-                                    {
-                                        reassignButtonText = "Request Reassignment";
-                                    }
-                                    else if (Model.BelongsToMyUnassignmentGroup)
-                                    {
-                                        reassignButtonText = "Reassign";
-                                    }
-                                    else if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanReassign))
-                                    {
-                                        var userReassignRegions = User.GetReassignmentGroupRegions();
-                                        if (userReassignRegions.Contains(ulo.RegionId))
-                                        {
-                                            reassignButtonText = "Reassign";
-                                        }
-                                    }
-                                    if (reassignButtonText != null)
-                                    {
-                                        var modalId = "#" + wf.WorkflowId + "RequestForReassignModal";
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">@reassignButtonText</button>
-                                    }
-                                }
-                            </dd>
-                        </dl>
-                    </div>
-                }
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Reason in Review:
-                        </dt>
-                        <dd>
-                            @ulo.ReasonIncludedInReview
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Date of Last Activity:
-                        </dt>
-                        <dd>
-                            @ulo.DateOfLastActivity.ToShortDateString()
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Accounting Period:
-                        </dt>
-                        <dd>
-                            @ulo.ActgPd
-                        </dd>
-                    </dl>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Zone:
-                        </dt>
-                        <dd>
-                            @ulo.Region.Zone.ZoneShortName
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>Region:</dt>
-                        <dd>
-                            @ulo.Region.RegionName
-                        </dd>
-                    </dl>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
                             Pegasys Document #:
                         </dt>
                         <dd>
@@ -157,6 +39,89 @@
                         </dt>
                         <dd>
                             @ulo.ContractNum
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Date of Last Activity:
+                        </dt>
+                        <dd>
+                            @ulo.DateOfLastActivity.ToShortDateString()
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Accounting Period:
+                        </dt>
+                        <dd>
+                            @ulo.ActgPd
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Assigned To:
+                        </dt>
+                        <dd>
+                            @if (wf.AspNetUser == null || wf.AspNetUser.IsGroup)
+                            {
+                                <text>Unassigned</text>
+                            }
+                            else
+                            {
+                                <text>@wf.AspNetUser.UserName</text>
+                            }
+                            @{
+                                string reassignButtonText = null;
+                                if (wf.OwnerUserId == PortalHelpers.GetUserId(User?.Identity?.Name))
+                                {
+                                    reassignButtonText = "Request Reassignment";
+                                }
+                                else if (Model.BelongsToMyUnassignmentGroup)
+                                {
+                                    reassignButtonText = "Reassign";
+                                }
+                                else if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanReassign))
+                                {
+                                    var userReassignRegions = User.GetReassignmentGroupRegions();
+                                    if (userReassignRegions.Contains(ulo.RegionId))
+                                    {
+                                        reassignButtonText = "Reassign";
+                                    }
+                                }
+                                if (reassignButtonText != null)
+                                {
+                                    var modalId = "#" + wf.WorkflowId + "RequestForReassignModal";
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">@reassignButtonText</button>
+                                }
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Zone:
+                        </dt>
+                        <dd>
+                            @ulo.Region.Zone.ZoneShortName
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>Region:</dt>
+                        <dd>
+                            @ulo.Region.RegionNumber
                         </dd>
                     </dl>
                 </div>
@@ -344,6 +309,63 @@
                         </dd>
                     </dl>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Review Name:
+                        </dt>
+                        <dd>
+                            @ulo.Review.ReviewName
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Review Type:
+                        </dt>
+                        <dd>
+                            @ulo.Review.ReviewType
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Reason in Review:
+                        </dt>
+                        <dd>
+                            @ulo.ReasonIncludedInReview
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            ULO ID:
+                        </dt>
+                        <dd>
+                            @ulo.UloId
+                        </dd>
+                    </dl>
+                </div>
+                @if (wf != null)
+                {
+                    <div class="col-md-4">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                Workflow ID:
+                            </dt>
+                            <dd>
+                                @(wf.WorkflowId)
+                            </dd>
+                        </dl>
+                    </div>
+                }
             </div>
             <div class="row">
                 <table class="table table-responsive table-striped">

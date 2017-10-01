@@ -68,10 +68,10 @@
                 @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneName)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneShortName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionName)
+                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.DocType)

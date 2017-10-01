@@ -509,7 +509,6 @@
     <Content Include="Content\ULO\Workflows\workflows.css" />
     <Content Include="Views\Reviews\Create.cshtml" />
     <Content Include="Views\Reviews\Details.cshtml" />
-    <Content Include="Views\Reviews\Edit.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Reports\Index.cshtml" />
     <Content Include="Views\Shared\_PaginationPartial.cshtml" />
