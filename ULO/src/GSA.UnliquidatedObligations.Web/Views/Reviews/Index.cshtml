@@ -11,7 +11,7 @@
     @if (User.HasPermission(ApplicationPermissionNames.CanCreateReviews))
     {
         <p>
-            <input type="button" value="Create New" class="btn btn-primary" onclick="location.href='@Url.Action(ReviewsController.ActionNames.Create)'" />
+            <input type="button" value="Create" class="btn btn-primary" onclick="location.href='@Url.Action(ReviewsController.ActionNames.Create)'" />
         </p>
     }
     <table class="table">

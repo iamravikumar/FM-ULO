@@ -100,6 +100,43 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 new RequestForReassignmentViewModel(suggestedReviewerId, justificationKey, requestForReassignmentId, comments, workflowId, uloRegionId, userSelectItems, wfDesc.GetResassignmentJustifications()));
         }
 
+        private async Task<ActionResult> HandleReassignmentRequestAsync(int workflowId, RequestForReassignmentViewModel m)
+        {
+            var wf = await FindWorkflowAsync(workflowId, false);
+            if (wf == null) return HttpNotFound();
+
+            var canHandleReassignment = User.HasPermission(ApplicationPermissionNames.CanReassign);
+            if (!canHandleReassignment && m.SuggestedReviewerId == CurrentUserId)
+            {
+                canHandleReassignment = User.GetUserGroupRegions(wf.OwnerUserId).Contains(wf.UnliquidatedObligation.RegionId);
+            }
+            var rfr = new RequestForReassignment
+            {
+                UnliqudatedObjectsWorkflowQuestion = new UnliqudatedObjectsWorkflowQuestion
+                {
+                    JustificationKey = m.JustificationKey,
+                    UserId = CurrentUserId,
+                    Answer = "Reassignment",
+                    WorkflowId = workflowId,
+                    Comments = m.Comments,
+                    WorkflowRowVersion = wf.WorkflowRowVersion,
+                    CreatedAtUtc = DateTime.UtcNow
+                },
+                WorkflowId = workflowId,
+                SuggestedReviewerId = m.SuggestedReviewerId,
+                IsActive = !canHandleReassignment
+            };
+            DB.RequestForReassignments.Add(rfr);
+            await DB.SaveChangesAsync();
+            if (canHandleReassignment)
+            {
+                var ret = await Manager.ReassignAsync(wf, m.SuggestedReviewerId, UloController.ActionNames.MyTasks);
+                await DB.SaveChangesAsync();
+                return ret;
+            }
+            return null;
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ReassignFromList(
@@ -113,21 +150,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var wf = await FindWorkflowAsync(workflowId, false);
-                if (wf == null) return HttpNotFound();
-                var question = new UnliqudatedObjectsWorkflowQuestion
-                {
-                    JustificationKey = requestForReassignmentViewModel.JustificationKey,
-                    UserId = CurrentUserId,
-                    Answer = "Reassigned",
-                    WorkflowId = workflowId,
-                    Comments = requestForReassignmentViewModel.Comments,
-                    WorkflowRowVersion = wf.WorkflowRowVersion,
-                    CreatedAtUtc = DateTime.UtcNow
-                };
-                var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, UloController.ActionNames.Index);
-                await DB.SaveChangesAsync();
-//                return ret;
+                await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel);
             }
             return Redirect(Request.UrlReferrer?.ToString());
         }
@@ -146,34 +169,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var wf = await FindWorkflowAsync(workflowId, false);
-                if (wf == null) return HttpNotFound();
-                var requestForReassignment =
-                    await DB.RequestForReassignments.FirstOrDefaultAsync(
-                        rr => rr.WorkflowId == workflowId);
-                var question = new UnliqudatedObjectsWorkflowQuestion
-                {
-                    JustificationKey = requestForReassignmentViewModel.JustificationKey,
-                    UserId = CurrentUserId,
-                    Answer = "Reassigned",
-                    WorkflowId = workflowId,
-                    Comments = requestForReassignmentViewModel.Comments,
-                    WorkflowRowVersion = wf.WorkflowRowVersion,
-                    CreatedAtUtc = DateTime.UtcNow
-                };
-                DB.UnliqudatedObjectsWorkflowQuestions.Add(question);
-                await DB.SaveChangesAsync();
-
-                if (requestForReassignment == null && User.HasPermission(ApplicationPermissionNames.CanReassign))
-                {
-                    var ret = await Manager.ReassignAsync(wf, requestForReassignmentViewModel.SuggestedReviewerId, "Index");
-                    await DB.SaveChangesAsync();
-                    return ret;
-                }
-                else if (requestForReassignment != null)
-                {
-                    return await Reassign(wf, question, requestForReassignment, requestForReassignmentViewModel.SuggestedReviewerId);
-                }
+                return await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel);
             }
 
             return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);
@@ -272,18 +268,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             };
             DB.RequestForReassignments.Add(requestForReassignment);
             var ret = await Manager.RequestReassignAsync(wf);
-            await DB.SaveChangesAsync();
-            return ret;
-        }
-
-        private async Task<ActionResult> Reassign(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, RequestForReassignment requestForReassignment, string suggestedReviewerId)
-        {
-            requestForReassignment.SuggestedReviewerId = suggestedReviewerId;
-            requestForReassignment.UnliqudatedWorkflowQuestionsId = question.UnliqudatedWorkflowQuestionsId;
-            requestForReassignment.WorkflowId = wf.WorkflowId;
-            requestForReassignment.IsActive = false;
-            var ret = await Manager.ReassignAsync(wf, suggestedReviewerId, "Index");
-            //TODO: add redirect method here.
             await DB.SaveChangesAsync();
             return ret;
         }
