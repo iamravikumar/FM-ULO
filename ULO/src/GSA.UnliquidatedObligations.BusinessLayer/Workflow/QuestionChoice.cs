@@ -9,6 +9,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
     [DataContract(Name = "QuestionChoice", Namespace = UloHelpers.WorkflowDescUrn)]
     public class QuestionChoice
     {
+        public static readonly QuestionChoice[] None = new QuestionChoice[0];
+
         [DataMember(Name= "Value")]
         [JsonProperty("value")]
         public string Value { get; set; }

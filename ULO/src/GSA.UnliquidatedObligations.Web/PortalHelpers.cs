@@ -127,6 +127,8 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static string ReassignGroupUserId
             => GetUserId(Properties.Settings.Default.ReassignGroupUserName);
+        public static string ReassignGroupUserName
+            => Properties.Settings.Default.ReassignGroupUserName;
 
         public static IList<int?> GetUserGroupRegions(this IPrincipal user, string groupNameOrId)
             => Cacher.FindOrCreateValWithSimpleKey(

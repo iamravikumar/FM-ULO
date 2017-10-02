@@ -85,7 +85,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 userSelectItems.Add(CurrentUser.ToSelectListItem(prohibitedUserIds.Contains(CurrentUserId)));
             }
 
+            if (workflow.OwnerUserId == CurrentUserId)
+            {
+                userSelectItems.Remove(userSelectItems.Where(z => z.Value == CurrentUserId).ToList());
+            }
+
             userSelectItems = userSelectItems.OrderBy(z => z.Text).ToList();
+
+            userSelectItems.Insert(0, PortalHelpers.CreateUserSelectListItem(PortalHelpers.ReassignGroupUserId, PortalHelpers.ReassignGroupUserName));
 
             var requestForReassignmentId = requestForReassignment?.RequestForReassignmentID;
             var suggestedReviewerId = requestForReassignment != null ? requestForReassignment.SuggestedReviewerId : "";
@@ -127,14 +134,22 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 IsActive = !canHandleReassignment
             };
             DB.RequestForReassignments.Add(rfr);
-            await DB.SaveChangesAsync();
-            if (canHandleReassignment)
+            try
             {
-                var ret = await Manager.ReassignAsync(wf, m.SuggestedReviewerId, UloController.ActionNames.MyTasks);
-                await DB.SaveChangesAsync();
-                return ret;
+                if (!canHandleReassignment && wf.OwnerUserId == CurrentUserId)
+                {
+                    wf.OwnerUserId = PortalHelpers.ReassignGroupUserId;
+                }
+                else if (canHandleReassignment)
+                {
+                    return await Manager.ReassignAsync(wf, m.SuggestedReviewerId, UloController.ActionNames.MyTasks);
+                }
+                return null;
             }
-            return null;
+            finally
+            {
+                await DB.SaveChangesAsync();
+            }
         }
 
         [HttpPost]
@@ -150,7 +165,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel);
+                return await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel) ?? RedirectToHome();
             }
             return Redirect(Request.UrlReferrer?.ToString());
         }
@@ -169,7 +184,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                return await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel);
+                return await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel) ?? RedirectToHome();
             }
 
             return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);

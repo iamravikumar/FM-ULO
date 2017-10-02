@@ -16,7 +16,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected readonly ULODBEntities DB;
         protected readonly IComponentContext ComponentContext;
         protected readonly ICacher Cacher;
-        protected readonly ILogger Log;
+        internal readonly ILogger Log;
 
         protected BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher, ILogger log)
         {
@@ -61,6 +61,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             pageAlerts.Add(pa);
         }
+
+        protected ActionResult RedirectToHome()
+            => RedirectToAction(UloController.ActionNames.Home, UloController.Name);
 
         protected virtual ActionResult RedirectToIndex()
             => RedirectToAction("Index");

@@ -14,6 +14,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         public List<QuestionChoice> Choices { get; set; }
 
         public IEnumerable<QuestionChoice> WhereApplicable(string docType)
-            => Choices.Where(z => z.IsApplicable(docType));
+            => Choices == null ? QuestionChoice.None : Choices.Where(z => z.IsApplicable(docType));
     }
 }

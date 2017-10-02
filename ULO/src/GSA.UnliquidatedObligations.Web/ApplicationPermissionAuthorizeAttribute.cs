@@ -30,6 +30,16 @@ namespace GSA.UnliquidatedObligations.Web
             return false;
         }
 
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        {
+            var c = filterContext.Controller as Controllers.BaseController;
+            if (c != null)
+            {
+                c.Log.Error("Unauthorized access attempt.  User does not have any of the specified application persissions {@ApplicationPermissions}", ApplicationPermissions);
+            }
+            base.HandleUnauthorizedRequest(filterContext);
+        }
+
         public static bool HasPermission(ClaimsPrincipal user, ApplicationPermissionNames permission)
         {
             try

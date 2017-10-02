@@ -28,6 +28,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             public const string Index = "Index";
             public const string MyTasks = "MyTasks";
+            public const string Home = MyTasks;
             public const string Search = "Search";
             public const string RequestForReassignments = "RequestForReassignments";
             public const string Unassigned = "Unassigned";
