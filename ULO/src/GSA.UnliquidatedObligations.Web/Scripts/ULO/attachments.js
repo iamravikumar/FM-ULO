@@ -22,13 +22,20 @@ function addAddAttachmentClick() {
 function addRow(attachment, documentId) {
     //var dId = $(this).siblings(".document-id-hidden")[0].value;
     //alert("JBT_addRow - 1");
+    //alert(attachment.AttachmentsId);
     $("#" + documentId + "Modal .attachments-heading-row").addClass("show").removeClass("hide");
-    $("#" + documentId + "Modal .attachments > tbody:last-child").append("<tr class='temp-attachment' id='attachment" + attachment.AttachmentsId + "'><td class='file-name'>" + attachment.FileName + "</td><td class='actions'><a class='attachments-view' href='" + attachment.FilePath + "' target='_blank'>View</a> | <a class='attachments-delete' data-target='" + attachment.AttachmentsId + "'>Delete</a></td></tr>");
+    $("#" + documentId + "Modal .attachments > tbody:last-child").append(
+        "<tr class='temp-attachment' id='attachment" + attachment.AttachmentsId + "'>"+
+        "<td class='file-name'>" + attachment.FileName + "</td>"+
+        "<td class='actions'><a class='attachments-delete' href='#' onclick='deleteAttachmentRow(" + attachment.AttachmentsId + ")' data-target='" + attachment.AttachmentsId + "'>Delete</a></td>" +
+        "</tr>");
     addDeleteAttachmentClick();
 }
 
 function deleteAttachmentRow(attachId) {
     $("#attachment" + attachId).remove();
+    newRemovedAttachmentIds[newRemovedAttachmentIds.length] = attachId;
+    return false;
 }
 
 function addDeleteAttachmentClick() {

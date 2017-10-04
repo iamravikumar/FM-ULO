@@ -170,7 +170,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.Search)]
         [Route("ulos/search")]
-        public async Task<ActionResult> Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId,
+        public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             var test = HttpUtility.UrlEncode(reasons);
@@ -178,14 +178,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             wfPredicate = wfPredicate.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
               baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId);
 
-            var workflows = await ApplyBrowse(
+            var workflows = ApplyBrowse(
                 DB.Workflows.AsNoTracking().Where(wfPredicate).
                 Include(wf => wf.UnliquidatedObligation).AsNoTracking().
                 Include(wf => wf.UnliquidatedObligation.Region).AsNoTracking().
                 Include(wf => wf.UnliquidatedObligation.Region.Zone).AsNoTracking().
                 Include(wf => wf.RequestForReassignments).AsNoTracking().
                 Include(wf => wf.AspNetUser).AsNoTracking(),
-                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToListAsync();
+                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToList();
 
             var baCodes = Cacher.FindOrCreateValWithSimpleKey(
                     Cache.CreateKey(nameof(Search), "baCodes"),

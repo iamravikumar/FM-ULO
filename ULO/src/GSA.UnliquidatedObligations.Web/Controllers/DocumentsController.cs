@@ -103,7 +103,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<JsonResult> Save(int? documentId, string documentName, int workflowId)
+        public async Task<JsonResult> Save(int? documentId, string documentName, int workflowId, string newRemovedAttachmentIds)
         {
             if (!ModelState.IsValid) throw new ArgumentException(ModelState.ToString(), nameof(ModelState));
             Document document;
@@ -142,21 +142,25 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             await DB.SaveChangesAsync();
             if (TempData["attachments"] != null)
             {
+                var rids = CSV.ParseIntegerRow(newRemovedAttachmentIds);
                 var attachmentsTempData = (List<Attachment>)TempData["attachments"];
                 foreach (var tempAttachment in attachmentsTempData)
                 {
-                    var attachment = new Attachment
+                    if (!rids.Contains(tempAttachment.AttachmentsId))
                     {
-                        FileName = tempAttachment.FileName,
-                        FilePath = $"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat",
-                        DocumentId = document.DocumentId,
-                        FileSize = tempAttachment.FileSize,
-                        ContentType = tempAttachment.ContentType,
-                        CreatedByUserId = tempAttachment.CreatedByUserId
-                    };
-                    var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
-                    System.IO.File.Copy(tempAttachment.FilePath, path);
-                    DB.Attachments.Add(attachment);
+                        var attachment = new Attachment
+                        {
+                            FileName = tempAttachment.FileName,
+                            FilePath = $"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat",
+                            DocumentId = document.DocumentId,
+                            FileSize = tempAttachment.FileSize,
+                            ContentType = tempAttachment.ContentType,
+                            CreatedByUserId = tempAttachment.CreatedByUserId
+                        };
+                        var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
+                        System.IO.File.Copy(tempAttachment.FilePath, path);
+                        DB.Attachments.Add(attachment);
+                    }
                     Stuff.FileTryDelete(tempAttachment.FileName);
                 }
                 await DB.SaveChangesAsync();

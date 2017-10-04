@@ -86,6 +86,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     }
                     var attachment = new Attachment
                     {
+                        AttachmentsId = Stuff.Random.Next(int.MaxValue),
                         FileName = fileContent.FileName,
                         FilePath = path,
                         CreatedByUserId = CurrentUserId,

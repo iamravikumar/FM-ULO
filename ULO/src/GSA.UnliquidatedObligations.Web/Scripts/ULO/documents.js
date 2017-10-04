@@ -33,21 +33,21 @@ function addDocumentSaveClick() {
         var workflowId = currentWorkflowId;
         var documentTypeId = $("#" + documentId + "ModalDocumentType").val();
         var documentName = $("#" + documentId + "ModalDocumentName").val();
-        if (documentTypeId === "") {
-            showErrMsg("You must select a Document Type before saving", $(this));
+        if (documentName == "") {
+            showDocumentErrMsg("You must enter a Document Name before saving", this);
             setButtonActions(true);
-        } else if (documentName === "") {
-            showErrMsg("You must enter a Document Name before saving", $(this));
-            setButtonActions(true)   
         }
+        else if (documentTypeId == "") {
+            showDocumentErrMsg("You must select a Document Type before saving", this);
+            setButtonActions(true);
+        } 
         else if (!attachmentsPresent()) {
-            showErrMsg("You must add attachments before saving", $(this));
-            setButtonActions(true)
+            showDocumentErrMsg("You must add attachments before saving", this);
+            setButtonActions(true);
         }
         else {
             saveDocument(documentId, documentName, workflowId, documentTypeId);  
         }
-
     });
 }
 
@@ -115,12 +115,15 @@ function deleteDocumentRow(documentId) {
     $("#document" + documentId).remove();
 }
 
+var newRemovedAttachmentIds = [];
+
 function saveDocument(documentId, documentName, workflowId, documentTypeId) {
     var url = "/Documents/Save?";
     url += "documentId=" + documentId;
     url += "&documentName=" + documentName;
     url += "&workflowId=" + workflowId;
     url += "&documentTypeId=" + documentTypeId;
+    url += "&newRemovedAttachmentIds=" + newRemovedAttachmentIds;
     debugAlert(url);
     $.ajax({
         type: "POST",
@@ -141,7 +144,7 @@ function saveDocument(documentId, documentName, workflowId, documentTypeId) {
     return false;
 }
 
-function showErrMsg(msg, location) {
+function showDocumentErrMsg(msg, location) {
     $(location).siblings(".document-error-msg").html(msg);
     $(location).siblings(".document-error-msg").show();
 }
