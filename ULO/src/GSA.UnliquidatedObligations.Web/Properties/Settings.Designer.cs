@@ -159,5 +159,14 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((int)(this["ManualReassignmentEmailTemplateId"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PostAuthToken199")]
+        public string SecureAuthCookieName {
+            get {
+                return ((string)(this["SecureAuthCookieName"]));
+            }
+        }
     }
 }

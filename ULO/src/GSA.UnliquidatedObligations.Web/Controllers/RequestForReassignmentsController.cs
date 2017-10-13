@@ -123,7 +123,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     JustificationKey = m.JustificationKey,
                     UserId = CurrentUserId,
-                    Answer = "Reassignment",
+                    Answer = UnliqudatedObjectsWorkflowQuestion.CommonAnswers.Reassignment,
                     WorkflowId = workflowId,
                     Comments = m.Comments,
                     WorkflowRowVersion = wf.WorkflowRowVersion,
@@ -209,7 +209,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     JustificationKey = requestForReassignmentViewModel.JustificationKey,
                     UserId = CurrentUserId,
-                    Answer = "Request for Reasssignment",
+                    Answer = UnliqudatedObjectsWorkflowQuestion.CommonAnswers.RequestForReasssignment,
                     WorkflowId = workflowId,
                     Comments = requestForReassignmentViewModel.Comments,
                     WorkflowRowVersion = wf.WorkflowRowVersion,

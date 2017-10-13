@@ -77,6 +77,8 @@ function ChoiceChange(value, pleaseSelect, justificationKey) {
 
     var select = $("#justifications")[0];
     select.options.length = 0;
+    var mrjk = $(select).attr("mrjk");
+    justificationKey = justificationKey == null ? mrjk : justificationKey;
     var el = document.createElement("option");
     el.textContent = pleaseSelect;
     el.value = "";

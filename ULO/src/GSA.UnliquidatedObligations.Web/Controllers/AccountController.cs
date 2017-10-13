@@ -354,13 +354,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult ExternalLoginCallback(string returnUrl)
         {
             FormsAuthenticationTicket ticket = null;
-            var cookie = Request.Cookies["PostAuthToken199"];
-            if (cookie != null)
+            var cookie = Request.Cookies[Properties.Settings.Default.SecureAuthCookieName];
+            if (cookie == null)
+            {
+                Log.Error("Cannot find expected cookie from secureAuth name={CookieName}", Properties.Settings.Default.SecureAuthCookieName);
+                return RedirectToAction(ActionNames.Login);
+            }
+            else 
             {
                 ticket = FormsAuthentication.Decrypt(cookie.Value);
             }
             if (ticket == null)
             {
+                Log.Error("Must redirect as we could not decrypt {EncryptedTicket}", cookie.Value);
                 return RedirectToAction(ActionNames.Login);
             }
 
@@ -370,38 +376,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 case SignInStatus.Success:
                     Log.Information("External Login success for user {NewUserName}", ticket.Name);
                     return RedirectToLocal(returnUrl);
-                //case SignInStatus.LockedOut:
-                //    return View("Lockout");
-                //case SignInStatus.RequiresVerification:
-                //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                //case SignInStatus.Failure:
                 default:
-                    //var user = new ApplicationUser { UserName = ticket.Name, Email = ticket.UserData };
-                    //var createResult = UserManager.Create(user);
-                    //if (createResult.Succeeded)
-                    //{
+                    Log.Error("We have a secureAuth return for {UserName} but a signin status of {SignInStatus}", ticket.Name, result);
                     return View(ActionNames.Login, new LoginViewModel(true));
-                    //}
             }
-
-
-            // Sign in the user with this external login provider if the user already has a login
-            //var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
-            //switch (result)
-            //{
-            //    case SignInStatus.Success:
-            //        return RedirectToLocal(returnUrl);
-            //    case SignInStatus.LockedOut:
-            //        return View("Lockout");
-            //    case SignInStatus.RequiresVerification:
-            //        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-            //    case SignInStatus.Failure:
-            //    default:
-            //        // If the user does not have an account, then prompt the user to create an account
-            //        ViewBag.ReturnUrl = returnUrl;
-            //        ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-            //        return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
-            //}
         }
 
         //
@@ -448,35 +426,32 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            try
+            if (Properties.Settings.Default.UseDevAuthentication)
             {
-                if (Properties.Settings.Default.UseDevAuthentication)
-                {
-                    Log.Information("Dev LogOff");
-                    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-                }
-                else
-                {
-                    Log.Information("GSA LogOff");
-                    Request.GetOwinContext()
-                           .Authentication
-                           .SignOut(HttpContext.GetOwinContext()
-                                               .Authentication.GetAuthenticationTypes()
-                                               .Select(o => o.AuthenticationType).ToArray());
-                    //if (Request.Cookies["PostAuthToken199"] != null)
-                    //{
-                    //    Response.Cookies["PostAuthToken199"].Value = "";
-                    //    Response.Cookies["PostAuthToken199"].Expires = DateTime.Now.AddDays(-1);
-                    //}
-                    //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-                    //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                }
-                return RedirectToAction("Login");
+                Log.Information("Dev LogOff");
+                AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             }
-            catch (Exception ex)
+            else
             {
-                throw new Exception(ex.Message);
+                Log.Information("GSA LogOff");
+                Response.Cookies.Clear();
+                var c = new HttpCookie(Properties.Settings.Default.SecureAuthCookieName);
+                c.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(c);
+                Request.GetOwinContext()
+                        .Authentication
+                        .SignOut(HttpContext.GetOwinContext()
+                                            .Authentication.GetAuthenticationTypes()
+                                            .Select(o => o.AuthenticationType).ToArray());
+                //if (Request.Cookies["PostAuthToken199"] != null)
+                //{
+                //    Response.Cookies["PostAuthToken199"].Value = "";
+                //    Response.Cookies["PostAuthToken199"].Expires = DateTime.Now.AddDays(-1);
+                //}
+                //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
             }
+            return RedirectToAction(ActionNames.Login);
         }
 
         //
@@ -525,7 +500,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Ulo");
+            return RedirectToAction(UloController.ActionNames.Index, UloController.Name);
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult

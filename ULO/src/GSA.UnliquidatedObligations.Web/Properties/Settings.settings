@@ -75,5 +75,8 @@ WholeAgency,ULO Workflow</Value>
     <Setting Name="ManualReassignmentEmailTemplateId" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">1</Value>
     </Setting>
+    <Setting Name="SecureAuthCookieName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PostAuthToken199</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

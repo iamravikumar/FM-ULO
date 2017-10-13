@@ -71,12 +71,14 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public bool ExpectedDateForCompletionNeeded { get; set; }
 
+        public string MostRecentJustificationKey { get; set; }
+
         public AdvanceViewModel()
         {
 
         }
 
-        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, Workflow workflow, DateTime? expectedDateForCompletion = null, bool expectedDateForCompletionEditable = true, bool expectedDateForCompletionNeeded = true)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, Workflow workflow, DateTime? expectedDateForCompletion, bool expectedDateForCompletionEditable, bool expectedDateForCompletionNeeded, string mostRecentJustificationKey)
         {
             var workflowId = workflow.WorkflowId;
             Answer = question != null ? question.Answer : "";  
@@ -94,6 +96,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                     QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
                 }
             }
+            MostRecentJustificationKey = mostRecentJustificationKey;
         }
     }
 
@@ -186,7 +189,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
                         workflow.CurrentWorkflowActivityKey);
 
                 var pending = questions.Count > 0 && questions.Last().Pending ? questions.Last() : null;
-                AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, pending, workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded);
+                var mostRecentJustificationKey = QuestionsViewModel.Questions?.LastOrDefault(z=>!UnliqudatedObjectsWorkflowQuestion.CommonAnswers.IsAnyTypeOfReassignmentAnswer(z.Answer))?.JustificationKey;
+                AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, pending, workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionNeeded, mostRecentJustificationKey);
                 allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
             RequestForReassignment = Workflow.GetReassignmentRequest();
