@@ -49,7 +49,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 return View("DevLogin");
             }
 
-            var cookie = Request.Cookies["PostAuthToken199"];
+            var cookie = Request.Cookies[Properties.Settings.Default.SecureAuthCookieName];
             if (cookie == null)
             {
                 return View(new LoginViewModel());
@@ -443,13 +443,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         .SignOut(HttpContext.GetOwinContext()
                                             .Authentication.GetAuthenticationTypes()
                                             .Select(o => o.AuthenticationType).ToArray());
-                //if (Request.Cookies["PostAuthToken199"] != null)
-                //{
-                //    Response.Cookies["PostAuthToken199"].Value = "";
-                //    Response.Cookies["PostAuthToken199"].Expires = DateTime.Now.AddDays(-1);
-                //}
-                //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-                //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
             }
             return RedirectToAction(ActionNames.Login);
         }
