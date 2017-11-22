@@ -42,5 +42,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting
 
         [JsonProperty("parameters")]
         public IList<ReportParameterDescription> Parameters { get; set; }
+
+        [JsonProperty("filenamePattern")]
+        public string FilenamePattern { get; set; }
     }
 }

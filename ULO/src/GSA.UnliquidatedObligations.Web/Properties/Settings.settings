@@ -23,45 +23,11 @@
     <Setting Name="UseHangfireDashboards" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="DocTypesCsv" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">*,*
-AR,AR	
-CL,CL	
-CT,CT	
-EJ,EJ	
-EK,EK	
-EN,EN	
-EP,EP	
-EQ,EQ	
-GP,GP	
-GX,GX	
-IX,IX	
-LO,LO	
-LR,LR	
-LU,LU	
-LY,LY	
-1B,1B	
-PJ,PJ	
-PN,PN	
-PS,PS	
-PX,PX	
-PY,PY	
-QP,QP	
-RB,RB	
-RO,RO	
-S2,S2	
-UE,UE	
-</Value>
-    </Setting>
-    <Setting Name="ReviewScopeWorkflowMapCsv" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Region,Region Workflow
-WholeAgency,ULO Workflow</Value>
-    </Setting>
     <Setting Name="PreAssignmentUserUsername" Type="System.String" Scope="Application">
       <Value Profile="(Default)">PreAssignment</Value>
     </Setting>
     <Setting Name="SprintName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Vikings</Value>
+      <Value Profile="(Default)">Xerez</Value>
     </Setting>
     <Setting Name="SecureAuthUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx</Value>
@@ -77,6 +43,52 @@ WholeAgency,ULO Workflow</Value>
     </Setting>
     <Setting Name="SecureAuthCookieName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">PostAuthToken199</Value>
+    </Setting>
+    <Setting Name="LogLevel" Type="Serilog.Events.LogEventLevel" Scope="Application">
+      <Value Profile="(Default)">Information</Value>
+    </Setting>
+    <Setting Name="DocTypesCsv" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">
+          *,*
+          AR,AR
+          CL,CL
+          CT,CT
+          EJ,EJ
+          EK,EK
+          EN,EN
+          EP,EP
+          EQ,EQ
+          GP,GP
+          GX,GX
+          IX,IX
+          LO,LO
+          LR,LR
+          LU,LU
+          LY,LY
+          1B,1B
+          PJ,PJ
+          PN,PN
+          PS,PS
+          PX,PX
+          PY,PY
+          QP,QP
+          RB,RB
+          RO,RO
+          S2,S2
+          UE,UE
+        </Value>
+    </Setting>
+    <Setting Name="ReviewScopeWorkflowMapCsv" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">
+          Region,Region Workflow
+          WholeAgency,ULO Workflow
+        </Value>
+    </Setting>
+    <Setting Name="DevLoginPassword" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">123abc</Value>
+    </Setting>
+    <Setting Name="ShowSprintNameOnFooter" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

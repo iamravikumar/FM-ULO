@@ -1,28 +1,29 @@
-﻿using System;
+﻿using Autofac;
+using GSA.UnliquidatedObligations.BusinessLayer;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
 using System.Web;
-using Autofac;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using System.Web.Mvc;
-using System.Configuration;
 using System.Web.Hosting;
-using RevolutionaryStuff.Core.Caching;
-using RevolutionaryStuff.Core;
-using GSA.UnliquidatedObligations.BusinessLayer;
-using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web
 {
     public static class PortalHelpers
     {
         public static bool UseDevAuthentication => Properties.Settings.Default.UseDevAuthentication;
+        public static bool ShowSprintNameOnFooter => Properties.Settings.Default.ShowSprintNameOnFooter;
         public static string SprintName => Properties.Settings.Default.SprintName;
         public static string AdministratorEmail => Properties.Settings.Default.AdminstratorEmail;
 
@@ -155,7 +156,7 @@ namespace GSA.UnliquidatedObligations.Web
         public static IList<int?> GetReassignmentGroupRegions(this IPrincipal user)
             => user.GetUserGroupRegions(Properties.Settings.Default.ReassignGroupUserName);
 
-        public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(this Expression<Func<Workflow, bool>> originalPredicate, int? uloId, string pegasysDocumentNumber, string organization,
+        public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(int? uloId, string pegasysDocumentNumber, string organization,
            int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId)
         {
             pegasysDocumentNumber = StringHelpers.TrimOrNull(pegasysDocumentNumber);
@@ -171,6 +172,30 @@ namespace GSA.UnliquidatedObligations.Web
             awardNumber = StringHelpers.TrimOrNull(awardNumber);
             reasonIncludedInReview = StringHelpers.TrimOrNull(reasonIncludedInReview);
             status = StringHelpers.TrimOrNull(status);
+
+            if (uloId == null &&
+                pegasysDocumentNumber == null &&
+                organization == null &&
+                region == null &&
+                zone == null &&
+                fund == null &&
+                baCode == null &&
+                pegasysTitleNumber == null &&
+                pegasysVendorName == null &&
+                docType == null &&
+                contractingOfficersName == null &&
+                currentlyAssignedTo == null &&
+                hasBeenAssignedTo == null &&
+                awardNumber == null &&
+                reasonIncludedInReview == null &&
+                valid == null &&
+                status == null &&
+                reviewId == null)
+            {
+                return null;
+            }
+
+            var originalPredicate = PredicateBuilder.Create<Workflow>(wf => true);
 
             var predicate = originalPredicate;
 
@@ -703,7 +728,7 @@ namespace GSA.UnliquidatedObligations.Web
                     return db.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
                                 r => new SelectListItem
                                 {
-                                    Text = $"{r.ReviewName} - {AspHelpers.GetDisplayName(r.ReviewScope)} - {AspHelpers.GetDisplayName(r.ReviewType)}",
+                                    Text = $"{r.ReviewName} (#{r.ReviewId}) - {AspHelpers.GetDisplayName(r.ReviewScope)} - {AspHelpers.GetDisplayName(r.ReviewType)}",
                                     Value = r.ReviewId.ToString()
                                 }).
                                 ToList().
@@ -744,11 +769,11 @@ namespace GSA.UnliquidatedObligations.Web
                     }
                 },
                 UloHelpers.MediumCacheTimeout
-                );
+                ).Copy();
 
         public static IList<SelectListItem> CreateDocumentTypeSelectListItems()
             => CSV.ParseText(Properties.Settings.Default.DocTypesCsv).Where(r => r.Length == 2).ConvertAll(
-                r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) });
+                r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) }).Copy();
 
         public static IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
             => items.OrderBy(z=>z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
@@ -758,6 +783,33 @@ namespace GSA.UnliquidatedObligations.Web
             bool alreadySelected = items.FirstOrDefault(z => z.Selected) != null;
             items.Insert(0, new SelectListItem { Text = AspHelpers.PleaseSelectOne, Disabled = true, Selected=!alreadySelected, Value="" });
             return items;
+        }
+
+        public static IList<SelectListItem> Select(this IList<SelectListItem> items, object selectedValue)
+        {
+            var v = Stuff.ObjectToString(selectedValue);
+            foreach (var i in items)
+            {
+                i.Selected = i.Value == v;
+            }
+            return items;
+        }
+
+        public static IList<SelectListItem> Copy(this IEnumerable<SelectListItem> items)
+        {
+            var ret = new List<SelectListItem>();
+            foreach (var i in items)
+            {
+                ret.Add(new SelectListItem
+                {
+                    Disabled = i.Disabled,
+                    Group = i.Group,
+                    Selected = i.Selected,
+                    Text = i.Text,
+                    Value = i.Value
+                });
+            }
+            return ret;
         }
 
         public static IList<SelectListItem> CreateZoneSelectListItems()
@@ -775,7 +827,7 @@ namespace GSA.UnliquidatedObligations.Web
                     }
                 },
                 UloHelpers.MediumCacheTimeout
-                );
+                ).Copy();
 
         public static string ToFriendlySubjectCategoryClaimString(string documentType, string baCode, string orgCode, int? region)
             => $"SC (DT: {documentType}, BAC: {baCode}, OC: {orgCode}), R:{(region.HasValue ? region.ToString() : "*")}";

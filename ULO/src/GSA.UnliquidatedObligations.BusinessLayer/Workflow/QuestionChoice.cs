@@ -31,12 +31,22 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         [JsonProperty("expectedDateAlwaysShow")]
         public bool ExpectedDateAlwaysShow { get; set; }
 
-        public bool IsApplicable(string documentType)
+        [DataMember(Name = "MostRecentNonReassignmentAnswer")]
+        [JsonProperty("mostRecentNonReassignmentAnswer")]
+        public string MostRecentNonReassignmentAnswer { get; set; }
+
+        public bool IsApplicable(string documentType, string mostRecentNonReassignmentAnswer)
             =>
-                DocumentTypes == null ||
-                DocumentTypes.Count == 0 ||
-                DocumentTypes.Contains(documentType) ||
-                DocumentTypes.Contains("*");
+                (
+                    MostRecentNonReassignmentAnswer == mostRecentNonReassignmentAnswer ||
+                    MostRecentNonReassignmentAnswer == null
+                ) &&
+                (
+                    DocumentTypes == null ||
+                    DocumentTypes.Count == 0 ||
+                    DocumentTypes.Contains(documentType) ||
+                    DocumentTypes.Contains("*")
+                );
 
         public override string ToString()
             => $"{this.GetType().Name} value=[{this.Value}] docTypes=[{CSV.FormatLine(DocumentTypes, false)}]";

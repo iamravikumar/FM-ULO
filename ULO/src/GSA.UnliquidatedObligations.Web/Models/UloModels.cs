@@ -91,7 +91,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             if (workflowQuestionChoices != null)
             {
                 QuestionLabel = workflowQuestionChoices.QuestionLabel;
-                foreach (var questionChoice in workflowQuestionChoices.WhereApplicable(workflow.UnliquidatedObligation.DocType))
+                foreach (var questionChoice in workflowQuestionChoices.WhereMostApplicable(workflow.UnliquidatedObligation.DocType, workflow.MostRecentNonReassignmentAnswer))
                 {
                     QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
                 }
@@ -106,6 +106,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string Value { get; set; }
         public IList<string> JustificationKeys { get; set; } = new List<string>();
         public bool ExpectedDateAlwaysShow { get; set; }
+        public string MostRecentNonReassignmentAnswer { get; set; }
 
         public QuestionChoicesViewModel()
         {
@@ -117,6 +118,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Text = questionChoice.Text;
             Value = questionChoice.Value;
             ExpectedDateAlwaysShow = questionChoice.ExpectedDateAlwaysShow;
+            MostRecentNonReassignmentAnswer = questionChoice.MostRecentNonReassignmentAnswer;
             if (questionChoice.JustificationKeys != null)
             {
                 foreach (var justificationKey in questionChoice.JustificationKeys)
@@ -240,17 +242,19 @@ namespace GSA.UnliquidatedObligations.Web.Models
     public class FilterViewModel
     {
         public IEnumerable<Workflow> Workflows { get; set; }
+        public IEnumerable<SelectListItem> Reviews { get; set; }
         public IEnumerable<SelectListItem> DocTypes { get; set; }
         public IEnumerable<SelectListItem> Zones { get; set; }
         public IEnumerable<SelectListItem> Regions { get; set; }
         public IEnumerable<SelectListItem> BaCodes { get; set; }
         public IEnumerable<SelectListItem> Statuses { get; set; }
         public IEnumerable<SelectListItem> Reasons { get; set; }
+        public bool HasFilters { get; set; }
 
         public FilterViewModel()
         { }
 
-        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> activityNames, IEnumerable<string> statuses, IEnumerable<string> reasons)
+        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> activityNames, IEnumerable<string> statuses, IEnumerable<string> reasons, bool hasFilters)
         {
             Workflows = workflows;
             DocTypes = docTypes;
@@ -259,6 +263,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
             BaCodes = baCodes.ConvertToSelectList();
             Statuses = statuses.ConvertToSelectList();
             Reasons = reasons.ConvertToSelectList();
+            Reviews = PortalHelpers.CreateReviewSelectListItems();
+            HasFilters = hasFilters;
         }
     }
 

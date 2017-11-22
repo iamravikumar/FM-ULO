@@ -91,13 +91,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    if (model.Password != Properties.Settings.Default.DevLoginPassword)
+                    {
+                        goto case SignInStatus.Failure;
+                    }
                     Log.Information("Dev Login success for user {NewUserName}", model.Username);
                     return RedirectToLocal(returnUrl);
                 //case SignInStatus.LockedOut:
                 //    return View("Lockout");
                 //case SignInStatus.RequiresVerification:
                 //    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                //case SignInStatus.Failure:
+                case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
@@ -374,10 +378,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    Log.Information("External Login success for user {NewUserName}", ticket.Name);
+                    Log.Information("External Login success for user {NewUserName} with {EncryptedTicket}", ticket.Name, cookie.Value);
                     return RedirectToLocal(returnUrl);
                 default:
-                    Log.Error("We have a secureAuth return for {UserName} but a signin status of {SignInStatus}", ticket.Name, result);
+                    Log.Error("We have a secureAuth return for {UserName} but a signin status of {SignInStatus} for {EncryptedTicket}", ticket.Name, result, cookie.Value);
                     return View(ActionNames.Login, new LoginViewModel(true));
             }
         }

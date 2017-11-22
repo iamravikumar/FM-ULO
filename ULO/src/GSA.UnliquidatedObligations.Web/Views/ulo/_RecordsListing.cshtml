@@ -85,8 +85,11 @@
             </td>
             <td>
                 @{
-                    var isValid = item.UnliquidatedObligation.Valid == true ? "Yes" : "No";
-                    @Html.Encode(isValid)
+                    var v = item.UnliquidatedObligation.Valid;
+                    if (v != null)
+                    {
+                        @Html.Encode(v==true ? "Yes" : "No")
+                    }
                 }
             </td>
             <td>

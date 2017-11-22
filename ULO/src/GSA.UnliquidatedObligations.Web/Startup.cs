@@ -74,7 +74,7 @@ namespace GSA.UnliquidatedObligations.Web
             builder.Register<ILogger>((c, p) =>
             {
                 return new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Is(Properties.Settings.Default.LogLevel)
                 .Enrich.WithProperty("ApplicationName", Properties.Settings.Default.ApplicationName)
                 .Enrich.WithProperty("ApplicationStartupTimeUtc", DateTime.UtcNow.ToRfc8601())
                 .Enrich.WithProperty("MachineName", Environment.MachineName)

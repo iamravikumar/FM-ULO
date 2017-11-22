@@ -173,7 +173,7 @@
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Answer" Type="varchar" MaxLength="100" />
-          <Property Name="Comments" Type="varchar" MaxLength="500" />
+          <Property Name="Comments" Type="nvarchar" MaxLength="4000" />
           <Property Name="Pending" Type="bit" Nullable="false" />
           <Property Name="WorkflowRowVersion" Type="binary" MaxLength="8" Nullable="false" />
           <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
@@ -1546,7 +1546,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Answer" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Comments" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Comments" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
           <Property Name="Pending" Type="Boolean" Nullable="false" />
           <Property Name="WorkflowRowVersion" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" />
           <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />

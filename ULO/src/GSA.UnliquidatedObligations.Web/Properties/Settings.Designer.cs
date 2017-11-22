@@ -88,26 +88,6 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("*,*\r\nAR,AR\t\r\nCL,CL\t\r\nCT,CT\t\r\nEJ,EJ\t\r\nEK,EK\t\r\nEN,EN\t\r\nEP,EP\t\r\nEQ,EQ\t\r\nGP,GP\t\r\nGX,G" +
-            "X\t\r\nIX,IX\t\r\nLO,LO\t\r\nLR,LR\t\r\nLU,LU\t\r\nLY,LY\t\r\n1B,1B\t\r\nPJ,PJ\t\r\nPN,PN\t\r\nPS,PS\t\r\nPX,P" +
-            "X\t\r\nPY,PY\t\r\nQP,QP\t\r\nRB,RB\t\r\nRO,RO\t\r\nS2,S2\t\r\nUE,UE\t\r\n")]
-        public string DocTypesCsv {
-            get {
-                return ((string)(this["DocTypesCsv"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Region,Region Workflow\r\nWholeAgency,ULO Workflow")]
-        public string ReviewScopeWorkflowMapCsv {
-            get {
-                return ((string)(this["ReviewScopeWorkflowMapCsv"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PreAssignment")]
         public string PreAssignmentUserUsername {
             get {
@@ -117,7 +97,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Vikings")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Xerez")]
         public string SprintName {
             get {
                 return ((string)(this["SprintName"]));
@@ -166,6 +146,79 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public string SecureAuthCookieName {
             get {
                 return ((string)(this["SecureAuthCookieName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Information")]
+        public global::Serilog.Events.LogEventLevel LogLevel {
+            get {
+                return ((global::Serilog.Events.LogEventLevel)(this["LogLevel"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"
+          *,*
+          AR,AR
+          CL,CL
+          CT,CT
+          EJ,EJ
+          EK,EK
+          EN,EN
+          EP,EP
+          EQ,EQ
+          GP,GP
+          GX,GX
+          IX,IX
+          LO,LO
+          LR,LR
+          LU,LU
+          LY,LY
+          1B,1B
+          PJ,PJ
+          PN,PN
+          PS,PS
+          PX,PX
+          PY,PY
+          QP,QP
+          RB,RB
+          RO,RO
+          S2,S2
+          UE,UE
+        ")]
+        public string DocTypesCsv {
+            get {
+                return ((string)(this["DocTypesCsv"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\r\n          Region,Region Workflow\r\n          WholeAgency,ULO Workflow\r\n        ")]
+        public string ReviewScopeWorkflowMapCsv {
+            get {
+                return ((string)(this["ReviewScopeWorkflowMapCsv"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("123abc")]
+        public string DevLoginPassword {
+            get {
+                return ((string)(this["DevLoginPassword"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowSprintNameOnFooter {
+            get {
+                return ((bool)(this["ShowSprintNameOnFooter"]));
             }
         }
     }

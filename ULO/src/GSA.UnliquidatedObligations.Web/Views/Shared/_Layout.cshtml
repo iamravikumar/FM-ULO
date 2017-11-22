@@ -82,7 +82,10 @@
             </div>
             <div class="row">
                 <div class="col-md-4">&copy; @DateTime.Now.Year - ULO</div>
-                <div class="col-md-8 text-right">@PortalHelpers.SprintName</div>
+                @if (PortalHelpers.ShowSprintNameOnFooter)
+                {
+                    <div class="col-md-8 text-right">@PortalHelpers.SprintName</div>
+                }
             </div>
         </footer>
     </div>

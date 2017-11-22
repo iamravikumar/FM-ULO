@@ -6,5 +6,12 @@
 
 @Html.Partial("~/Views/Ulo/Search/_Filtering.cshtml", Model)
 <div id="masterRecordsListing">
-    @Html.Partial("~/Views/Ulo/Search/_Data.cshtml", Model.Workflows)
+    @if (Model.HasFilters)
+    {
+        @Html.Partial("~/Views/Ulo/Search/_Data.cshtml", Model.Workflows)
+    }
+    else
+    {
+        <h4>Please enter a search criteria then press the <span style="font-style: italic">Apply Filters</span> button</h4>
+    }
 </div>

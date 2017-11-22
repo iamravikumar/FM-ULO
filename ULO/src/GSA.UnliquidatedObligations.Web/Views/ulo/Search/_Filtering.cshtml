@@ -9,8 +9,8 @@
     <table class="table filter-region-workflows table" id="filterRegions">
 
         <tr>
-            <td class="label-container"><label for="uloId">Ulo Id:</label></td>
-            <td><input type="text" name="uloId" id="uloId" value="@Context.Request["uloId"]" /></td>
+            <td class="label-container"><label for="reviewId">Review Id:</label></td>
+            <td>@Html.DropDownList("reviewId", Model.Reviews, "", new { @class = "form-control" })</td>
             <td class="label-container"><label for="organization">Zone:</label></td>
             <td>@Html.DropDownList("zone", Model.Zones, "", new { @class = "form-control" })</td>
             <td class="label-container"><label for="region">Region:</label></td>
@@ -64,8 +64,8 @@
             </td>
             <td class="label-container"><label for="status">Status:</label></td>
             <td>@Html.DropDownList("status", Model.Statuses, "", new { @class = "form-control" })</td>
-            <td class="label-container"><label for="reviewId">Review Id:</label></td>
-            <td><input type="text" name="reviewId" id="reviewId" value="@Context.Request["reviewId"]" /></td>
+            <td class="label-container"><label for="uloId">Ulo Id:</label></td>
+            <td><input type="text" name="uloId" id="uloId" value="@Context.Request["uloId"]" /></td>
         </tr>
         <tr>
             <td colspan="4">

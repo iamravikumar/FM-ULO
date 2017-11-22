@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
@@ -48,14 +47,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
 
-        private void PopulateWorkflowDescriptionInViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType)
+        private void PopulateWorkflowDescriptionInViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType, string mostRecentNonReassignmentAnswer)
         {
             ViewBag.JustificationByKey = workflowDescription.GetJustificationByKey();
             ViewBag.WorkflowDescription = workflowDescription;
             var wawa = workflowDescription.Activities.FirstOrDefault(a => a.WorkflowActivityKey == wf.CurrentWorkflowActivityKey) as WebActionWorkflowActivity;
             var d = new Dictionary<string, QuestionChoice>();
             ViewBag.QuestionChoiceByQuestionChoiceValue = d;
-            wawa?.QuestionChoices?.WhereApplicable(docType).ForEach(z => d[z.Value] = z);
+            wawa?.QuestionChoices?.WhereMostApplicable(docType, mostRecentNonReassignmentAnswer).ForEach(z => d[z.Value] = z);
         }
 
         [ActionName(ActionNames.Index)]
@@ -173,10 +172,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
-            var test = HttpUtility.UrlEncode(reasons);
-            var wfPredicate = PredicateBuilder.Create<Workflow>(wf => true);
-            wfPredicate = wfPredicate.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
+            var wfPredicate = PortalHelpers.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
               baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId);
+            bool hasFilters = true;
+            if (wfPredicate == null)
+            {
+                hasFilters = false;
+                wfPredicate = PredicateBuilder.Create<Workflow>(wf => false);
+            }
 
             var workflows = ApplyBrowse(
                 DB.Workflows.AsNoTracking().Where(wfPredicate).
@@ -212,16 +215,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 "~/Views/Ulo/Search/Index.cshtml", 
                 new FilterViewModel(
                     workflows, 
-                    PortalHelpers.CreateDocumentTypeSelectListItems(),
-                    PortalHelpers.CreateZoneSelectListItems(),
-                    PortalHelpers.CreateRegionSelectListItems(),
+                    PortalHelpers.CreateDocumentTypeSelectListItems().Select(docType),
+                    PortalHelpers.CreateZoneSelectListItems().Select(zone),
+                    PortalHelpers.CreateRegionSelectListItems().Select(region),
                     baCodes,
                     activityNames,
                     statuses,
                     Cacher.FindOrCreateValWithSimpleKey(
                         "ReasonsIncludedInReview",
                         () => DB.UnliquidatedObligations.Select(z => z.ReasonIncludedInReview).Distinct().WhereNotNull().OrderBy().AsReadOnly(),
-                        UloHelpers.MediumCacheTimeout)
+                        UloHelpers.MediumCacheTimeout),
+                    hasFilters
                 ));
         }
 
@@ -256,7 +260,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 FirstOrDefaultAsync(u => u.UloId == uloId);
             if (workflowId==0)
             {
-                workflowId = (await DB.Workflows.SingleAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
+                workflowId = (await DB.Workflows.OrderByDescending(z=>z.WorkflowId).FirstOrDefaultAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
             }
 
             Log.Information("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
@@ -278,7 +282,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
         {
             var workflowDescription = await Manager.GetWorkflowDescriptionAsync(wf);
-            PopulateWorkflowDescriptionInViewBag(workflowDescription, wf, wf.UnliquidatedObligation.DocType);
+            PopulateWorkflowDescriptionInViewBag(workflowDescription, wf, wf.UnliquidatedObligation.DocType, wf.MostRecentNonReassignmentAnswer);
             return workflowDescription;
         }
 
@@ -287,6 +291,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 .Include(q => q.AspNetUser)
                 .Include(q => q.Documents)
                 .Include(q => q.UnliquidatedObligation)
+                .Include(q => q.UnliqudatedObjectsWorkflowQuestions)
                 .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
 
         //Referred to by WebActionWorkflowActivity

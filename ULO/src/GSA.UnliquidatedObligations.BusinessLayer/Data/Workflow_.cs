@@ -1,20 +1,35 @@
-﻿using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+﻿using RevolutionaryStuff.Core;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
-    public partial class WorkflowDefinition
+    public partial class Workflow
     {
-        public WorkflowDescription Description
+        public string GetMostRecentAnswer(ICollection<string> ignorableAnswers = null)
+        {
+            ignorableAnswers = ignorableAnswers ?? Empty.StringArray;
+            foreach (var a in this.UnliqudatedObjectsWorkflowQuestions.OrderByDescending(z => z.UnliqudatedWorkflowQuestionsId))
+            {
+                if (a.Pending || ignorableAnswers.Contains(a.Answer)) continue;
+                return a.Answer;
+            }
+            return null;
+        }
+
+        public string MostRecentNonReassignmentAnswer
         {
             get
             {
-                if (WorkflowDescription_p == null)
+                if (!MostRecentNonReassignmentAnswerFound)
                 {
-                    WorkflowDescription_p = WorkflowDescription.DeserializeFromXml(DescriptionXml);
+                    MostRecentNonReassignmentAnswer_p = GetMostRecentAnswer(UnliqudatedObjectsWorkflowQuestion.CommonAnswers.ReassignmentAnswers);
+                    MostRecentNonReassignmentAnswerFound = true;
                 }
-                return WorkflowDescription_p;
+                return MostRecentNonReassignmentAnswer_p;
             }
         }
-        private WorkflowDescription WorkflowDescription_p;
+        private string MostRecentNonReassignmentAnswer_p;
+        private bool MostRecentNonReassignmentAnswerFound;
     }
 }

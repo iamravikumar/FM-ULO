@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using RevolutionaryStuff.Core;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -13,7 +14,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         [DataMember(Name = "Choices")]
         public List<QuestionChoice> Choices { get; set; }
 
-        public IEnumerable<QuestionChoice> WhereApplicable(string docType)
-            => Choices == null ? QuestionChoice.None : Choices.Where(z => z.IsApplicable(docType));
+        public IEnumerable<QuestionChoice> WhereMostApplicable(string documentType, string mostRecentNonReassignmentAnswer)
+            => Choices == null ? 
+                QuestionChoice.None : 
+                Choices.Where(z => z.IsApplicable(documentType, mostRecentNonReassignmentAnswer)).
+                    OrderBy(z => z.MostRecentNonReassignmentAnswer == null ? 0 : 1).
+                    ToDictionaryOnConflictKeepLast(z=>z.Value, z=>z).Values;
     }
 }

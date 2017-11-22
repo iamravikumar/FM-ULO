@@ -9,7 +9,6 @@ using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -83,9 +82,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     var st = new MemoryStream();
                     ds.ToSpreadSheet(st);
                     st.Position = 0;
+                    var now = DateTime.UtcNow;
+                    string filename = report.FilenamePattern == null ? report.Name : string.Format(report.FilenamePattern, now, now.ToLocalTime());
+                    filename += MimeType.Application.SpreadSheet.Xlsx.PrimaryFileExtension;
                     var cd = new System.Net.Mime.ContentDisposition
                     {
-                        FileName = report.Name + MimeType.Application.SpreadSheet.Xlsx.PrimaryFileExtension,
+                        FileName = filename,
                         Inline = false,
                     };
                     Response.AppendHeader("Content-Disposition", cd.ToString());
