@@ -35,6 +35,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string Details = "Details";
         }
 
+        private static class NoDataMessages
+        {
+            public const string NoTasks = "You do not currently have any tasks";
+            public const string NoUnassigned = "There are no unassigned items in groups to which you belong at this time";
+            public const string NoReassignments = "There are no reassigment requests at this time";
+            public const string NoSearchResults = "Your criteria yielded no results";
+        }
+
+        private void SetNoDataMessage(string message)
+        {
+            ViewBag.NoDataMessage = message;
+        }
+
         protected readonly IWorkflowManager Manager;
         private readonly ApplicationUserManager UserManager;
 
@@ -65,8 +78,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("ulos/myTasks")]
         public ActionResult MyTasks(string sortCol, string sortDir, int? page, int? pageSize)
         {
+            SetNoDataMessage(NoDataMessages.NoTasks);
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).ApplyStandardIncludes(),
+                DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             return View(workflows);
         }
@@ -87,6 +101,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("ulos/unassigned")]
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
+            SetNoDataMessage(NoDataMessages.NoUnassigned);
             ViewBag.AllAreUnassigned = true;         
 
             var predicate = PredicateBuilder.Create<Workflow>(wf => false);
@@ -121,7 +136,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             select wf;
 
             workflows = ApplyBrowse(
-                workflows.ApplyStandardIncludes(),
+                workflows.WhereReviewExists().ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
             return View(workflows);
         }
@@ -131,6 +146,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("ulos/reassignments")]
         public ActionResult RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
+            SetNoDataMessage(NoDataMessages.NoReassignments);
             ViewBag.ShowReassignButton = true;
             var regionIds = (IList<int?>) new List<int?>();
             var reassignGroupUserId = PortalHelpers.ReassignGroupUserId;
@@ -146,7 +162,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             Browse:
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId))
+                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId)).WhereReviewExists()
                 .ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
 
@@ -172,6 +188,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
+            SetNoDataMessage(NoDataMessages.NoSearchResults);
             var wfPredicate = PortalHelpers.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
               baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId);
             bool hasFilters = true;
@@ -187,7 +204,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 Include(wf => wf.UnliquidatedObligation.Region).AsNoTracking().
                 Include(wf => wf.UnliquidatedObligation.Region.Zone).AsNoTracking().
                 Include(wf => wf.RequestForReassignments).AsNoTracking().
-                Include(wf => wf.AspNetUser).AsNoTracking(),
+                Include(wf => wf.AspNetUser).AsNoTracking().
+                WhereReviewExists(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToList();
 
             var baCodes = Cacher.FindOrCreateValWithSimpleKey(
@@ -257,7 +275,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 Include(u => u.Notes).
                 Include(u => u.Region).
                 Include(u => u.Region.Zone).
+                WhereReviewExists().
                 FirstOrDefaultAsync(u => u.UloId == uloId);
+            if (ulo==null) return HttpNotFound();
             if (workflowId==0)
             {
                 workflowId = (await DB.Workflows.OrderByDescending(z=>z.WorkflowId).FirstOrDefaultAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
@@ -292,6 +312,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 .Include(q => q.Documents)
                 .Include(q => q.UnliquidatedObligation)
                 .Include(q => q.UnliqudatedObjectsWorkflowQuestions)
+                .WhereReviewExists()
                 .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
 
         //Referred to by WebActionWorkflowActivity

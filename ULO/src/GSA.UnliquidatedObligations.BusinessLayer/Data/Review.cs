@@ -32,11 +32,13 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public Nullable<System.DateTime> ProjectDueDate { get; set; }
         public Nullable<System.DateTime> ReviewDateInitiated { get; set; }
         public bool IsClosed { get; set; }
+        public string DeletedByUserId { get; set; }
     
         public virtual Region Region { get; set; }
         public virtual Region Region1 { get; set; }
         public virtual WorkflowDefinition WorkflowDefinition { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UnliquidatedObligation> UnliquidatedObligations { get; set; }
+        public virtual AspNetUser AspNetUser { get; set; }
     }
 }

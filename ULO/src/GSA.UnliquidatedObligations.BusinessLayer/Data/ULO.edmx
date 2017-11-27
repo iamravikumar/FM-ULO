@@ -164,6 +164,8 @@
           <Property Name="ProjectDueDate" Type="datetime" />
           <Property Name="ReviewDateInitiated" Type="date" />
           <Property Name="IsClosed" Type="bit" Nullable="false" />
+          <Property Name="DeletedAtUtc" Type="datetime" />
+          <Property Name="DeletedByUserId" Type="nvarchar" MaxLength="128" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestions">
           <Key>
@@ -173,11 +175,11 @@
           <Property Name="WorkflowId" Type="int" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Answer" Type="varchar" MaxLength="100" />
-          <Property Name="Comments" Type="nvarchar" MaxLength="4000" />
           <Property Name="Pending" Type="bit" Nullable="false" />
           <Property Name="WorkflowRowVersion" Type="binary" MaxLength="8" Nullable="false" />
           <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
           <Property Name="JustificationKey" Type="varchar" MaxLength="80" />
+          <Property Name="Comments" Type="nvarchar" MaxLength="4000" />
         </EntityType>
         <EntityType Name="UnliquidatedObligations">
           <Key>
@@ -641,6 +643,18 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Reviews__Deleted__3D491139">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+          <End Role="Reviews" Type="Self.Reviews" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Reviews">
+              <PropertyRef Name="DeletedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Reviews__RegionI__1699586C">
           <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
           <End Role="Reviews" Type="Self.Reviews" Multiplicity="*" />
@@ -926,6 +940,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
         <Function Name="SoftDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="tableKey" Type="nvarchar" Mode="In" />
           <Parameter Name="entityKey" Type="nvarchar" Mode="In" />
+          <Parameter Name="deletorId" Type="nvarchar" Mode="In" />
         </Function>
         <EntityContainer Name="GSAUnliquidatedObligationsBusinessLayerDataStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
@@ -1057,6 +1072,10 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           </AssociationSet>
           <AssociationSet Name="FK__Review__RegionId__0EF836A4" Association="Self.FK__Review__RegionId__0EF836A4">
             <End Role="Regions" EntitySet="Regions" />
+            <End Role="Reviews" EntitySet="Reviews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reviews__Deleted__3D491139" Association="Self.FK__Reviews__Deleted__3D491139">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
           <AssociationSet Name="FK__Reviews__RegionI__1699586C" Association="Self.FK__Reviews__RegionI__1699586C">
@@ -1335,15 +1354,20 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Attachment" EntitySet="Attachments" />
           </AssociationSet>
-          <FunctionImport Name="SoftDelete">
-            <Parameter Name="tableKey" Mode="In" Type="String" />
-            <Parameter Name="entityKey" Mode="In" Type="String" />
-          </FunctionImport>
           <AssociationSet Name="FK__Documents__Delet__0F824689" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Documents__Delet__0F824689">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Document" EntitySet="Documents" />
           </AssociationSet>
           <EntitySet Name="WorkflowProhibitedOwners" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowProhibitedOwner" />
+          <AssociationSet Name="FK__Reviews__Deleted__3D491139" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Deleted__3D491139">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Review" EntitySet="Reviews" />
+          </AssociationSet>
+          <FunctionImport Name="SoftDelete">
+            <Parameter Name="tableKey" Mode="In" Type="String" />
+            <Parameter Name="entityKey" Mode="In" Type="String" />
+            <Parameter Name="deletorId" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -1420,6 +1444,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="Attachments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Creat__0CA5D9DE" FromRole="AspNetUser" ToRole="Attachment" />
           <NavigationProperty Name="Attachments1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Delet__0D99FE17" FromRole="AspNetUser" ToRole="Attachment" />
           <NavigationProperty Name="Documents1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Documents__Delet__0F824689" FromRole="AspNetUser" ToRole="Document" />
+          <NavigationProperty Name="Reviews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Deleted__3D491139" FromRole="AspNetUser" ToRole="Review" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -1537,6 +1562,8 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="WorkflowDefinition" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Workflo__45544755" FromRole="Review" ToRole="WorkflowDefinition" />
           <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Revie__4183B671" FromRole="Review" ToRole="UnliquidatedObligation" />
           <Property Name="IsClosed" Type="Boolean" Nullable="false" />
+          <Property Name="DeletedByUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Deleted__3D491139" FromRole="Review" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="UnliqudatedObjectsWorkflowQuestion">
           <Key>
@@ -2287,6 +2314,18 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="WorkflowId" Type="Int32" Nullable="false" />
           <Property Name="ProhibitedOwnerUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
         </EntityType>
+        <Association Name="FK__Reviews__Deleted__3D491139">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Review" Role="Review" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Review">
+              <PropertyRef Name="DeletedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2451,6 +2490,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="Reviews">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Review">
               <MappingFragment StoreEntitySet="Reviews">
+                <ScalarProperty Name="DeletedByUserId" ColumnName="DeletedByUserId" />
                 <ScalarProperty Name="IsClosed" ColumnName="IsClosed" />
                 <ScalarProperty Name="ReviewDateInitiated" ColumnName="ReviewDateInitiated" />
                 <ScalarProperty Name="ProjectDueDate" ColumnName="ProjectDueDate" />
@@ -2463,6 +2503,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
                 <ScalarProperty Name="RegionId" ColumnName="RegionId" />
+                <Condition ColumnName="DeletedAtUtc" IsNull="true" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2802,7 +2843,6 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="SoftDelete" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.SoftDelete" />
           <EntitySetMapping Name="WorkflowProhibitedOwners">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowProhibitedOwner">
               <MappingFragment StoreEntitySet="WorkflowProhibitedOwners">
@@ -2811,6 +2851,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SoftDelete" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.SoftDelete" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

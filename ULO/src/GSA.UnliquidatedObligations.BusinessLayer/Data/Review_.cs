@@ -2,7 +2,8 @@
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
-    public partial class Review
+    [TableKey("Reviews")]
+    public partial class Review : ISoftDelete
     {
         public static class StatusNames
         {
@@ -31,6 +32,20 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         {
             IsClosed = isClosed.GetValueOrDefault(IsClosed);
             Status = IsClosed ? StatusNames.Closed : StatusNames.Open;
+        }
+
+        public bool IsDeleted
+        {
+            get; private set;
+        }
+
+        string ISoftDelete.DeleteKey
+            => ReviewId.ToString();
+
+        public void Delete(string deletorUserId=null)
+        {
+            IsDeleted = true;
+            DeletedByUserId = deletorUserId;
         }
     }
 }

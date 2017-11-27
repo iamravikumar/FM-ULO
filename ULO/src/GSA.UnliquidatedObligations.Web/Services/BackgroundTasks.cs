@@ -5,6 +5,7 @@ using GSA.UnliquidatedObligations.Web.Models;
 using RazorEngine;
 using RazorEngine.Templating;
 using RevolutionaryStuff.Core.Caching;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,12 +22,14 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IEmailServer EmailServer;
         private readonly ULODBEntities DB;
         private readonly IWorkflowManager WorkflowManager;
+        protected readonly ILogger Log;
 
-        public BackgroundTasks(IEmailServer emailServer, ULODBEntities db, IWorkflowManager workflowManager)
+        public BackgroundTasks(IEmailServer emailServer, ULODBEntities db, IWorkflowManager workflowManager, ILogger log)
         {
             EmailServer = emailServer;
             DB = db;
             WorkflowManager = workflowManager;
+            Log = log.ForContext(GetType());
         }
 
         private System.Data.SqlClient.SqlConnection CreateSqlConnection()
@@ -128,15 +131,22 @@ namespace GSA.UnliquidatedObligations.Web.Services
         //TODO: Email on exception or let user know what happened.
         public async Task AssignWorkFlows(int reviewId)
         {
-            var workflows = 
+            var review = await DB.Reviews.FindAsync(reviewId);
+            if (review == null)
+            {
+                Log.Information("AssignWorkFlows could not find {reviewId}", reviewId);
+                return;
+            }
+            review.Status = Review.StatusNames.Assigning;
+            await DB.SaveChangesAsync();
+
+            var workflows =
                 DB.Workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.AspNetUser).
-                Where(wf => wf.OwnerUserId==PortalHelpers.PreAssignmentUserUserId).
+                Where(wf => wf.OwnerUserId == PortalHelpers.PreAssignmentUserUserId).
                 OrderBy(wf => wf.UnliquidatedObligation.ReviewId == reviewId ? 0 : 1).
                 ToList();
 
-            var review = DB.Reviews.Single(q => q.ReviewId == reviewId);
-            review.Status = Review.StatusNames.Assigning;
-            await DB.SaveChangesAsync();
+            Log.Information("AssignWorkFlows {reviewId} assigning up to {totalRecords}", reviewId, workflows.Count);
 
             int z = 0;
             foreach (var workflow in workflows)
@@ -145,10 +155,21 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 if (++z % 10 == 0)
                 {
                     await DB.SaveChangesAsync();
+                    Log.Debug("AssignWorkFlows {reviewId} save after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
+                    using (var zdb = PortalHelpers.UloDbCreator())
+                    {
+                        var r = await zdb.Reviews.FindAsync(reviewId);
+                        if (r == null)
+                        {
+                            Log.Information("AssignWorkFlows cancelled as {reviewId} has been deleted", reviewId);
+                            break;
+                        }
+                    }
                 }
             }
             review.SetStatusDependingOnClosedBit();
             await DB.SaveChangesAsync();
+            Log.Information("AssignWorkFlows {reviewId} completed after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
         }
 
         private void Upload442Table(int reviewId, string uploadPath)
@@ -159,7 +180,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 dt.LoadRowsFromDelineatedText(st, new LoadRowsFromDelineatedTextSettings
                 {
                     SkipRawRows = 2,
-                    RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore
+                    RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore                     
                 });
                 dt.SetColumnWithValue("ReviewId", reviewId);
                 dt.UploadIntoSqlServer(CreateSqlConnection);

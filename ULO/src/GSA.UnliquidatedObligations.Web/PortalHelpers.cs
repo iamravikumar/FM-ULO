@@ -32,7 +32,7 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static readonly string DefaultUloConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         private static readonly ICacher Cacher = Cache.DataCacher;
-        private static Func<ULODBEntities> UloDbCreator = () => new ULODBEntities();
+        internal static Func<ULODBEntities> UloDbCreator = () => new ULODBEntities();
 
         static PortalHelpers()
         {
@@ -152,6 +152,12 @@ namespace GSA.UnliquidatedObligations.Web
                 },
                 UloHelpers.MediumCacheTimeout
                 );
+
+        public static IQueryable<UnliquidatedObligation> WhereReviewExists(this IQueryable<UnliquidatedObligation> wf)
+            => wf.Where(z => z.Review != null);
+
+        public static IQueryable<Workflow> WhereReviewExists(this IQueryable<Workflow> wf)
+            => wf.Where(z => z.UnliquidatedObligation.Review != null);
 
         public static IList<int?> GetReassignmentGroupRegions(this IPrincipal user)
             => user.GetUserGroupRegions(Properties.Settings.Default.ReassignGroupUserName);

@@ -6,7 +6,20 @@
     var todaysDate = DateTime.Today;
     var userReassignRegions = User.GetReassignmentGroupRegions();
     var canReassign = User.HasPermission(ApplicationPermissionNames.CanReassign);
+
+    var hasData = false;
+    var noDataMessage = ViewBag.NoDataMessage as string ?? AspHelpers.NoResultsMessage;
+    if (ViewBag.TotalItemCount != null)
+    {
+        hasData = (int)ViewBag.TotalItemCount > 0;
+    }
 }
+@if (!hasData)
+{
+    <h4>@noDataMessage</h4>
+}
+else
+{
 <table class="table table-responsive active-workflows">
 
     <tr>
@@ -18,10 +31,10 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Document Type")
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Doc Type")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "Pesasys Document Number")
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysTitleNumber, overrideDisplayName: "Pesasys Title Number")
@@ -30,7 +43,7 @@
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Fund, overrideDisplayName: "Fund")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Organization")
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
@@ -46,9 +59,6 @@
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.AwardNbr, overrideDisplayName: "Award Number")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReasonIncludedInReview, overrideDisplayName: "Reason Included In Review")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
@@ -104,9 +114,6 @@
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.AwardNbr)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReasonIncludedInReview)
-            </td>
-            <td>
                 @{
                     var isValid = item.UnliquidatedObligation.Valid == true ? "Yes" : "No";
                     @Html.Encode(isValid)
@@ -124,3 +131,4 @@
 
 @Html.Partial("_PaginationPartial")
 
+}

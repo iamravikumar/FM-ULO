@@ -28,6 +28,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string Details = "Details";
             public const string Create = "Create";
             public const string Save = "Save";
+            public const string Delete = "Delete";
         }
 
         public static class ReviewFileDesignators
@@ -92,7 +93,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("reviews/save")]
         [HttpPost]
         [ActionName(ActionNames.Save)]
-        [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(
             [Bind(Include =
@@ -127,10 +128,29 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
 
-        private async Task<ReviewModel> CreateReviewModelAsync()
+        [Route("reviews/delete")]
+        [HttpPost]
+        [ActionName(ActionNames.Delete)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Delete(
+            [Bind(Include =
+                nameof(ReviewDetailsModel.Review)+","+
+                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewId)+","
+            )]
+            ReviewDetailsModel m)
         {
-            var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.ManageUsers).ToList();
-            return new ReviewModel(claimRegionIds);
+            var r = await DB.Reviews.FirstOrDefaultAsync(z => z.ReviewId == m.Review.ReviewId);
+            if (r == null) return HttpNotFound();
+            r.Delete();
+            await DB.SaveChangesAsync();
+            return RedirectToIndex();
+        }
+
+        private Task<ReviewModel> CreateReviewModelAsync()
+        {
+            var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanCreateReviews).ToList();
+            return Task.FromResult(new ReviewModel(claimRegionIds));
         }
 
         // GET: Review/Create

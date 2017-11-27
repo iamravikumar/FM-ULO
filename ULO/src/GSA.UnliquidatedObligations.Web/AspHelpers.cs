@@ -18,6 +18,8 @@ namespace GSA.UnliquidatedObligations.Web
     {
         public const string PleaseSelectOne = "-- Please Select --";
 
+        public const string NoResultsMessage = "There are not currently any results to show";
+
         public static SelectListItem CreatePleaseSelectListItem(bool selected=true)
             => new SelectListItem
             {

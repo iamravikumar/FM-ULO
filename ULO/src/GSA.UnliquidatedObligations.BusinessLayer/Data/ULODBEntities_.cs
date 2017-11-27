@@ -3,6 +3,7 @@ using RevolutionaryStuff.Core.Collections;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading;
@@ -69,8 +70,18 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             {
                 var e = item.Value;
                 e.State = EntityState.Detached;
-                SoftDelete(item.Key, e.Entity.DeleteKey);
+                SoftDelete(item.Key, e.Entity.DeleteKey, null);
             }
+        }
+
+        protected ObjectContext ObjectContext
+        {
+            get { return ((IObjectContextAdapter)this).ObjectContext; }
+        }
+
+        public void Refresh(object o, RefreshMode mode = RefreshMode.StoreWins)
+        {
+            ObjectContext.Refresh(mode, o);
         }
     }
 }
