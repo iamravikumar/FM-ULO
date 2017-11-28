@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -26,9 +27,36 @@ namespace GSA.UnliquidatedObligations.Web
         public static bool ShowSprintNameOnFooter => Properties.Settings.Default.ShowSprintNameOnFooter;
         public static string SprintName => Properties.Settings.Default.SprintName;
         public static string AdministratorEmail => Properties.Settings.Default.AdminstratorEmail;
+        public static string AttachmentFileUploadAccept => Properties.Settings.Default.AttachmentFileUploadAccept;
+        public static string AttachmentFileUploadAcceptMessage => Properties.Settings.Default.AttachmentFileUploadAcceptMessage;
 
         public const string Wildcard = "*";
 
+        public static bool VerifyFileAccept(string accepts, string filename, string contentType)
+        {
+            accepts = accepts ?? "";
+            var ext = Path.GetExtension(filename);
+            foreach (var accept in accepts.Split('|'))
+            {
+                try
+                {
+                    if (accept.Length < 2) continue;
+                    if (accept[0] == '.')
+                    {
+                        if (0 == string.Compare(ext, accept, true)) return true;
+                    }
+                    else if (accept.Contains("/"))
+                    {
+                        if (MimeType.IsA(contentType, accept)) return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine(ex);
+                }
+            }
+            return false;
+        }
 
         public static readonly string DefaultUloConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         private static readonly ICacher Cacher = Cache.DataCacher;

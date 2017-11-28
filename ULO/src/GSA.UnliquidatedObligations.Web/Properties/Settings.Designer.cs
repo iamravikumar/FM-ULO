@@ -221,5 +221,23 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((bool)(this["ShowSprintNameOnFooter"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("audio/*|video/*|image/*|.txt|.pdf|.doc|.docx|.xls|.xlsx|.zip|.csv")]
+        public string AttachmentFileUploadAccept {
+            get {
+                return ((string)(this["AttachmentFileUploadAccept"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Only images, videos, audio files, documents, and archives are accepted.")]
+        public string AttachmentFileUploadAcceptMessage {
+            get {
+                return ((string)(this["AttachmentFileUploadAcceptMessage"]));
+            }
+        }
     }
 }

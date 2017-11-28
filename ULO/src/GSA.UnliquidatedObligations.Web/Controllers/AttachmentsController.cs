@@ -94,7 +94,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         FileSize = fileContent.ContentLength,
                         ContentType = fileContent.ContentType ?? System.Net.Mime.MediaTypeNames.Application.Octet
                     };
-                    attachmentsAdded.Add(attachment);                        
+                    if (PortalHelpers.VerifyFileAccept(
+                        Properties.Settings.Default.AttachmentFileUploadAccept,
+                        attachment.FileName,
+                        attachment.ContentType))
+                    {
+                        attachmentsAdded.Add(attachment);
+                    }
                 }
             }
             attachmentsTempData.AddRange(attachmentsAdded);
