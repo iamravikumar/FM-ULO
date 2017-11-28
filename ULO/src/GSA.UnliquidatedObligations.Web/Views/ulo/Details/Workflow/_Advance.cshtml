@@ -13,7 +13,7 @@
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     <div class="col-md-12">
                         @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.Answer, Model.QuestionChoices.CreateSelectListItems().PleaseSelect(), htmlAttributes: new { @onchange = "ChoiceChange(this.value, \""+AspHelpers.PleaseSelectOne+"\", null)" })<br />
+                        @Html.DropDownListFor(model => model.Answer, Model.QuestionChoices.CreateSelectListItems().PleaseSelect(), htmlAttributes: new { id="q", required="required", @onchange = "ChoiceChange(this.value, \""+AspHelpers.PleaseSelectOne+"\", null)" })<br />
                         @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id = "validateAnswerMessage", @class = "text-danger" })
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                 @Html.HiddenFor(model => model.ExpectedDateForCompletionEditable)
                 <div class="row row-space-top">
                     <div class="col-md-10">
-                        <input type="submit" value="Save" name="WhatNext" class="btn btn-default confirm-on-click" confirmMessage="Do you want to save?" />
+                        <input type="submit" value="Save" name="WhatNext" class="btn btn-default" onclick="allowSubmitWithoutRequiredValidations();" />
                         <input type="submit" value="Submit" name="WhatNext" class="btn btn-primary confirm-on-click" confirmMessage="Do you want to submit?" />
                     </div>
                 </div>
@@ -65,3 +65,10 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    function allowSubmitWithoutRequiredValidations()
+    {
+        $('#q').removeAttr('required').removeAttr('aria-required');
+    }
+</script>
