@@ -15,7 +15,7 @@
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
-                            Pegasys Document #:
+                            PDN:
                         </dt>
                         <dd>
                             @ulo.PegasysDocumentNumber
@@ -320,29 +320,30 @@
                     </dl>
                 </div>
             </div>
-            <div class="row hidden">
-                <div class="col-md-6">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Credit Card Holder Username:
-                        </dt>
-                        <dd class="huh">
-                            ___FUTURE___
-                        </dd>
-                    </dl>
-                </div>
-                <div class="col-md-6">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            Credit Card Holder Email:
-                        </dt>
-                        <dd class="huh">
-                            ___FUTURE___
-                        </dd>
-                    </dl>
-                </div>
-            </div>
-            <div class="row">
+            @*
+    <div class="row hidden">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>
+                    Credit Card Holder Username:
+                </dt>
+                <dd class="huh">
+                    ___FUTURE___
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>
+                    Credit Card Holder Email:
+                </dt>
+                <dd class="huh">
+                    ___FUTURE___
+                </dd>
+            </dl>
+        </div>
+    </div>
+            *@<div class="row">
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
@@ -400,57 +401,58 @@
                 }
             </div>
             <div class="row">
-                <table class="table table-responsive table-striped">
-                    <tbody>
-                        <tr>
-                            <th>Pending Payment</th>
-                            <td>@Html.Currency(ulo.PendPayments.GetValueOrDefault())</td>
-                            <th>Total Payments</th>
-                            <td>@Html.Currency(totalPayments)</td>
-                        </tr>
-                        <tr>
-                            <th>Payments (In Transit)</th>
-                            <td>@Html.Currency(ulo.PymtsInTransit.GetValueOrDefault())</td>
-                            <th>Receipt</th>
-                            <td>@Html.Currency(ulo.Rcpt.GetValueOrDefault())</td>
-                        </tr>
-                        <tr>
-                            <th>Payments (Confirmed)</th>
-                            <td>@Html.Currency(ulo.PymtsConfirmed.GetValueOrDefault())</td>
-                            <th>Accrual</th>
-                            <td>@Html.Currency(ulo.Accrual.GetValueOrDefault())</td>
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <td></td>
-                            <th>Holdbacks</th>
-                            <td>@Html.Currency(ulo.Holdbacks.GetValueOrDefault())</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr style="border-top: 2px solid black">
-                            <th>Total Payments</th>
-                            <td>@Html.Currency(totalPayments)</td>
-                            <th>Total Delivered Orders (DO)</th>
-                            <td>@Html.Currency(ulo.TotalDO.GetValueOrDefault())</td>
-                            <th>Total Undelivered Orders (UDO)</th>
-                            <td>@Html.Currency(ulo.UndelOrders.GetValueOrDefault())</td>
-                            <th>Total Orders</th>
-                            <td>@Html.Currency(ulo.TotalUDOAndDO.GetValueOrDefault())</td>
-                        </tr>
-                        <tr style="border-top: 1px dashed black">
-                            <th>Commitments</th>
-                            <td>@Html.Currency(ulo.Commitments.GetValueOrDefault())</td>
-                            <th>Prepayments</th>
-                            <td>@Html.Currency(ulo.Prepayments.GetValueOrDefault())</td>
-                            <th>Total Orders</th>
-                            <td>@Html.Currency(ulo.TotalUDOAndDO.GetValueOrDefault())</td>
-                            <th>Total Line</th>
-                            <td>@Html.Currency(ulo.TotalLine.GetValueOrDefault())</td>
-                        </tr>
-                    </tfoot>
-
-                </table>
+                <div style="padding-left: 7px">
+                    <table class="table table-responsive table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Pending Payment</th>
+                                <td>@Html.Currency(ulo.PendPayments.GetValueOrDefault())</td>
+                                <th>Total Payments</th>
+                                <td>@Html.Currency(totalPayments)</td>
+                            </tr>
+                            <tr>
+                                <th>Payments (In Transit)</th>
+                                <td>@Html.Currency(ulo.PymtsInTransit.GetValueOrDefault())</td>
+                                <th>Receipt</th>
+                                <td>@Html.Currency(ulo.Rcpt.GetValueOrDefault())</td>
+                            </tr>
+                            <tr>
+                                <th>Payments (Confirmed)</th>
+                                <td>@Html.Currency(ulo.PymtsConfirmed.GetValueOrDefault())</td>
+                                <th>Accrual</th>
+                                <td>@Html.Currency(ulo.Accrual.GetValueOrDefault())</td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td></td>
+                                <th>Holdbacks</th>
+                                <td>@Html.Currency(ulo.Holdbacks.GetValueOrDefault())</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="border-top: 2px solid black">
+                                <th>Total Payments</th>
+                                <td>@Html.Currency(totalPayments)</td>
+                                <th>Total Delivered Orders (DO)</th>
+                                <td>@Html.Currency(ulo.TotalDO.GetValueOrDefault())</td>
+                                <th>Total Undelivered Orders (UDO)</th>
+                                <td>@Html.Currency(ulo.UndelOrders.GetValueOrDefault())</td>
+                                <th>Total Orders</th>
+                                <td>@Html.Currency(ulo.TotalUDOAndDO.GetValueOrDefault())</td>
+                            </tr>
+                            <tr style="border-top: 1px dashed black">
+                                <th>Commitments</th>
+                                <td>@Html.Currency(ulo.Commitments.GetValueOrDefault())</td>
+                                <th>Prepayments</th>
+                                <td>@Html.Currency(ulo.Prepayments.GetValueOrDefault())</td>
+                                <th>Total Orders</th>
+                                <td>@Html.Currency(ulo.TotalUDOAndDO.GetValueOrDefault())</td>
+                                <th>Total Line</th>
+                                <td>@Html.Currency(ulo.TotalLine.GetValueOrDefault())</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

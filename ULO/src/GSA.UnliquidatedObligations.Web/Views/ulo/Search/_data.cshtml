@@ -30,9 +30,11 @@ else
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
         </th>
+        @*
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Doc Type")
         </th>
+        *@
         <th>
             @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
         </th>
@@ -83,9 +85,11 @@ else
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionNumber)
             </td>
+        @*
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.DocType)
             </td>
+            *@
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
             </td>

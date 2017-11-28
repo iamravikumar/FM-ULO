@@ -1,5 +1,5 @@
-﻿.ulo-details .row .dl-horizontaldl {
-    margin-bottom: 5px;
+﻿.dl-horizontal {
+    margin:5px 0 5px 0
 }
 
 .ulo-details .row .dl-horizontal dt {
@@ -12,11 +12,19 @@
     margin-left: 3px;
 }
 
-.ulo-details .row:first-of-type {
-    margin-bottom: 15px;
-}
- 
 .ulo-details .row:nth-child(even) {
     background-color: #f5f5f5;
 }
 
+.panel-body {
+    padding: 15px 15px 15px 15px;
+}
+
+.document-type-list li {
+    list-style-type: none;
+
+}
+
+.document-type-list {
+    padding-left: 0
+}

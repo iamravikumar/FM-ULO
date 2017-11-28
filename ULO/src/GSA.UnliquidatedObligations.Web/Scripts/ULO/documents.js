@@ -100,7 +100,7 @@ function updateDocumentList(documentId, document) {
     var tableRowString =
         "<tr id='document" + document.Id + "'><td>" +
         document.Name + "</td><td>" +
-        "<ul>" + docTypeNames + "</ul></td><td>" +
+        "<ul class='document-type-list'>" + docTypeNames + "</ul></td><td>" +
         document.AttachmentCount + "</td><td>" +
         document.UserName + "</td><td>" +
         document.UploadedDate + "</td><td><a data-target='' data-toggle='modal' href='#" + document.Id + "Modal'>View</a> | <a data-toggle='modal' data-target='#" + document.Id + "ModalDelete' href='#" + document.Id + "ModalDelete'>Delete</a></td></tr>"

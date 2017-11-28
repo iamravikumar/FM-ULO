@@ -43,7 +43,7 @@
                                 <td>
                                     @if (document.DocumentDocumentTypes != null && document.DocumentDocumentTypes.Count > 0)
                                     {
-                                        <ul>
+                                        <ul class="document-type-list">
                                             @foreach (var ddt in document.DocumentDocumentTypes)
                                             {
                                                 <li>@documentTypeNameByDocumentTypeId.FindOrDefault(ddt.DocumentTypeId)</li>
