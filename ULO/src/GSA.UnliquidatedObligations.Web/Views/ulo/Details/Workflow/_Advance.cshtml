@@ -13,7 +13,7 @@
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     <div class="col-md-12">
                         @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.Answer, Model.QuestionChoices.CreateSelectListItems().PleaseSelect(), htmlAttributes: new { @onchange = "ChoiceChange(this.value, \""+AspHelpers.PleaseSelectOne+"\", null, \")" })<br />
+                        @Html.DropDownListFor(model => model.Answer, Model.QuestionChoices.CreateSelectListItems().PleaseSelect(), htmlAttributes: new { @onchange = "ChoiceChange(this.value, \""+AspHelpers.PleaseSelectOne+"\", null)" })<br />
                         @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id = "validateAnswerMessage", @class = "text-danger" })
                     </div>
                 </div>
