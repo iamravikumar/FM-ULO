@@ -438,16 +438,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             else
             {
                 Log.Information("GSA LogOff");
-                Response.Cookies.Clear();
-                var c = new HttpCookie(Properties.Settings.Default.SecureAuthCookieName);
-                c.Expires = DateTime.Now.AddDays(-1);
-                Response.Cookies.Add(c);
-                Request.GetOwinContext()
-                        .Authentication
-                        .SignOut(HttpContext.GetOwinContext()
-                                            .Authentication.GetAuthenticationTypes()
-                                            .Select(o => o.AuthenticationType).ToArray());
             }
+            Session.Abandon();
+            Response.Cookies.Clear();
+            Request.Cookies.OfType<string>().ToList().ForEach(cookieName => Response.Cookies.Add(new HttpCookie(cookieName) { Expires = DateTime.Now.AddDays(-1) }));
             return RedirectToAction(ActionNames.Login);
         }
 
