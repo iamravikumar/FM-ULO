@@ -12,7 +12,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -97,7 +97,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Xerez")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Yankees")]
         public string SprintName {
             get {
                 return ((string)(this["SprintName"]));
@@ -215,16 +215,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ShowSprintNameOnFooter {
-            get {
-                return ((bool)(this["ShowSprintNameOnFooter"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("audio/*|video/*|image/*|.txt|.pdf|.doc|.docx|.xls|.xlsx|.zip|.csv")]
+        [global::System.Configuration.DefaultSettingValueAttribute("audio/*|video/*|image/*|.txt|.pdf|.doc|.docx|.xls|.xlsx|.zip|.csv|.ppt|.pptx")]
         public string AttachmentFileUploadAccept {
             get {
                 return ((string)(this["AttachmentFileUploadAccept"]));
@@ -237,6 +228,34 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public string AttachmentFileUploadAcceptMessage {
             get {
                 return ((string)(this["AttachmentFileUploadAcceptMessage"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Region Review,Region Approval,CO Review 1,CO Review 2,Action Needed,Deobligate,Co" +
+            "mplete")]
+        public string ReviewStatusOrdering {
+            get {
+                return ((string)(this["ReviewStatusOrdering"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowSprintName {
+            get {
+                return ((bool)(this["ShowSprintName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Eastern Standard Time")]
+        public string TimezoneId {
+            get {
+                return ((string)(this["TimezoneId"]));
             }
         }
     }

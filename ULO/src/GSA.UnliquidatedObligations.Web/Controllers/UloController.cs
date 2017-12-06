@@ -60,6 +60,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
 
+        private void PopulateRequestForReassignmentsControllerDetailsBulkTokenInViewBag(IQueryable<Workflow> workflows)
+        {
+            var dbt = new RequestForReassignmentsController.DetailsBulkToken(CurrentUser, this.DB, workflows);
+            ViewBag.DetailsBulkToken = dbt;
+        }
+
         private void PopulateWorkflowDescriptionInViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType, string mostRecentNonReassignmentAnswer)
         {
             ViewBag.JustificationByKey = workflowDescription.GetJustificationByKey();
@@ -74,14 +80,29 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult Index()
             => RedirectToAction(ActionNames.MyTasks);
 
+        private const string MyTasksReviewStatusColumn = "UnliquidatedObligation.Status";
+
         [ActionName(ActionNames.MyTasks)]
         [Route("ulos/myTasks")]
         public ActionResult MyTasks(string sortCol, string sortDir, int? page, int? pageSize)
         {
             SetNoDataMessage(NoDataMessages.NoTasks);
-            var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
-                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            IQueryable<Workflow> workflows;
+            sortCol = sortCol ?? MyTasksReviewStatusColumn;
+            if (sortCol == MyTasksReviewStatusColumn)
+            {
+                workflows = ApplyBrowse(
+                    DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
+                    sortCol,
+                    CSV.ParseLine(Properties.Settings.Default.ReviewStatusOrdering),
+                    sortDir, page, pageSize);
+            }
+            else
+            {
+                workflows = ApplyBrowse(
+                    DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
+                    sortCol, sortDir, page, pageSize);
+            }
             return View(workflows);
         }
 
@@ -138,6 +159,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             workflows = ApplyBrowse(
                 workflows.WhereReviewExists().ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+
+            PopulateRequestForReassignmentsControllerDetailsBulkTokenInViewBag(workflows);
+
             return View(workflows);
         }
 
@@ -165,6 +189,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId)).WhereReviewExists()
                 .ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+
+            PopulateRequestForReassignmentsControllerDetailsBulkTokenInViewBag(workflows);
 
             return View(workflows);
         }

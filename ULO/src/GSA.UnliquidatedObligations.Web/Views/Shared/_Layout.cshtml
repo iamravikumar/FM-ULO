@@ -76,16 +76,22 @@
         <hr />
         <footer>
             <div class="row">
-                <div class="col-sm-2">
+                <div class="col-sm-4">
                     &copy; @DateTime.Now.Year - ULO
-                    @if (PortalHelpers.ShowSprintNameOnFooter)
+                    @if (PortalHelpers.ShowSprintName)
                     {
-                        <text>
-                    Sprint: @PortalHelpers.SprintName
+                    <text>
+                    - @PortalHelpers.SprintName
                     </text>
                     }
+                    else
+                    {
+                        <!--
+                    Sprint: @PortalHelpers.SprintName                            
+                        -->
+                    }
                 </div>
-                <div class="col-sm-8 text-center">
+                <div class="col-sm-4 text-center">
                         @Html.ActionLink("About", HomeController.ActionNames.About, HomeController.Name)
                 </div>
             </div>

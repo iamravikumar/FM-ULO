@@ -140,10 +140,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 documentTypeNames.Add(d.FindOrDefault(id));
             }
             await DB.SaveChangesAsync();
-            if (TempData["attachments"] != null)
+            if (TempData[PortalHelpers.TempDataKeys.Attachments] != null)
             {
                 var rids = CSV.ParseIntegerRow(newRemovedAttachmentIds);
-                var attachmentsTempData = (List<Attachment>)TempData["attachments"];
+                var attachmentsTempData = (IList<Attachment>)TempData[PortalHelpers.TempDataKeys.Attachments];
                 foreach (var tempAttachment in attachmentsTempData)
                 {
                     if (!rids.Contains(tempAttachment.AttachmentsId))
@@ -164,7 +164,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     Stuff.FileTryDelete(tempAttachment.FileName);
                 }
                 await DB.SaveChangesAsync();
-                TempData["attachments"] = null;
+                TempData[PortalHelpers.TempDataKeys.Attachments] = null;
             }
             return Json(new
             {
@@ -179,7 +179,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public void Clear()
         {
-            if (TempData["attachments"] != null)
+            if (TempData[PortalHelpers.TempDataKeys.Attachments] != null)
             {
                 var path = HostingEnvironment.MapPath("~/Content/DocStorage/Temp");
                 var di = new DirectoryInfo(path);
@@ -188,7 +188,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     file.Delete();
                 }
-                TempData["attachments"] = null;
+                TempData[PortalHelpers.TempDataKeys.Attachments] = null;
             }
         }
 

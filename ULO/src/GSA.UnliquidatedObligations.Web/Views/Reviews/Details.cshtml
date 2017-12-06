@@ -6,7 +6,8 @@
     var canMakeChanges = User.HasPermission(ApplicationPermissionNames.CanCreateReviews);
     var readonlyHtmlAttributes = new { @readonly = "readonly" };
     var disabledHtmlAttributes = new { @disabled = "disabled" };
-    var textboxHtmlAttributes = canMakeChanges ? (object)new { } : (object)readonlyHtmlAttributes;
+    var textboxHtmlAttributes = canMakeChanges ? (object)new { maxlength = "100" } : (object)readonlyHtmlAttributes;
+    var textareaHtmlAttributes = canMakeChanges ? (object)new { maxlength = "500" } : (object)readonlyHtmlAttributes;
     var checkboxHtmlAttributes = canMakeChanges ? (object)new { } : (object)disabledHtmlAttributes;
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -87,7 +88,7 @@
                 Comments:
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.Review.Comments)
+                @Html.TextAreaFor(model => model.Review.Comments, 10, 30, textareaHtmlAttributes)
             </dd>
             <dt>
                 Region:

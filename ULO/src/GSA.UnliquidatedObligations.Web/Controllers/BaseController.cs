@@ -128,6 +128,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return q;
         }
 
+        protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, IEnumerable<string> orderedValues, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
+        {
+            ViewBag.TotalItemCount = q.Count();
+            bool isAscending = AspHelpers.IsSortDirAscending(sortDir);
+            ViewBag.SortCol = sortCol;
+            ViewBag.SortDir = sortDir;
+            q = q.OrderByField(sortCol, orderedValues, isAscending);
+            q = ApplyPagination(q, page, pageSize);
+            return q;
+        }
+
         private static readonly IDictionary<string, string> NoMappings = new Dictionary<string, string>().AsReadOnly();
 
         protected IQueryable<T> ApplySort<T>(IQueryable<T> q, string sortCol, string sortDir, IDictionary<string, string> colMapper = null)
@@ -163,7 +174,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ViewBag.PaginationSupported = true;
             ViewBag.PageNum = p;
             ViewBag.PageSize = s;
-            return q.Skip((p - 1) * s).Take(s);
+            return q.Skip((p - 1) * s).Take(s).ToList().AsQueryable();
         }
     }
 }

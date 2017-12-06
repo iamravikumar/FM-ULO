@@ -98,10 +98,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     {
                         wf.UnliquidatedObligation.Valid = false;
                     }
-                    else
-                    {
-                        wf.UnliquidatedObligation.Valid = null;
-                    }
 
                     if (ignoreActionResult)
                     {

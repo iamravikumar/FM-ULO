@@ -5,22 +5,31 @@
         <div class="panel-heading">
             <h3 class="panel-title">Workflow History</h3>
         </div>
-        <div class="panel-body table-responsive">
-            <div class="row header">
-                <div class="col-md-2">Person</div>
-                <div class="col-md-2">Answer</div>
-                <div class="col-md-2">Date</div>
-                <div class="col-md-3">Justification</div>
-                <div class="col-md-3">Comments</div>
-            </div>
-            @foreach (var question in Model.Questions)
+        <div class="panel-body">
+            @if (Model.Questions.Count == 0)
             {
-                <div class="row">
-                    <div class="col-md-2">@question.Username</div>
-                    <div class="col-md-2">@question.Answer</div>
-                    <div class="col-md-2">@question.CreatedDate.ToString("MM/dd/yyyy")</div>
-                    <div class="col-md-3">@question.Justification</div>
-                    <div class="col-md-3">@question.Comments</div>
+                <div class="noDataMessage">No history has been generated yet.</div>
+            }
+            else
+            {
+                <div class="table table-responsive table-striped">
+                    <div class="row header">
+                        <div class="col-md-2">Person</div>
+                        <div class="col-md-2">Answer</div>
+                        <div class="col-md-2">Date</div>
+                        <div class="col-md-3">Justification</div>
+                        <div class="col-md-3">Comments</div>
+                    </div>
+                    @foreach (var question in Model.Questions)
+                {
+                        <div class="row">
+                            <div class="col-md-2">@question.Username</div>
+                            <div class="col-md-2">@question.Answer</div>
+                            <div class="col-md-2">@question.CreatedDate.ToString("MM/dd/yyyy")</div>
+                            <div class="col-md-3">@question.Justification</div>
+                            <div class="col-md-3">@question.Comments</div>
+                        </div>
+                    }
                 </div>
             }
         </div>

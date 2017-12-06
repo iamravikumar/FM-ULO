@@ -1,4 +1,5 @@
 ﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.Web.Controllers
 @using GSA.UnliquidatedObligations.Web.Models;
 @using RevolutionaryStuff.Core;
 @model IEnumerable<UserModel>
@@ -11,7 +12,7 @@
 @if (canMakeChanges)
 {
     <p>
-        @Html.ActionLink("Create User", "Create", null, new { @classZ = "btn btn-primary create-user" })
+        <input type="button" value="Create" class="btn btn-primary" onclick="location.href='@Url.Action(UsersController.ActionNames.Create)'" />
     </p>
 }
 

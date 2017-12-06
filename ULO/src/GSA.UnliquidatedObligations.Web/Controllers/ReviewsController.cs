@@ -113,7 +113,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             if (!errors && ModelState.IsValid)
             {
-                var r = await DB.Reviews.FirstOrDefaultAsync(z => z.ReviewId == reviewId);
+                var r = await DB.Reviews.FindAsync(reviewId);
                 if (r == null) return HttpNotFound();
                 r.ReviewName = m.Review.ReviewName;
                 r.SetStatusDependingOnClosedBit(m.Review.IsClosed);
@@ -140,7 +140,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             )]
             ReviewDetailsModel m)
         {
-            var r = await DB.Reviews.FirstOrDefaultAsync(z => z.ReviewId == m.Review.ReviewId);
+            var r = await DB.Reviews.FindAsync(m.Review.ReviewId);
             if (r == null) return HttpNotFound();
             r.Delete();
             await DB.SaveChangesAsync();
@@ -199,7 +199,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 ModelState.AddModelError("Files", "You must upload at least one of each type of file.");
                 errors = true;
             }
-            var reviewScope = (ReviewScopeEnum)reviewModel.ReviewScopeId.Value;
+            var reviewScope = (ReviewScopeEnum)reviewModel.ReviewScopeId.GetValueOrDefault(-1);
             string workflowDefinitionName;
             if (!PortalHelpers.WorkflowDefinitionNameByReviewScope.TryGetValue(reviewScope, out workflowDefinitionName))
             {

@@ -1,5 +1,5 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Controllers
-@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result>
+@model IList<GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result>
 
 <div class="row documents">
     <div class="panel panel-default">
@@ -7,6 +7,12 @@
             <h3 class="panel-title">Other Reviews</h3>
         </div>
         <div class="panel-body">
+            @if (Model.Count == 0)
+            {
+                <div class="noDataMessage">This item has not been included in any other reviews yet.</div>
+            }
+            else
+            {
             <table class="table table-responsive table-striped documents-list">
                 <thead>
                     <tr>
@@ -52,6 +58,7 @@
                     }
                 </tbody>
             </table>
+            }
         </div>
     </div>
 </div>

@@ -60,12 +60,15 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public IList<SelectListItem> ReviewScopes { get; set; }
 
+        [MaxLength(100)]
         public string ReviewName { get; set; }
 
         [Required(ErrorMessage = "Review Date is required")]
         [DataType(DataType.Date)]
         public DateTime ReviewDateInitiated { get; set; }
 
+        [MaxLength(500)]
+        [DataType(DataType.MultilineText)]
         public string Comments { get; set; }
 
 

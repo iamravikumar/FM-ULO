@@ -441,7 +441,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             Session.Abandon();
             Response.Cookies.Clear();
-            Request.Cookies.OfType<string>().ToList().ForEach(cookieName => Response.Cookies.Add(new HttpCookie(cookieName) { Expires = DateTime.Now.AddDays(-1) }));
+            var requestCookies = new HttpCookieCollection();
+            for (int z = 0; z < Request.Cookies.Count; ++z)
+            {
+                requestCookies.Add(Request.Cookies[z]);
+            }
+            for (int z=0;z<requestCookies.Count;++z)
+            {
+                var c = requestCookies[z];
+                Response.Cookies.Add(new HttpCookie(c.Name)
+                {
+                    Domain = c.Domain,
+                    Expires = DateTime.Now.AddYears(-1),
+                    HttpOnly = c.HttpOnly,
+                    Path = c.Path,
+                    Secure = c.Secure,
+                    Shareable = c.Shareable,
+                });
+            }
             return RedirectToAction(ActionNames.Login);
         }
 

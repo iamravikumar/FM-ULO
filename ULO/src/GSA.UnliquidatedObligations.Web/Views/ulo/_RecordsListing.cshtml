@@ -20,7 +20,7 @@
 }
 @if (!hasData)
 {
-    <h4>@noDataMessage</h4>
+    <div class="noDataMessage">@noDataMessage</div>
 }
 else
 {
@@ -98,13 +98,7 @@ else
                 @Html.Currency(Convert.ToDecimal(item.UnliquidatedObligation.TotalLine))
             </td>
             <td>
-                @{
-                    var v = item.UnliquidatedObligation.Valid;
-                    if (v != null)
-                    {
-                        @Html.Encode(v == true ? "Yes" : "No")
-                    }
-                }
+                @Html.DisplayIsValid(item.UnliquidatedObligation.Valid)
             </td>
             <td>
                 @if (showReassignmentButton)
@@ -123,14 +117,15 @@ else
         </tr>
                     }
 </table>
-if (showReassignmentButton && rfrIdByWorkflow.Count > 0)
-{
-    foreach (var kvp in rfrIdByWorkflow)
+    if (showReassignmentButton && rfrIdByWorkflow.Count > 0)
     {
-        var rfrId = kvp.Value;
-        var wf = kvp.Key;
-        Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = wf.WorkflowId, uloRegionId = wf.UnliquidatedObligation.RegionId, isAdmin = true, id = rfrId });
+        var bulkToken = ViewBag.DetailsBulkToken as RequestForReassignmentsController.DetailsBulkToken;
+        foreach (var kvp in rfrIdByWorkflow)
+        {
+            var rfrId = kvp.Value;
+            var wf = kvp.Key;
+            Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = wf.WorkflowId, uloRegionId = wf.UnliquidatedObligation.RegionId, isAdmin = true, id = rfrId, bulkToken = bulkToken });
+        }
     }
-}
 @Html.Partial("_PaginationPartial")
 }

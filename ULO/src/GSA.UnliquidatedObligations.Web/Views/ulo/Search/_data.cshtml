@@ -16,7 +16,7 @@
 }
 @if (!hasData)
 {
-    <h4>@noDataMessage</h4>
+    <div class="noDataMessage">@noDataMessage</div>
 }
 else
 {
@@ -118,10 +118,7 @@ else
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.AwardNbr)
             </td>
             <td>
-                @{
-                    var isValid = item.UnliquidatedObligation.Valid == true ? "Yes" : "No";
-                    @Html.Encode(isValid)
-                }
+                @Html.DisplayIsValid(item.UnliquidatedObligation.Valid)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)

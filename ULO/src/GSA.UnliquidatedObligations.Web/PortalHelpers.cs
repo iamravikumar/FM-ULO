@@ -23,12 +23,18 @@ namespace GSA.UnliquidatedObligations.Web
 {
     public static class PortalHelpers
     {
+        public static readonly TimeZoneInfo DisplayTimeZone = TimeZoneInfo.FindSystemTimeZoneById(Properties.Settings.Default.TimezoneId);
         public static bool UseDevAuthentication => Properties.Settings.Default.UseDevAuthentication;
-        public static bool ShowSprintNameOnFooter => Properties.Settings.Default.ShowSprintNameOnFooter;
+        public static bool ShowSprintName => Properties.Settings.Default.ShowSprintName;
         public static string SprintName => Properties.Settings.Default.SprintName;
         public static string AdministratorEmail => Properties.Settings.Default.AdminstratorEmail;
         public static string AttachmentFileUploadAccept => Properties.Settings.Default.AttachmentFileUploadAccept;
         public static string AttachmentFileUploadAcceptMessage => Properties.Settings.Default.AttachmentFileUploadAcceptMessage;
+
+        public static class TempDataKeys
+        {
+            public const string Attachments = "attachments";
+        }
 
         public const string Wildcard = "*";
 
@@ -885,5 +891,98 @@ namespace GSA.UnliquidatedObligations.Web
 
         internal static IQueryable<Workflow> ApplyStandardIncludes(this IQueryable<Workflow> workflows)
             => workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region).Include(wf => wf.UnliquidatedObligation.Review);
+
+
+        private static Expression NestedProperty(Expression arg, string fieldName)
+        {
+            var left = fieldName.LeftOf(".");
+            var right = StringHelpers.TrimOrNull(fieldName.RightOf("."));
+            var leftExp = Expression.Property(arg, left);
+            if (right == null) return leftExp;
+            return NestedProperty(leftExp, right);
+        }
+
+        public enum OrderByFieldUnmappedBehaviors
+        {
+            UpFront,
+            InPlace,
+            AtEnd,
+        }
+
+        public static IOrderedQueryable<T> OrderByField<T>(this IQueryable<T> q, string sortColumn, IEnumerable<string> orderedValues, bool isAscending = true)
+        {
+            var d = new Dictionary<string, string>();
+            string mapped = "o";
+            foreach (var v in orderedValues)
+            {
+                d[v] = mapped;
+                mapped = mapped + "o";
+            }
+            return q.OrderByField(sortColumn, d, isAscending, OrderByFieldUnmappedBehaviors.AtEnd);
+        }
+
+        private static Expression GenerateStringConcat(Expression left, Expression right)
+        {
+            return BinaryExpression.Add(left, right, typeof(string).GetMethod("Concat", new[] { typeof(object), typeof(object) }));
+        }
+
+        public static IOrderedQueryable<T> OrderByField<T>(this IQueryable<T> q, string sortColumn, IDictionary<string, string> valueMapper, bool isAscending = true, OrderByFieldUnmappedBehaviors unmappedValueBehavior = OrderByFieldUnmappedBehaviors.InPlace)
+        {
+            Requires.Text(sortColumn, nameof(sortColumn));
+            valueMapper = valueMapper ?? new Dictionary<string, string>();
+
+            var param = Expression.Parameter(typeof(T), "p");
+            var prop = NestedProperty(param, sortColumn);
+
+            var last = valueMapper.Values.OrderBy().LastOrDefault() ?? "";
+
+            Expression expr;
+            switch (unmappedValueBehavior)
+            {
+                case OrderByFieldUnmappedBehaviors.UpFront:
+                    expr = GenerateStringConcat(Expression.Constant("UpFront_a_"), prop);
+                    break;
+                case OrderByFieldUnmappedBehaviors.InPlace:
+                    expr = (Expression)prop;
+                    break;
+                case OrderByFieldUnmappedBehaviors.AtEnd:
+                    expr = GenerateStringConcat(Expression.Constant(last + "_AtEnd_"), prop);
+                    break;
+                default:
+                    throw new UnexpectedSwitchValueException(unmappedValueBehavior);
+            }
+            foreach (var kvp in valueMapper)
+            {
+                Expression mapped;
+                switch (unmappedValueBehavior)
+                {
+                    case OrderByFieldUnmappedBehaviors.UpFront:
+                        mapped = Expression.Constant("UpFront_b_" + kvp.Value);
+                        break;
+                    case OrderByFieldUnmappedBehaviors.InPlace:
+                        mapped = Expression.Constant(kvp.Value);
+                        break;
+                    case OrderByFieldUnmappedBehaviors.AtEnd:
+                        mapped = Expression.Constant(kvp.Value);
+                        break;
+                    default:
+                        throw new UnexpectedSwitchValueException(unmappedValueBehavior);
+                }
+                expr = Expression.Condition(
+                    Expression.Equal(prop, Expression.Constant(kvp.Key)),
+                    mapped,
+                    expr);
+            }
+
+            var types = new[] { q.ElementType, prop.Type };
+            var mce = Expression.Call(
+                typeof(Queryable),
+                LinqHelpers.StandardMethodNames.GetSortOrder(isAscending),
+                new[] { q.ElementType, typeof(string) },
+                q.Expression,
+                Expression.Lambda<Func<T, string>>(expr, new ParameterExpression[] { param })
+                );
+            return (IOrderedQueryable<T>)q.Provider.CreateQuery<T>(mce);
+        }
     }
 }

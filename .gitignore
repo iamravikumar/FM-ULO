@@ -14,18 +14,23 @@
 /ULO/src/GSA.UnliquidatedObligations.Web/Properties/PublishProfiles/
 /ULO/src/GSA.UnliquidatedObligations.Web/MailDrop
 /ULO/src/GSA.UnliquidatedObligations.Web/Content/DocStorage
+/ULO/src/GSA.UnliquidatedObligations.Web/App_Data/*.mdf
+/ULO/src/GSA.UnliquidatedObligations.Web/App_Data/*.ldf
+/ULO/src/GSA.UnliquidatedObligations.Web/GSA.UnliquidatedObligations.Web.csproj.user
 /.vs
 **/web.config
 **/Web.bak.config
 **/app.config
 **/*.dll
 **/*.pdb
-/ULO/src/GSA.UnliquidatedObligations.Web/App_Data/*.mdf
-/ULO/src/GSA.UnliquidatedObligations.Web/App_Data/*.ldf
-/ULO/src/GSA.UnliquidatedObligations.Web/GSA.UnliquidatedObligations.Web.csproj.user
+**/storage.ide
+**/*.suo
 **/*.user
 *.user
 /ULO/.vs/
+/ULO/.vs/**
+ULO/.vs/
+ULO/.vs/**
 
 # NuGet Packages
 *.nupkg

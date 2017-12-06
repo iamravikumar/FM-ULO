@@ -99,3 +99,24 @@ h1.navbar-brand {
 .modal-dialog {
     width: 640px;
 }
+
+.noDataMessage {
+    font-size: 16px;
+    font-style: italic;
+}
+
+
+.dl-horizontal-middle{
+    margin-bottom: 0;
+}
+
+.dl-horizontal-middle dt {
+    display: table-cell;
+    vertical-align: middle;
+    padding-right: 5px;
+}
+
+.dl-horizontal-middle dd {
+    display: table-cell;
+    vertical-align: middle;
+}

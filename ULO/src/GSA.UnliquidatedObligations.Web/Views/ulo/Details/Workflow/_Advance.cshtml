@@ -2,6 +2,8 @@
 
 @Html.Partial("_MyJustifications")
 
+@Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
+
 <div class="row advance">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -9,57 +11,41 @@
         </div>
         <div class="panel-body">
             <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="row">
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="col-md-12">
-                        @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.Answer, Model.QuestionChoices.CreateSelectListItems().PleaseSelect(), htmlAttributes: new { id="q", required="required", @onchange = "ChoiceChange(this.value, \""+AspHelpers.PleaseSelectOne+"\", null)" })<br />
+                    @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
+                    @Html.DropDownListFor(model => model.Answer, Model.QuestionChoices.CreateSelectListItems().PleaseSelect(), htmlAttributes: new { id="q", required="required", @onchange = "ChoiceChange(false)" })<br />
+                    <div>
                         @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id = "validateAnswerMessage", @class = "text-danger" })
                     </div>
                 </div>
                 <div class="row row-space-top" style="display:none">
-                    <div class="col-md-12">
-                        @Html.LabelFor(model => model.JustificationKey, "Justification:", htmlAttributes: new { @class = "control-label" })
-                        @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications", mrjk= Model.MostRecentJustificationKey })<br />
+                    @Html.LabelFor(model => model.JustificationKey, "Justification:", htmlAttributes: new { @class = "control-label" })
+                    @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications", mrjk= Model.MostRecentJustificationKey, @onchange= "clearJustificationValidationErrors()" })<br />
+                    <div>
                         @Html.ValidationMessageFor(model => model.JustificationKey, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
-                        @if (!string.IsNullOrEmpty(Model.JustificationKey))
-                        {
-                        <script type="text/javascript">
-                            $(document).ready(function () {
-                                ChoiceChange("@Model.Answer", "@AspHelpers.PleaseSelectOne", "@Model.JustificationKey");
-                            });
-                        </script>
-                        }
                     </div>
                 </div>
                 <div class="row row-space-top" id="expectedDateForCompletionContainer">
-                    <div class="col-md-12">
-                        @Html.LabelFor(model => model.ExpectedDateForCompletion, "Expected Date for Completion/Resolution: ", htmlAttributes: new { @class = "control-label" })
-                        @Html.EditorFor(model => model.ExpectedDateForCompletion, new { @class = "form-control", type = "date" })
-                        <br />
+                    @Html.LabelFor(model => model.ExpectedDateForCompletion, "Expected Date for Completion/Resolution: ", htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.ExpectedDateForCompletion, new { @class = "form-control", type = "date", htmlAttributes= new { @onchange = "clearDateValidationErrors()" }  })
+                    <div>
                         @Html.ValidationMessageFor(model => model.ExpectedDateForCompletion, "Must select Expected Date of Completion", new { id = "validateExpectedDateMessage", @class = "text-danger" })
                     </div>
                 </div>
-                <div class="row other-comments row-space-top">
-                    <div class="row">
-                        @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
-                    </div>
-                    <div class="row">
+                <div class="row row-space-top">
+                    @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
+                    <div>
                         @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })
                     </div>
-                    <div class="row">
+                    <div style="clear:both">
                         @Html.ValidationMessageFor(model => model.Comments, "Must enter Comment when Other is selected", new { id = "validateCommentMessage", @class = "text-danger" })
                     </div>
+                    @Html.ValidationMessageFor(model => model.Comments, "Maximum comment size is 4000", new { id = "validateCommentMessageMax", @class = "text-danger", style="display:none" })
                 </div>
-                @Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
-                @* Needed for checking on submit *@
-                @Html.HiddenFor(model => model.ExpectedDateForCompletionNeeded)
-                @Html.HiddenFor(model => model.ExpectedDateForCompletionEditable)
                 <div class="row row-space-top">
-                    <div class="col-md-10">
-                        <input type="submit" value="Save" name="WhatNext" class="btn btn-default" onclick="allowSubmitWithoutRequiredValidations();" />
-                        <input type="submit" value="Submit" name="WhatNext" class="btn btn-primary confirm-on-click" confirmMessage="Do you want to submit?" />
-                    </div>
+                    <input type="submit" value="Save" name="WhatNext" class="btn btn-default" onclick="allowSubmitWithoutRequiredValidations();" />
+                    <input type="submit" value="Submit" name="WhatNext" class="btn btn-primary confirm-on-click" confirmMessage="Are you sure you're ready to submit?" />
                 </div>
             </div>
         </div>
@@ -67,6 +53,8 @@
 </div>
 
 <script type="text/javascript">
+    var pleaseSelectOneMessage = "@AspHelpers.PleaseSelectOne";
+    $(document).ready(function () { ChoiceChange(true); });
     function allowSubmitWithoutRequiredValidations()
     {
         $('#q').removeAttr('required').removeAttr('aria-required');

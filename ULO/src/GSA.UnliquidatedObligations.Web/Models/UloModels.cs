@@ -57,10 +57,12 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string QuestionLabel { get; set; }
 
+        [MaxLength(100)]
         public string Answer { get; set; }
 
         public string JustificationKey { get; set; }
 
+        [MaxLength(4000)]
         public string Comments { get; set; }
 
         [DataType(DataType.Date)]

@@ -65,7 +65,7 @@
                     </dl>
                 </div>
                 <div class="col-md-4">
-                    <dl class="dl-horizontal">
+                    <dl class="dl-horizontal-middle">
                         <dt>
                             Assigned To:
                         </dt>
@@ -82,7 +82,7 @@
                                 string reassignButtonText = null;
                                 if (wf.OwnerUserId == PortalHelpers.GetUserId(User?.Identity?.Name))
                                 {
-                                    reassignButtonText = "Request Reassignment";
+                                    reassignButtonText = "Reassign";
                                 }
                                 else if (Model.BelongsToMyUnassignmentGroup)
                                 {

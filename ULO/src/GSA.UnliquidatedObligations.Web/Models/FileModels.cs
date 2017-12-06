@@ -3,6 +3,7 @@ using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Web.Mvc;
 using RevolutionaryStuff.Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
@@ -10,6 +11,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
     {
         public int DocumentId { get; set; }
 
+        [MaxLength(255)]
         public string DocumentName { get; set; }
 
         public IList<int> DocumentTypeIds { get; set; }

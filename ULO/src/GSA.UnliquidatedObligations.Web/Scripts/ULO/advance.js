@@ -1,5 +1,16 @@
 ﻿var select, submitActor;
 
+function clearValidationErrors() {
+    $("#validateAnswerMessage,#validateJustificationMessage,#validateExpectedDateMessage,#validateCommentMessage,#validateCommentMessageMax").hide();
+}
+
+function clearJustificationValidationErrors() {
+    $("#validateJustificationMessage").hide();
+}
+
+function clearDateValidationErrors() {
+    $("#validateExpectedDateMessage").hide();
+}
 
 $(document).ready(function () {
 
@@ -26,41 +37,56 @@ $(document).ready(function () {
     });
 
     $form.submit(function () {
+        var needsAnswer = $("#q").val() == "" || $("#q").val() == null;
         var justificationVal = $("#justifications").val();
-        debugAlert("submitActor.name=" + submitActor.name + "; submitActor.value=" + submitActor.value + "; needed=" + justificationNeeded() + "; J_len=" + $("#justifications").children().length + "; j_val=[" + justificationVal + "]");
-        if (submitActor.value === "Submit") {
-            if ($("#Answer").val() === "") {
-                debugAlert("inputError: case1");
+        var justificationNeeded = $("#justifications").children().length > 1 && $("#justifications").is(":visible");
+        var expectedDateForCompletionNeeded = $("#ExpectedDateForCompletion").is(":visible");
+        debugAlert(
+                "form.submit checker: \n" +
+                "submitActor.name=" + submitActor.name + "\n" +
+                "submitActor.value=" + submitActor.value + "\n" +
+                "needed=" + justificationNeeded + "\n" +
+                "J_len=" + $("#justifications").children().length + "\n" +
+                "j_val=[" + justificationVal + "]" + "\n" +
+                "justificationNeeded=" + justificationNeeded + "\n" +
+                "expectedDateForCompletionNeeded=" + expectedDateForCompletionNeeded + "\n" +
+                "needsAnswer=" + needsAnswer + "\n" +
+                "answer=[" + $("#q").val()+"]"
+                );
+        var allowSubmit = true;
+        var comment = $("#Comments").val();
+        clearValidationErrors();
+        if (submitActor.value == "Submit") {
+            if (needsAnswer) {
                 $("#validateAnswerMessage").show();
-                return false;
+                allowSubmit = false;
             }
-            if (justificationNeeded()) {
+            if (justificationNeeded) {
                 if (justificationVal == null || justificationVal == "") {
-                    debugAlert("inputError: case2");
                     $("#validateJustificationMessage").show();
-                    return false;
+                    allowSubmit = false;
                 }
             }
-            if ($("#ExpectedDateForCompletionNeeded").val() === "True" && ($("#Answer").val() === "Valid" || $("#Answer").val() === "Approve") && $("#ExpectedDateForCompletion").val() === "") {
-                debugAlert("inputError: case3");
+            if (expectedDateForCompletionNeeded && $("#ExpectedDateForCompletion").val() === "") {
                 $("#validateExpectedDateMessage").show();
-                return false;
+                allowSubmit = false;
             }
-            if ($("#justifications option:selected").text() === "Other" && $("#Comments").val() == "") {
-                debugAlert("inputError: case4");
+            if ($("#justifications option:selected").text() === "Other" && comment == "") {
                 $("#validateCommentMessage").show();
-                return false;
+                allowSubmit = false;
             }
         }
-        $("#validateAnswerMessage").hide();
-        $("#validateJustificationMessage").hide();
-        return true;
+        if (comment.length > 4000) {
+            $("#validateCommentMessageMax").show().text("The maximum comment size is 4000 and you entered "+comment.length+" characters");
+            allowSubmit = false;
+        }
+        debugAlert(
+            "form.submit checker: \n" +
+            "result=" + allowSubmit
+        );
+        return allowSubmit;
     })
 });
-
-function justificationNeeded() {
-    return $("#justifications").children().length > 1;
-}
 
 function showExpectedDate(showBool) {
     if (showBool) {
@@ -72,18 +98,25 @@ function showExpectedDate(showBool) {
     }
 }
 
-function ChoiceChange(value, pleaseSelect, justificationKey) {
-    debugAlert('ChoiceChange("' + value + '", "' + pleaseSelect + '", "' + justificationKey + '")');
+function ChoiceChange(initialize) {
+    clearValidationErrors();
+    var value = $("#q").val();
+    var mrjk = $("#justifications").attr("mrjk");
+    debugAlert(
+        "ChoiceChange\n"+
+        "initialize= [" + initialize + "]\n" +
+        "value= [" + value + "]\n" +
+        "mrjk= [" + mrjk + "]\n" +
+        "please= [" + pleaseSelectOneMessage + "]"
+        );
 
     var select = $("#justifications")[0];
     select.options.length = 0;
-    var mrjk = $(select).attr("mrjk");
-    justificationKey = justificationKey == null ? mrjk : justificationKey;
     var el = document.createElement("option");
-    el.textContent = pleaseSelect;
+    el.textContent = pleaseSelectOneMessage;
     el.value = "";
+    el.selected = true;
     el.disabled = true;
-    el.selected = justificationKey == null;
     select.appendChild(el);
 
     var jc = 0;
@@ -103,25 +136,17 @@ function ChoiceChange(value, pleaseSelect, justificationKey) {
             el = document.createElement("option");
             el.textContent = desc;
             el.value = key;
-            el.selected = key == justificationKey;
+            el.selected = initialize && key == mrjk;
             select.appendChild(el);
             ++jc;
         }
     }
 
-    while (el.tagName != "DIV" && el != null) {
-        el = el.parentElement;
+    if (jc == 0) {
+        $(select.parentElement).hide();
     }
-
-    debugAlert("jc=" + jc + "; el.tagName=" + el.tagName + "; el.id=" + el.id);
-
-    if (el != null) {
-        if (jc == 0) {
-            $(el.parentElement).hide();
-        }
-        else {
-            $(el.parentElement).show();
-        }
+    else {
+        $(select.parentElement).show();
     }
 
     showExpectedDate(q.expectedDateAlwaysShow);

@@ -86,9 +86,24 @@ function uploadAttachment(documentId, files) {
                 processData: false,
                 data: data,
                 success: function (result) {
+                    var errorMessage = null;
                     result.forEach(function (e) {
-                        addRow(e,  $("[name='DocumentIdForUpload']").val());
+                        if (e.Added) {
+                            addRow(e, $("[name='DocumentIdForUpload']").val());
+                        }
+                        else {
+                            errorMessage = errorMessage == null ? "" : errorMessage + "\n\n";
+                            errorMessage += e.FileName + ":\n";
+                            for (i in e.ErrorMessages)
+                            {
+                                errorMessage += "\t" + e.ErrorMessages[i];
+                            }
+                        }
                     });
+                    if (errorMessage != null)
+                    {
+                        alert(errorMessage);
+                    }
                 },
                 error: function (xhr, status, p3, p4) {
                     var err = "Error " + " " + status + " " + p3 + " " + p4;

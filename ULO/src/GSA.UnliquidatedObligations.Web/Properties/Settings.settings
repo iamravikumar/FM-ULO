@@ -27,7 +27,7 @@
       <Value Profile="(Default)">PreAssignment</Value>
     </Setting>
     <Setting Name="SprintName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Xerez</Value>
+      <Value Profile="(Default)">Yankees</Value>
     </Setting>
     <Setting Name="SecureAuthUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx</Value>
@@ -87,14 +87,20 @@
     <Setting Name="DevLoginPassword" Type="System.String" Scope="Application">
       <Value Profile="(Default)">123abc</Value>
     </Setting>
-    <Setting Name="ShowSprintNameOnFooter" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="AttachmentFileUploadAccept" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">audio/*|video/*|image/*|.txt|.pdf|.doc|.docx|.xls|.xlsx|.zip|.csv</Value>
+      <Value Profile="(Default)">audio/*|video/*|image/*|.txt|.pdf|.doc|.docx|.xls|.xlsx|.zip|.csv|.ppt|.pptx</Value>
     </Setting>
     <Setting Name="AttachmentFileUploadAcceptMessage" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Only images, videos, audio files, documents, and archives are accepted.</Value>
+    </Setting>
+    <Setting Name="ReviewStatusOrdering" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Region Review,Region Approval,CO Review 1,CO Review 2,Action Needed,Deobligate,Complete</Value>
+    </Setting>
+    <Setting Name="ShowSprintName" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TimezoneId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Eastern Standard Time</Value>
     </Setting>
   </Settings>
 </SettingsFile>

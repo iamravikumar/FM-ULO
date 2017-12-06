@@ -83,7 +83,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     ds.ToSpreadSheet(st);
                     st.Position = 0;
                     var now = DateTime.UtcNow;
-                    string filename = report.FilenamePattern == null ? report.Name : string.Format(report.FilenamePattern, now, now.ToLocalTime());
+                    string filename = report.FilenamePattern == null ? 
+                        report.Name : 
+                        string.Format(
+                            report.FilenamePattern, 
+                            now, 
+                            now.ToLocalTime(), 
+                            now.ToTimeZone(PortalHelpers.DisplayTimeZone));
                     filename += MimeType.Application.SpreadSheet.Xlsx.PrimaryFileExtension;
                     var cd = new System.Net.Mime.ContentDisposition
                     {

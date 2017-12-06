@@ -22,6 +22,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public static class ActionNames
         {
+            public const string Create = "Create";
             public const string Index = "Index";
             public const string Save = "Save";
         }
@@ -83,6 +84,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [Route("users/create", Order =1)]
+        [ActionName(ActionNames.Create)]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
         public async Task<ActionResult> Create()
         {
@@ -119,6 +121,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             m.Email = StringHelpers.TrimOrNull(m.Email);
             var users = await DB.AspNetUsers.Where(z => z.UserName == m.UserName || z.Email == m.Email || z.Id == m.UserId).ToListAsync();
             bool hasErrors = false;
+            bool userNameError = false;
+            bool emailError = false;
             foreach (var user in users)
             {
                 if (user.Id == m.UserId)
@@ -126,15 +130,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     u = user;
                     continue;
                 }
-                if (0 == string.Compare(m.UserName, user.UserName, true))
+                if (0 == string.Compare(m.UserName, user.UserName, true) &&!userNameError && m.UserName!=null)
                 {
                     ModelState.AddModelError(nameof(m.UserName), $"Username {m.UserName} already exists, cannot re-add");
                     hasErrors = true;
+                    userNameError = true;
                 }
-                if (0 == string.Compare(m.Email, user.Email, true))
+                if (0 == string.Compare(m.Email, user.Email, true) && !emailError && m.Email!=null)
                 {
                     ModelState.AddModelError(nameof(m.Email), $"Email {m.Email} already exists, cannot re-add");
                     hasErrors = true;
+                    emailError = true;
                 }
             }
             if (ModelState.IsValid && !hasErrors)

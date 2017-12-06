@@ -31,6 +31,9 @@ namespace GSA.UnliquidatedObligations.Web
         public const string SortDirAscending = "asc";
         public const string SortDirDescending = "desc";
 
+        public static DateTime ToTimeZone(this DateTime dt, TimeZoneInfo zoneInfo)
+            => TimeZoneInfo.ConvertTime(dt, zoneInfo);
+
         public static bool IsSortDirAscending(string sortDir)
             => !(0 == string.Compare(SortDirDescending, sortDir, true));
 
@@ -42,6 +45,9 @@ namespace GSA.UnliquidatedObligations.Web
             var da = e.GetCustomAttributes<DisplayAttribute>().FirstOrDefault(a => a.Description != null);
             return da?.Description ?? da.Name ?? e.ToString();
         }
+
+        public static string DisplayIsValid(this HtmlHelper hh, bool? isValid)
+            => isValid.HasValue ? (isValid.Value ? "Yes" : "No") : null;
 
         public static string FriendlyNameFor<TModelItem, TResult>(this HtmlHelper<TModelItem> hh, Expression<Func<TModelItem, TResult>> columnExpression)
         {

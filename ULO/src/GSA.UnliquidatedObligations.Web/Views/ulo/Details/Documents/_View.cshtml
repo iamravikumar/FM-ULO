@@ -10,7 +10,7 @@
     var deleteConfId = id + "Delete";
     var deleteConfLabel = deleteConfId + "Label";
     var deleteConfBody = deleteConfId + "Body";
-    object docNameAttributes = Model.AllowDocumentEdit ? new { id = @documentName, @class = "col-md-8 document-name" } : (object)new { id = @documentName, @class = "col-md-8 document-name", @readonly = "readonly" };
+    object docNameAttributes = Model.AllowDocumentEdit ? new { id = @documentName, @class = "col-md-8 document-name", maxlength = "255" } : (object)new { id = @documentName, @class = "col-md-8 document-name", @readonly = "readonly" };
     object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4 } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4, @disabled = "disabled" };
     var isDisabled = !Model.AllowDocumentEdit ? "disabled" : "";
     var isReadOnly = !Model.AllowDocumentEdit ? "readonly" : "";
@@ -77,7 +77,7 @@
 
                         @if (Model.AllowDocumentEdit)
                         {
-                            <button type="button" class="btn btn-primary attachments-add-btn" title="@PortalHelpers.AttachmentFileUploadAcceptMessage">Add Attachment</button>
+                            <button type="button" class="btn btn-primary attachments-add-btn" title="@PortalHelpers.AttachmentFileUploadAcceptMessage">Add</button>
                         }
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                 <div class="document-error-msg">This is an Errors</div>
                 @if (Model.AllowDocumentEdit)
                 {
-                    <button type="button" data-target="@Model.DocumentId" class="btn btn-primary save-document">Save Document</button>
+                    <button type="button" data-target="@Model.DocumentId" class="btn btn-primary save-document">Save</button>
                 }
                 <button type="button" class="btn btn-secondary close-document-modal" data-dismiss="modal">Close</button>
             </div>

@@ -64,14 +64,22 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
         }
 
+        public class FileUploadAttachmentResult : Attachment
+        {
+            public bool Added { get; set; }
+            public bool Whitelisted { get; set; }
+            public bool SaveError { get; set; }
+            public IList<string> ErrorMessages { get; set; } = new List<string>();
+        }
+
         [HttpPost]
         public async Task<JsonResult> FileUpload(int documentId)
         {
-            var attachmentsAdded = new List<Attachment>();
+            var results = new List<FileUploadAttachmentResult>();
             List<Attachment> attachmentsTempData = null;
-            if (TempData["attachments"] != null)
+            if (TempData[PortalHelpers.TempDataKeys.Attachments] != null)
             {
-                attachmentsTempData = (List<Attachment>) TempData["attachments"];
+                attachmentsTempData = (List<Attachment>) TempData[PortalHelpers.TempDataKeys.Attachments];
             }
             attachmentsTempData = attachmentsTempData ?? new List<Attachment>();
             foreach (string file in Request.Files)
@@ -80,11 +88,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 if (fileContent != null && fileContent.ContentLength > 0)
                 {
                     var path = PortalHelpers.GetStorageFolderPath($"Temp/{Guid.NewGuid()}.dat");
-                    using (var fileStream = System.IO.File.Create(path))
-                    {
-                        await fileContent.InputStream.CopyToAsync(fileStream);
-                    }
-                    var attachment = new Attachment
+                    var attachment = new FileUploadAttachmentResult
                     {
                         AttachmentsId = Stuff.Random.Next(int.MaxValue),
                         FileName = fileContent.FileName,
@@ -94,18 +98,36 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         FileSize = fileContent.ContentLength,
                         ContentType = fileContent.ContentType ?? System.Net.Mime.MediaTypeNames.Application.Octet
                     };
-                    if (PortalHelpers.VerifyFileAccept(
+                    attachment.Whitelisted = PortalHelpers.VerifyFileAccept(
                         Properties.Settings.Default.AttachmentFileUploadAccept,
                         attachment.FileName,
-                        attachment.ContentType))
+                        attachment.ContentType);
+                    if (attachment.Whitelisted)
                     {
-                        attachmentsAdded.Add(attachment);
+                        try
+                        {
+                            using (var fileStream = System.IO.File.Create(path))
+                            {
+                                await fileContent.InputStream.CopyToAsync(fileStream);
+                            }
+                            attachment.Added = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            attachment.SaveError = true;
+                            attachment.ErrorMessages.Add(ex.Message);
+                        }
                     }
+                    else
+                    {
+                        attachment.ErrorMessages.Add(Properties.Settings.Default.AttachmentFileUploadAcceptMessage);
+                    }
+                    results.Add(attachment);
                 }
             }
-            attachmentsTempData.AddRange(attachmentsAdded);
-            TempData["attachments"] = attachmentsTempData;
-            return Json(attachmentsAdded);
+            attachmentsTempData.AddRange(results.Where(z=>z.Added));
+            TempData[PortalHelpers.TempDataKeys.Attachments] = attachmentsTempData;
+            return Json(results);
         }
 
         [HttpGet]

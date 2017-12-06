@@ -7,7 +7,9 @@ using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using RevolutionaryStuff.Core.Collections;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -38,16 +40,44 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             UserManager = userManager;
         }
 
-        [ActionName(ActionNames.Details)]
-        public ActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false)
+        public class DetailsBulkToken
         {
+            internal AspNetUser CurrentUser { get; private set; }
+            internal MultipleValueDictionary<int, string> ProhibitedOwnerIdsByWorkflowId { get; private set; }
+            internal ULODBEntities DB { get; private set; }
+            internal IDictionary<int, Workflow> WorkflowById { get; private set; }
+
+            internal bool IsValid
+                => CurrentUser != null & DB != null && ProhibitedOwnerIdsByWorkflowId != null && WorkflowById != null;
+
+            public DetailsBulkToken()
+            { }
+
+            internal DetailsBulkToken(AspNetUser currentUser, ULODBEntities db, IQueryable<Workflow> workflows)
+            {
+                CurrentUser = currentUser;
+                DB = db;
+                WorkflowById = workflows.ToDictionary(z => z.WorkflowId);
+                var ids = WorkflowById.Keys;
+                ProhibitedOwnerIdsByWorkflowId = db.WorkflowProhibitedOwners.Where(z => ids.Contains(z.WorkflowId)).ToMultipleValueDictionary(z => z.WorkflowId, z => z.ProhibitedOwnerUserId);
+            }
+            internal DetailsBulkToken(AspNetUser currentUser, ULODBEntities db, int workflowId)
+                : this(currentUser, db, new[] { db.Workflows.Find(workflowId) }.AsQueryable())
+            { }
+        }
+
+        [ActionName(ActionNames.Details)]
+        public ActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false, DetailsBulkToken bulkToken=null)
+        {
+            bulkToken = (bulkToken != null && bulkToken.IsValid) ? bulkToken : new DetailsBulkToken(CurrentUser, DB, workflowId);
+            var db = bulkToken.DB; 
             RequestForReassignment requestForReassignment = null;
             if (id.HasValue)
             {
-                requestForReassignment = DB.RequestForReassignments.Include(z=>z.UnliqudatedObjectsWorkflowQuestion).FirstOrDefault(r => r.RequestForReassignmentID == id.Value);
+                requestForReassignment = db.RequestForReassignments.Include(z=>z.UnliqudatedObjectsWorkflowQuestion).FirstOrDefault(r => r.RequestForReassignmentID == id.Value);
             }
 
-            var workflow = DB.Workflows.FirstOrDefault(wf => wf.WorkflowId == workflowId);
+            var workflow = db.Workflows.Find(workflowId);
             var wfDesc = Manager.GetWorkflowDescriptionAsync(workflow).Result;
 
             string groupOwnerId;
@@ -62,11 +92,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 groupOwnerId = PortalHelpers.GetUserId(wfDefintionOwnerName);
             }
 
-            var prohibitedUserIds = DB.WorkflowProhibitedOwners.Where(z => z.WorkflowId == workflow.WorkflowId).Select(z => z.ProhibitedOwnerUserId).ToList();
+            var prohibitedUserIds = bulkToken.ProhibitedOwnerIdsByWorkflowId[workflowId];
 
             var userSelectItems = Cacher.FindOrCreateValWithSimpleKey(
                 Cache.CreateKey(groupOwnerId, uloRegionId, "fdsfdsaf"),
-                () => DB.UserUsers
+                () => db.UserUsers
                     .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId && uu.ChildUser.UserType == AspNetUser.UserTypes.Person)
                     .Select(uu => new { UserName = uu.ChildUser.UserName, UserId = uu.ChildUserId }).ToList(),
                     UloHelpers.MediumCacheTimeout
@@ -82,7 +112,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 UloHelpers.MediumCacheTimeout
                 ))
             {
-                userSelectItems.Add(CurrentUser.ToSelectListItem(prohibitedUserIds.Contains(CurrentUserId)));
+                userSelectItems.Add((bulkToken.CurrentUser).ToSelectListItem(prohibitedUserIds.Contains(CurrentUserId)));
             }
 
             if (workflow.OwnerUserId == CurrentUserId)
