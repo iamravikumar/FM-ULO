@@ -79,13 +79,12 @@ $(document).ready(function () {
     })
 });
 
-function ChoiceChange(initialize) {
+function ChoiceChange() {
     clearValidationErrors();
     var value = $("#q").val();
     var mrjk = $("#justifications").attr("mrjk");
     debugAlert(
         "ChoiceChange\n"+
-        "initialize= [" + initialize + "]\n" +
         "value= [" + value + "]\n" +
         "mrjk= [" + mrjk + "]\n" +
         "please= [" + pleaseSelectOneMessage + "]"
@@ -118,7 +117,7 @@ function ChoiceChange(initialize) {
             el = document.createElement("option");
             el.textContent = desc;
             el.value = key;
-            el.selected = initialize && key == mrjk;
+            el.selected = key == mrjk;
             select.appendChild(el);
             ++jc;
         }
