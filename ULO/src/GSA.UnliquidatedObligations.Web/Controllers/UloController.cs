@@ -398,7 +398,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 await DB.SaveChangesAsync();
                 if (submit)
                 {
-                    var ret = await Manager.AdvanceAsync(wf, question);
+                    var ret = await Manager.AdvanceAsync(wf, question, Properties.Settings.Default.ForceAdvanceFromUloSubmit);
                     await DB.SaveChangesAsync();
                     return ret;
                 }

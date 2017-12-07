@@ -3,7 +3,7 @@
   <PropertyGroup>
     <UseIISExpress>true</UseIISExpress>
     <ProjectView>ProjectFiles</ProjectView>
-    <NameOfLastUsedPublishProfile>2ULO - Web Deploy</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>2ULO - File Deploy</NameOfLastUsedPublishProfile>
     <WebStackScaffolding_ViewDialogWidth>1381.71428571429</WebStackScaffolding_ViewDialogWidth>
     <WebStackScaffolding_LayoutPageFile>~/Views/Shared/_Layout.cshtml</WebStackScaffolding_LayoutPageFile>
     <WebStackScaffolding_ControllerDialogWidth>604</WebStackScaffolding_ControllerDialogWidth>
@@ -13,6 +13,12 @@
     <WebStackScaffolding_DbContextTypeFullName>GSA.UnliquidatedObligations.BusinessLayer.Data.ULODBEntities</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsViewGenerationSelected>True</WebStackScaffolding_IsViewGenerationSelected>
     <WebStackScaffolding_IsAsyncSelected>True</WebStackScaffolding_IsAsyncSelected>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

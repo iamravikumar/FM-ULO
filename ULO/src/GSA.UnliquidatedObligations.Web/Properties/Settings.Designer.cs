@@ -258,5 +258,14 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
                 return ((string)(this["TimezoneId"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ForceAdvanceFromUloSubmit {
+            get {
+                return ((bool)(this["ForceAdvanceFromUloSubmit"]));
+            }
+        }
     }
 }

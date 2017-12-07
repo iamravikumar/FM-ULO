@@ -44,8 +44,5 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [DataMember(Name = "ExpectedDateForCompletionEditable")]
         public bool ExpectedDateForCompletionEditable { get; set; }
-
-        [DataMember(Name = "ExpectedDateForCompletionNeeded")]
-        public bool ExpectedDateForCompletionNeeded { get; set; }
     }
 }

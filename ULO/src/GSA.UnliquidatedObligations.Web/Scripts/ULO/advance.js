@@ -19,18 +19,9 @@ $(document).ready(function () {
     $("#validateExpectedDateMessage").hide();
     $("#validateCommentMessage").hide();
 
-    if ($("#ExpectedDateForCompletionEditable").val() == "False") {
-        $("#ExpectedDateForCompletion").attr('type', 'text');
-        $("#ExpectedDateForCompletion").attr('readonly', true);
-    }
 
     var $form = $('#uloDetailsForm');
     var $submitActors = $form.find('input[type=submit]');
-
-    var showExpectedDateBool = $("#ExpectedDateAlwaysShow").val() == "True" || $("#Answer").val() === "Valid" || $("#Answer").val() === "Approve" || $("#ExpectedDateForCompletion").val() !== "";
-
-    showExpectedDate(showExpectedDateBool);
-
 
     $submitActors.click(function () {
         submitActor = this;
@@ -88,16 +79,6 @@ $(document).ready(function () {
     })
 });
 
-function showExpectedDate(showBool) {
-    if (showBool) {
-        $("#expectedDateForCompletionContainer").show();
-    }
-    else {
-        $("#expectedDateForCompletionContainer").hide();
-        $("#expectedDate").val("");
-    }
-}
-
 function ChoiceChange(initialize) {
     clearValidationErrors();
     var value = $("#q").val();
@@ -121,6 +102,7 @@ function ChoiceChange(initialize) {
 
     var jc = 0;
     var q = questionChoiceByQuestionChoiceValue[value];
+
     var keys = q.justificationKeys;
     if (keys != null) {
         debugAlert(keys.length + " keys of [" + keys + "]");
@@ -149,5 +131,10 @@ function ChoiceChange(initialize) {
         $(select.parentElement).show();
     }
 
-    showExpectedDate(q.expectedDateAlwaysShow);
+    if (q!=null && q.expectedDateAlwaysShow) {
+        $("#expectedDateForCompletionContainer").show();
+    }
+    else {
+        $("#expectedDateForCompletionContainer").hide();
+    }
 }
