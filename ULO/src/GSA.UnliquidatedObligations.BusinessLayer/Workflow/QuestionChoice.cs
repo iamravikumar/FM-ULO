@@ -38,8 +38,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         public bool IsApplicable(string documentType, string mostRecentNonReassignmentAnswer)
             =>
                 (
+                    MostRecentNonReassignmentAnswer == null ||
                     MostRecentNonReassignmentAnswer == mostRecentNonReassignmentAnswer ||
-                    MostRecentNonReassignmentAnswer == null
+                    CSV.ParseLine(MostRecentNonReassignmentAnswer).Contains(mostRecentNonReassignmentAnswer)
                 ) &&
                 (
                     DocumentTypes == null ||
