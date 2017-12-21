@@ -97,7 +97,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Yankees")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Zephyr")]
         public string SprintName {
             get {
                 return ((string)(this["SprintName"]));

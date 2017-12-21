@@ -27,7 +27,7 @@
       <Value Profile="(Default)">PreAssignment</Value>
     </Setting>
     <Setting Name="SprintName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Yankees</Value>
+      <Value Profile="(Default)">Zephyr</Value>
     </Setting>
     <Setting Name="SecureAuthUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx</Value>
