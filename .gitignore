@@ -39,3 +39,4 @@ ULO/.vs/**
 # except build/, which is used as an MSBuild target.
 !**/packages/build/
  ULO\src\GSA.UnliquidatedObligations.Web\Web.bak.config 
+"ULO\src\GSA.UnliquidatedObligations.Web\Web.bak.config" 
