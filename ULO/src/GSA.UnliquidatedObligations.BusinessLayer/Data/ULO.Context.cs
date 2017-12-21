@@ -64,6 +64,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<ReviewStat> ReviewStats { get; set; }
         public virtual DbSet<UnliquidatedObligation> UnliquidatedObligations { get; set; }
         public virtual DbSet<WorkflowProhibitedOwner> WorkflowProhibitedOwners { get; set; }
+        public virtual DbSet<PdnAttribute> PdnAttributes { get; set; }
     
         public virtual int CreateULOAndAssignWf(Nullable<int> reviewId, Nullable<int> workflowDefinitionId, Nullable<System.DateTime> reviewDate)
         {

@@ -21,6 +21,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.Reviews1 = new HashSet<Review>();
             this.UserUsers = new HashSet<UserUser>();
             this.UnliquidatedObligations = new HashSet<UnliquidatedObligation>();
+            this.PdnAttributes = new HashSet<PdnAttribute>();
         }
     
         public int RegionId { get; set; }
@@ -37,5 +38,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual Zone Zone { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UnliquidatedObligation> UnliquidatedObligations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PdnAttribute> PdnAttributes { get; set; }
     }
 }

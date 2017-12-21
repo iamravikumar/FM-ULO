@@ -77,6 +77,8 @@
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Documents__Delet__0F824689" />
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowProhibitedOwner" Width="1.5" PointX="14.375" PointY="0.75" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Deleted__3D491139" />
+        <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.PdnAttribute" Width="1.5" PointX="8.25" PointY="24.125" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__PdnAttrib__Regio__7869D707" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

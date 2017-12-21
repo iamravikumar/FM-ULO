@@ -406,6 +406,7 @@
     <Compile Include="Controllers\DocumentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\PdnController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RequestForReassignmentsController.cs" />
     <Compile Include="Controllers\ReviewsController.cs" />
@@ -417,6 +418,7 @@
     </Compile>
     <Compile Include="HangfireDashboardAuthorizationFilter.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\PdnModels.cs" />
     <Compile Include="Models\ReportModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -525,6 +527,8 @@
     <Content Include="Views\Shared\_ApplicationDescription.cshtml" />
     <Content Include="Views\Shared\_AuthenticatedNotAuthorized.cshtml" />
     <Content Include="Views\Ulo\Details\Workflow\_Others.cshtml" />
+    <Content Include="Views\Pdn\Index.cshtml" />
+    <Content Include="Views\Pdn\Details.cshtml" />
     <None Include="Web.bak.config">
       <SubType>Designer</SubType>
     </None>

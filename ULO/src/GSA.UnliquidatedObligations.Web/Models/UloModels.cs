@@ -190,7 +190,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                         workflow.CurrentWorkflowActivityKey);
 
                 var pending = questions.Count > 0 && questions.Last().Pending ? questions.Last() : null;
-                var mostRecentJustificationKey = QuestionsViewModel.Questions?.LastOrDefault(z=>!UnliqudatedObjectsWorkflowQuestion.CommonAnswers.IsAnyTypeOfReassignmentAnswer(z.Answer))?.JustificationKey;
+                var mostRecentJustificationKey = QuestionsViewModel.Questions?.LastOrDefault(z=>z.JustificationKey!=null && !UnliqudatedObjectsWorkflowQuestion.CommonAnswers.IsAnyTypeOfReassignmentAnswer(z.Answer))?.JustificationKey;
                 AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, pending, workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, mostRecentJustificationKey);
                 allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }

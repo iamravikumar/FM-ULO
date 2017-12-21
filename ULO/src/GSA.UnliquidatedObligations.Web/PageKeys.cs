@@ -10,5 +10,6 @@
         ReassignmentRequests,
         ManageReviews,
         ManageUsers,
+        PdnAttributes,
     }
 }

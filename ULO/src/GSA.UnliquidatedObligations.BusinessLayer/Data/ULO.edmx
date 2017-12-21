@@ -130,6 +130,17 @@
           <Property Name="Body" Type="nvarchar(max)" />
           <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
         </EntityType>
+        <EntityType Name="PdnAttributes">
+          <Key>
+            <PropertyRef Name="PdnAttributeId" />
+          </Key>
+          <Property Name="PdnAttributeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PegasysDocumentNumber" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="RegionId" Type="int" />
+          <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
+          <Property Name="DeletedAtUtc" Type="datetime" />
+          <Property Name="IsExcluded" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="ReportDefinitions">
           <Key>
             <PropertyRef Name="ReportDefinitionId" />
@@ -583,6 +594,18 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PdnAttrib__Regio__7869D707">
+          <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
+          <End Role="PdnAttributes" Type="Self.PdnAttributes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Regions">
+              <PropertyRef Name="RegionId" />
+            </Principal>
+            <Dependent Role="PdnAttributes">
+              <PropertyRef Name="RegionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Regions__ZoneId__30C33EC3">
           <End Role="Zones" Type="Self.Zones" Multiplicity="1" />
           <End Role="Regions" Type="Self.Regions" Multiplicity="*" />
@@ -955,6 +978,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySet Name="DocumentTypes" EntityType="Self.DocumentTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EmailTemplates" EntityType="Self.EmailTemplates" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Notes" EntityType="Self.Notes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PdnAttributes" EntityType="Self.PdnAttributes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReportDefinitions" EntityType="Self.ReportDefinitions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RequestForReassignment" EntityType="Self.RequestForReassignment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reviews" EntityType="Self.Reviews" Schema="dbo" store:Type="Tables" />
@@ -1053,6 +1077,10 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <AssociationSet Name="FK__Notes__UserId__536D5C82" Association="Self.FK__Notes__UserId__536D5C82">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Notes" EntitySet="Notes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PdnAttrib__Regio__7869D707" Association="Self.FK__PdnAttrib__Regio__7869D707">
+            <End Role="Regions" EntitySet="Regions" />
+            <End Role="PdnAttributes" EntitySet="PdnAttributes" />
           </AssociationSet>
           <AssociationSet Name="FK__Regions__ZoneId__30C33EC3" Association="Self.FK__Regions__ZoneId__30C33EC3">
             <End Role="Zones" EntitySet="Zones" />
@@ -1368,6 +1396,11 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             <Parameter Name="entityKey" Mode="In" Type="String" />
             <Parameter Name="deletorId" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="PdnAttributes" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.PdnAttribute" />
+          <AssociationSet Name="FK__PdnAttrib__Regio__7869D707" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__PdnAttrib__Regio__7869D707">
+            <End Role="Region" EntitySet="Regions" />
+            <End Role="PdnAttribute" EntitySet="PdnAttributes" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -1659,6 +1692,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="UserUsers" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__UserUsers__Regio__395884C4" FromRole="Region" ToRole="UserUser" />
           <NavigationProperty Name="Zone" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Regions__ZoneId__30C33EC3" FromRole="Region" ToRole="Zone" />
           <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Regio__408F9238" FromRole="Region" ToRole="UnliquidatedObligation" />
+          <NavigationProperty Name="PdnAttributes" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__PdnAttrib__Regio__7869D707" FromRole="Region" ToRole="PdnAttribute" />
         </EntityType>
         <EntityType Name="Zone">
           <Key>
@@ -2326,6 +2360,29 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="PdnAttribute">
+          <Key>
+            <PropertyRef Name="PdnAttributeId" />
+          </Key>
+          <Property Name="PdnAttributeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PegasysDocumentNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RegionId" Type="Int32" />
+          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsExcluded" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Region" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__PdnAttrib__Regio__7869D707" FromRole="PdnAttribute" ToRole="Region" />
+        </EntityType>
+        <Association Name="FK__PdnAttrib__Regio__7869D707">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Region" Role="Region" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.PdnAttribute" Role="PdnAttribute" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Region">
+              <PropertyRef Name="RegionId" />
+            </Principal>
+            <Dependent Role="PdnAttribute">
+              <PropertyRef Name="RegionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2852,6 +2909,18 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SoftDelete" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.SoftDelete" />
+          <EntitySetMapping Name="PdnAttributes">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.PdnAttribute">
+              <MappingFragment StoreEntitySet="PdnAttributes">
+                <ScalarProperty Name="IsExcluded" ColumnName="IsExcluded" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
+                <ScalarProperty Name="PegasysDocumentNumber" ColumnName="PegasysDocumentNumber" />
+                <ScalarProperty Name="PdnAttributeId" ColumnName="PdnAttributeId" />
+                <Condition ColumnName="DeletedAtUtc" IsNull="true" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
