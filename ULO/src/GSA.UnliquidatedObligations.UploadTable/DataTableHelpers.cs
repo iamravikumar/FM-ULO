@@ -329,7 +329,14 @@ namespace GSA.UnliquidatedObligations.Utility
                                 }
                                 else
                                 {
-                                    val = settings.TypeConverter(val, c.DataType);
+                                    try
+                                    {
+                                        val = settings.TypeConverter(val, c.DataType);
+                                    }
+                                    catch (Exception tcex)
+                                    {
+                                        throw new Exception($"Problem with column {z} converting {val} to type {c.DataType.Name}", tcex);
+                                    }
                                 }
                             }
                         }

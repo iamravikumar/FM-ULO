@@ -4,6 +4,7 @@ using GSA.UnliquidatedObligations.Utility;
 using GSA.UnliquidatedObligations.Web.Models;
 using RazorEngine;
 using RazorEngine.Templating;
+using R = RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
@@ -99,21 +100,45 @@ namespace GSA.UnliquidatedObligations.Web.Services
         public void UploadFiles(UploadFilesModel files)
         {
             var reviewId = files.ReviewId;
-            foreach (var fn in files.PegasysFilePathsList)
+            string importer = null;
+            int rowErrorCount = 0;
+
+            Action<Exception, int> onRowAddError = (ex, rowNum) =>
             {
-                Upload442Table(reviewId, fn);
+                Log.Error(ex, "OnRowAddError with {rowNum} in {importer} with {reviewId}", rowNum, importer, reviewId);
+                ++rowErrorCount;
+            };
+
+            try
+            {
+                importer = nameof(Upload442Table);
+                foreach (var fn in files.PegasysFilePathsList)
+                {
+                    Upload442Table(reviewId, fn, onRowAddError);
+                }
+
+                importer = nameof(UploadRetaTable);
+                foreach (var fn in files.RetaFileList)
+                {
+                    UploadRetaTable(reviewId, fn, onRowAddError);
+                }
+
+                importer = nameof(UploadEasiTable);
+                foreach (var fn in files.EasiFileList)
+                {
+                    UploadEasiTable(reviewId, fn, onRowAddError);
+                }
+
+                importer = nameof(Upload192Table);
+                foreach (var fn in files.One92FileList)
+                {
+                    Upload192Table(reviewId, fn, onRowAddError);
+                }
             }
-            foreach (var fn in files.RetaFileList)
+            finally
             {
-                UploadRetaTable(reviewId, fn);
-            }
-            foreach (var fn in files.EasiFileList)
-            {
-                UploadEasiTable(reviewId, fn);
-            }
-            foreach (var fn in files.One92FileList)
-            {
-                Upload192Table(reviewId, fn);
+                var level = rowErrorCount == 0 ? Serilog.Events.LogEventLevel.Information : Serilog.Events.LogEventLevel.Warning;
+                Log.Write(level, "Importing of {reviewId} yielded {rowErrorCount}.  Note, this does not indicate either overall success or failure.", rowErrorCount);
             }
         }
 
@@ -172,7 +197,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             Log.Information("AssignWorkFlows {reviewId} completed after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
         }
 
-        private void Upload442Table(int reviewId, string uploadPath)
+        private void Upload442Table(int reviewId, string uploadPath, Action<Exception, int> onRowAddError)
         {
             var dt = CreatePegasysOpenObligationsDataTable();
             using (var st = File.OpenRead(uploadPath))
@@ -180,14 +205,14 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 dt.LoadRowsFromDelineatedText(st, new LoadRowsFromDelineatedTextSettings
                 {
                     SkipRawRows = 2,
-                    RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore                     
+                    RowAddErrorHandler = onRowAddError
                 });
                 dt.SetColumnWithValue("ReviewId", reviewId);
                 dt.UploadIntoSqlServer(CreateSqlConnection);
             }
         }
 
-        private void UploadRetaTable(int reviewId, string uploadPath)
+        private void UploadRetaTable(int reviewId, string uploadPath, Action<Exception, int> onRowAddError)
         {
             DataTable dt;
             using (var st = File.OpenRead(uploadPath))
@@ -199,7 +224,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     CreateDataTable = CreateRetaDataTable
                 };
 
-                foreach (var sheetName in new[] { "R.00", "R.01", "R.02", "R.03", "R.04", "R.05", "R.06", "R.07", "R.08", "R.09", "R.10", "R.11" })
+                var sheetNames = R.CSV.ParseLine(Properties.Settings.Default.RetaSheetsToImport);
+                foreach (var sheetName in sheetNames)
                 {
                     settings.SheetSettings.Add(
                     new LoadRowsFromSpreadsheetSettings
@@ -207,7 +233,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                         SheetName = sheetName,
                         TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
                         UseSheetNameForTableName = true,
-                        RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore,
+                        RowAddErrorHandler = onRowAddError,
                         ThrowOnMissingSheet = false,
                     });
                 }
@@ -218,7 +244,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             FinalizeAndUpload(dt, reviewId);
         }
 
-        private void UploadEasiTable(int reviewId, string uploadPath)
+        private void UploadEasiTable(int reviewId, string uploadPath, Action<Exception, int> onRowAddError)
         {
             DataTable dt;
             using (var st = File.OpenRead(uploadPath))
@@ -227,6 +253,14 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 var settings = new LoadTablesFromSpreadsheetSettings()
                 {
                     CreateDataTable = CreateEasiTable,
+                    SheetSettings = new List<LoadRowsFromSpreadsheetSettings>
+                    {
+                        new LoadRowsFromSpreadsheetSettings
+                        {
+                            TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
+                            RowAddErrorHandler = onRowAddError
+                        }
+                    }
                 };
                 ds.LoadSheetsFromExcel(st, settings);
                 dt = MergeIntoSingleTable(ds, CreateEasiTable);
@@ -234,7 +268,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             FinalizeAndUpload(dt, reviewId);
         }
 
-        private void Upload192Table(int reviewId, string uploadPath)
+        private void Upload192Table(int reviewId, string uploadPath, Action<Exception, int> onRowAddError)
         {
             DataTable dt;
             using (var st = File.OpenRead(uploadPath))
@@ -245,16 +279,16 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     SheetSettings = new List<LoadRowsFromSpreadsheetSettings>(),
                     CreateDataTable = Create192Table,
                 };
-                foreach (var sheetName in new[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" })
+                var sheetNames = R.CSV.ParseLine(Properties.Settings.Default.Upload192SheetsToImport);
+                foreach (var sheetName in sheetNames)
                 {
                     settings.SheetSettings.Add(
                     new LoadRowsFromSpreadsheetSettings
                     {
-                        SkipWhileTester = r=>r.Count<43,
                         SheetName = sheetName,
                         TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
                         UseSheetNameForTableName = true,
-                        RowAddErrorHandler = DataTableHelpers.RowAddErrorIgnore
+                        RowAddErrorHandler = onRowAddError
                     });
                 }
                 ds.LoadSheetsFromExcel(st, settings);

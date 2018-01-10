@@ -12,7 +12,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -151,7 +151,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Information")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Debug")]
         public global::Serilog.Events.LogEventLevel LogLevel {
             get {
                 return ((global::Serilog.Events.LogEventLevel)(this["LogLevel"]));
@@ -265,6 +265,24 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public bool ForceAdvanceFromUloSubmit {
             get {
                 return ((bool)(this["ForceAdvanceFromUloSubmit"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("R.00,R.01,R.02,R.03,R.04,R.05,R.06,R.07,R.08,R.09,R.10,R.11")]
+        public string RetaSheetsToImport {
+            get {
+                return ((string)(this["RetaSheetsToImport"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00,01,02,03,04,05,06,07,08,09,10,11")]
+        public string Upload192SheetsToImport {
+            get {
+                return ((string)(this["Upload192SheetsToImport"]));
             }
         }
     }
