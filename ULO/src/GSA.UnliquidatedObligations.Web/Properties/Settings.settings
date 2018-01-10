@@ -17,9 +17,6 @@
     <Setting Name="ReassignGroupUserName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Reassign Group</Value>
     </Setting>
-    <Setting Name="RunHangfireServer" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="UseHangfireDashboards" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -110,6 +107,12 @@
     </Setting>
     <Setting Name="Upload192SheetsToImport" Type="System.String" Scope="Application">
       <Value Profile="(Default)">00,01,02,03,04,05,06,07,08,09,10,11</Value>
+    </Setting>
+    <Setting Name="RunHangfireServer" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Upload192SkipRawRows" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">3</Value>
     </Setting>
   </Settings>
 </SettingsFile>

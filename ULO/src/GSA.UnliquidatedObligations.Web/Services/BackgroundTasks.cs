@@ -135,10 +135,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     Upload192Table(reviewId, fn, onRowAddError);
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Problem with UploadFiles in {reviewId}", reviewId);
+                throw;
+            }
             finally
             {
                 var level = rowErrorCount == 0 ? Serilog.Events.LogEventLevel.Information : Serilog.Events.LogEventLevel.Warning;
-                Log.Write(level, "Importing of {reviewId} yielded {rowErrorCount}.  Note, this does not indicate either overall success or failure.", rowErrorCount);
+                Log.Write(level, "Importing of {reviewId} yielded {rowErrorCount}.  Note, this does not indicate either overall success or failure.", reviewId, rowErrorCount);
             }
         }
 
@@ -253,13 +258,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 var settings = new LoadTablesFromSpreadsheetSettings()
                 {
                     CreateDataTable = CreateEasiTable,
-                    SheetSettings = new List<LoadRowsFromSpreadsheetSettings>
+                    LoadAllSheetsDefaultSettings = new LoadRowsFromSpreadsheetSettings
                     {
-                        new LoadRowsFromSpreadsheetSettings
-                        {
-                            TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
-                            RowAddErrorHandler = onRowAddError
-                        }
+                        TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
+                        RowAddErrorHandler = onRowAddError
                     }
                 };
                 ds.LoadSheetsFromExcel(st, settings);
@@ -288,7 +290,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
                         SheetName = sheetName,
                         TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
                         UseSheetNameForTableName = true,
-                        RowAddErrorHandler = onRowAddError
+                        RowAddErrorHandler = onRowAddError,
+                        SkipRawRows = Properties.Settings.Default.Upload192SkipRawRows,
                     });
                 }
                 ds.LoadSheetsFromExcel(st, settings);

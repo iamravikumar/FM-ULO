@@ -70,15 +70,6 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool RunHangfireServer {
-            get {
-                return ((bool)(this["RunHangfireServer"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool UseHangfireDashboards {
             get {
@@ -283,6 +274,24 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public string Upload192SheetsToImport {
             get {
                 return ((string)(this["Upload192SheetsToImport"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool RunHangfireServer {
+            get {
+                return ((bool)(this["RunHangfireServer"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int Upload192SkipRawRows {
+            get {
+                return ((int)(this["Upload192SkipRawRows"]));
             }
         }
     }
