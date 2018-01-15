@@ -21,9 +21,12 @@ Periodic unliquidated obligation reviews allow GSA to validate outstanding balan
 - .NET 4.6.1
 - Entity Framework 6
 - SQL Server 2012+
+- ASP.NET MVC
 
 Major 3rd Party Frameworks:
 - Autofac (Dependency Injection)
+- Bootstrap (Responsive Website)
 - DynamicExpresso (Dynamic Expression Evaluation)
 - Hangfire (Background Job Execution)
-- RevolutionaryStuff (Random Helpers)
+- JQuery (Javascript Helpers)
+- RevolutionaryStuff (Random .NET Helpers)
