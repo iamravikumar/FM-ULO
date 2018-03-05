@@ -6,6 +6,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting
     public enum ReportParameterRenderHints
     {
         Standard,
+
         TextArea,
         Region,
         Review,

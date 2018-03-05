@@ -5,7 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GSA.UnliquidatedObligations.UploadTable")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription(@"A helper assembly for use with the GSA ULO project. 
+You can find more information regarding that project at https://github.com/GSA/FM-ULO. 
+This assembly should probably be renamed to something more apt like [GSA.Utility.DataLoading], 
+maintained, and shared among other projects. It contains general routines to parse data from
+CSV or Excel files into .NET DataSets and from there upload it into SQL Server.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GSA")]
 [assembly: AssemblyProduct("GSA.UnliquidatedObligations.UploadTable")]

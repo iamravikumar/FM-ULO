@@ -196,8 +196,8 @@ namespace GSA.UnliquidatedObligations.Web
         public static IList<int?> GetReassignmentGroupRegions(this IPrincipal user)
             => user.GetUserGroupRegions(Properties.Settings.Default.ReassignGroupUserName);
 
-        public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(int? uloId, string pegasysDocumentNumber, string organization,
-           int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId)
+        public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(IPrincipal currentUser, int? uloId, string pegasysDocumentNumber, string organization,
+           int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId, bool? reassignableByMe)
         {
             pegasysDocumentNumber = StringHelpers.TrimOrNull(pegasysDocumentNumber);
             organization = StringHelpers.TrimOrNull(organization);
@@ -230,7 +230,8 @@ namespace GSA.UnliquidatedObligations.Web
                 reasonIncludedInReview == null &&
                 valid == null &&
                 status == null &&
-                reviewId == null)
+                reviewId == null &&
+                !reassignableByMe.GetValueOrDefault())
             {
                 return null;
             }
@@ -244,7 +245,7 @@ namespace GSA.UnliquidatedObligations.Web
                 predicate = predicate.And(wf => wf.TargetUloId == uloId);
             }
 
-            if (pegasysDocumentNumber!=null)
+            if (pegasysDocumentNumber != null)
             {
                 var criteria = pegasysDocumentNumber.Replace(Wildcard, "");
                 if (pegasysDocumentNumber.StartsWith(Wildcard) && pegasysDocumentNumber.EndsWith(Wildcard))
@@ -273,7 +274,7 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (organization!=null)
+            if (organization != null)
             {
                 var criteria = organization.Replace(Wildcard, "");
                 if (organization.StartsWith(Wildcard) && organization.EndsWith(Wildcard))
@@ -311,7 +312,7 @@ namespace GSA.UnliquidatedObligations.Web
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Region.ZoneId == zone);
             }
 
-            if (fund!=null)
+            if (fund != null)
             {
                 var criteria = fund.Replace(Wildcard, "");
                 if (fund.StartsWith(Wildcard) && fund.EndsWith(Wildcard))
@@ -338,7 +339,7 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (baCode!=null)
+            if (baCode != null)
             {
                 var criteria = baCode.Replace(Wildcard, "");
                 if (baCode.StartsWith(Wildcard) && baCode.EndsWith(Wildcard))
@@ -363,10 +364,10 @@ namespace GSA.UnliquidatedObligations.Web
                 {
                     predicate = predicate.And(wf => wf.UnliquidatedObligation.Prog.Trim() == criteria);
                 }
-                
+
             }
 
-            if (pegasysTitleNumber!=null)
+            if (pegasysTitleNumber != null)
             {
                 var criteria = pegasysTitleNumber.Replace(Wildcard, "");
                 if (pegasysTitleNumber.StartsWith(Wildcard) && pegasysTitleNumber.EndsWith(Wildcard))
@@ -397,7 +398,7 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (pegasysVendorName!=null)
+            if (pegasysVendorName != null)
             {
                 var criteria = pegasysVendorName.Replace(Wildcard, "");
                 if (pegasysVendorName.StartsWith(Wildcard) && pegasysVendorName.EndsWith(Wildcard))
@@ -417,7 +418,7 @@ namespace GSA.UnliquidatedObligations.Web
                     predicate =
                         predicate.And(
                             wf => wf.UnliquidatedObligation.VendorName.Trim().StartsWith(criteria));
-                } 
+                }
                 else
                 {
                     predicate =
@@ -426,14 +427,14 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (docType!=null)
+            if (docType != null)
             {
                 predicate =
                    predicate.And(
                        wf => wf.UnliquidatedObligation.DocType == docType);
             }
 
-            if (contractingOfficersName!=null)
+            if (contractingOfficersName != null)
             {
                 var criteria = contractingOfficersName.Replace(Wildcard, "");
                 if (contractingOfficersName.StartsWith(Wildcard) && contractingOfficersName.EndsWith(Wildcard))
@@ -464,7 +465,7 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (currentlyAssignedTo!=null)
+            if (currentlyAssignedTo != null)
             {
                 var criteria = currentlyAssignedTo.Replace(Wildcard, "");
                 if (currentlyAssignedTo.StartsWith(Wildcard) && currentlyAssignedTo.EndsWith(Wildcard))
@@ -492,7 +493,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             }
 
-            if (hasBeenAssignedTo!=null)
+            if (hasBeenAssignedTo != null)
             {
                 var criteria = hasBeenAssignedTo.Replace(Wildcard, "");
                 if (hasBeenAssignedTo.StartsWith(Wildcard) && hasBeenAssignedTo.EndsWith(Wildcard))
@@ -521,7 +522,7 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (awardNumber!=null)
+            if (awardNumber != null)
             {
                 var criteria = awardNumber.Replace(Wildcard, "");
                 if (awardNumber.StartsWith(Wildcard) && awardNumber.EndsWith(Wildcard))
@@ -546,10 +547,10 @@ namespace GSA.UnliquidatedObligations.Web
                 {
                     predicate = predicate.And(wf => wf.UnliquidatedObligation.AwardNbr.Trim() == criteria);
                 }
-               
+
             }
 
-            if (reasonIncludedInReview!=null)
+            if (reasonIncludedInReview != null)
             {
                 var criteria = reasonIncludedInReview.Replace(Wildcard, "");
                 if (reasonIncludedInReview.StartsWith(Wildcard) && reasonIncludedInReview.EndsWith(Wildcard))
@@ -585,7 +586,7 @@ namespace GSA.UnliquidatedObligations.Web
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Valid == valid);
             }
 
-            if (status!=null)
+            if (status != null)
             {
                 var criteria = status.Replace(Wildcard, "");
                 if (status.StartsWith(Wildcard) && status.EndsWith(Wildcard))
@@ -617,6 +618,42 @@ namespace GSA.UnliquidatedObligations.Web
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.ReviewId == reviewId);
             }
 
+            if (reassignableByMe.GetValueOrDefault())
+            {
+                var regionIds = GetUserGroupRegions(currentUser, PortalHelpers.ReassignGroupUserId);
+                predicate = predicate.And(GetWorkflowsRegionIdPredicate(regionIds));
+
+            }
+
+            return predicate;
+        }
+
+        public static Expression<Func<AspNetUser, bool>> GrouplikeUserPredicate
+            => PredicateBuilder.Create<AspNetUser>(u => u.UserType == AspNetUser.UserTypes.Group || (u.UserName == Properties.Settings.Default.TheCloserUserUsername && u.UserType == AspNetUser.UserTypes.System));
+
+        public static Expression<Func<Workflow, bool>> GetWorkflowsRegionIdPredicate(IEnumerable<int?> regionIds)
+        {
+            var predicate = PredicateBuilder.Create<Workflow>(wf => false);
+            foreach (var regionId in regionIds)
+            {
+                var rid = regionId.GetValueOrDefault();
+                predicate = predicate.Or(wf => wf.UnliquidatedObligation.RegionId == rid);
+            }
+            return predicate;
+        }
+
+        public static Expression<Func<Workflow, bool>> GetWorkflowsWorkflowIdPredicate(IEnumerable<int> workflowIds)
+        {
+            /*
+            var workflows = DB.Workflows.Where(w => workflowIds.Contains(w.WorkflowId));
+            For whatever reason, linq 2 sql wont translate the above into an IN statement (maybe it only does this for string),
+            As such, we have to build out a big long nasty OR predicate then apply which we do below.             
+             */
+            var predicate = PredicateBuilder.Create<Workflow>(wf => false);
+            foreach (var wfid in workflowIds)
+            {
+                predicate = predicate.Or(wf => wf.WorkflowId == wfid);
+            }
             return predicate;
         }
 
@@ -668,7 +705,6 @@ namespace GSA.UnliquidatedObligations.Web
                 stringsSelect.Add(new SelectListItem { Text = stringToConvert, Value = stringToConvert });
             }
             return stringsSelect;
-
         }
 
         public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<SelectListItem> selectListItems)
@@ -680,7 +716,6 @@ namespace GSA.UnliquidatedObligations.Web
                 selectList.Add(selectListItem);
             }
             return selectList;
-
         }
 
         public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<int> nums)
@@ -706,7 +741,6 @@ namespace GSA.UnliquidatedObligations.Web
                 });
             }
             return workFlowDefintionsSelect;
-
         }
 
         public static string Currency(this HtmlHelper helper, decimal data, string locale = "en-US", bool woCurrency = false)
@@ -776,7 +810,7 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             },
             UloHelpers.ShortCacheTimeout
-            );
+            ).Copy();
 
         public static IList<SelectListItem> CreateUserTypesSelectListItems(bool creatableOnly = true)
             =>new[] {
@@ -983,6 +1017,21 @@ namespace GSA.UnliquidatedObligations.Web
                 Expression.Lambda<Func<T, string>>(expr, new ParameterExpression[] { param })
                 );
             return (IOrderedQueryable<T>)q.Provider.CreateQuery<T>(mce);
+        }
+
+        public static IQueryable<Workflow> GetWorkflows(ULODBEntities db, IEnumerable<int> workflowIds)
+        {
+            /*
+            var workflows = DB.Workflows.Where(w => workflowIds.Contains(w.WorkflowId));
+            For whatever reason, linq 2 sql wont translate the above into an IN statement (maybe it only does this for string),
+            As such, we have to build out a big long nasty OR predicate then apply which we do below.             
+             */
+            var predicate = PredicateBuilder.Create<Workflow>(wf => false);
+            foreach (var wfid in workflowIds)
+            {
+                predicate = predicate.Or(wf => wf.WorkflowId == wfid);
+            }
+            return db.Workflows.Where(predicate);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿@model GSA.UnliquidatedObligations.Web.Models.FilterViewModel
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@model GSA.UnliquidatedObligations.Web.Models.FilterViewModel
 
 <button id="showFilters" type="button" class="btn show-filters">
     Show Filters
@@ -42,8 +43,6 @@
             <td><input type="text" name="contractingOfficersName" id="contractingOfficersName" value="@Context.Request["contractingOfficersName"]" /></td>
             <td class="label-container"><label for="currentlyAssignedTo">Currently Assigned to:</label></td>
             <td><input type="text" name="currentlyAssignedTo" id="currentlyAssignedTo" value="@Context.Request["currentlyAssignedTo"]" /></td>
-
-
         </tr>
         <tr>
             <td class="label-container"><label for="hasBeenAssignedto">Has been Assigned to:</label></td>
@@ -67,6 +66,13 @@
             <td class="label-container"><label for="uloId">Ulo Id:</label></td>
             <td><input type="text" name="uloId" id="uloId" value="@Context.Request["uloId"]" /></td>
         </tr>
+        @if (User.HasPermission(ApplicationPermissionNames.CanReassign))
+        {
+        <tr>
+            <td class="label-container"><label for="reassignable">Reassignable?:</label></td>
+            <td><input type="checkbox" name="reassignableByMe" id="reassignable" value="true" @(Model.IsReassignable?"checked=\"checked\"":"") /></td>
+        </tr>
+        }
         <tr>
             <td colspan="4">
                 <button id="filterWorkflows" class="btn btn-primary">
@@ -79,5 +85,4 @@
         </tr>
     </table>
 }
-<br />
 <br />

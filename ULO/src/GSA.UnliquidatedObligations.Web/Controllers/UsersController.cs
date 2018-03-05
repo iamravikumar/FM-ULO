@@ -63,10 +63,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private Task PopulateDetailsViewBag()
         {
-            var userNames =
-                from u in DB.AspNetUsers
-                where u.UserType == AspNetUser.UserTypes.Group
-                select u.UserName;
+            var userNames = DB.AspNetUsers.Where(PortalHelpers.GrouplikeUserPredicate).Select(u=>u.UserName);
             ViewBag.GroupNames = userNames.Distinct().OrderBy().ToList();
             return Task.CompletedTask;
         }
@@ -162,7 +159,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     u.UserName = m.UserName;
                 }
 
-                var myGroups = await DB.AspNetUsers.Where(g => g.UserType == AspNetUser.UserTypes.Group && m.Groups.Contains(g.UserName)).ToListAsync();
+                var myGroups = await DB.AspNetUsers.Where(PortalHelpers.GrouplikeUserPredicate).Where(g => m.Groups.Contains(g.UserName)).ToListAsync();
                 foreach (var uu in u.ChildUserUsers.ToList())
                 {
                     DB.UserUsers.Remove(uu);

@@ -46,7 +46,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance, bool ignoreActionResult)
+        async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance, bool ignoreActionResult, bool sendNotifications)
         {
             Requires.NonNull(wf, nameof(wf));
 
@@ -83,12 +83,17 @@ namespace GSA.UnliquidatedObligations.Web.Services
                         nextOwnerId = await GetNextOwnerUserIdAsync(wf, null, nextActivity.WorkflowActivityKey);
                         wf.OwnerUserId = nextOwnerId;
 
-                        await NotifyNewAssigneeAsync(wf, nextOwnerId, nextActivity.EmailTemplateId);
+                        if (sendNotifications)
+                        {
+                            await NotifyNewAssigneeAsync(wf, nextOwnerId, nextActivity.EmailTemplateId);
+                        }
                     }
                     wf.UnliquidatedObligation.Status = nextActivity.ActivityName;
 
                     if (nextActivity.DueIn != null)
+                    {
                         wf.ExpectedDurationInSeconds = (long?)nextActivity.DueIn.Value.TotalSeconds;
+                    }
 
                     if (question != null && question.IsValid)
                     {
@@ -130,7 +135,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
             //TODO: Get programatically based on user's region
             var reassignGroupId = await GetNextOwnerUserIdAsync(wf, Properties.Settings.Default.ReassignGroupUserName);
-            wf.OwnerUserId = reassignGroupId;
+            wf.OwnerUserId = reassignGroupId ?? PortalHelpers.GetUserId(Properties.Settings.Default.ReassignGroupUserName);
             var c = new RedirectingController();
             var routeValues = new RouteValueDictionary(new Dictionary<string, object>());
             return await Task.FromResult(c.RedirectToAction(UloController.ActionNames.Index, UloController.Name, routeValues));
@@ -150,7 +155,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             {
                 var emailTemplate = Cacher.FindOrCreateValWithSimpleKey(
                     emailTemplateId,
-                    () => DB.EmailTemplates.Select(z=>new { EmailBody = z.EmailBody, EmailSubject = z.EmailSubject, EmailTemplateId = z.EmailTemplateId }).FirstOrDefault(z => z.EmailTemplateId == emailTemplateId),
+                    () => DB.EmailTemplates.Select(z=>new { EmailBody = z.EmailBody, EmailSubject = z.EmailSubject, EmailTemplateId = z.EmailTemplateId, EmailHtmlBody = z.EmailHtmlBody }).FirstOrDefault(z => z.EmailTemplateId == emailTemplateId),
                     UloHelpers.MediumCacheTimeout);
                 if (emailTemplate == null)
                 {
@@ -158,14 +163,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 }
                 else
                 {
-                    var emailModel = new EmailViewModel
+                    var emailModel = new EmailViewModel(u.UserName)
                     {
-                        UserName = u.UserName,
                         PDN = wf.UnliquidatedObligation.PegasysDocumentNumber,
                         WorkflowId = wf.WorkflowId,
                         UloId = wf.UnliquidatedObligation.UloId
                     };
-                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(emailTemplate.EmailSubject, u.Email, emailTemplate.EmailBody, emailModel));
+                    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.Email(u.Email, emailTemplate.EmailSubject, emailTemplate.EmailBody, emailTemplate.EmailHtmlBody, emailModel));
                 }
             }
             else
@@ -197,18 +201,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
             string proposedOwnerUserId = null;
             if (proposedOwnerUserName != null)
             {
-                var u = Cacher.FindOrCreateValWithSimpleKey(
-                    proposedOwnerUserName,
-                    () => DB.AspNetUsers.Select(z => new { UserId = z.Id, UserType = z.UserType, UserName = z.UserName }).FirstOrDefault(z => z.UserName == proposedOwnerUserName),
-                    UloHelpers.MediumCacheTimeout
-                    );
-                if (u == null) throw new Exception($"Could not find user=[{proposedOwnerUserName}]");
-                proposedOwnerUserId = u.UserId;
+                proposedOwnerUserId = PortalHelpers.GetUserId(proposedOwnerUserName);
+                if (proposedOwnerUserId == null) throw new Exception($"Could not find user=[{proposedOwnerUserName}]");
             }
 
             var output = new ObjectParameter("nextOwnerId", typeof(string));
             DB.Database.Log = s => Log.Debug(s);
-            DB.GetNextLevelOwnerId(proposedOwnerUserId, wf.WorkflowId, nextActivityKey, null, output);
+            DB.GetNextLevelOwnerId(proposedOwnerUserId, wf.WorkflowId, nextActivityKey, null, output, false);
             Log.Information($"DB.GetNextLevelOwnerId('{proposedOwnerUserId}', {wf.WorkflowId}, '{nextActivityKey}')=>{output.Value}");
             if (output.Value == DBNull.Value)
             {

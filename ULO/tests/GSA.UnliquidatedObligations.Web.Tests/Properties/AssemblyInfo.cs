@@ -5,7 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GSA.UnliquidatedObligations.Web.Tests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription(@"A unit test assembly for the related [GSA.UnliquidatedObligations.Web] website
+of the GSA ULO project. You can find more information regarding that project at https://github.com/GSA/FM-ULO. 
+This uses the [Microsoft.VisualStudio.QualityTools.UnitTestFramework] framework. At one time, this project
+had the bare minimal of tests. Unfortunately, the developer in charge of it moved on, it was unloaded from the 
+solution, a bunch of refactoring was performed, and these changes did not make it back in here. Given 
+the paucity of tests, you may be better starting over.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GSA")]
 [assembly: AssemblyProduct("GSA.UnliquidatedObligations.Web.Tests")]

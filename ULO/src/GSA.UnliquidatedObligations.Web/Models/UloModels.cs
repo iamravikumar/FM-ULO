@@ -73,6 +73,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string MostRecentJustificationKey { get; set; }
 
+        public string WorkflowRowVersionString { get; set; }
+
+        public DateTime EditingBeganAtUtc { get; set; }
+
         public AdvanceViewModel()
         {
 
@@ -81,12 +85,15 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, Workflow workflow, DateTime? expectedDateForCompletion, bool expectedDateForCompletionEditable, string mostRecentJustificationKey)
         {
             var workflowId = workflow.WorkflowId;
+            WorkflowRowVersionString = workflow.WorkflowRowVersionString;
+            EditingBeganAtUtc = DateTime.UtcNow;
             Answer = question != null ? question.Answer : "";  
             Comments = question != null ? question.Comments : "";
             UnliqudatedWorkflowQuestionsId = question?.UnliqudatedWorkflowQuestionsId ?? 0;
             JustificationKey = question?.JustificationKey;
             ExpectedDateForCompletion = expectedDateForCompletion;
             ExpectedDateForCompletionEditable = expectedDateForCompletionEditable;
+//            workflow.WorkflowRowVersionString;
             if (workflowQuestionChoices != null)
             {
                 QuestionLabel = workflowQuestionChoices.QuestionLabel;
@@ -248,6 +255,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public IEnumerable<SelectListItem> BaCodes { get; set; }
         public IEnumerable<SelectListItem> Statuses { get; set; }
         public IEnumerable<SelectListItem> Reasons { get; set; }
+        public bool IsReassignable { get; set; }
         public bool HasFilters { get; set; }
 
         public FilterViewModel()
@@ -267,21 +275,59 @@ namespace GSA.UnliquidatedObligations.Web.Models
         }
     }
 
-    public class EmailViewModel
+    public abstract class BaseEmailViewModel
     {
-        public string UserName { get; set; }
+        public string UserName { get; private set; }
 
+        public string SiteUrl { get; private set; }
+
+        protected BaseEmailViewModel()
+        {
+            SiteUrl = Properties.Settings.Default.SiteUrl;
+        }
+
+        protected BaseEmailViewModel(string userName)
+            : this()
+        {
+            Requires.Text(userName, nameof(userName));
+            UserName = userName;
+        }
+
+        protected BaseEmailViewModel(AspNetUser u)
+            : this()
+        {
+            Requires.NonNull(u, nameof(u));
+            UserName = u.UserName;
+        }
+    }
+
+    public class EmailViewModel : BaseEmailViewModel
+    {
         public string PDN { get; set; }
 
         public int UloId { get; set; }
 
-        public string SiteUrl { get; set; }
-
         public int WorkflowId { get; set; }
 
-        public EmailViewModel()
+        public EmailViewModel(AspNetUser u)
+            : base(u)
+        { }
+
+        public EmailViewModel(string userName)
+            : base(userName)
+        { }
+    }
+
+    public class ItemsEmailViewModel<T> : BaseEmailViewModel
+    {
+        public ICollection<T> Items { get; private set; }
+
+        public int ItemCount => Items.Count;
+
+        public ItemsEmailViewModel(AspNetUser u, ICollection<T> items)
+            : base(u)
         {
-            SiteUrl = Properties.Settings.Default.SiteUrl;
+            Items = items ?? new List<T>();
         }
     }
 

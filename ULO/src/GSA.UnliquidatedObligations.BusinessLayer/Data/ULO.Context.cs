@@ -92,7 +92,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetMyGroups_Result>("GetMyGroups", proposedOwnerIdParameter);
         }
     
-        public virtual int GetNextLevelOwnerId(string proposedOwnerId, Nullable<int> workflowId, string nextActivityKey, string ownerProhibitedPreviousActivityNamesCsv, ObjectParameter nextOwnerId)
+        public virtual int GetNextLevelOwnerId(string proposedOwnerId, Nullable<int> workflowId, string nextActivityKey, string ownerProhibitedPreviousActivityNamesCsv, ObjectParameter nextOwnerId, Nullable<bool> debugMode)
         {
             var proposedOwnerIdParameter = proposedOwnerId != null ?
                 new ObjectParameter("proposedOwnerId", proposedOwnerId) :
@@ -110,7 +110,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
                 new ObjectParameter("ownerProhibitedPreviousActivityNamesCsv", ownerProhibitedPreviousActivityNamesCsv) :
                 new ObjectParameter("ownerProhibitedPreviousActivityNamesCsv", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNextLevelOwnerId", proposedOwnerIdParameter, workflowIdParameter, nextActivityKeyParameter, ownerProhibitedPreviousActivityNamesCsvParameter, nextOwnerId);
+            var debugModeParameter = debugMode.HasValue ?
+                new ObjectParameter("debugMode", debugMode) :
+                new ObjectParameter("debugMode", typeof(bool));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GetNextLevelOwnerId", proposedOwnerIdParameter, workflowIdParameter, nextActivityKeyParameter, ownerProhibitedPreviousActivityNamesCsvParameter, nextOwnerId, debugModeParameter);
         }
     
         public virtual ObjectResult<GetUloSummariesByPdn_Result> GetUloSummariesByPdn(string pegasysDocumentNumber)
@@ -137,6 +141,23 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
                 new ObjectParameter("deletorId", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SoftDelete", tableKeyParameter, entityKeyParameter, deletorIdParameter);
+        }
+    
+        public virtual ObjectResult<GetEligibleReviewers_Result> GetEligibleReviewers(string workflowIdCsv, Nullable<bool> qualifiedOnly, Nullable<bool> debugMode)
+        {
+            var workflowIdCsvParameter = workflowIdCsv != null ?
+                new ObjectParameter("workflowIdCsv", workflowIdCsv) :
+                new ObjectParameter("workflowIdCsv", typeof(string));
+    
+            var qualifiedOnlyParameter = qualifiedOnly.HasValue ?
+                new ObjectParameter("qualifiedOnly", qualifiedOnly) :
+                new ObjectParameter("qualifiedOnly", typeof(bool));
+    
+            var debugModeParameter = debugMode.HasValue ?
+                new ObjectParameter("debugMode", debugMode) :
+                new ObjectParameter("debugMode", typeof(bool));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEligibleReviewers_Result>("GetEligibleReviewers", workflowIdCsvParameter, qualifiedOnlyParameter, debugModeParameter);
         }
     }
 }

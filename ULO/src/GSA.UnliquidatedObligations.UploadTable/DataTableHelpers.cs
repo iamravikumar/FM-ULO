@@ -335,7 +335,7 @@ namespace GSA.UnliquidatedObligations.Utility
                                     }
                                     catch (Exception tcex)
                                     {
-                                        throw new Exception($"Problem with column {z} converting {val} to type {c.DataType.Name}", tcex);
+                                        throw new Exception($"Problem with row {rowNum} column {z} converting {val} to type {c.DataType.Name} into store [{dt.TableName}]", tcex);
                                     }
                                 }
                             }

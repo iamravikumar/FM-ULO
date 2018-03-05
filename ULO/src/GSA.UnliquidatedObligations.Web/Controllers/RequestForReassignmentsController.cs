@@ -5,6 +5,8 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
+using Hangfire;
+using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
@@ -13,6 +15,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -27,28 +30,73 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public static class ActionNames
         {
+            public const string BulkReassign = "BulkReassign";
             public const string Details = "Details";
+            public const string GetCommonReassignees = "GetCommonReassignees";
         }
 
         protected readonly IWorkflowManager Manager;
         private readonly ApplicationUserManager UserManager;
+        private readonly IBackgroundJobClient BackgroundJobClient;
 
-        public RequestForReassignmentsController(IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
+        public RequestForReassignmentsController(IBackgroundJobClient backgroundJobClient, IWorkflowManager manager, ApplicationUserManager userManager, ULODBEntities db, IComponentContext componentContext, ICacher cacher, Serilog.ILogger logger)
             : base(db, componentContext, cacher, logger)
         {
+            BackgroundJobClient = backgroundJobClient;
             Manager = manager;
             UserManager = userManager;
+        }
+
+        private IQueryable<Workflow> GetWorkflows(IEnumerable<int> workflowIds)
+        {
+            return DB.Workflows.Where(PortalHelpers.GetWorkflowsWorkflowIdPredicate(workflowIds));
+        }
+
+        [HttpPost]
+        [Route("rfr/getCommonReassignees")]
+        [ActionName(ActionNames.GetCommonReassignees)]
+        public JsonResult GetCommonReassignees()
+        {
+            var workflowIds = (this.Request.BodyAsJsonObject<int[]>() ?? Empty.IntArray).Distinct().ToArray();
+            var workflows = GetWorkflows(workflowIds);
+            var dbt = new DetailsBulkToken(CurrentUser, this.DB, workflows);
+            var eligibleReviewers = new List<GetEligibleReviewers_Result>();
+            if (dbt.PotentialReviewersByWorkflowId.Count > 0)
+            {
+                foreach (var p in dbt.PotentialReviewersByWorkflowId.First().Value)
+                {
+                    eligibleReviewers.Add(new GetEligibleReviewers_Result
+                    {
+                        UserId = p.UserId,
+                        UserName = MungeReviewerName(p.UserName, p.IsQualified),
+                    });
+                }
+                foreach (var kvp in dbt.PotentialReviewersByWorkflowId.Skip(1))
+                {
+                    var erByUserId = kvp.Value.ToDictionaryOnConflictKeepLast(p => p.UserId, p => p);
+                    eligibleReviewers.Remove(eligibleReviewers.Where(er => !erByUserId.ContainsKey(er.UserId)).ToList());
+                    foreach (var p in kvp.Value)
+                    {
+                        if (p.IsQualified.GetValueOrDefault(false)) continue;
+                        var er = eligibleReviewers.FirstOrDefault(z => z.UserId == p.UserId);
+                        if (er == null) continue;
+                        er.UserName = MungeReviewerName(p.UserName, false);
+                        er.IsQualified = false;
+                    }
+                }
+            }
+            return Json(eligibleReviewers.OrderBy(z => z.UserName), JsonRequestBehavior.DenyGet);
         }
 
         public class DetailsBulkToken
         {
             internal AspNetUser CurrentUser { get; private set; }
             internal MultipleValueDictionary<int, string> ProhibitedOwnerIdsByWorkflowId { get; private set; }
+            internal MultipleValueDictionary<int, GetEligibleReviewers_Result> PotentialReviewersByWorkflowId { get; private set; }
             internal ULODBEntities DB { get; private set; }
             internal IDictionary<int, Workflow> WorkflowById { get; private set; }
 
-            internal bool IsValid
-                => CurrentUser != null & DB != null && ProhibitedOwnerIdsByWorkflowId != null && WorkflowById != null;
+            internal bool IsValid { get; private set; }
 
             public DetailsBulkToken()
             { }
@@ -59,12 +107,25 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 DB = db;
                 WorkflowById = workflows.ToDictionary(z => z.WorkflowId);
                 var ids = WorkflowById.Keys;
-                ProhibitedOwnerIdsByWorkflowId = db.WorkflowProhibitedOwners.Where(z => ids.Contains(z.WorkflowId)).ToMultipleValueDictionary(z => z.WorkflowId, z => z.ProhibitedOwnerUserId);
+                if (Properties.Settings.Default.UseOldGetEligibleReviewersAlgorithm)
+                {
+                    ProhibitedOwnerIdsByWorkflowId = db.WorkflowProhibitedOwners.Where(z => ids.Contains(z.WorkflowId)).ToMultipleValueDictionary(z => z.WorkflowId, z => z.ProhibitedOwnerUserId);
+                }
+                else
+                {
+                    PotentialReviewersByWorkflowId = db.GetEligibleReviewers(CSV.FormatLine(ids, false), Properties.Settings.Default.GetEligibleReviewersQualifiedOnly, false).ToMultipleValueDictionary(z => z.WorkflowId, z => z);
+                }
+                IsValid = true;
             }
             internal DetailsBulkToken(AspNetUser currentUser, ULODBEntities db, int workflowId)
                 : this(currentUser, db, new[] { db.Workflows.Find(workflowId) }.AsQueryable())
             { }
         }
+
+        private static string MungeReviewerName(string username, bool? isQualified)
+            => string.Format(
+                isQualified.GetValueOrDefault() ? Properties.Settings.Default.GetEligibleReviewersQualifiedUsernameFormat : Properties.Settings.Default.GetEligibleReviewersNotQualifiedUsernameFormat,
+                username);
 
         [ActionName(ActionNames.Details)]
         public ActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false, DetailsBulkToken bulkToken=null)
@@ -92,27 +153,41 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 groupOwnerId = PortalHelpers.GetUserId(wfDefintionOwnerName);
             }
 
-            var prohibitedUserIds = bulkToken.ProhibitedOwnerIdsByWorkflowId[workflowId];
 
-            var userSelectItems = Cacher.FindOrCreateValWithSimpleKey(
-                Cache.CreateKey(groupOwnerId, uloRegionId, "fdsfdsaf"),
-                () => db.UserUsers
-                    .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId && uu.ChildUser.UserType == AspNetUser.UserTypes.Person)
-                    .Select(uu => new { UserName = uu.ChildUser.UserName, UserId = uu.ChildUserId }).ToList(),
-                    UloHelpers.MediumCacheTimeout
-                    ).ConvertAll(z => PortalHelpers.CreateUserSelectListItem(z.UserId, z.UserName, prohibitedUserIds.Contains(z.UserId))).ToList();
-
-            if (Cacher.FindOrCreateValWithSimpleKey(
-                Cache.CreateKey(uloRegionId, User.Identity.Name),
-                () => 
-                {
-                    var userReassignRegions = User.GetReassignmentGroupRegions();
-                    return User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId);
-                },
-                UloHelpers.MediumCacheTimeout
-                ))
+            IList<SelectListItem> userSelectItems;
+            if (Properties.Settings.Default.UseOldGetEligibleReviewersAlgorithm)
             {
-                userSelectItems.Add((bulkToken.CurrentUser).ToSelectListItem(prohibitedUserIds.Contains(CurrentUserId)));
+                var prohibitedUserIds = bulkToken.ProhibitedOwnerIdsByWorkflowId[workflowId];
+
+                userSelectItems = Cacher.FindOrCreateValWithSimpleKey(
+                    Cache.CreateKey(groupOwnerId, uloRegionId, "fdsfdsaf"),
+                    () => db.UserUsers
+                        .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId && uu.ChildUser.UserType == AspNetUser.UserTypes.Person)
+                        .Select(uu => new { UserName = uu.ChildUser.UserName, UserId = uu.ChildUserId }).ToList(),
+                        UloHelpers.MediumCacheTimeout
+                        ).ConvertAll(z => PortalHelpers.CreateUserSelectListItem(z.UserId, z.UserName, prohibitedUserIds.Contains(z.UserId))).ToList();
+
+                if (Cacher.FindOrCreateValWithSimpleKey(
+                    Cache.CreateKey(uloRegionId, User.Identity.Name),
+                    () =>
+                    {
+                        var userReassignRegions = User.GetReassignmentGroupRegions();
+                        return User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId);
+                    },
+                    UloHelpers.MediumCacheTimeout
+                    ))
+                {
+                    userSelectItems.Add((bulkToken.CurrentUser).ToSelectListItem(prohibitedUserIds.Contains(CurrentUserId)));
+                }
+            }
+            else
+            {
+                userSelectItems = new List<SelectListItem>();
+                foreach (var p in bulkToken.PotentialReviewersByWorkflowId[workflowId])
+                {
+                    string text = MungeReviewerName(p.UserName, p.IsQualified);
+                    userSelectItems.Add(PortalHelpers.CreateUserSelectListItem(p.UserId, text));
+                }
             }
 
             if (workflow.OwnerUserId == CurrentUserId)
@@ -180,6 +255,26 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 await DB.SaveChangesAsync();
             }
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName(ActionNames.BulkReassign)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
+        public async Task<ActionResult> BulkReassign() {
+            var workflowIds = JsonConvert.DeserializeObject<int[]>(Request.Form["WorkflowIds"]);
+            var reviewerId = Request.Form["SuggestedReviewerId"];
+            var comment = Request.Form["Comments"];
+            var regionIds = User.GetUserGroupRegions(PortalHelpers.ReassignGroupUserId);
+            var regionIdPredicate = PortalHelpers.GetWorkflowsRegionIdPredicate(regionIds);
+            var workflowIdPredicate = PortalHelpers.GetWorkflowsWorkflowIdPredicate(workflowIds);
+            var workflows = await DB.Workflows.Where(regionIdPredicate.And(workflowIdPredicate)).ToListAsync();
+            workflows.ForEach(wf => wf.OwnerUserId = reviewerId);
+            await DB.SaveChangesAsync();
+            BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.SendAssignWorkFlowsBatchNotifications(workflowIds, reviewerId));
+            AddPageAlert($"Reassigned {workflows.Count}/{workflowIds.Length} items", true, PageAlert.AlertTypes.Info, true);
+            return Redirect(Request.UrlReferrer.ToString());
         }
 
         [HttpPost]
@@ -309,7 +404,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 UnliqudatedWorkflowQuestionsId = question.UnliqudatedWorkflowQuestionsId,
                 WorkflowId = wf.WorkflowId,
                 IsActive = true
-
             };
             DB.RequestForReassignments.Add(requestForReassignment);
             var ret = await Manager.RequestReassignAsync(wf);

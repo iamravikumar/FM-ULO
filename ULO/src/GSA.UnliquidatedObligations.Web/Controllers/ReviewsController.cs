@@ -210,6 +210,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 var wd = await DB.WorkflowDefinitions.Where(z => z.IsActive && z.WorkflowDefinitionName == workflowDefinitionName).OrderByDescending(z => z.WorkflowDefinitionId).FirstOrDefaultAsync();
 
+                if (wd == null)
+                {
+                    ModelState.AddModelError("", $"Can't find active workflowDefinition for workflowDefinitionName={workflowDefinitionName}");
+                    errors = true;
+                    goto ErrorReturn;
+                }
+
                 //content += "before review object create<br />";
                 var review = new Review
                 {
@@ -264,9 +271,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>(uploadFilesJobId,
                     bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, review.ReviewDateInitiated.Value));
 
-                BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId));
+                BackgroundJob.ContinueWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId, Properties.Settings.Default.SendBatchEmailsDuringAssignWorkflows));
                 return RedirectToIndex();
             }
+ErrorReturn:
             var m = await CreateReviewModelAsync();
             reviewModel.RegionChoices = m.RegionChoices;
             reviewModel.ReviewTypes = m.ReviewTypes;

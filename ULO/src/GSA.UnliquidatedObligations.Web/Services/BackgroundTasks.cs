@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Hangfire;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
@@ -23,10 +24,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IEmailServer EmailServer;
         private readonly ULODBEntities DB;
         private readonly IWorkflowManager WorkflowManager;
+        private readonly IBackgroundJobClient BackgroundJobClient;
         protected readonly ILogger Log;
+        IBackgroundTasks BT => (IBackgroundTasks)this;
 
-        public BackgroundTasks(IEmailServer emailServer, ULODBEntities db, IWorkflowManager workflowManager, ILogger log)
+        public BackgroundTasks(IBackgroundJobClient backgroundJobClient, IEmailServer emailServer, ULODBEntities db, IWorkflowManager workflowManager, ILogger log)
         {
+            BackgroundJobClient = backgroundJobClient;
             EmailServer = emailServer;
             DB = db;
             WorkflowManager = workflowManager;
@@ -81,6 +85,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private static readonly object ProcessRazorTemplateLocker = new object();
         private static string ProcessRazorTemplate(string template, object model)
         {
+            if (template == null) return null;
             var name = GetRazorName(template, model);
             lock (ProcessRazorTemplateLocker)
             {
@@ -88,13 +93,17 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-
-        public void Email(string subjectTemplate, string recipient, string bodyTemplate, object model)
+        Task IBackgroundTasks.Email(string recipient, string subjectTemplate, string bodyTemplate, string bodyHtmlTemplate, object model)
         {
             var subject = ProcessRazorTemplate(subjectTemplate, model);
             var body = ProcessRazorTemplate(bodyTemplate, model);
-            EmailServer.SendEmail(subject, body, recipient);
+            var bodyHtml = ProcessRazorTemplate(bodyHtmlTemplate, model);
+            EmailServer.SendEmail(subject, body, bodyHtml, recipient);
+            return Task.CompletedTask;
         }
+
+        void IBackgroundTasks.Email(string subjectTemplate, string recipient, string bodyTemplate, object model)
+            => BT.Email(recipient, subjectTemplate, bodyTemplate, null, model);
 
         //TODO: Email on exception or let user know what happened
         public void UploadFiles(UploadFilesModel files)
@@ -158,48 +167,129 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        //TODO: Email on exception or let user know what happened.
-        public async Task AssignWorkFlows(int reviewId)
+        private async Task SendAssignWorkFlowsBatchNotifications(ICollection<Workflow> workflows, string userId)
         {
-            var review = await DB.Reviews.FindAsync(reviewId);
-            if (review == null)
+            var u = await DB.AspNetUsers.FindAsync(userId);
+            var et = await DB.EmailTemplates.FindAsync(Properties.Settings.Default.BatchAssignmentNotificationEmailTemplateId);
+            var m = new ItemsEmailViewModel<Workflow>(u, workflows);
+            await BT.Email(u.Email, et.EmailSubject, et.EmailBody, et.EmailHtmlBody, m);
+        }
+
+        async Task IBackgroundTasks.SendAssignWorkFlowsBatchNotifications(int reviewId, string userId)
+        {
+            try
             {
-                Log.Information("AssignWorkFlows could not find {reviewId}", reviewId);
-                return;
+                var workflows = await DB.Workflows.Include(wf => wf.UnliquidatedObligation).
+                    Where(wf => wf.UnliquidatedObligation.ReviewId == reviewId && wf.OwnerUserId == userId).
+                    OrderBy(wf => wf.UnliquidatedObligation.PegasysDocumentNumber).
+                    ToListAsync();
+                await SendAssignWorkFlowsBatchNotifications(workflows, userId);
             }
-            review.Status = Review.StatusNames.Assigning;
-            await DB.SaveChangesAsync();
-
-            var workflows =
-                DB.Workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.AspNetUser).
-                Where(wf => wf.OwnerUserId == PortalHelpers.PreAssignmentUserUserId).
-                OrderBy(wf => wf.UnliquidatedObligation.ReviewId == reviewId ? 0 : 1).
-                ToList();
-
-            Log.Information("AssignWorkFlows {reviewId} assigning up to {totalRecords}", reviewId, workflows.Count);
-
-            int z = 0;
-            foreach (var workflow in workflows)
+            catch (Exception ex)
             {
-                await WorkflowManager.AdvanceAsync(workflow, null, true, true);
-                if (++z % 10 == 0)
+                Log.Error(ex, 
+                    "Problem in {methodName}", 
+                    nameof(IBackgroundTasks.SendAssignWorkFlowsBatchNotifications));
+                throw;
+            }
+        }
+
+        async Task IBackgroundTasks.SendAssignWorkFlowsBatchNotifications(int[] workflowIds, string userId)
+        {
+            try
+            {
+                var workflows = await PortalHelpers.GetWorkflows(DB, workflowIds).ToListAsync();
+                await SendAssignWorkFlowsBatchNotifications(workflows, userId);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex,
+                    "Problem in {methodName}",
+                    nameof(IBackgroundTasks.SendAssignWorkFlowsBatchNotifications));
+                throw;
+            }
+        }
+
+        async Task IBackgroundTasks.SendAssignWorkFlowsBatchNotifications(int reviewId)
+        {
+            int assigneesProcessed = 0;
+            try
+            {
+                var assignees = await
+                DB.Workflows.Where(wf => wf.UnliquidatedObligation.ReviewId == reviewId && wf.AspNetUser.UserType == AspNetUser.UserTypes.Person).Select(wf => wf.OwnerUserId).Distinct().ToListAsync();
+                foreach (var assignee in assignees)
                 {
-                    await DB.SaveChangesAsync();
-                    Log.Debug("AssignWorkFlows {reviewId} save after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
-                    using (var zdb = PortalHelpers.UloDbCreator())
+                    BackgroundJob.Enqueue<IBackgroundTasks>(bt => bt.SendAssignWorkFlowsBatchNotifications(reviewId, assignee));
+                    ++assigneesProcessed;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, 
+                    "Problem in {methodName} after having queued {assigneesProcessed} user batch notifications", 
+                    nameof(IBackgroundTasks.SendAssignWorkFlowsBatchNotifications), 
+                    assigneesProcessed);
+                throw;
+            }
+        }
+
+        //TODO: Email on exception or let user know what happened.
+        async Task IBackgroundTasks.AssignWorkFlows(int reviewId, bool sendBatchNotifications)
+        {
+            try
+            {
+                var review = await DB.Reviews.FindAsync(reviewId);
+                if (review == null)
+                {
+                    Log.Information("AssignWorkFlows could not find {reviewId}", reviewId);
+                    return;
+                }
+                review.Status = Review.StatusNames.Assigning;
+                await DB.SaveChangesAsync();
+
+                var workflows =
+                    DB.Workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.AspNetUser).
+                    Where(wf => wf.OwnerUserId == PortalHelpers.PreAssignmentUserUserId).
+                    OrderBy(wf => wf.UnliquidatedObligation.ReviewId == reviewId ? 0 : 1).
+                    ToList();
+
+                Log.Information("AssignWorkFlows {reviewId} assigning up to {totalRecords}", reviewId, workflows.Count);
+
+                int z = 0;
+                foreach (var workflow in workflows)
+                {
+                    await WorkflowManager.AdvanceAsync(workflow, null, true, true, !sendBatchNotifications);
+                    if (++z % 10 == 0)
                     {
-                        var r = await zdb.Reviews.FindAsync(reviewId);
-                        if (r == null)
+                        await DB.SaveChangesAsync();
+                        Log.Debug("AssignWorkFlows {reviewId} save after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
+                        using (var zdb = PortalHelpers.UloDbCreator())
                         {
-                            Log.Information("AssignWorkFlows cancelled as {reviewId} has been deleted", reviewId);
-                            break;
+                            var r = await zdb.Reviews.FindAsync(reviewId);
+                            if (r == null)
+                            {
+                                Log.Information("AssignWorkFlows cancelled as {reviewId} has been deleted", reviewId);
+                                break;
+                            }
                         }
                     }
                 }
+                review.SetStatusDependingOnClosedBit();
+                await DB.SaveChangesAsync();
+                Log.Information("AssignWorkFlows {reviewId} completed after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
+
+                if (Properties.Settings.Default.SendBatchEmailsDuringAssignWorkflows)
+                {
+                    BackgroundJob.Enqueue<IBackgroundTasks>(bt => bt.SendAssignWorkFlowsBatchNotifications(reviewId));
+                }
             }
-            review.SetStatusDependingOnClosedBit();
-            await DB.SaveChangesAsync();
-            Log.Information("AssignWorkFlows {reviewId} completed after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
+            catch (Exception ex)
+            {
+                Log.Error(ex,
+                    "Problem in {methodName}",
+                    nameof(IBackgroundTasks.AssignWorkFlows));
+                throw;
+            }
         }
 
         private void Upload442Table(int reviewId, string uploadPath, Action<Exception, int> onRowAddError)
@@ -458,7 +548,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 TableName = "PegasysObligations192"
             };
             dt.Columns.Add("ReviewId", typeof(int));
-            dt.Columns.Add("Region", typeof(int));
+            dt.Columns.Add("Region", typeof(string));
             dt.Columns.Add("Fund", typeof(string));
             dt.Columns.Add("Organization", typeof(string));
             dt.Columns.Add("Prog", typeof(string));

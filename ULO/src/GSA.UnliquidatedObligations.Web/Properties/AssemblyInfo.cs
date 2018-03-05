@@ -5,7 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GSA.UnliquidatedObligations.Web")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription(@"The website for the GSA ULO project. 
+You can find more information regarding that project at https://github.com/GSA/FM-ULO. 
+This uses ASP.NET MVC and right now, is the sole entry point for users of ULO. 
+As there are no standalone background applications, Hangfire Server run in-process to 
+execute long running background tasks such as the creation of a new review.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GSA")]
 [assembly: AssemblyProduct("GSA.UnliquidatedObligations.Web")]

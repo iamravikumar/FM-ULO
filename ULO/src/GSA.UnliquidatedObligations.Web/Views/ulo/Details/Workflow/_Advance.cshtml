@@ -48,6 +48,8 @@
                     @Html.ValidationMessageFor(model => model.Comments, "Maximum comment size is 4000", new { id = "validateCommentMessageMax", @class = "text-danger", style="display:none" })
                 </div>
                 <div class="row row-space-top">
+                    @Html.HiddenFor(model => model.WorkflowRowVersionString)
+                    @Html.HiddenFor(model => model.EditingBeganAtUtc)
                     <input type="submit" value="Save" name="WhatNext" class="btn btn-default" onclick="allowSubmitWithoutRequiredValidations();" />
                     <input type="submit" value="Submit" name="WhatNext" class="btn btn-primary confirm-on-click" confirmMessage="Are you sure you're ready to submit?" />
                 </div>

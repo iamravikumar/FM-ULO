@@ -31,5 +31,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         }
         private string MostRecentNonReassignmentAnswer_p;
         private bool MostRecentNonReassignmentAnswerFound;
+
+        public string WorkflowRowVersionString
+            => Raw.Buf2HexString(this.WorkflowRowVersion);
     }
 }

@@ -6,6 +6,7 @@
     var todaysDate = DateTime.Today;
     var userReassignRegions = User.GetReassignmentGroupRegions();
     var canReassign = User.HasPermission(ApplicationPermissionNames.CanReassign);
+    var showSelectors = canReassign;
 
     var hasData = false;
     var noDataMessage = ViewBag.NoDataMessage as string ?? AspHelpers.NoResultsMessage;
@@ -14,122 +15,160 @@
         hasData = (int)ViewBag.TotalItemCount > 0;
     }
 }
+
+<script type="text/javascript">
+    function gcr(ids) {
+        showBulkReassignmentsLoading();
+        for (var z = 0; z < ids.length; ++z) {
+            ids[z] = parseInt(ids[z]);
+        }
+        var cr = getCommonReassignees(ids, function (reassigners) {
+            fillBulkReassignments(ids, reassigners);
+        });
+        return false;
+    }
+</script>
+
 @if (!hasData)
 {
     <div class="noDataMessage">@noDataMessage</div>
 }
 else
 {
-<table class="table table-responsive active-workflows">
-
-    <tr>
-        <th>@Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")</th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.Zone.ZoneName, overrideDisplayName: "Zone")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
-        </th>
-        @*
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Doc Type")
-        </th>
-        *@
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysTitleNumber, overrideDisplayName: "Pesasys Title Number")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Fund, overrideDisplayName: "Fund")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.VendorName, overrideDisplayName: "Pegasys Vendor Name")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ContractingOfficersName, overrideDisplayName: "Contracting Officer Name")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.AspNetUser.UserName, overrideDisplayName: "Currently Assigned to")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.AwardNbr, overrideDisplayName: "Award Number")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Status")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review Id")
-        </th>
-    </tr>
-
-    @foreach (var item in Model)
+    if (canReassign || false) //add other batch action buttons here
     {
-        <tr class="active-workflows-record" data-id="@item.WorkflowId">
-            <td>
-                @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneShortName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionNumber)
-            </td>
-        @*
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.DocType)
-            </td>
-            *@
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysTitleNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Fund)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.VendorName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ContractingOfficersName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AspNetUser.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.AwardNbr)
-            </td>
-            <td>
-                @Html.DisplayIsValid(item.UnliquidatedObligation.Valid)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
-            </td>
-        </tr>
+    <div class="col-sm-12" style="padding-bottom: 10px; text-align: right">
+        <strong>Batch Actions:</strong> 
+        @if (canReassign)
+        {
+        <button disabled="disabled" class="btn btn-primary master request-active selectionCountMultiple" data-toggle="modal" onclick="gcr(getSelections('data-id'))" data-target="#bulkReassignmentDialog">Reassign</button>
+        }
+    </div>
     }
-</table>
 
-@Html.Partial("_PaginationPartial")
+    <table class="table table-responsive active-workflows">
 
+        <tr>
+            @if (showSelectors)
+            {
+                <th><input type="checkbox" id="allSelector" onclick="allSelectorClicked()" /></th>
+            }
+            <th>@Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")</th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.Zone.ZoneName, overrideDisplayName: "Zone")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
+            </th>
+            @*
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Doc Type")
+                </th>
+            *@
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysTitleNumber, overrideDisplayName: "Pesasys Title Number")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Fund, overrideDisplayName: "Fund")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.VendorName, overrideDisplayName: "Pegasys Vendor Name")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ContractingOfficersName, overrideDisplayName: "Contracting Officer Name")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.AspNetUser.UserName, overrideDisplayName: "Currently Assigned to")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.AwardNbr, overrideDisplayName: "Award Number")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Status")
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review Id")
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr class="active-workflows-record" data-id="@item.WorkflowId">
+                @if (showSelectors)
+                {
+                    <td><input type="checkbox" class="itemSelector" onclick="selectorClicked()" value="1" data-id="@item.WorkflowId" /></td>
+                }
+                <td>
+                    @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneShortName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionNumber)
+                </td>
+                @*
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnliquidatedObligation.DocType)
+                    </td>
+                *@
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysTitleNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Fund)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.VendorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ContractingOfficersName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AspNetUser.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.AwardNbr)
+                </td>
+                <td>
+                    @Html.DisplayIsValid(item.UnliquidatedObligation.Valid)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.Partial("_PaginationPartial")
+
+}
+
+@if (canReassign)
+{
+    @Html.Partial("~/Views/Ulo/BulkReassignments.cshtml")
 }

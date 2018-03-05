@@ -106,13 +106,34 @@
       <Value Profile="(Default)">R.00,R.01,R.02,R.03,R.04,R.05,R.06,R.07,R.08,R.09,R.10,R.11</Value>
     </Setting>
     <Setting Name="Upload192SheetsToImport" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">00,01,02,03,04,05,06,07,08,09,10,11</Value>
+      <Value Profile="(Default)">00,01,02,03,04,05,06,07,08,09,10,11,Blank</Value>
     </Setting>
     <Setting Name="RunHangfireServer" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="Upload192SkipRawRows" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="GetEligibleReviewersQualifiedOnly" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="GetEligibleReviewersQualifiedUsernameFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">{0} +</Value>
+    </Setting>
+    <Setting Name="GetEligibleReviewersNotQualifiedUsernameFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">{0} -</Value>
+    </Setting>
+    <Setting Name="UseOldGetEligibleReviewersAlgorithm" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SendBatchEmailsDuringAssignWorkflows" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="BatchAssignmentNotificationEmailTemplateId" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="TheCloserUserUsername" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Closed</Value>
     </Setting>
   </Settings>
 </SettingsFile>

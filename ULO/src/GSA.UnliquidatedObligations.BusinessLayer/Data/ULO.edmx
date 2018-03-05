@@ -118,6 +118,7 @@
           <Property Name="EmailTemplateId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="EmailBody" Type="varchar" MaxLength="500" />
           <Property Name="EmailSubject" Type="varchar" MaxLength="200" />
+          <Property Name="EmailHtmlBody" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Notes">
           <Key>
@@ -947,6 +948,11 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Parameter Name="workflowDefinitionId" Type="int" Mode="In" />
           <Parameter Name="reviewDate" Type="datetime" Mode="In" />
         </Function>
+        <Function Name="GetEligibleReviewers" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="workflowIdCsv" Type="nvarchar" Mode="In" />
+          <Parameter Name="qualifiedOnly" Type="bit" Mode="In" />
+          <Parameter Name="debugMode" Type="bit" Mode="In" />
+        </Function>
         <Function Name="GetMyGroups" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="proposedOwnerId" Type="nvarchar" Mode="In" />
         </Function>
@@ -956,6 +962,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Parameter Name="nextActivityKey" Type="varchar" Mode="In" />
           <Parameter Name="ownerProhibitedPreviousActivityNamesCsv" Type="nvarchar" Mode="In" />
           <Parameter Name="nextOwnerId" Type="varchar" Mode="InOut" />
+          <Parameter Name="debugMode" Type="bit" Mode="In" />
         </Function>
         <Function Name="GetUloSummariesByPdn" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="pegasysDocumentNumber" Type="varchar" Mode="In" />
@@ -1210,6 +1217,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             <Parameter Name="nextActivityKey" Mode="In" Type="String" />
             <Parameter Name="ownerProhibitedPreviousActivityNamesCsv" Mode="In" Type="String" />
             <Parameter Name="nextOwnerId" Mode="InOut" Type="String" />
+            <Parameter Name="debugMode" Mode="In" Type="Boolean" />
           </FunctionImport>
           <EntitySet Name="C__MigrationHistory" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.C__MigrationHistory" />
           <EntitySet Name="AspNetRoles" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetRole" />
@@ -1401,6 +1409,11 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             <End Role="Region" EntitySet="Regions" />
             <End Role="PdnAttribute" EntitySet="PdnAttributes" />
           </AssociationSet>
+          <FunctionImport Name="GetEligibleReviewers" ReturnType="Collection(GSA.UnliquidatedObligations.BusinessLayer.Data.GetEligibleReviewers_Result)">
+            <Parameter Name="workflowIdCsv" Mode="In" Type="String" />
+            <Parameter Name="qualifiedOnly" Mode="In" Type="Boolean" />
+            <Parameter Name="debugMode" Mode="In" Type="Boolean" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -1538,6 +1551,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="EmailTemplateId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="EmailBody" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="EmailSubject" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="EmailHtmlBody" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Note">
           <Key>
@@ -2383,6 +2397,12 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="GetEligibleReviewers_Result">
+          <Property Type="Int32" Name="WorkflowId" Nullable="false" />
+          <Property Type="String" Name="UserId" Nullable="false" MaxLength="128" />
+          <Property Type="Boolean" Name="IsQualified" Nullable="true" />
+          <Property Type="String" Name="UserName" Nullable="false" MaxLength="256" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2506,6 +2526,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="EmailTemplates">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.EmailTemplate">
               <MappingFragment StoreEntitySet="EmailTemplates">
+                <ScalarProperty Name="EmailHtmlBody" ColumnName="EmailHtmlBody" />
                 <ScalarProperty Name="EmailSubject" ColumnName="EmailSubject" />
                 <ScalarProperty Name="EmailBody" ColumnName="EmailBody" />
                 <ScalarProperty Name="EmailTemplateId" ColumnName="EmailTemplateId" />
@@ -2921,6 +2942,16 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetEligibleReviewers" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.GetEligibleReviewers">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.GetEligibleReviewers_Result">
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="IsQualified" ColumnName="IsQualified" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -211,12 +211,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.Search)]
         [Route("ulos/search")]
-        public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId,
+        public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId, bool? reassignableByMe,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             SetNoDataMessage(NoDataMessages.NoSearchResults);
-            var wfPredicate = PortalHelpers.GenerateWorkflowPredicate(uloId, pegasysDocumentNumber, organization, region, zone, fund,
-              baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId);
+            var wfPredicate = PortalHelpers.GenerateWorkflowPredicate(this.User, uloId, pegasysDocumentNumber, organization, region, zone, fund,
+              baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId, reassignableByMe);
             bool hasFilters = true;
             if (wfPredicate == null)
             {
@@ -363,6 +363,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 nameof(AdvanceViewModel.Answer)+","+
                 nameof(AdvanceViewModel.ExpectedDateForCompletion)+","+
                 nameof(AdvanceViewModel.Comments)+","+
+                nameof(AdvanceViewModel.WorkflowRowVersionString)+","+
+                nameof(AdvanceViewModel.EditingBeganAtUtc)+","+
                 nameof(AdvanceViewModel.UnliqudatedWorkflowQuestionsId))]
             AdvanceViewModel advanceModel=null)
         {
@@ -371,6 +373,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (ModelState.IsValid)
             {
                 Log.Information("Altering ULO {UloId} with Workflow {WorkflowId} via command {AlterCommand}", uloId, workflowId, Request["WhatNext"]);
+
+                if (wf.WorkflowRowVersionString != advanceModel.WorkflowRowVersionString)
+                {
+                    Log.Error(
+                        "Workflow {workflowId} is stale. Trying to edit {staleWorkflowRowVersion} when {currentWorkflowRowVersion} is the most recent.  Record was in the wind for {inprogressTimespan}.", 
+                        wf.WorkflowId, advanceModel.WorkflowRowVersionString, wf.WorkflowRowVersionString, DateTime.UtcNow.Subtract(advanceModel.EditingBeganAtUtc)
+                        );
+                    AddPageAlert($"Someone edited this record while you were working.  You'll need to re-apply your changes if you still have edit rights.", false, PageAlert.AlertTypes.Danger, true);
+                    return RedirectToAction(ActionNames.Details, new { uloId = wf.TargetUloId, workflowId = wf.WorkflowId });
+                }
 
                 var submit = Request["WhatNext"] == "Submit";
                 var question = await DB.UnliqudatedObjectsWorkflowQuestions.Where(z => z.WorkflowId == workflowId).OrderByDescending(z => z.UnliqudatedWorkflowQuestionsId).FirstOrDefaultAsync();

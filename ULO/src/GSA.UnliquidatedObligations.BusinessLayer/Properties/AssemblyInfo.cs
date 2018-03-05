@@ -6,7 +6,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GSA.UnliquidatedObligations.BusinessLayer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription(@"A helper assembly for use with the GSA ULO project. 
+You can find more information regarding that project at https://github.com/GSA/FM-ULO. 
+This assembly contains the EntityFramework ORM, the scripts that were first used to initialize the database, 
+and other objects that could be useful if a 2nd interface (not just the web portal) were used.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GSA")]
 [assembly: AssemblyProduct("GSA.UnliquidatedObligations.BusinessLayer")]

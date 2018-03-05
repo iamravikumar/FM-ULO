@@ -270,7 +270,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("00,01,02,03,04,05,06,07,08,09,10,11")]
+        [global::System.Configuration.DefaultSettingValueAttribute("00,01,02,03,04,05,06,07,08,09,10,11,Blank")]
         public string Upload192SheetsToImport {
             get {
                 return ((string)(this["Upload192SheetsToImport"]));
@@ -292,6 +292,69 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public int Upload192SkipRawRows {
             get {
                 return ((int)(this["Upload192SkipRawRows"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GetEligibleReviewersQualifiedOnly {
+            get {
+                return ((bool)(this["GetEligibleReviewersQualifiedOnly"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("{0} +")]
+        public string GetEligibleReviewersQualifiedUsernameFormat {
+            get {
+                return ((string)(this["GetEligibleReviewersQualifiedUsernameFormat"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("{0} -")]
+        public string GetEligibleReviewersNotQualifiedUsernameFormat {
+            get {
+                return ((string)(this["GetEligibleReviewersNotQualifiedUsernameFormat"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseOldGetEligibleReviewersAlgorithm {
+            get {
+                return ((bool)(this["UseOldGetEligibleReviewersAlgorithm"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SendBatchEmailsDuringAssignWorkflows {
+            get {
+                return ((bool)(this["SendBatchEmailsDuringAssignWorkflows"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int BatchAssignmentNotificationEmailTemplateId {
+            get {
+                return ((int)(this["BatchAssignmentNotificationEmailTemplateId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Closed")]
+        public string TheCloserUserUsername {
+            get {
+                return ((string)(this["TheCloserUserUsername"]));
             }
         }
     }
