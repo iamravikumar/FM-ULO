@@ -1,5 +1,5 @@
 ﻿function debugAlert(msg) {
-    //alert("debugAlert: "+msg);
+//    alert("debugAlert: "+msg);
 }
 
 function popupConfirmHide() {
@@ -19,6 +19,22 @@ function showToast(itemText) {
     var toastText = $('#universal-alert-item-text');
     toastText.text(itemText);
     toastAppearDisappear(toast);
+}
+
+function appendStalenessData(obj) {
+    obj = obj || {};
+    obj.StalenessWorkflowRowVersionString = $("input[name='StalenessWorkflowRowVersionString']").val();
+    obj.StalenessEditingBeganAtUtc = $("input[name='StalenessEditingBeganAtUtc']").val();
+    obj.StalenessWorkflowId = $("input[name='StalenessWorkflowId']").val();
+    //alert(JSON.stringify(obj));
+    return obj;
+}
+
+function itemCountString(itemCount, itemTypeString) {
+    if (itemCount == 1) {
+        return "1 " + itemTypeString;
+    }
+    return itemCount + " " + itemTypeString + "s";
 }
 
 $(document).ready(function () {

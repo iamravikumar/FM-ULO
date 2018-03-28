@@ -21,7 +21,10 @@
                         <th>Review Date</th>
                         <th>Current Activity</th>
                         <th>Reviewer</th>
-                        <th>Justification</th>
+                        @*
+        <th>Justification</th>
+                        *@
+                        <th>Comment</th>
                         <th>Disposition</th>
                         <th># Documents</th>
                     </tr>
@@ -29,32 +32,37 @@
                 <tbody>
                     @foreach (var o in Model)
                     {
-                        <tr>
-                            <td>
-                                @Html.ActionLink(o.WorkflowId.ToString(), UloController.ActionNames.Details, new { uloId = o.UloId, workflowId = o.WorkflowId })
-                            </td>
-                            <td>
-                                @o.ReviewName
-                            </td>
-                            <td>
-                                @o.ReviewCreatedAtUtc.ToLocalTime().ToShortDateString()
-                            </td>
-                            <td>
-                                @o.WorkflowActivityName
-                            </td>
-                            <td>
-                                @o.UserName
-                            </td>
-                            <td>
-                                @o.JustificationDescription
-                            </td>
-                            <td>
-                                @o.Answer
-                            </td>
-                            <td>
-                                @o.DocumentCount
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            @Html.ActionLink(o.WorkflowId.ToString(), UloController.ActionNames.Details, new { uloId = o.UloId, workflowId = o.WorkflowId })
+                        </td>
+                        <td>
+                            @o.ReviewName
+                        </td>
+                        <td>
+                            @o.ReviewCreatedAtUtc.ToLocalTime().ToShortDateString()
+                        </td>
+                        <td>
+                            @o.WorkflowActivityName
+                        </td>
+                        <td>
+                            @o.UserName
+                        </td>
+                        @*
+        <td>
+            @o.JustificationDescription
+        </td>
+                        *@
+                        <td title="@o.Comments">
+                            @RevolutionaryStuff.Core.StringHelpers.TruncateWithEllipsis(o.Comments, 200)
+                        </td>
+                        <td>
+                            @o.Answer
+                        </td>
+                        <td>
+                            @o.DocumentCount
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>

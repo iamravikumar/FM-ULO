@@ -20,7 +20,7 @@
         </ul>
     }
 }
-else
+else if (!PortalHelpers.HideLoginLinks(ViewBag))
 {
     <ul class="nav navbar-nav navbar-right">
         <li>@Html.ActionLink("Log in", AccountController.ActionNames.Login, AccountController.Name)</li>

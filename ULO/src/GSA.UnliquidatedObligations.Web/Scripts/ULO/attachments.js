@@ -51,18 +51,26 @@ function addDeleteAttachmentClick() {
 }
 
 function deleteAttachment(attachId) {
+    //alert("deleteAttachment(" + attachId + ")");
     $.ajax({
         type: "POST",
         url: "/Attachments/Delete?attachmentId=" + attachId,
         success: function (result) {
+            //alert("deleteAttachment success: " + JSON.stringify(result));
+            if (result.ErrorMessage != null) {
+                alert(result.ErrorMessage);
+                return;
+            }
             deleteAttachmentRow(result.AttachmentsId);
         },
         error: function (xhr, status, p3, p4) {
+            //alert("deleteAttachment fail: ");
             var err = "Error " + " " + status + " " + p3 + " " + p4;
             if (xhr.responseText && xhr.responseText[0] == "{")
                 err = JSON.parse(xhr.responseText).Message;
             console.log(err);
-        }
+        },
+        data: appendStalenessData({})
     });
     return false;
 }

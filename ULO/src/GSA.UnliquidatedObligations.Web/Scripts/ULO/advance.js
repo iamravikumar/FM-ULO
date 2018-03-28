@@ -102,24 +102,26 @@ function ChoiceChange() {
     var jc = 0;
     var q = questionChoiceByQuestionChoiceValue[value];
 
-    var keys = q.justificationKeys;
-    if (keys != null) {
-        debugAlert(keys.length + " keys of [" + keys + "]");
+    if (q != null) {
+        var keys = q.justificationKeys;
+        if (keys != null) {
+            debugAlert(keys.length + " keys of [" + keys + "]");
 
-        for (x = 0; x < keys.length; ++x) {
-            var key = keys[x];
-            var j = justificationByKey[key];
-            if (j == null) {
-                alert("missing key value for [" + key + "]");
-                continue;
+            for (x = 0; x < keys.length; ++x) {
+                var key = keys[x];
+                var j = justificationByKey[key];
+                if (j == null) {
+                    alert("missing key value for [" + key + "]");
+                    continue;
+                }
+                var desc = j.Description;
+                el = document.createElement("option");
+                el.textContent = desc;
+                el.value = key;
+                el.selected = key == mrjk;
+                select.appendChild(el);
+                ++jc;
             }
-            var desc = j.Description;
-            el = document.createElement("option");
-            el.textContent = desc;
-            el.value = key;
-            el.selected = key == mrjk;
-            select.appendChild(el);
-            ++jc;
         }
     }
 

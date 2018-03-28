@@ -11,10 +11,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -1033,5 +1035,39 @@ namespace GSA.UnliquidatedObligations.Web
             }
             return db.Workflows.Where(predicate);
         }
+
+        public static bool HideLoginLinks(dynamic viewBag, bool ?set=null)
+        {
+            if (set.HasValue)
+            {
+                viewBag.HideLoginLinks = set.Value;
+            }
+            var o = viewBag.HideLoginLinks;
+            if (o == null || !(o is bool))
+            {
+                return false;
+            }
+            return (bool)o;
+        }
+
+        internal static ICollection<Document> GetUniqueMissingLineageDocuments(this ULODBEntities db, Workflow wf)
+            => db.GetUniqueMissingLineageDocuments(wf, db.GetUloSummariesByPdn(wf.UnliquidatedObligation.PegasysDocumentNumber).Select(z => z.WorkflowId));
+
+        internal static ICollection<Document> GetUniqueMissingLineageDocuments(this ULODBEntities db, Workflow wf, IEnumerable<int> otherWorkflowIds)
+        {
+            var others = new List<int>(otherWorkflowIds);
+            var otherDocsByName = db.Documents.Where(d => others.Contains(d.WorkflowId)).OrderByDescending(d => d.CreatedAtUtc).ToDictionaryOnConflictKeepLast(d => d.DocumentName, d => d);
+            wf.Documents.ForEach(d => otherDocsByName.Remove(d.DocumentName));
+            return otherDocsByName.Values;
+        }
+
+        internal static async Task<Workflow> FindWorkflowAsync(this ULODBEntities db, int workflowId)
+            => await db.Workflows
+                .Include(q => q.AspNetUser)
+                .Include(q => q.Documents)
+                .Include(q => q.UnliquidatedObligation)
+                .Include(q => q.UnliqudatedObjectsWorkflowQuestions)
+                .WhereReviewExists()
+                .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
     }
 }

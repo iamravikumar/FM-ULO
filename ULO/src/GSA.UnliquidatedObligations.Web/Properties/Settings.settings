@@ -135,5 +135,29 @@
     <Setting Name="TheCloserUserUsername" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Closed</Value>
     </Setting>
+    <Setting Name="StaleWorkflowErrorMessageTemplate" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Someone edited this record while you were working.  You'll need to reload this page and re-apply your changes if you still have edit rights.</Value>
+    </Setting>
+    <Setting Name="CreditCardAliasSheetsToImport" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Report 1</Value>
+    </Setting>
+    <Setting Name="CreditCardAliasSkipRawRows" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="PegasysOpenItemsCreditCardsSheetsToImport" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Sheet1</Value>
+    </Setting>
+    <Setting Name="PegasysOpenItemsCreditCardsSkipRawRows" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="RetaSkipRawRows" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="ActiveCardholderSheetsToImport" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Sheet1</Value>
+    </Setting>
+    <Setting Name="ActiveCardholderSkipRawRows" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

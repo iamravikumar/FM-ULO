@@ -6,7 +6,9 @@ using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
@@ -17,6 +19,31 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected readonly IComponentContext ComponentContext;
         protected readonly ICacher Cacher;
         internal readonly ILogger Log;
+
+        public static class WorkflowStalenessMagicFieldNames
+        {
+            public const string WorkflowRowVersionString = "StalenessWorkflowRowVersionString";
+            public const string EditingBeganAtUtc = "StalenessEditingBeganAtUtc";
+            public const string WorkflowId = "StalenessWorkflowId";
+        }
+
+        protected async Task CheckStalenessFromFormAsync(Workflow wf=null)
+        {
+            int workflowId = Parse.ParseInt32(Request.Form[WorkflowStalenessMagicFieldNames.WorkflowId]);
+            DateTime editingBeganAtUtc = DateTime.Parse(Request.Form[WorkflowStalenessMagicFieldNames.EditingBeganAtUtc]);
+            string workflowRowVersionString = Request.Form[WorkflowStalenessMagicFieldNames.WorkflowRowVersionString];
+            if (wf == null || wf.WorkflowId != workflowId)
+            {
+                wf = await DB.Workflows.FindAsync(workflowId);
+            }
+            if (wf == null) throw new FileNotFoundException();
+            if (wf.WorkflowRowVersionString != workflowRowVersionString)
+            {
+                LogStaleWorkflowError(wf, workflowRowVersionString, editingBeganAtUtc);
+                var staleMessage = GetStaleWorkflowErrorMessage(wf, workflowRowVersionString, editingBeganAtUtc);
+                throw new Exception(staleMessage);
+            }
+        }
 
         protected BaseController(ULODBEntities db, IComponentContext componentContext, ICacher cacher, ILogger log)
         {
@@ -35,6 +62,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
             }
         }
+
+        protected JsonResult CreateJsonError(Exception ex)
+            => Json(new ExceptionError(ex));
+
+        protected void LogStaleWorkflowError(Workflow wf, string workflowRowVersionString, DateTime ?editingBeganAtUtc)
+        {
+            Log.Error(
+                "Workflow {workflowId} is stale. Trying to edit {staleWorkflowRowVersion} when {currentWorkflowRowVersion} is the most recent.  Record was in the wind for {inprogressTimespan}.",
+                wf.WorkflowId, workflowRowVersionString, wf.WorkflowRowVersionString, DateTime.UtcNow.Subtract(editingBeganAtUtc.GetValueOrDefault(DateTime.MinValue))
+                );
+        }
+
+        protected string GetStaleWorkflowErrorMessage(Workflow wf, string workflowRowVersionString, DateTime? editingBeganAtUtc)
+            => string.Format(Properties.Settings.Default.StaleWorkflowErrorMessageTemplate, workflowRowVersionString, editingBeganAtUtc);
 
         protected void OnlySupportedInDevelopmentEnvironment()
         {

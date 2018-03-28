@@ -50,12 +50,12 @@ namespace GSA.UnliquidatedObligations.Web.Services
             return dt;
         }
 
-        private void FinalizeAndUpload(DataTable dt, int reviewId)
+        private void FinalizeAndUpload(DataTable dt, int reviewId, RowsTransferredEventHandler rowsTransferred)
         {
-            dt.SetColumnWithValue("ReviewId", reviewId);
+            dt.SetColumnWithValue(ReviewIdColumnName, reviewId);
             dt.MakeDateColumnsFitSqlServerBounds();
             dt.IdealizeStringColumns();
-            dt.UploadIntoSqlServer(CreateSqlConnection);
+            dt.UploadIntoSqlServer(CreateSqlConnection, new UploadIntoSqlServerSettings { RowsTransferredEventHandler = rowsTransferred });
         }
 
         private static readonly object EmptyModel = new object();
@@ -114,34 +114,57 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
             Action<Exception, int> onRowAddError = (ex, rowNum) =>
             {
-                Log.Error(ex, "OnRowAddError with {rowNum} in {importer} with {reviewId}", rowNum, importer, reviewId);
+                Log.Error(ex, "UploadFiles: OnRowAddError with {rowNum} in {importer} with {reviewId}", rowNum, importer, reviewId);
                 ++rowErrorCount;
             };
 
+            RowsTransferredEventHandler rowsTransferred = (sender, e) =>
+            {
+                Log.Information("UploadFiles: Loading progress. {rowCount} in {importer} with {reviewId}", e.RowsTransferred, importer, reviewId);
+            };
+ 
             try
             {
-                importer = nameof(Upload442Table);
+                importer = nameof(Load442s);
                 foreach (var fn in files.PegasysFilePathsList)
                 {
-                    Upload442Table(reviewId, fn, onRowAddError);
+                    Load442s(reviewId, fn, onRowAddError, rowsTransferred);
                 }
 
-                importer = nameof(UploadRetaTable);
+                importer = nameof(LoadReta);
                 foreach (var fn in files.RetaFileList)
                 {
-                    UploadRetaTable(reviewId, fn, onRowAddError);
+                    LoadReta(reviewId, fn, onRowAddError, rowsTransferred);
                 }
 
-                importer = nameof(UploadEasiTable);
+                importer = nameof(LoadEasi);
                 foreach (var fn in files.EasiFileList)
                 {
-                    UploadEasiTable(reviewId, fn, onRowAddError);
+                    LoadEasi(reviewId, fn, onRowAddError, rowsTransferred);
                 }
 
-                importer = nameof(Upload192Table);
+                importer = nameof(Load192s);
                 foreach (var fn in files.One92FileList)
                 {
-                    Upload192Table(reviewId, fn, onRowAddError);
+                    Load192s(reviewId, fn, onRowAddError, rowsTransferred);
+                }
+
+                importer = nameof(LoadCreditCardAliases);
+                foreach (var fn in files.CreditCardAliasCrosswalkFiles)
+                {
+                    LoadCreditCardAliases(reviewId, fn, onRowAddError, rowsTransferred);
+                }
+
+                importer = nameof(LoadPegasysOpenItemsCreditCards);
+                foreach (var fn in files.PegasysOpenItemsCreditCards)
+                {
+                    LoadPegasysOpenItemsCreditCards(reviewId, fn, onRowAddError, rowsTransferred);
+                }
+
+                importer = nameof(LoadActiveCardholders);
+                foreach (var fn in files.ActiveCardholderFiles)
+                {
+                    LoadActiveCardholders(reviewId, fn, onRowAddError, rowsTransferred);
                 }
             }
             catch (Exception ex)
@@ -162,16 +185,17 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             using (ULODBEntities _db = DB)
             {
-                _db.Database.CommandTimeout = 60*15;
+                _db.Database.CommandTimeout = 60 * 15;
                 _db.CreateULOAndAssignWf(reviewId, workflowDefinitionId, reviewDate.Date);
             }
         }
 
-        private async Task SendAssignWorkFlowsBatchNotifications(ICollection<Workflow> workflows, string userId)
+        private async Task SendAssignWorkFlowsBatchNotifications(IQueryable<Workflow> workflows, string userId)
         {
             var u = await DB.AspNetUsers.FindAsync(userId);
             var et = await DB.EmailTemplates.FindAsync(Properties.Settings.Default.BatchAssignmentNotificationEmailTemplateId);
-            var m = new ItemsEmailViewModel<Workflow>(u, workflows);
+            var wfs = await (workflows.Include(z => z.UnliquidatedObligation.Review).Include(wf => wf.UnliquidatedObligation).ToListAsync());
+            var m = new WorkflowsEmailViewModel(u, wfs);
             await BT.Email(u.Email, et.EmailSubject, et.EmailBody, et.EmailHtmlBody, m);
         }
 
@@ -179,16 +203,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             try
             {
-                var workflows = await DB.Workflows.Include(wf => wf.UnliquidatedObligation).
+                var workflows = DB.Workflows.
                     Where(wf => wf.UnliquidatedObligation.ReviewId == reviewId && wf.OwnerUserId == userId).
-                    OrderBy(wf => wf.UnliquidatedObligation.PegasysDocumentNumber).
-                    ToListAsync();
+                    OrderBy(wf => wf.UnliquidatedObligation.PegasysDocumentNumber);
                 await SendAssignWorkFlowsBatchNotifications(workflows, userId);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, 
-                    "Problem in {methodName}", 
+                Log.Error(ex,
+                    "Problem in {methodName}",
                     nameof(IBackgroundTasks.SendAssignWorkFlowsBatchNotifications));
                 throw;
             }
@@ -198,7 +221,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             try
             {
-                var workflows = await PortalHelpers.GetWorkflows(DB, workflowIds).ToListAsync();
+                var workflows = PortalHelpers.GetWorkflows(DB, workflowIds);
                 await SendAssignWorkFlowsBatchNotifications(workflows, userId);
             }
             catch (Exception ex)
@@ -225,9 +248,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             catch (Exception ex)
             {
-                Log.Error(ex, 
-                    "Problem in {methodName} after having queued {assigneesProcessed} user batch notifications", 
-                    nameof(IBackgroundTasks.SendAssignWorkFlowsBatchNotifications), 
+                Log.Error(ex,
+                    "Problem in {methodName} after having queued {assigneesProcessed} user batch notifications",
+                    nameof(IBackgroundTasks.SendAssignWorkFlowsBatchNotifications),
                     assigneesProcessed);
                 throw;
             }
@@ -292,7 +315,39 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        private void Upload442Table(int reviewId, string uploadPath, Action<Exception, int> onRowAddError)
+        #region Loaders
+
+        private void LoadExcelDataTable(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred, string sheetNamesCsv, int skipRawRows, Func<DataTable> dataTableCreator)
+        {
+            DataTable dt;
+            using (var st = File.OpenRead(uploadPath))
+            {
+                var ds = new DataSet();
+                var settings = new LoadTablesFromSpreadsheetSettings()
+                {
+                    SheetSettings = new List<LoadRowsFromSpreadsheetSettings>(),
+                    CreateDataTable = dataTableCreator,
+                };
+                var sheetNames = R.CSV.ParseLine(sheetNamesCsv);
+                foreach (var sheetName in sheetNames)
+                {
+                    settings.SheetSettings.Add(
+                    new LoadRowsFromSpreadsheetSettings
+                    {
+                        SheetName = sheetName,
+                        TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
+                        UseSheetNameForTableName = true,
+                        RowAddErrorHandler = onRowAddError,
+                        SkipRawRows = skipRawRows,
+                    });
+                }
+                ds.LoadSheetsFromExcel(st, settings);
+                dt = MergeIntoSingleTable(ds, dataTableCreator);
+            }
+            FinalizeAndUpload(dt, reviewId, rowsTransferred);
+        }
+
+        private void Load442s(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
         {
             var dt = CreatePegasysOpenObligationsDataTable();
             using (var st = File.OpenRead(uploadPath))
@@ -302,12 +357,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     SkipRawRows = 2,
                     RowAddErrorHandler = onRowAddError
                 });
-                dt.SetColumnWithValue("ReviewId", reviewId);
-                dt.UploadIntoSqlServer(CreateSqlConnection);
+                dt.SetColumnWithValue(ReviewIdColumnName, reviewId);
+                dt.UploadIntoSqlServer(CreateSqlConnection, new UploadIntoSqlServerSettings { RowsTransferredEventHandler = rowsTransferred } );
             }
         }
 
-        private void UploadRetaTable(int reviewId, string uploadPath, Action<Exception, int> onRowAddError)
+        private void LoadReta(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+             => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, Properties.Settings.Default.RetaSheetsToImport, Properties.Settings.Default.RetaSkipRawRows, CreateRetaDataTable);
+
+        private void LoadEasi(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
         {
             DataTable dt;
             using (var st = File.OpenRead(uploadPath))
@@ -315,39 +373,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 var ds = new DataSet();
                 var settings = new LoadTablesFromSpreadsheetSettings()
                 {
-                    SheetSettings = new List<LoadRowsFromSpreadsheetSettings>(),
-                    CreateDataTable = CreateRetaDataTable
-                };
-
-                var sheetNames = R.CSV.ParseLine(Properties.Settings.Default.RetaSheetsToImport);
-                foreach (var sheetName in sheetNames)
-                {
-                    settings.SheetSettings.Add(
-                    new LoadRowsFromSpreadsheetSettings
-                    {
-                        SheetName = sheetName,
-                        TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
-                        UseSheetNameForTableName = true,
-                        RowAddErrorHandler = onRowAddError,
-                        ThrowOnMissingSheet = false,
-                    });
-                }
-
-                ds.LoadSheetsFromExcel(st, settings);
-                dt = MergeIntoSingleTable(ds, CreateRetaDataTable);
-            }
-            FinalizeAndUpload(dt, reviewId);
-        }
-
-        private void UploadEasiTable(int reviewId, string uploadPath, Action<Exception, int> onRowAddError)
-        {
-            DataTable dt;
-            using (var st = File.OpenRead(uploadPath))
-            {
-                var ds = new DataSet();
-                var settings = new LoadTablesFromSpreadsheetSettings()
-                {
-                    CreateDataTable = CreateEasiTable,
+                    CreateDataTable = CreateEasiDataTable,
                     LoadAllSheetsDefaultSettings = new LoadRowsFromSpreadsheetSettings
                     {
                         TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
@@ -355,243 +381,282 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     }
                 };
                 ds.LoadSheetsFromExcel(st, settings);
-                dt = MergeIntoSingleTable(ds, CreateEasiTable);
+                dt = MergeIntoSingleTable(ds, CreateEasiDataTable);
             }
-            FinalizeAndUpload(dt, reviewId);
+            FinalizeAndUpload(dt, reviewId, rowsTransferred);
         }
 
-        private void Upload192Table(int reviewId, string uploadPath, Action<Exception, int> onRowAddError)
+        private void Load192s(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+            => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, Properties.Settings.Default.Upload192SheetsToImport, Properties.Settings.Default.Upload192SkipRawRows, Create192DataTable);
+
+        private void LoadCreditCardAliases(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+            => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, Properties.Settings.Default.CreditCardAliasSheetsToImport, Properties.Settings.Default.CreditCardAliasSkipRawRows, CreateCreditCardAliasDataTable);
+
+        private void LoadPegasysOpenItemsCreditCards(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+            => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, Properties.Settings.Default.PegasysOpenItemsCreditCardsSheetsToImport, Properties.Settings.Default.PegasysOpenItemsCreditCardsSkipRawRows, CreatePegasysOpenItemsCreditCardsDataTable);
+
+        private void LoadActiveCardholders(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+            => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, Properties.Settings.Default.ActiveCardholderSheetsToImport, Properties.Settings.Default.ActiveCardholderSkipRawRows, CreateActiveCardholdersDataTable);
+
+        #endregion
+
+        #region DataTable Creation
+
+        private static DataTable CreateDataTable(string tableName, params DataColumn[] columns)
         {
-            DataTable dt;
-            using (var st = File.OpenRead(uploadPath))
+            var dt = new DataTable()
             {
-                var ds = new DataSet();
-                var settings = new LoadTablesFromSpreadsheetSettings()
-                {
-                    SheetSettings = new List<LoadRowsFromSpreadsheetSettings>(),
-                    CreateDataTable = Create192Table,
-                };
-                var sheetNames = R.CSV.ParseLine(Properties.Settings.Default.Upload192SheetsToImport);
-                foreach (var sheetName in sheetNames)
-                {
-                    settings.SheetSettings.Add(
-                    new LoadRowsFromSpreadsheetSettings
-                    {
-                        SheetName = sheetName,
-                        TypeConverter = SpreadsheetHelpers.ExcelTypeConverter,
-                        UseSheetNameForTableName = true,
-                        RowAddErrorHandler = onRowAddError,
-                        SkipRawRows = Properties.Settings.Default.Upload192SkipRawRows,
-                    });
-                }
-                ds.LoadSheetsFromExcel(st, settings);
-                dt = MergeIntoSingleTable(ds, Create192Table);
+                TableName = tableName
+            };
+            foreach (var col in columns)
+            {
+                dt.Columns.Add(col);
             }
-            FinalizeAndUpload(dt, reviewId);
+            return dt;
         }
+
+        private const string ReviewIdColumnName = "ReviewId";
 
         private static DataTable CreatePegasysOpenObligationsDataTable()
-        {
-            var dt = new DataTable()
-            {
-                TableName = "PegasysObligations442"
-            };
-            dt.Columns.Add("ReviewId", typeof(int));
-            //dt.Columns.Add("SourceRowNumber", typeof(int));
-            dt.Columns.Add("Region", typeof(int));
-            dt.Columns.Add("Fund", typeof(string));
-            dt.Columns.Add("Organization", typeof(string));
-            dt.Columns.Add("Prog", typeof(string));
-            dt.Columns.Add("Doc Type", typeof(string)); //renamed from the excel to prove the test
-            dt.Columns.Add("Doc Num", typeof(string));
-            dt.Columns.Add("Itmz Ln Num", typeof(int));
-            dt.Columns.Add("Actg Ln Num", typeof(int));
-            dt.Columns.Add("Title", typeof(string));
-            dt.Columns.Add("BBFY", typeof(string));
-            dt.Columns.Add("EBFY", typeof(string));
-            dt.Columns.Add("Acty", typeof(string));
-            dt.Columns.Add("O/C", typeof(string));
-            dt.Columns.Add("SOC", typeof(string));
-            dt.Columns.Add("Project", typeof(string));
-            dt.Columns.Add("Agreement", typeof(string));
-            dt.Columns.Add("Contract Num", typeof(string));
-            dt.Columns.Add("Bldg", typeof(string));
-            dt.Columns.Add("Sys/Loc", typeof(string));
-            dt.Columns.Add("Veh Tag", typeof(string));
-            dt.Columns.Add("WI", typeof(string));
-            dt.Columns.Add("Lease Number", typeof(string));
-            dt.Columns.Add("Vendor Name", typeof(string));
-            dt.Columns.Add("Actg Pd", typeof(string));
-            dt.Columns.Add("Total Line", typeof(decimal));
-            dt.Columns.Add("Commitments", typeof(decimal));
-            dt.Columns.Add("Prepayments", typeof(decimal));
-            dt.Columns.Add("Undel Orders", typeof(decimal));
-            dt.Columns.Add("Rcpt", typeof(decimal));
-            dt.Columns.Add("Accrual", typeof(decimal));
-            dt.Columns.Add("Pend Payments", typeof(decimal));
-            dt.Columns.Add("Pymts(In Transit)", typeof(decimal));
-            dt.Columns.Add("Pymts(Confirmed)", typeof(decimal));
-            dt.Columns.Add("Holdbacks", typeof(decimal));
-            dt.Columns.Add("TAFS", typeof(string));
-            dt.Columns.Add("DUNS #", typeof(string));
-            dt.Columns.Add("Date of Last Activity", typeof(string));
-            dt.Columns.Add("Days Since First Activity", typeof(int));
-            dt.Columns.Add("Days Since Last Activity", typeof(int));
-            dt.Columns.Add("Date of First Activity", typeof(string));
-            dt.Columns.Add("Trading Partner Type", typeof(string));
-            dt.Columns.Add("Vendor Agency Code", typeof(string));
-            dt.Columns.Add("Vendor Bureau Code", typeof(string));
-            return dt;
-        }
+            => CreateDataTable(
+                "PegasysObligations442",
+                new DataColumn(ReviewIdColumnName, typeof(int)),
+                //dt.Columns.Add("SourceRowNumber", typeof(int)),
+                new DataColumn("Region", typeof(int)),
+                new DataColumn("Fund", typeof(string)),
+                new DataColumn("Organization", typeof(string)),
+                new DataColumn("Prog", typeof(string)),
+                new DataColumn("Doc Type", typeof(string)), //renamed from the excel to prove the test
+                new DataColumn("Doc Num", typeof(string)),
+                new DataColumn("Itmz Ln Num", typeof(int)),
+                new DataColumn("Actg Ln Num", typeof(int)),
+                new DataColumn("Title", typeof(string)),
+                new DataColumn("BBFY", typeof(string)),
+                new DataColumn("EBFY", typeof(string)),
+                new DataColumn("Acty", typeof(string)),
+                new DataColumn("O/C", typeof(string)),
+                new DataColumn("SOC", typeof(string)),
+                new DataColumn("Project", typeof(string)),
+                new DataColumn("Agreement", typeof(string)),
+                new DataColumn("Contract Num", typeof(string)),
+                new DataColumn("Bldg", typeof(string)),
+                new DataColumn("Sys/Loc", typeof(string)),
+                new DataColumn("Veh Tag", typeof(string)),
+                new DataColumn("WI", typeof(string)),
+                new DataColumn("Lease Number", typeof(string)),
+                new DataColumn("Vendor Name", typeof(string)),
+                new DataColumn("Actg Pd", typeof(string)),
+                new DataColumn("Total Line", typeof(decimal)),
+                new DataColumn("Commitments", typeof(decimal)),
+                new DataColumn("Prepayments", typeof(decimal)),
+                new DataColumn("Undel Orders", typeof(decimal)),
+                new DataColumn("Rcpt", typeof(decimal)),
+                new DataColumn("Accrual", typeof(decimal)),
+                new DataColumn("Pend Payments", typeof(decimal)),
+                new DataColumn("Pymts(In Transit)", typeof(decimal)),
+                new DataColumn("Pymts(Confirmed)", typeof(decimal)),
+                new DataColumn("Holdbacks", typeof(decimal)),
+                new DataColumn("TAFS", typeof(string)),
+                new DataColumn("DUNS #", typeof(string)),
+                new DataColumn("Date of Last Activity", typeof(string)),
+                new DataColumn("Days Since First Activity", typeof(int)),
+                new DataColumn("Days Since Last Activity", typeof(int)),
+                new DataColumn("Date of First Activity", typeof(string)),
+                new DataColumn("Trading Partner Type", typeof(string)),
+                new DataColumn("Vendor Agency Code", typeof(string)),
+                new DataColumn("Vendor Bureau Code", typeof(string))
+                );
 
         private static DataTable CreateRetaDataTable()
-        {
-            var dt = new DataTable()
-            {
-                TableName = "Reta"
-            };
+            => CreateDataTable(
+                "Reta",
+                new DataColumn(ReviewIdColumnName, typeof(int)),
+                new DataColumn("Agreement", typeof(int)),
+                new DataColumn("RWA Type", typeof(string)),
+                new DataColumn("Completion Date", typeof(DateTime)),
+                new DataColumn("Agency Bureau Code", typeof(string)),
+                new DataColumn("RETA POC", typeof(string)),
+                new DataColumn("Region", typeof(int)),
+                new DataColumn("Fund", typeof(string)),
+                new DataColumn("Organization", typeof(string)),
+                new DataColumn("Prog", typeof(string)),
+                new DataColumn("Doc Type", typeof(string)), //renamed from the excel to prove the test
+                new DataColumn("Doc Num", typeof(string)),
+                new DataColumn("Itmz Ln Num", typeof(int)),
+                new DataColumn("Actg Ln Num", typeof(int)),
+                new DataColumn("Title", typeof(string)),
+                new DataColumn("BBFY", typeof(string)),
+                new DataColumn("EBFY", typeof(string)),
+                new DataColumn("Acty", typeof(string)),
+                new DataColumn("O/C", typeof(string)),
+                new DataColumn("SOC", typeof(string)),
+                new DataColumn("Project", typeof(string)),
+                //dt.Columns.Add("Agreement", typeof(string)),
+                new DataColumn("Contract Num", typeof(string)),
+                new DataColumn("Bldg", typeof(string)),
+                new DataColumn("Sys/Loc", typeof(string)),
+                new DataColumn("Veh Tag", typeof(string)),
+                new DataColumn("WI", typeof(string)),
+                new DataColumn("Lease Number", typeof(string)),
+                new DataColumn("Vendor Name", typeof(string)),
+                new DataColumn("Actg Pd", typeof(string)),
+                new DataColumn("Total Line", typeof(decimal)),
+                new DataColumn("Commitments", typeof(decimal)),
+                new DataColumn("Prepayments", typeof(decimal)),
+                new DataColumn("Undel Orders", typeof(decimal)),
+                new DataColumn("Rcpt", typeof(decimal)),
+                new DataColumn("Accrual", typeof(decimal)),
+                new DataColumn("Pend Payments", typeof(decimal)),
+                new DataColumn("Pymts(In Transit)", typeof(decimal)),
+                new DataColumn("Pymts(Confirmed)", typeof(decimal)),
+                new DataColumn("Holdbacks", typeof(decimal)),
+                new DataColumn("TAFS", typeof(string)),
+                new DataColumn("DUNS #", typeof(string)),
+                new DataColumn("Date of Last Activity", typeof(DateTime)),
+                new DataColumn("Days Since First Activity", typeof(int)),
+                new DataColumn("Days Since Last Activity", typeof(int)),
+                new DataColumn("Date of First Activity", typeof(DateTime)),
+                new DataColumn("Trading Partner Type", typeof(string)),
+                new DataColumn("Vendor Agency Code", typeof(string)),
+                new DataColumn("Vendor Bureau Code", typeof(string))
+                );
 
-            dt.Columns.Add("ReviewId", typeof(int));
-            dt.Columns.Add("Agreement", typeof(int));
-            dt.Columns.Add("RWA Type", typeof(string));
-            dt.Columns.Add("Completion Date", typeof(DateTime));
-            dt.Columns.Add("Agency Bureau Code", typeof(string));
-            dt.Columns.Add("RETA POC", typeof(string));
-            dt.Columns.Add("Region", typeof(int));
-            dt.Columns.Add("Fund", typeof(string));
-            dt.Columns.Add("Organization", typeof(string));
-            dt.Columns.Add("Prog", typeof(string));
-            dt.Columns.Add("Doc Type", typeof(string)); //renamed from the excel to prove the test
-            dt.Columns.Add("Doc Num", typeof(string));
-            dt.Columns.Add("Itmz Ln Num", typeof(int));
-            dt.Columns.Add("Actg Ln Num", typeof(int));
-            dt.Columns.Add("Title", typeof(string));
-            dt.Columns.Add("BBFY", typeof(string));
-            dt.Columns.Add("EBFY", typeof(string));
-            dt.Columns.Add("Acty", typeof(string));
-            dt.Columns.Add("O/C", typeof(string));
-            dt.Columns.Add("SOC", typeof(string));
-            dt.Columns.Add("Project", typeof(string));
-            //dt.Columns.Add("Agreement", typeof(string));
-            dt.Columns.Add("Contract Num", typeof(string));
-            dt.Columns.Add("Bldg", typeof(string));
-            dt.Columns.Add("Sys/Loc", typeof(string));
-            dt.Columns.Add("Veh Tag", typeof(string));
-            dt.Columns.Add("WI", typeof(string));
-            dt.Columns.Add("Lease Number", typeof(string));
-            dt.Columns.Add("Vendor Name", typeof(string));
-            dt.Columns.Add("Actg Pd", typeof(string));
-            dt.Columns.Add("Total Line", typeof(decimal));
-            dt.Columns.Add("Commitments", typeof(decimal));
-            dt.Columns.Add("Prepayments", typeof(decimal));
-            dt.Columns.Add("Undel Orders", typeof(decimal));
-            dt.Columns.Add("Rcpt", typeof(decimal));
-            dt.Columns.Add("Accrual", typeof(decimal));
-            dt.Columns.Add("Pend Payments", typeof(decimal));
-            dt.Columns.Add("Pymts(In Transit)", typeof(decimal));
-            dt.Columns.Add("Pymts(Confirmed)", typeof(decimal));
-            dt.Columns.Add("Holdbacks", typeof(decimal));
-            dt.Columns.Add("TAFS", typeof(string));
-            dt.Columns.Add("DUNS #", typeof(string));
-            dt.Columns.Add("Date of Last Activity", typeof(DateTime));
-            dt.Columns.Add("Days Since First Activity", typeof(int));
-            dt.Columns.Add("Days Since Last Activity", typeof(int));
-            dt.Columns.Add("Date of First Activity", typeof(DateTime));
-            dt.Columns.Add("Trading Partner Type", typeof(string));
-            dt.Columns.Add("Vendor Agency Code", typeof(string));
-            dt.Columns.Add("Vendor Bureau Code", typeof(string));
-            return dt;
-        }
+        private static DataTable CreateEasiDataTable()
+            => CreateDataTable(
+                "EASI",
+                new DataColumn(ReviewIdColumnName, typeof(int)),
+                //dt.Columns.Add("SourceRowNumber", typeof(int)),
+                new DataColumn("Created by users Region", typeof(string)),
+                new DataColumn("Office", typeof(string)),
+                new DataColumn("Created By (User Full Name)", typeof(string)),
+                new DataColumn("Contracting Officers Name", typeof(string)),
+                new DataColumn("Contracting Userid", typeof(string)),
+                new DataColumn("Awd Obligated Amt", typeof(string)),
+                new DataColumn("Current Awd Amt", typeof(string)),
+                new DataColumn("Document Nbr", typeof(string)),
+                new DataColumn("Award Nbr", typeof(string)),
+                new DataColumn("Base Contract Nbr", typeof(string)),
+                new DataColumn("GSA FSS/Other #", typeof(string)),
+                new DataColumn("Vendor Name", typeof(string)),
+                new DataColumn("Status Cd", typeof(string)),
+                new DataColumn("Status Ds", typeof(string)),
+                new DataColumn("Procurement Status", typeof(string)),
+                new DataColumn("Create Dt", typeof(DateTime)),
+                new DataColumn("Signed On Date", typeof(DateTime)),
+                new DataColumn("Awd Effective Dt", typeof(DateTime)),
+                new DataColumn("Awd Expiration Dt", typeof(DateTime)),
+                new DataColumn("CLIN ADN", typeof(string)),
+                new DataColumn("ACT/PDN", typeof(string)),
+                new DataColumn("Data Source", typeof(string)),
+                new DataColumn("Region Cd", typeof(string)),
+                new DataColumn("Contracting Officer Email", typeof(string)),
+                new DataColumn("Contracting Specialist Name", typeof(string)),
+                new DataColumn("Contracting Specialist Email", typeof(string)),
+                new DataColumn("Budget Analyst Email", typeof(string))
+                );
 
-        private static DataTable CreateEasiTable()
-        {
-            var dt = new DataTable()
-            {
-                TableName = "EASI"
-            };
-            dt.Columns.Add("ReviewId", typeof(int));
-            //dt.Columns.Add("SourceRowNumber", typeof(int));
-            dt.Columns.Add("Created by users Region", typeof(string));
-            dt.Columns.Add("Office", typeof(string));
-            dt.Columns.Add("Created By (User Full Name)", typeof(string));
-            dt.Columns.Add("Contracting Officers Name", typeof(string));
-            dt.Columns.Add("Contracting Userid", typeof(string));
-            dt.Columns.Add("Awd Obligated Amt", typeof(string));
-            dt.Columns.Add("Current Awd Amt", typeof(string));
-            dt.Columns.Add("Document Nbr", typeof(string));
-            dt.Columns.Add("Award Nbr", typeof(string));
-            dt.Columns.Add("Base Contract Nbr", typeof(string));
-            dt.Columns.Add("GSA FSS/Other #", typeof(string));
-            dt.Columns.Add("Vendor Name", typeof(string));
-            dt.Columns.Add("Status Cd", typeof(string));
-            dt.Columns.Add("Status Ds", typeof(string));
-            dt.Columns.Add("Procurement Status", typeof(string));
-            dt.Columns.Add("Create Dt", typeof(DateTime));
-            dt.Columns.Add("Signed On Date", typeof(DateTime));
-            dt.Columns.Add("Awd Effective Dt", typeof(DateTime));
-            dt.Columns.Add("Awd Expiration Dt", typeof(DateTime));
-            dt.Columns.Add("CLIN ADN", typeof(string));
-            dt.Columns.Add("ACT/PDN", typeof(string));
-            dt.Columns.Add("Data Source", typeof(string));
-            dt.Columns.Add("Region Cd", typeof(string));
-            dt.Columns.Add("Contracting Officer Email", typeof(string));
-            dt.Columns.Add("Contracting Specialist Name", typeof(string));
-            dt.Columns.Add("Contracting Specialist Email", typeof(string));
-            dt.Columns.Add("Budget Analyst Email", typeof(string));
-            return dt;
-        }
+        private static DataTable Create192DataTable()
+            => CreateDataTable(
+                "PegasysObligations192",
+                new DataColumn(ReviewIdColumnName, typeof(int)),
+                new DataColumn("Region", typeof(string)),
+                new DataColumn("Fund", typeof(string)),
+                new DataColumn("Organization", typeof(string)),
+                new DataColumn("Prog", typeof(string)),
+                new DataColumn("Doc Type", typeof(string)), //renamed from the excel to prove the test
+                new DataColumn("Doc Num", typeof(string)),
+                new DataColumn("Itmz Ln Num", typeof(int)),
+                new DataColumn("Actg Ln Num", typeof(int)),
+                new DataColumn("Title", typeof(string)),
+                new DataColumn("BBFY", typeof(string)),
+                new DataColumn("EBFY", typeof(string)),
+                new DataColumn("Acty", typeof(string)),
+                new DataColumn("O/C", typeof(string)),
+                new DataColumn("SOC", typeof(string)),
+                new DataColumn("Project", typeof(string)),
+                new DataColumn("Agreement", typeof(string)),
+                new DataColumn("Contract Num", typeof(string)),
+                new DataColumn("Bldg", typeof(string)),
+                new DataColumn("Sys/Loc", typeof(string)),
+                new DataColumn("Veh Tag", typeof(string)),
+                new DataColumn("WI", typeof(string)),
+                new DataColumn("Lease Number", typeof(string)),
+                new DataColumn("Vendor Name", typeof(string)),
+                new DataColumn("Actg Pd", typeof(string)),
+                new DataColumn("Total Line", typeof(decimal)),
+                new DataColumn("Commitments", typeof(decimal)),
+                new DataColumn("Prepayments", typeof(decimal)),
+                new DataColumn("Undel Orders", typeof(decimal)),
+                new DataColumn("Rcpt", typeof(decimal)),
+                new DataColumn("Accrual", typeof(decimal)),
+                new DataColumn("Pend Payments", typeof(decimal)),
+                new DataColumn("Pymts(In Transit)", typeof(decimal)),
+                new DataColumn("Pymts(Confirmed)", typeof(decimal)),
+                new DataColumn("Holdbacks", typeof(decimal)),
+                new DataColumn("TAFS", typeof(string)),
+                new DataColumn("DUNS #", typeof(string)),
+                new DataColumn("Date of Last Activity", typeof(DateTime)),
+                new DataColumn("Days Since First Activity", typeof(int)),
+                new DataColumn("Days Since Last Activity", typeof(int)),
+                new DataColumn("Date of First Activity", typeof(DateTime)),
+                new DataColumn("Trading Partner Type", typeof(string)),
+                new DataColumn("Vendor Agency Code", typeof(string)),
+                new DataColumn("Vendor Bureau Code", typeof(string))
+            );
 
-        private static DataTable Create192Table()
-        {
-            var dt = new DataTable()
-            {
-                TableName = "PegasysObligations192"
-            };
-            dt.Columns.Add("ReviewId", typeof(int));
-            dt.Columns.Add("Region", typeof(string));
-            dt.Columns.Add("Fund", typeof(string));
-            dt.Columns.Add("Organization", typeof(string));
-            dt.Columns.Add("Prog", typeof(string));
-            dt.Columns.Add("Doc Type", typeof(string)); //renamed from the excel to prove the test
-            dt.Columns.Add("Doc Num", typeof(string));
-            dt.Columns.Add("Itmz Ln Num", typeof(int));
-            dt.Columns.Add("Actg Ln Num", typeof(int));
-            dt.Columns.Add("Title", typeof(string));
-            dt.Columns.Add("BBFY", typeof(string));
-            dt.Columns.Add("EBFY", typeof(string));
-            dt.Columns.Add("Acty", typeof(string));
-            dt.Columns.Add("O/C", typeof(string));
-            dt.Columns.Add("SOC", typeof(string));
-            dt.Columns.Add("Project", typeof(string));
-            dt.Columns.Add("Agreement", typeof(string));
-            dt.Columns.Add("Contract Num", typeof(string));
-            dt.Columns.Add("Bldg", typeof(string));
-            dt.Columns.Add("Sys/Loc", typeof(string));
-            dt.Columns.Add("Veh Tag", typeof(string));
-            dt.Columns.Add("WI", typeof(string));
-            dt.Columns.Add("Lease Number", typeof(string));
-            dt.Columns.Add("Vendor Name", typeof(string));
-            dt.Columns.Add("Actg Pd", typeof(string));
-            dt.Columns.Add("Total Line", typeof(decimal));
-            dt.Columns.Add("Commitments", typeof(decimal));
-            dt.Columns.Add("Prepayments", typeof(decimal));
-            dt.Columns.Add("Undel Orders", typeof(decimal));
-            dt.Columns.Add("Rcpt", typeof(decimal));
-            dt.Columns.Add("Accrual", typeof(decimal));
-            dt.Columns.Add("Pend Payments", typeof(decimal));
-            dt.Columns.Add("Pymts(In Transit)", typeof(decimal));
-            dt.Columns.Add("Pymts(Confirmed)", typeof(decimal));
-            dt.Columns.Add("Holdbacks", typeof(decimal));
-            dt.Columns.Add("TAFS", typeof(string));
-            dt.Columns.Add("DUNS #", typeof(string));
-            dt.Columns.Add("Date of Last Activity", typeof(DateTime));
-            dt.Columns.Add("Days Since First Activity", typeof(int));
-            dt.Columns.Add("Days Since Last Activity", typeof(int));
-            dt.Columns.Add("Date of First Activity", typeof(DateTime));
-            dt.Columns.Add("Trading Partner Type", typeof(string));
-            dt.Columns.Add("Vendor Agency Code", typeof(string));
-            dt.Columns.Add("Vendor Bureau Code", typeof(string));
-            return dt;
-        }
+        private static DataTable CreateCreditCardAliasDataTable()
+            => CreateDataTable(
+                "CreditCardAliases",
+                new DataColumn(ReviewIdColumnName, typeof(int)),
+                new DataColumn("Alias", typeof(string)),
+                new DataColumn("ALIAS - No #", typeof(string)),
+                new DataColumn("Cardholder Name", typeof(string))
+                );
+
+        private static DataTable CreatePegasysOpenItemsCreditCardsDataTable()
+            => CreateDataTable(
+                "PegasysOpenItemsCreditCards",
+                new DataColumn(ReviewIdColumnName, typeof(int)),
+                new DataColumn("Reg", typeof(string)),
+                new DataColumn("OrgCode", typeof(string)),
+                new DataColumn("Doc Num", typeof(string)),
+                new DataColumn("BBFY", typeof(int)),
+                new DataColumn("LNUM", typeof(int)),
+                new DataColumn("UDO", typeof(decimal)),
+                new DataColumn("Accrued", typeof(decimal)),
+                new DataColumn("Payments", typeof(decimal)),
+                new DataColumn("Holdback", typeof(decimal)),
+                new DataColumn("Total Order", typeof(decimal)),
+                new DataColumn("Fund", typeof(string)),
+                new DataColumn("Vendor", typeof(string)),
+                new DataColumn("RWA", typeof(string)),
+                new DataColumn("BA", typeof(string)),
+                new DataColumn("FuncCode", typeof(string)),
+                new DataColumn("WorkItems", typeof(string)),
+                new DataColumn("ProjNo", typeof(string)),
+                new DataColumn("BldgNO", typeof(string)),
+                new DataColumn("OC", typeof(string)),
+                new DataColumn("SOC", typeof(string)),
+                new DataColumn("DocStatus", typeof(string)),
+                new DataColumn("Alias", typeof(string)),
+                new DataColumn("UserId", typeof(string)),
+                new DataColumn("Last Activity Date", typeof(DateTime)),
+                new DataColumn("Days Since Last Activity", typeof(int)),
+                new DataColumn("Contract", typeof(string))
+                );
+
+        private static DataTable CreateActiveCardholdersDataTable()
+            => CreateDataTable(
+                "ActiveCardholders",
+                new DataColumn(ReviewIdColumnName, typeof(int)),
+                new DataColumn("Program", typeof(string)),
+                new DataColumn("Region", typeof(string)),
+                new DataColumn("Service/Staff Office", typeof(string)),
+                new DataColumn("Cardholder First Name", typeof(string)),
+                new DataColumn("Cardholder Middle Name", typeof(string)),
+                new DataColumn("Cardholder Last Name", typeof(string)),
+                new DataColumn("Account e-mail Address", typeof(string))
+                );
+        #endregion
     }
 }

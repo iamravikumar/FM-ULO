@@ -311,7 +311,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             Log.Information("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
 
-            var workflow = await FindWorkflowAsync(workflowId);
+            var workflow = await DB.FindWorkflowAsync(workflowId);
             var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
 
             var belongs =
@@ -322,7 +322,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var others = DB.GetUloSummariesByPdn(ulo.PegasysDocumentNumber).ToList().Where(z => z.WorkflowId != workflowId).OrderBy(z => z.WorkflowId).ToList();
 
-            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, belongs));
+            var otherDocs = DB.GetUniqueMissingLineageDocuments(workflow, others.Select(o => o.WorkflowId));
+
+            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, otherDocs, belongs));
         }
 
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
@@ -332,22 +334,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return workflowDescription;
         }
 
-        private async Task<Workflow> FindWorkflowAsync(int workflowId)
-            => await DB.Workflows
-                .Include(q => q.AspNetUser)
-                .Include(q => q.Documents)
-                .Include(q => q.UnliquidatedObligation)
-                .Include(q => q.UnliqudatedObjectsWorkflowQuestions)
-                .WhereReviewExists()
-                .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
-
         //Referred to by WebActionWorkflowActivity
         //TODO: Attributes will probably change
         [ActionName("Advance")]
         [Route("Advance/{workflowId}")]
         public async Task<ActionResult> Advance(int workflowId)
         {
-            var wf = await FindWorkflowAsync(workflowId);
+            var wf = await DB.FindWorkflowAsync(workflowId);
             if (wf == null) return HttpNotFound();
             return View(new FormAModel(wf));
         }
@@ -368,7 +361,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 nameof(AdvanceViewModel.UnliqudatedWorkflowQuestionsId))]
             AdvanceViewModel advanceModel=null)
         {
-            var wf = await FindWorkflowAsync(workflowId);
+            var wf = await DB.FindWorkflowAsync(workflowId);
             if (wf == null) return HttpNotFound();
             if (ModelState.IsValid)
             {
@@ -376,11 +369,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                 if (wf.WorkflowRowVersionString != advanceModel.WorkflowRowVersionString)
                 {
-                    Log.Error(
-                        "Workflow {workflowId} is stale. Trying to edit {staleWorkflowRowVersion} when {currentWorkflowRowVersion} is the most recent.  Record was in the wind for {inprogressTimespan}.", 
-                        wf.WorkflowId, advanceModel.WorkflowRowVersionString, wf.WorkflowRowVersionString, DateTime.UtcNow.Subtract(advanceModel.EditingBeganAtUtc)
-                        );
-                    AddPageAlert($"Someone edited this record while you were working.  You'll need to re-apply your changes if you still have edit rights.", false, PageAlert.AlertTypes.Danger, true);
+                    LogStaleWorkflowError(wf, advanceModel.WorkflowRowVersionString, advanceModel.EditingBeganAtUtc);
+                    var staleMessage = GetStaleWorkflowErrorMessage(wf, advanceModel.WorkflowRowVersionString, advanceModel.EditingBeganAtUtc);
+                    AddPageAlert(staleMessage, false, PageAlert.AlertTypes.Danger, true);
                     return RedirectToAction(ActionNames.Details, new { uloId = wf.TargetUloId, workflowId = wf.WorkflowId });
                 }
 

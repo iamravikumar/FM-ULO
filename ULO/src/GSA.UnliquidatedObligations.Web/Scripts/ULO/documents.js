@@ -103,12 +103,18 @@ function updateDocumentList(documentId, document) {
         '<ul class="document-type-list">' + docTypeNames + "</ul></td><td>" +
         document.AttachmentCount + "</td><td>" +
         document.UserName + "</td><td>" +
-        document.UploadedDate + "</td><td><a data-target='' data-toggle='modal' href='#" + document.Id + "Modal'>View</a> | <a data-toggle='modal' data-target='#" + document.Id + "ModalDelete' href='#" + document.Id + "ModalDelete'>Delete</a></td></tr>"
+        document.UploadedDate + "</td><td>" +
+        (documentId>0?
+            ("<a data-target='' data-toggle='modal' href='#" + document.Id + "Modal'>View</a> | <a data-toggle='modal' data-target='#" + document.Id + "ModalDelete' href='#" + document.Id + "ModalDelete'>Delete</a>") :
+            "page reload required") +
+        "</td></tr>";
     if (documentId === 0) {
         $(".documents-list > tbody:last-child").append(tableRowString);
     } else {
         $("#document" + document.Id).replaceWith(tableRowString);
     }
+    $("#noDocumentMessage").css("display", "none");
+    $("#documentsTable").css("display", "");
 }
 
 function deleteDocumentRow(documentId) {
@@ -130,6 +136,10 @@ function saveDocument(documentId, documentName, workflowId, documentTypeId) {
         url: url,
         success: function (result) {
             closeModal();
+            if (result.ErrorMessage != null) {
+                alert(result.ErrorMessage);
+                return;
+            }
             updateDocumentList(documentId, result);
 //            loadDocumentModal(result.Id, addDocumentDeleteClick, addDocumentSaveClick, window.addAddAttachmentClick, window.addDeleteAttachmentClick);
             setButtonActions(true);
@@ -141,7 +151,8 @@ function saveDocument(documentId, documentName, workflowId, documentTypeId) {
             if (xhr.responseText && xhr.responseText[0] == "{")
                 err = JSON.parse(xhr.responseText).Message;
             console.log(err);
-        }
+        },
+        data: appendStalenessData({})
     });
     return false;
 }
@@ -160,6 +171,10 @@ function deleteDocument(documentId) {
         type: "POST",
         url: "/Documents/Delete?documentId=" + documentId,
         success: function (result) {
+            if (result.ErrorMessage != null) {
+                alert(result.ErrorMessage);
+                return;
+            }            
             deleteDocumentRow(result.Id);
         },
         error: function (xhr, status, p3, p4) {
@@ -167,7 +182,8 @@ function deleteDocument(documentId) {
             if (xhr.responseText && xhr.responseText[0] == "{")
                 err = JSON.parse(xhr.responseText).Message;
             console.log(err);
-        }
+        },
+        data: appendStalenessData({})
     });
     return false;
 }

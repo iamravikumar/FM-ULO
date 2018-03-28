@@ -37,6 +37,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string RetaFiles = "retaFiles";
             public const string EasiFiles = "easiFiles";
             public const string One92Files = "One92Files";
+            public const string ActiveCardholderFiles = "ActiveCardholderFiles";
+            public const string PegasysOpenItemsCreditCards = "PegasysOpenItemsCreditCardsFiles";
+            public const string CreditCardAliasCrosswalkFiles = "CreditCardAliasCrosswalkFiles";
+
+            public const int ReviewFileTypeCount = 7;
         }
 
         private readonly IBackgroundJobClient BackgroundJobClient;
@@ -194,7 +199,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     distinctFileTypes.Add(file);
                 }
             }
-            if (distinctFileTypes.Count != 4)
+            if (distinctFileTypes.Count != ReviewFileDesignators.ReviewFileTypeCount)
             {
                 ModelState.AddModelError("Files", "You must upload at least one of each type of file.");
                 errors = true;
@@ -259,6 +264,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                                 break;
                             case ReviewFileDesignators.One92Files:
                                 uploadFiles.One92FileList.Add(path);
+                                break;
+                            case ReviewFileDesignators.ActiveCardholderFiles:
+                                uploadFiles.ActiveCardholderFiles.Add(path);
+                                break;
+                            case ReviewFileDesignators.PegasysOpenItemsCreditCards:
+                                uploadFiles.PegasysOpenItemsCreditCards.Add(path);
+                                break;
+                            case ReviewFileDesignators.CreditCardAliasCrosswalkFiles:
+                                uploadFiles.CreditCardAliasCrosswalkFiles.Add(path);
                                 break;
                             default:
                                 throw new UnexpectedSwitchValueException(file);

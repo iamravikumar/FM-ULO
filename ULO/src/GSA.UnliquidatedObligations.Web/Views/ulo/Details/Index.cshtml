@@ -6,13 +6,17 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var currentUloId = Convert.ToInt32(ViewContext.RouteData.Values["uloId"]);
     var currentWorkflowId = Convert.ToInt32(ViewContext.RouteData.Values["workflowId"]);
+    ViewData[BaseController.WorkflowStalenessMagicFieldNames.WorkflowRowVersionString] = Model.WorkflowViewModel.Workflow.WorkflowRowVersionString;
+    ViewData[BaseController.WorkflowStalenessMagicFieldNames.EditingBeganAtUtc] = DateTime.UtcNow;
+    ViewData[BaseController.WorkflowStalenessMagicFieldNames.WorkflowId] = Model.WorkflowViewModel.Workflow.WorkflowId;
 }
 <h2>ULO Details</h2>
 @Html.Partial("Details/Workflow/_WorkflowDescription", Model.WorkflowViewModel.WorkflowDescriptionViewModel)
 
-@using (Html.BeginForm(UloController.ActionNames.Save, UloController.Name, new { uloId = @currentUloId, workflowId = @currentWorkflowId }, FormMethod.Post, new { id = "uloDetailsForm"}))
+@using (Html.BeginForm(UloController.ActionNames.Save, UloController.Name, new { uloId = @currentUloId, workflowId = @currentWorkflowId }, FormMethod.Post, new { id = "uloDetailsForm" }))
 {
     @Html.AntiForgeryToken()
+    @Html.Partial("Details/_WorkflowStalenessHiddenFields");
     @Html.Partial("Details/_Ulo", Model)
     @Html.Partial("Details/Documents/_Index", Model.WorkflowViewModel.DocumentsViewModel)
     @*@Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)*@

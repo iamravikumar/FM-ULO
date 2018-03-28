@@ -43,6 +43,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ActionName(ActionNames.Login)]
         public ActionResult Login(string returnUrl)
         {
+            PortalHelpers.HideLoginLinks(ViewBag, true);
+
             if (PortalHelpers.UseDevAuthentication)
             {
                 ViewBag.ReturnUrl = returnUrl;

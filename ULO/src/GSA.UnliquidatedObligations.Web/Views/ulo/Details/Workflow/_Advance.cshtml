@@ -40,12 +40,15 @@
                 <div class="row row-space-top">
                     @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
                     <div>
-                        @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6" })
+                        @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6", maxlength = 4000, id = "advanceCommentsBox" })
                     </div>
                     <div style="clear:both">
                         @Html.ValidationMessageFor(model => model.Comments, "Must enter Comment when Other is selected", new { id = "validateCommentMessage", @class = "text-danger" })
                     </div>
-                    @Html.ValidationMessageFor(model => model.Comments, "Maximum comment size is 4000", new { id = "validateCommentMessageMax", @class = "text-danger", style="display:none" })
+                    @Html.ValidationMessageFor(model => model.Comments, "Maximum comment size is 4000", new { id = "validateCommentMessageMax", @class = "text-danger", style = "display:none" })
+                    <div>
+                        <span id="advanceCommentsBoxRemainingCharacters"></span><span id="advanceCommentsBoxRemainingCharactersSuffix"></span>
+                    </div>
                 </div>
                 <div class="row row-space-top">
                     @Html.HiddenFor(model => model.WorkflowRowVersionString)
@@ -60,7 +63,17 @@
 
 <script type="text/javascript">
     var pleaseSelectOneMessage = "@AspHelpers.PleaseSelectOne";
-    $(document).ready(function () { ChoiceChange(); });
+    $(document).ready(function () {
+        advanceCommentsBoxInputHappened();
+        $("#advanceCommentsBox").on("input", advanceCommentsBoxInputHappened);
+        ChoiceChange();
+    });
+    function advanceCommentsBoxInputHappened() {
+        var len = $("#advanceCommentsBox").val().length;
+        var remaining = 4000 - len;
+        $("#advanceCommentsBoxRemainingCharacters").text(remaining);
+        $("#advanceCommentsBoxRemainingCharactersSuffix").text(remaining == 1 ? " character remains." : " characters remain.");
+    }
     function allowSubmitWithoutRequiredValidations()
     {
         $('#q').removeAttr('required').removeAttr('aria-required');

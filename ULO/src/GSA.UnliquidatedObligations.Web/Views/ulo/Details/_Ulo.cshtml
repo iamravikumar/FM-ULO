@@ -71,36 +71,36 @@
                         </dt>
                         <dd>
                             @if (wf.AspNetUser == null || wf.AspNetUser.IsGroup)
-                            {
-                                <text>Unassigned</text>
-                            }
-                            else
-                            {
-                                <text>@wf.AspNetUser.UserName</text>
-                            }
+                    {
+                        <text>Unassigned</text>
+            }
+            else
+            {
+                <text>@wf.AspNetUser.UserName</text>
+    }
                             @{
-                                string reassignButtonText = null;
-                                if (wf.OwnerUserId == PortalHelpers.GetUserId(User?.Identity?.Name))
-                                {
-                                    reassignButtonText = "Reassign";
-                                }
-                                else if (Model.BelongsToMyUnassignmentGroup)
-                                {
-                                    reassignButtonText = "Reassign";
-                                }
-                                else if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanReassign))
-                                {
-                                    var userReassignRegions = User.GetReassignmentGroupRegions();
-                                    if (userReassignRegions.Contains(ulo.RegionId))
-                                    {
-                                        reassignButtonText = "Reassign";
-                                    }
-                                }
-                                if (reassignButtonText != null)
-                                {
-                                    var modalId = "#" + wf.WorkflowId + "RequestForReassignModal";
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">@reassignButtonText</button>
-                                }
+                        string reassignButtonText = null;
+                        if (wf.OwnerUserId == PortalHelpers.GetUserId(User?.Identity?.Name))
+                        {
+                            reassignButtonText = "Reassign";
+                        }
+                        else if (Model.BelongsToMyUnassignmentGroup)
+                        {
+                            reassignButtonText = "Reassign";
+                        }
+                        else if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanReassign))
+                        {
+                            var userReassignRegions = User.GetReassignmentGroupRegions();
+                            if (userReassignRegions.Contains(ulo.RegionId))
+                            {
+                                reassignButtonText = "Reassign";
+                            }
+                        }
+                        if (reassignButtonText != null)
+                        {
+                            var modalId = "#" + wf.WorkflowId + "RequestForReassignModal";
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">@reassignButtonText</button>
+                }
                             }
                         </dd>
                     </dl>
@@ -320,30 +320,53 @@
                     </dl>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Credit Card Holder Alias:
+                        </dt>
+                        <dd title="@ulo.CardholderAlias">
+                            @ulo.CardholderAlias8
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Credit Card Holder Email:
+                        </dt>
+                        <dd title="@ulo.CardholderName">
+                            @ulo.CardholderEmail
+                        </dd>
+                    </dl>
+                </div>
+            </div>
             @*
-    <div class="row hidden">
-        <div class="col-md-6">
-            <dl class="dl-horizontal">
-                <dt>
-                    Credit Card Holder Username:
-                </dt>
-                <dd class="huh">
-                    ___FUTURE___
-                </dd>
-            </dl>
+        <div class="row hidden">
+            <div class="col-md-6">
+                <dl class="dl-horizontal">
+                    <dt>
+                        Credit Card Holder Username:
+                    </dt>
+                    <dd class="huh">
+                        ___FUTURE___
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="dl-horizontal">
+                    <dt>
+                        Credit Card Holder Email:
+                    </dt>
+                    <dd class="huh">
+                        ___FUTURE___
+                    </dd>
+                </dl>
+            </div>
         </div>
-        <div class="col-md-6">
-            <dl class="dl-horizontal">
-                <dt>
-                    Credit Card Holder Email:
-                </dt>
-                <dd class="huh">
-                    ___FUTURE___
-                </dd>
-            </dl>
-        </div>
-    </div>
-            *@<div class="row">
+            *@
+            <div class="row">
                 <div class="col-md-4">
                     <dl class="dl-horizontal">
                         <dt>
@@ -387,18 +410,18 @@
                     </dl>
                 </div>
                 @if (wf != null)
-                {
-                    <div class="col-md-4">
-                        <dl class="dl-horizontal">
-                            <dt>
-                                Workflow ID:
-                            </dt>
-                            <dd>
-                                @(wf.WorkflowId)
-                            </dd>
-                        </dl>
-                    </div>
-                }
+        {
+            <div class="col-md-4">
+                <dl class="dl-horizontal">
+                    <dt>
+                        Workflow ID:
+                    </dt>
+                    <dd>
+                        @(wf.WorkflowId)
+                    </dd>
+                </dl>
+            </div>
+}
             </div>
             <div class="row">
                 <div style="padding-left: 7px">

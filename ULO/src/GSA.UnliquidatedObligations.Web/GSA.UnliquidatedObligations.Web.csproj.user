@@ -3,7 +3,7 @@
   <PropertyGroup>
     <UseIISExpress>true</UseIISExpress>
     <ProjectView>ProjectFiles</ProjectView>
-    <NameOfLastUsedPublishProfile>2ULO - File Deploy</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>2ULO - Web Deploy</NameOfLastUsedPublishProfile>
     <WebStackScaffolding_ViewDialogWidth>1381.71428571429</WebStackScaffolding_ViewDialogWidth>
     <WebStackScaffolding_LayoutPageFile>~/Views/Shared/_Layout.cshtml</WebStackScaffolding_LayoutPageFile>
     <WebStackScaffolding_ControllerDialogWidth>604</WebStackScaffolding_ControllerDialogWidth>
@@ -21,6 +21,7 @@
     <UseGlobalApplicationHostFile />
     <Controller_SelectedScaffolderID>MvcControllerEmptyScaffolder</Controller_SelectedScaffolderID>
     <Controller_SelectedScaffolderCategoryPath>root/Controller</Controller_SelectedScaffolderCategoryPath>
+    <LastActiveSolutionConfig>Release|Any CPU</LastActiveSolutionConfig>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

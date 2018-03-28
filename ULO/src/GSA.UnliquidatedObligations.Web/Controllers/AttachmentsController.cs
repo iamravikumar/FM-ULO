@@ -5,6 +5,7 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -156,28 +157,36 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Attachments/Delete/5
         [HttpPost]
-        public async Task<ActionResult> Delete(int attachmentId)
+        public async Task<JsonResult> Delete(int attachmentId)
         {
-            var attachment = await DB.Attachments.FindAsync(attachmentId);
-            if (attachment == null) return HttpNotFound();
             try
             {
-                var document = attachment.Document;
-                Log.Information("Attachment {AttachmentId} was soft deleted from {DocumentId}", attachmentId, document.DocumentId);
-                attachment.Delete(CurrentUserId);
-                if (document.Attachments.Where(a => a.AttachmentsId != attachmentId).Count() == 0)
+                await CheckStalenessFromFormAsync();
+                var attachment = await DB.Attachments.FindAsync(attachmentId);
+                if (attachment == null) throw new FileNotFoundException();
+                try
                 {
-                    Log.Information("Document {DocumentId} was soft deleted because it had no more attachments", document.DocumentId);
-                    document.Delete(CurrentUserId);
+                    var document = attachment.Document;
+                    Log.Information("Attachment {AttachmentId} was soft deleted from {DocumentId}", attachmentId, document.DocumentId);
+                    attachment.Delete(CurrentUserId);
+                    if (document.Attachments.Where(a => a.AttachmentsId != attachmentId).Count() == 0)
+                    {
+                        Log.Information("Document {DocumentId} was soft deleted because it had no more attachments", document.DocumentId);
+                        document.Delete(CurrentUserId);
+                    }
+                    await DB.SaveChangesAsync();
                 }
-                await DB.SaveChangesAsync();
+                catch
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json(Response);
+                }
+                return Json(attachment);
             }
-            catch
+            catch (Exception ex)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                return Json(Response);
+                return base.CreateJsonError(ex);
             }
-            return Json(attachment);
         }
     }
 }

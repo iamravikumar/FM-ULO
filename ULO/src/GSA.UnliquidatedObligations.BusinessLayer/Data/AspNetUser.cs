@@ -32,6 +32,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.Attachments1 = new HashSet<Attachment>();
             this.Documents1 = new HashSet<Document>();
             this.Reviews = new HashSet<Review>();
+            this.UnliquidatedObligations = new HashSet<UnliquidatedObligation>();
         }
     
         public string Id { get; set; }
@@ -79,5 +80,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual ICollection<Document> Documents1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Review> Reviews { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UnliquidatedObligation> UnliquidatedObligations { get; set; }
     }
 }

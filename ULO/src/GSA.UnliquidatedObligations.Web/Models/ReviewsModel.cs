@@ -145,6 +145,12 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public IList<string> One92FileList { get; set; } = new List<string>();
 
+        public IList<string> ActiveCardholderFiles { get; set; } = new List<string>();
+
+        public IList<string> PegasysOpenItemsCreditCards { get; set; } = new List<string>();
+
+        public IList<string> CreditCardAliasCrosswalkFiles { get; set; } = new List<string>();
+
         public UploadFilesModel(int reviewId)
         {
             ReviewId = reviewId;

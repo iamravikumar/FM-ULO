@@ -259,6 +259,11 @@
           <Property Name="ContractingSpecialistEmail" Type="varchar" MaxLength="254" />
           <Property Name="BudgetAnalystEmail" Type="varchar" MaxLength="254" />
           <Property Name="Valid" Type="bit" />
+          <Property Name="CardholderName" Type="varchar" MaxLength="155" />
+          <Property Name="CardholderAlias8" Type="varchar" MaxLength="8" />
+          <Property Name="CardholderAlias" Type="varchar" MaxLength="50" />
+          <Property Name="CardholderEmail" Type="varchar" MaxLength="254" />
+          <Property Name="CardholderUserId" Type="nvarchar" MaxLength="128" />
         </EntityType>
         <EntityType Name="UserUsers">
           <Key>
@@ -703,6 +708,18 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Unliquida__Cardh__2CDD9F46">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UnliquidatedObligations">
+              <PropertyRef Name="CardholderUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Unliquida__Regio__408F9238">
           <End Role="Regions" Type="Self.Regions" Multiplicity="0..1" />
           <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="*" />
@@ -1121,6 +1138,10 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             <End Role="WorkflowDefinitions" EntitySet="WorkflowDefinitions" />
             <End Role="Reviews" EntitySet="Reviews" />
           </AssociationSet>
+          <AssociationSet Name="FK__Unliquida__Cardh__2CDD9F46" Association="Self.FK__Unliquida__Cardh__2CDD9F46">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
+          </AssociationSet>
           <AssociationSet Name="FK__Unliquida__Regio__408F9238" Association="Self.FK__Unliquida__Regio__408F9238">
             <End Role="Regions" EntitySet="Regions" />
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
@@ -1414,6 +1435,10 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             <Parameter Name="qualifiedOnly" Mode="In" Type="Boolean" />
             <Parameter Name="debugMode" Mode="In" Type="Boolean" />
           </FunctionImport>
+          <AssociationSet Name="FK__Unliquida__Cardh__2CDD9F46" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Cardh__2CDD9F46">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -1491,6 +1516,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="Attachments1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Attachmen__Delet__0D99FE17" FromRole="AspNetUser" ToRole="Attachment" />
           <NavigationProperty Name="Documents1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Documents__Delet__0F824689" FromRole="AspNetUser" ToRole="Document" />
           <NavigationProperty Name="Reviews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Deleted__3D491139" FromRole="AspNetUser" ToRole="Review" />
+          <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Cardh__2CDD9F46" FromRole="AspNetUser" ToRole="UnliquidatedObligation" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -2257,6 +2283,12 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="ContractingSpecialistEmail" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
           <Property Name="BudgetAnalystEmail" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
           <Property Name="C_Temp" Type="Boolean" />
+          <Property Name="CardholderName" Type="String" MaxLength="155" FixedLength="false" Unicode="false" />
+          <Property Name="CardholderAlias8" Type="String" MaxLength="8" FixedLength="false" Unicode="false" />
+          <Property Name="CardholderAlias" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CardholderEmail" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
+          <Property Name="CardholderUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Cardh__2CDD9F46" FromRole="UnliquidatedObligation" ToRole="AspNetUser" />
         </EntityType>
         <Association Name="FK__Notes__UloId__5555A4F4">
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
@@ -2317,6 +2349,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Type="String" Name="WorkflowActivityName" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="JustificationKey" Nullable="true" MaxLength="80" />
           <Property Type="String" Name="JustificationDescription" Nullable="true" MaxLength="1024" />
+          <Property Type="String" Name="Comments" Nullable="true" MaxLength="4000" />
         </ComplexType>
         <Association Name="FK__Attachmen__Creat__0CA5D9DE">
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
@@ -2403,6 +2436,18 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Type="Boolean" Name="IsQualified" Nullable="true" />
           <Property Type="String" Name="UserName" Nullable="false" MaxLength="256" />
         </ComplexType>
+        <Association Name="FK__Unliquida__Cardh__2CDD9F46">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UnliquidatedObligation">
+              <PropertyRef Name="CardholderUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2840,6 +2885,11 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="UnliquidatedObligations">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation">
               <MappingFragment StoreEntitySet="UnliquidatedObligations">
+                <ScalarProperty Name="CardholderUserId" ColumnName="CardholderUserId" />
+                <ScalarProperty Name="CardholderEmail" ColumnName="CardholderEmail" />
+                <ScalarProperty Name="CardholderAlias" ColumnName="CardholderAlias" />
+                <ScalarProperty Name="CardholderAlias8" ColumnName="CardholderAlias8" />
+                <ScalarProperty Name="CardholderName" ColumnName="CardholderName" />
                 <ScalarProperty Name="C_Temp" ColumnName="_Temp" />
                 <ScalarProperty Name="BudgetAnalystEmail" ColumnName="BudgetAnalystEmail" />
                 <ScalarProperty Name="ContractingSpecialistEmail" ColumnName="ContractingSpecialistEmail" />
@@ -2918,6 +2968,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
                 <ScalarProperty Name="WorkflowActivityName" ColumnName="WorkflowActivityName" />
                 <ScalarProperty Name="JustificationKey" ColumnName="JustificationKey" />
                 <ScalarProperty Name="JustificationDescription" ColumnName="JustificationDescription" />
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

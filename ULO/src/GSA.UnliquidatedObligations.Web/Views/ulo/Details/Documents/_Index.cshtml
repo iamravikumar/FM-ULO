@@ -1,4 +1,5 @@
-﻿@using RevolutionaryStuff.Core
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@using RevolutionaryStuff.Core
 @using System.Linq
 @model GSA.UnliquidatedObligations.Web.Models.DocumentsViewModel
 @{
@@ -63,7 +64,6 @@
                             <a data-toggle="modal" data-target="@modalId" href="@modalId">View</a>
                             @if (Model.AllowDocumentsEdit)
                             {
-
                                 @Html.Raw("| <a data-toggle='modal' data-target='" + @deleteModalId + "' href='" + @deleteModalId + "'>Delete</a>")
                             }
                         </td>
@@ -72,9 +72,48 @@
             </table>
             @if (Model.AllowDocumentsEdit)
             {
-                <button type="button" class="btn btn-primary document-add-btn" data-toggle="modal" data-target="#0Modal">Add</button>
+                <button type="button" class="btn btn-primary document-add-btn" data-toggle="modal" data-target="#0Modal" title="Add a new document.">Add...</button>
+                <button 
+                        type="button" 
+                        class="btn document-copy-btn" 
+                        id="copyUniqueMissingLineageDocumentButton" 
+                        @(Model.UniqueMissingLineageDocumentCount==0?"disabled=\"disabled\"":"") 
+                        onclick="copyUniqueMissingLineageDocuments()"
+                        title="Copy unique documents from other reviews with the same PDN:@Model.UniqueMissingLineageDocuments.Select(d=>d.DocumentName).Format("", "\n   - {0}")">Copy (@Model.UniqueMissingLineageDocumentCount)</button>
             }
         </div>
     </div>
 </div>
-
+<script type="text/javascript">
+    function copyUniqueMissingLineageDocuments() {
+        $("#copyUniqueMissingLineageDocumentButton").attr("disabled", "disabled");
+        $.ajax({
+            type: "POST",
+            url: "@Html.ActionLinkUrl(DocumentsController.ActionNames.CopyUniqueMissingLineageDocuments, DocumentsController.Name, new { workflowId = Model.WorkflowId })",
+            success: function (result) {
+            //alert("deleteAttachment success: " + JSON.stringify(result));
+            if (result.ErrorMessage != null) {
+                alert(result.ErrorMessage);
+                return;
+                }
+                for (z in result.documents) {
+                    var doc = result.documents[z];
+                    //alert(JSON.stringify(doc, null, 4));
+                    updateDocumentList(0, doc);
+                }
+                alert("Copied " + itemCountString(result.copiedDocumentCount, "document") + " containing " + itemCountString(result.copiedAttachmentCount, "attachment"))
+            },
+            error: function (xhr, status, p3, p4) {
+            //alert("deleteAttachment fail: ");
+            var err = "Error " + " " + status + " " + p3 + " " + p4;
+            if (xhr.responseText && xhr.responseText[0] == "{")
+                err = JSON.parse(xhr.responseText).Message;
+            console.log(err);
+        },
+            data: appendStalenessData({})
+        });
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return false;
+    }
+</script>

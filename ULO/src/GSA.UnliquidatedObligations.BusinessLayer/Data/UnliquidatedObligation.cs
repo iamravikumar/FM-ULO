@@ -83,6 +83,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string ContractingSpecialistEmail { get; set; }
         public string BudgetAnalystEmail { get; set; }
         public Nullable<bool> C_Temp { get; set; }
+        public string CardholderName { get; set; }
+        public string CardholderAlias8 { get; set; }
+        public string CardholderAlias { get; set; }
+        public string CardholderEmail { get; set; }
+        public string CardholderUserId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }
@@ -90,5 +95,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual Region Region { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Workflow> Workflows { get; set; }
+        public virtual AspNetUser AspNetUser { get; set; }
     }
 }

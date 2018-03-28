@@ -143,23 +143,24 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string DocType { get; set; }
 
+        public ICollection<Document> UniqueMissingLineageDocuments;
+
+        public int UniqueMissingLineageDocumentCount
+            => (UniqueMissingLineageDocuments ?? Document.None).Count;
+
+        public int WorkflowId { get; set; }
+
         public DocumentsViewModel()
         { }
 
-        public DocumentsViewModel(IList<Document> documents, bool allowDocumentsEdit, string docType)
+        public DocumentsViewModel(IList<Document> documents, bool allowDocumentsEdit, string docType, ICollection<Document> uniqueMissingLineageDocuments, int workflowId)
         {
             Documents = documents;
             AllowDocumentsEdit = allowDocumentsEdit;
             DocType = docType;
+            WorkflowId = workflowId;
+            UniqueMissingLineageDocuments = uniqueMissingLineageDocuments;
         }
-
-        public DocumentsViewModel Subset(Document document)
-            => new DocumentsViewModel
-            {
-                Documents = new List<Document> { document },
-                AllowDocumentsEdit = this.AllowDocumentsEdit,
-                DocType = this.DocType
-            };
     }
 
     public class WorkflowViewModel
@@ -178,7 +179,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public WorkflowViewModel()
         { }
 
-        public WorkflowViewModel(Workflow workflow, bool workflowAssignedToCurrentUser, IWorkflowDescription workflowDescription=null)
+        public WorkflowViewModel(Workflow workflow, bool workflowAssignedToCurrentUser, IWorkflowDescription workflowDescription, ICollection<Document> uniqueMissingLineageDocuments)
         {
             Requires.NonNull(workflow, nameof(workflow));
 
@@ -202,7 +203,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
             RequestForReassignment = Workflow.GetReassignmentRequest();
-            DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList(), allowDocumentEdits, workflow.UnliquidatedObligation.DocType);
+            DocumentsViewModel = new DocumentsViewModel(workflow.Documents.ToList(), allowDocumentEdits, workflow.UnliquidatedObligation.DocType, uniqueMissingLineageDocuments, workflow.WorkflowId);
         }
     }
 
@@ -236,10 +237,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public UloViewModel()
         { }
 
-        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDescription, bool workflowAsignedToCurrentUser, IList<GetUloSummariesByPdn_Result> others, bool belongs)
+        public UloViewModel(UnliquidatedObligation ulo, Workflow workflow, IWorkflowDescription workflowDescription, bool workflowAsignedToCurrentUser, IList<GetUloSummariesByPdn_Result> others, ICollection<Document> uniqueMissingLineageDocuments, bool belongs)
         {
             CurretUnliquidatedObligation = ulo;
-            WorkflowViewModel = new WorkflowViewModel(workflow, workflowAsignedToCurrentUser, workflowDescription);
+            WorkflowViewModel = new WorkflowViewModel(workflow, workflowAsignedToCurrentUser, workflowDescription, uniqueMissingLineageDocuments);
             Others = others;
             BelongsToMyUnassignmentGroup = belongs;
         }
@@ -328,6 +329,21 @@ namespace GSA.UnliquidatedObligations.Web.Models
             : base(u)
         {
             Items = items ?? new List<T>();
+        }
+    }
+
+    public class WorkflowsEmailViewModel : ItemsEmailViewModel<Workflow>
+    {
+        public string ReviewName { get; private set; }
+
+        public bool MultipleReviewNames { get; private set; }
+
+        public WorkflowsEmailViewModel(AspNetUser u, ICollection<Workflow> items)
+            : base(u, items)
+        {
+            var reviewNames = items.Select(z => z.UnliquidatedObligation.Review.ReviewName).Distinct().ToList();
+            ReviewName = reviewNames.FirstOrDefault();
+            MultipleReviewNames = reviewNames.Count > 1;
         }
     }
 

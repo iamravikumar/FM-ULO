@@ -3,6 +3,8 @@
     [TableKey("Documents")]
     public partial class Document : ISoftDelete
     {
+        public static readonly Document[] None = new Document[0];
+
         public bool IsDeleted
         {
             get; private set;

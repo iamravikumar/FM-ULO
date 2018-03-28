@@ -12,7 +12,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.6.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -355,6 +355,79 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public string TheCloserUserUsername {
             get {
                 return ((string)(this["TheCloserUserUsername"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Someone edited this record while you were working.  You\'ll need to reload this pa" +
+            "ge and re-apply your changes if you still have edit rights.")]
+        public string StaleWorkflowErrorMessageTemplate {
+            get {
+                return ((string)(this["StaleWorkflowErrorMessageTemplate"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Report 1")]
+        public string CreditCardAliasSheetsToImport {
+            get {
+                return ((string)(this["CreditCardAliasSheetsToImport"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int CreditCardAliasSkipRawRows {
+            get {
+                return ((int)(this["CreditCardAliasSkipRawRows"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sheet1")]
+        public string PegasysOpenItemsCreditCardsSheetsToImport {
+            get {
+                return ((string)(this["PegasysOpenItemsCreditCardsSheetsToImport"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int PegasysOpenItemsCreditCardsSkipRawRows {
+            get {
+                return ((int)(this["PegasysOpenItemsCreditCardsSkipRawRows"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int RetaSkipRawRows {
+            get {
+                return ((int)(this["RetaSkipRawRows"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sheet1")]
+        public string ActiveCardholderSheetsToImport {
+            get {
+                return ((string)(this["ActiveCardholderSheetsToImport"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int ActiveCardholderSkipRawRows {
+            get {
+                return ((int)(this["ActiveCardholderSkipRawRows"]));
             }
         }
     }

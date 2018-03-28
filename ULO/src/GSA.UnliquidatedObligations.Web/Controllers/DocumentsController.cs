@@ -27,6 +27,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public static class ActionNames
         {
             public const string View = "View";
+            public const string CopyUniqueMissingLineageDocuments = "CopyUniqueMissingLineageDocuments";
         }
 
         private readonly ApplicationUserManager UserManager;
@@ -105,76 +106,84 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<JsonResult> Save(int? documentId, string documentName, int workflowId, string newRemovedAttachmentIds)
         {
-            if (!ModelState.IsValid) throw new ArgumentException(ModelState.ToString(), nameof(ModelState));
-            Document document;
-            if (documentId.GetValueOrDefault(0) > 0)
+            try
             {
-                document = await DB.Documents.FindAsync(documentId);
-                if (document == null)
+                if (!ModelState.IsValid) throw new ArgumentException(ModelState.ToString(), nameof(ModelState));
+                await CheckStalenessFromFormAsync();
+                Document document;
+                if (documentId.GetValueOrDefault(0) > 0)
                 {
-                    throw new KeyNotFoundException($"could not find documentId={documentId}");
-                }
-                document.DocumentDocumentTypes.ToList().ForEach(dt => DB.DocumentDocumentTypes.Remove(dt));
-            }
-            else
-            {
-                document = new Document
-                {
-                    UploadedByUserId = CurrentUserId,
-                    WorkflowId = workflowId,
-                    CreatedAtUtc = DateTime.UtcNow
-                };
-                DB.Documents.Add(document);
-            }
-            document.DocumentName = StringHelpers.TrimOrNull(documentName);
-            var documentTypeIds = CSV.ParseIntegerRow(Request["documentTypeId"]);
-            var documentTypeNames = new List<string>();
-            var d = base.PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
-            foreach (var id in documentTypeIds)
-            {
-                DB.DocumentDocumentTypes.Add(new DocumentDocumentType
-                {
-                    DocumentTypeId = id,
-                    Document = document
-                });
-                documentTypeNames.Add(d.FindOrDefault(id));
-            }
-            await DB.SaveChangesAsync();
-            if (TempData[PortalHelpers.TempDataKeys.Attachments] != null)
-            {
-                var rids = CSV.ParseIntegerRow(newRemovedAttachmentIds);
-                var attachmentsTempData = (IList<Attachment>)TempData[PortalHelpers.TempDataKeys.Attachments];
-                foreach (var tempAttachment in attachmentsTempData)
-                {
-                    if (!rids.Contains(tempAttachment.AttachmentsId))
+                    document = await DB.Documents.FindAsync(documentId);
+                    if (document == null)
                     {
-                        var attachment = new Attachment
-                        {
-                            FileName = tempAttachment.FileName,
-                            FilePath = $"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat",
-                            DocumentId = document.DocumentId,
-                            FileSize = tempAttachment.FileSize,
-                            ContentType = tempAttachment.ContentType,
-                            CreatedByUserId = tempAttachment.CreatedByUserId
-                        };
-                        var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
-                        System.IO.File.Copy(tempAttachment.FilePath, path);
-                        DB.Attachments.Add(attachment);
+                        throw new KeyNotFoundException($"could not find documentId={documentId}");
                     }
-                    Stuff.FileTryDelete(tempAttachment.FileName);
+                    document.DocumentDocumentTypes.ToList().ForEach(dt => DB.DocumentDocumentTypes.Remove(dt));
+                }
+                else
+                {
+                    document = new Document
+                    {
+                        UploadedByUserId = CurrentUserId,
+                        WorkflowId = workflowId,
+                        CreatedAtUtc = DateTime.UtcNow
+                    };
+                    DB.Documents.Add(document);
+                }
+                document.DocumentName = StringHelpers.TrimOrNull(documentName);
+                var documentTypeIds = CSV.ParseIntegerRow(Request["documentTypeId"]);
+                var documentTypeNames = new List<string>();
+                var d = base.PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
+                foreach (var id in documentTypeIds)
+                {
+                    DB.DocumentDocumentTypes.Add(new DocumentDocumentType
+                    {
+                        DocumentTypeId = id,
+                        Document = document
+                    });
+                    documentTypeNames.Add(d.FindOrDefault(id));
                 }
                 await DB.SaveChangesAsync();
-                TempData[PortalHelpers.TempDataKeys.Attachments] = null;
+                if (TempData[PortalHelpers.TempDataKeys.Attachments] != null)
+                {
+                    var rids = CSV.ParseIntegerRow(newRemovedAttachmentIds);
+                    var attachmentsTempData = (IList<Attachment>)TempData[PortalHelpers.TempDataKeys.Attachments];
+                    foreach (var tempAttachment in attachmentsTempData)
+                    {
+                        if (!rids.Contains(tempAttachment.AttachmentsId))
+                        {
+                            var attachment = new Attachment
+                            {
+                                FileName = tempAttachment.FileName,
+                                FilePath = $"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat",
+                                DocumentId = document.DocumentId,
+                                FileSize = tempAttachment.FileSize,
+                                ContentType = tempAttachment.ContentType,
+                                CreatedByUserId = tempAttachment.CreatedByUserId
+                            };
+                            var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
+                            System.IO.File.Copy(tempAttachment.FilePath, path);
+                            DB.Attachments.Add(attachment);
+                        }
+                        Stuff.FileTryDelete(tempAttachment.FileName);
+                    }
+                    await DB.SaveChangesAsync();
+                    TempData[PortalHelpers.TempDataKeys.Attachments] = null;
+                }
+                return Json(new
+                {
+                    Id = document.DocumentId,
+                    UserName = User.Identity.Name,
+                    Name = document.DocumentName,
+                    DocumentTypeNames = documentTypeNames.WhereNotNull().OrderBy().ToList(),
+                    AttachmentCount = document.Attachments.Count,
+                    UploadedDate = document.CreatedAtUtc.ToLocalTime().ToString("MM/dd/yyyy")
+                });
             }
-            return Json(new
+            catch (Exception ex)
             {
-                Id = document.DocumentId,
-                UserName = User.Identity.Name,
-                Name = document.DocumentName,
-                DocumentTypeNames = documentTypeNames.WhereNotNull().OrderBy().ToList(),
-                AttachmentCount = document.Attachments.Count,
-                UploadedDate = document.CreatedAtUtc.ToLocalTime().ToString("MM/dd/yyyy")
-            });
+                return base.CreateJsonError(ex);
+            }
         }
 
         public void Clear()
@@ -212,18 +221,99 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int documentId)
         {
-            var document = await DB.Documents.FindAsync(documentId);
-            if (document == null)
+            try
             {
-                return HttpNotFound();
+                await CheckStalenessFromFormAsync();
+                var document = await DB.Documents.FindAsync(documentId);
+                if (document == null)
+                {
+                    return HttpNotFound();
+                }
+                document.Delete(CurrentUserId);
+                await DB.SaveChangesAsync();
+                Log.Information("Document {DocumentId} was soft deleted", document.DocumentId);
+                return Json(new
+                {
+                    Id = documentId
+                });
             }
-            document.Delete(CurrentUserId);
-            await DB.SaveChangesAsync();
-            Log.Information("Document {DocumentId} was soft deleted", document.DocumentId);
-            return Json(new
+            catch (Exception ex)
             {
-                Id = documentId
-            });
+                return base.CreateJsonError(ex);
+            }
+        }
+
+        [HttpPost]
+        [ActionName(ActionNames.CopyUniqueMissingLineageDocuments)]
+        [Route("documents/copyUniqueMissingLineageDocuments/{workflowId}")]
+        public async Task<ActionResult> CopyUniqueMissingLineageDocuments(int workflowId)
+        {
+            try
+            {
+                await CheckStalenessFromFormAsync();
+                var wf = await DB.FindWorkflowAsync(workflowId);
+                if (wf == null) return HttpNotFound();
+                var otherDocs = DB.GetUniqueMissingLineageDocuments(wf);
+                int copiedDocumentCount = 0;
+                int copiedAttachmentCount = 0;
+                var copiedDocs = new List<Document>();
+                foreach (var od in otherDocs)
+                {
+                    var d = new Document
+                    {
+                        Workflow = wf,
+                        DocumentName = od.DocumentName,
+                        UploadedByUserId = CurrentUserId
+                    };
+                    wf.Documents.Add(d);
+                    copiedDocs.Add(d);
+                    ++copiedDocumentCount;
+                    foreach (var oa in od.Attachments)
+                    {
+                        d.Attachments.Add(new Attachment
+                        {
+                            FileName = oa.FileName,
+                            FilePath = oa.FilePath,
+                            Document = d,
+                            FileSize = oa.FileSize,
+                            ContentType = oa.ContentType,
+                            CreatedByUserId = CurrentUserId
+                        });
+                        ++copiedAttachmentCount;
+                    }
+                    foreach (var odt in od.DocumentDocumentTypes)
+                    {
+                        d.DocumentDocumentTypes.Add(new DocumentDocumentType {
+                            DocumentTypeId = odt.DocumentTypeId,
+                            DocumentType = odt.DocumentType
+                        });
+                    }
+                }
+                await DB.SaveChangesAsync();
+                Log.Information(
+                    "CopyUniqueMissingLineageDocuments({workflowId}) => {copiedDocumentCount}, {copiedAttachmentCount}",
+                    workflowId,
+                    copiedDocumentCount,
+                    copiedAttachmentCount);
+                return Json(new
+                {
+                    workflowId,
+                    copiedDocumentCount,
+                    copiedAttachmentCount,
+                    documents = copiedDocs.Select(z => new {
+                        UserName = CurrentUser.UserName,
+                        UploadedDate = z.CreatedAtUtc,
+                        AttachmentCount = z.Attachments.Count,
+                        Name = z.DocumentName,
+                        Id = z.DocumentId,
+                        DocumentTypeNames = z.DocumentDocumentTypes.Select(dt=>dt.DocumentType?.Name)
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                return base.CreateJsonError(ex);
+            }
         }
     }
 }

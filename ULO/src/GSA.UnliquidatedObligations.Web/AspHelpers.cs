@@ -137,6 +137,15 @@ namespace GSA.UnliquidatedObligations.Web
             return hs;
         }
 
+        public static string ActionLinkUrl(this HtmlHelper hh, string actionName, string controllerName, object routeValues)
+        {
+            var a = hh.ActionLink("jbt", actionName, controllerName, routeValues, new { });
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(a.ToHtmlString());
+            var href = doc.DocumentNode.FirstChild.Attributes["href"];
+            return href.Value;
+        }
+
         private const string BREAK_TOKEN = "^^ BrEaKer bReaKER 123 vv";
         private const int FORCE_BREAK_LEN = 16;
 
