@@ -79,9 +79,14 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             get { return ((IObjectContextAdapter)this).ObjectContext; }
         }
 
-        public void Refresh(object o, RefreshMode mode = RefreshMode.StoreWins)
+        public void Refresh(object entity, RefreshMode mode = RefreshMode.StoreWins)
         {
-            ObjectContext.Refresh(mode, o);
+            ObjectContext.Refresh(mode, entity);
+        }
+
+        public void Refresh(IEnumerable<object> entities, RefreshMode mode = RefreshMode.StoreWins)
+        {
+            ObjectContext.Refresh(mode, entities);
         }
     }
 }

@@ -19,8 +19,8 @@ function setButtonActions(actionSwitch) {
     }
 }
 
-function attachmentsPresent() {
-    return $(".temp-attachment").length + $(".attachment-row").length > 0;
+function attachmentsPresent(parentDialog) {
+    return $(parentDialog).find(".temp-attachment,.attachment-row").length > 0;
 }
 
 function addDocumentSaveClick() {
@@ -41,7 +41,7 @@ function addDocumentSaveClick() {
             showDocumentErrMsg("You must select a Document Type before saving", this);
             setButtonActions(true);
         } 
-        else if (!attachmentsPresent()) {
+        else if (!attachmentsPresent($(this).closest(".modal-dialog")[0])) {
             showDocumentErrMsg("You must add attachments before saving", this);
             setButtonActions(true);
         }

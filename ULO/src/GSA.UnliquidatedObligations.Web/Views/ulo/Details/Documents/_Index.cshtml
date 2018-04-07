@@ -58,7 +58,7 @@
                             @document.AspNetUser.UserName
                         </td>
                         <td>
-                            @document.CreatedAtUtc.ToLocalTime().ToString("MM/dd/yyyy")
+                            @document.CreatedAtLocalTimeString
                         </td>
                         <td>
                             <a data-toggle="modal" data-target="@modalId" href="@modalId">View</a>
@@ -79,7 +79,7 @@
                         id="copyUniqueMissingLineageDocumentButton" 
                         @(Model.UniqueMissingLineageDocumentCount==0?"disabled=\"disabled\"":"") 
                         onclick="copyUniqueMissingLineageDocuments()"
-                        title="Copy unique documents from other reviews with the same PDN:@Model.UniqueMissingLineageDocuments.Select(d=>d.DocumentName).Format("", "\n   - {0}")">Copy (@Model.UniqueMissingLineageDocumentCount)</button>
+                        title="Copy documents from other reviews for this PDN:@Model.UniqueMissingLineageDocuments.Select(d=>d.DocumentName).Format("", "\n   - {0}")">Copy (@Model.UniqueMissingLineageDocumentCount)</button>
             }
         </div>
     </div>

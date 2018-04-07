@@ -307,6 +307,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (workflowId==0)
             {
                 workflowId = (await DB.Workflows.OrderByDescending(z=>z.WorkflowId).FirstOrDefaultAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
+                return RedirectToAction(ActionNames.Details, new { uloId, workflowId });
             }
 
             Log.Information("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
@@ -403,10 +404,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     var ret = await Manager.AdvanceAsync(wf, question, Properties.Settings.Default.ForceAdvanceFromUloSubmit);
                     await DB.SaveChangesAsync();
+                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.UnliquidatedObligation.PegasysDocumentNumber} was submitted.", false, PageAlert.AlertTypes.Success, true);
                     return ret;
                 }
                 else
                 {
+                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.UnliquidatedObligation.PegasysDocumentNumber} was saved.", false, PageAlert.AlertTypes.Success, true);
                     return RedirectToIndex();
                 }
             }

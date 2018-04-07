@@ -534,6 +534,7 @@
     <Content Include="Views\Pdn\Index.cshtml" />
     <Content Include="Views\Pdn\Details.cshtml" />
     <Content Include="Views\Ulo\BulkReassignments.cshtml" />
+    <Content Include="Views\Ulo\Details\_WorkflowStalenessHiddenFields.cshtml" />
     <None Include="Web.bak.config">
       <SubType>Designer</SubType>
     </None>

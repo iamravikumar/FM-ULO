@@ -56,8 +56,8 @@
             </dt>
             <dd>
                 @{
-                    var reviewType = (ReviewTypeEnum)Model.Review.ReviewTypeId;
-                    var reviewTypeName = reviewType.GetDisplayName();
+            var reviewType = (ReviewTypeEnum)Model.Review.ReviewTypeId;
+            var reviewTypeName = reviewType.GetDisplayName();
                 }
                 @reviewTypeName
             </dd>
@@ -66,8 +66,8 @@
             </dt>
             <dd>
                 @{
-                    var scope = (ReviewScopeEnum)Model.Review.ReviewScopeId;
-                    var scopeName = scope.GetDisplayName();
+            var scope = (ReviewScopeEnum)Model.Review.ReviewScopeId;
+            var scopeName = scope.GetDisplayName();
                 }
                 @scopeName
             </dd>
@@ -76,11 +76,11 @@
             </dt>
             <dd>
                 @{
-                    var reviewAsOfDate = "";
-                    if (Model.Review.ReviewDateInitiated != null)
-                    {
-                        reviewAsOfDate = Convert.ToDateTime(Model.Review.ReviewDateInitiated).ToString("MM/dd/yyyy");
-                    }
+            var reviewAsOfDate = "";
+            if (Model.Review.ReviewDateInitiated != null)
+            {
+                reviewAsOfDate = Convert.ToDateTime(Model.Review.ReviewDateInitiated).ToString("MM/dd/yyyy");
+            }
                 }
                 @reviewAsOfDate
             </dd>
@@ -97,16 +97,16 @@
                 @Html.DisplayFor(model => model.Review.Region.RegionNumber)
             </dd>
             <dt>
+                192 Uploads:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewUploadStats.PO192Stats)
+            </dd>
+            <dt>
                 442 Uploads:
             </dt>
             <dd>
                 @Html.DisplayFor(model => model.ReviewUploadStats.PO442UploadStats)
-            </dd>
-            <dt>
-                Reta Uploads:
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.ReviewUploadStats.RetaUploadStats)
             </dd>
             <dt>
                 Easi Uploads:
@@ -115,12 +115,29 @@
                 @Html.DisplayFor(model => model.ReviewUploadStats.EasiUploadStats)
             </dd>
             <dt>
-                192 Uploads:
+                Reta Uploads:
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.ReviewUploadStats.PO192Stats)
+                @Html.DisplayFor(model => model.ReviewUploadStats.RetaUploadStats)
             </dd>
-
+            <dt>
+                Active Cardholder Uploads:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewUploadStats.ActiveCardholdersStats)
+            </dd>
+            <dt>
+                Credit Card Alias Uploads:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewUploadStats.CreditCardAliasesStats)
+            </dd>
+            <dt>
+                Pegasys CC Uploads:
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewUploadStats.PegasysOpenItemsCreditCardsStats)
+            </dd>
             <dt>
                 Ulos Created:
             </dt>
@@ -132,7 +149,7 @@
             </dt>
             <dd>
                 @{
-                    var personUserStats = Model.ReviewUploadStats.AssignedToPersonStats + Model.ReviewUploadStats.AssignedToSystemTheCloserStats;
+            var personUserStats = Model.ReviewUploadStats.AssignedToPersonStats + Model.ReviewUploadStats.AssignedToSystemTheCloserStats;
                 }
                 @personUserStats
             </dd>

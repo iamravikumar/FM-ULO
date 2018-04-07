@@ -126,7 +126,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     {
                         UploadedByUserId = CurrentUserId,
                         WorkflowId = workflowId,
-                        CreatedAtUtc = DateTime.UtcNow
+                        //CreatedAtUtc = DateTime.UtcNow
                     };
                     DB.Documents.Add(document);
                 }
@@ -144,6 +144,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     documentTypeNames.Add(d.FindOrDefault(id));
                 }
                 await DB.SaveChangesAsync();
+                DB.Refresh(document);
                 if (TempData[PortalHelpers.TempDataKeys.Attachments] != null)
                 {
                     var rids = CSV.ParseIntegerRow(newRemovedAttachmentIds);
@@ -177,7 +178,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     Name = document.DocumentName,
                     DocumentTypeNames = documentTypeNames.WhereNotNull().OrderBy().ToList(),
                     AttachmentCount = document.Attachments.Count,
-                    UploadedDate = document.CreatedAtUtc.ToLocalTime().ToString("MM/dd/yyyy")
+                    UploadedDate = document.CreatedAtLocalTimeString
                 });
             }
             catch (Exception ex)
@@ -263,7 +264,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     {
                         Workflow = wf,
                         DocumentName = od.DocumentName,
-                        UploadedByUserId = CurrentUserId
+                        UploadedByUserId = CurrentUserId,
+                        CreatedAtUtc = od.CreatedAtUtc
                     };
                     wf.Documents.Add(d);
                     copiedDocs.Add(d);
@@ -277,7 +279,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             Document = d,
                             FileSize = oa.FileSize,
                             ContentType = oa.ContentType,
-                            CreatedByUserId = CurrentUserId
+                            CreatedByUserId = oa.CreatedByUserId,
+                            CreatedAtUtc = oa.CreatedAtUtc
                         });
                         ++copiedAttachmentCount;
                     }
@@ -290,6 +293,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     }
                 }
                 await DB.SaveChangesAsync();
+                DB.Refresh(copiedDocs);
                 Log.Information(
                     "CopyUniqueMissingLineageDocuments({workflowId}) => {copiedDocumentCount}, {copiedAttachmentCount}",
                     workflowId,
@@ -302,7 +306,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     copiedAttachmentCount,
                     documents = copiedDocs.Select(z => new {
                         UserName = CurrentUser.UserName,
-                        UploadedDate = z.CreatedAtUtc,
+                        UploadedDate = z.CreatedAtLocalTimeString,
                         AttachmentCount = z.Attachments.Count,
                         Name = z.DocumentName,
                         Id = z.DocumentId,

@@ -25,5 +25,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public Nullable<int> SystemCnt { get; set; }
         public Nullable<int> PreAssignmentCnt { get; set; }
         public Nullable<int> TheCloserCnt { get; set; }
+        public Nullable<int> CreditCardAliasesCnt { get; set; }
+        public Nullable<int> ActiveCardholdersCnt { get; set; }
+        public Nullable<int> PegasysOpenItemsCreditCardsCnt { get; set; }
     }
 }

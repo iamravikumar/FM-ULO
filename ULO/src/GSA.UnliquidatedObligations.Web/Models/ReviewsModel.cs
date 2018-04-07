@@ -115,11 +115,18 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public int AssignedToSystemTheCloserStats { get; set; }
         public int AssignedToSystePreAssignmentStats { get; set; }
 
+        public int CreditCardAliasesStats { get; set; }
+        public int ActiveCardholdersStats { get; set; }
+        public int PegasysOpenItemsCreditCardsStats { get; set; }
+
         public ReviewUploadStatsModel()
         { }
 
         public ReviewUploadStatsModel(ReviewStat reviewStat)
         {
+            CreditCardAliasesStats = reviewStat.CreditCardAliasesCnt.GetValueOrDefault();
+            ActiveCardholdersStats = reviewStat.ActiveCardholdersCnt.GetValueOrDefault();
+            PegasysOpenItemsCreditCardsStats = reviewStat.PegasysOpenItemsCreditCardsCnt.GetValueOrDefault();
             PO442UploadStats = reviewStat.PegasysObligations442Cnt.GetValueOrDefault();
             RetaUploadStats = reviewStat.RetaCnt.GetValueOrDefault();
             EasiUploadStats = reviewStat.EasiCnt.GetValueOrDefault();

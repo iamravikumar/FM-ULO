@@ -21,7 +21,7 @@
                 </div>
                 <div class="row row-space-top" style="display:none">
                     @Html.LabelFor(model => model.JustificationKey, "Justification:", htmlAttributes: new { @class = "control-label" })
-                    @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications", mrjk = Model.MostRecentJustificationKey, @onchange = "clearJustificationValidationErrors()" })<br />
+                    @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications", mrjk = Model.JustificationKey, @onchange = "clearJustificationValidationErrors()" })<br />
                     <div>
                         @Html.ValidationMessageFor(model => model.JustificationKey, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
                     </div>

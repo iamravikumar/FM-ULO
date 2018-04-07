@@ -25,15 +25,6 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://ulo.azurewebsites.net/")]
-        public string SiteUrl {
-            get {
-                return ((string)(this["SiteUrl"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool UseDevAuthentication {
             get {
@@ -83,15 +74,6 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public string PreAssignmentUserUsername {
             get {
                 return ((string)(this["PreAssignmentUserUsername"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Zephyr")]
-        public string SprintName {
-            get {
-                return ((string)(this["SprintName"]));
             }
         }
         
@@ -342,15 +324,6 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int BatchAssignmentNotificationEmailTemplateId {
-            get {
-                return ((int)(this["BatchAssignmentNotificationEmailTemplateId"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Closed")]
         public string TheCloserUserUsername {
             get {
@@ -428,6 +401,42 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public int ActiveCardholderSkipRawRows {
             get {
                 return ((int)(this["ActiveCardholderSkipRawRows"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://2ulo.azurewebsites.net/")]
+        public string SiteUrl {
+            get {
+                return ((string)(this["SiteUrl"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Dalmation")]
+        public string SprintName {
+            get {
+                return ((string)(this["SprintName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public string ShowSprintNameOnFooter {
+            get {
+                return ((string)(this["ShowSprintNameOnFooter"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int BatchAssignmentNotificationEmailTemplateId {
+            get {
+                return ((int)(this["BatchAssignmentNotificationEmailTemplateId"]));
             }
         }
     }

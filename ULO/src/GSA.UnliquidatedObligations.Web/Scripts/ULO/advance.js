@@ -67,6 +67,7 @@ $(document).ready(function () {
                 allowSubmit = false;
             }
         }
+        comment = comment || "";
         if (comment.length > 4000) {
             $("#validateCommentMessageMax").show().text("The maximum comment size is 4000 and you entered "+comment.length+" characters");
             allowSubmit = false;

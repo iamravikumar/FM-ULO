@@ -2,9 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="GSA.UnliquidatedObligations.Web.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="SiteUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://ulo.azurewebsites.net/</Value>
-    </Setting>
     <Setting Name="UseDevAuthentication" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -22,9 +19,6 @@
     </Setting>
     <Setting Name="PreAssignmentUserUsername" Type="System.String" Scope="Application">
       <Value Profile="(Default)">PreAssignment</Value>
-    </Setting>
-    <Setting Name="SprintName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Zephyr</Value>
     </Setting>
     <Setting Name="SecureAuthUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://secureauth.dev.gsa.gov/SecureAuth199/SecureAuth.aspx</Value>
@@ -129,9 +123,6 @@
     <Setting Name="SendBatchEmailsDuringAssignWorkflows" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="BatchAssignmentNotificationEmailTemplateId" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
     <Setting Name="TheCloserUserUsername" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Closed</Value>
     </Setting>
@@ -158,6 +149,18 @@
     </Setting>
     <Setting Name="ActiveCardholderSkipRawRows" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="SiteUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://2ulo.azurewebsites.net/</Value>
+    </Setting>
+    <Setting Name="SprintName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Dalmation</Value>
+    </Setting>
+    <Setting Name="ShowSprintNameOnFooter" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="BatchAssignmentNotificationEmailTemplateId" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">2</Value>
     </Setting>
   </Settings>
 </SettingsFile>

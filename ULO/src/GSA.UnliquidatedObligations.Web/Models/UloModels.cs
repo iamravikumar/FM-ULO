@@ -82,7 +82,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         }
 
-        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, Workflow workflow, DateTime? expectedDateForCompletion, bool expectedDateForCompletionEditable, string mostRecentJustificationKey)
+        public AdvanceViewModel(WorkflowQuestionChoices workflowQuestionChoices, UnliqudatedObjectsWorkflowQuestion question, Workflow workflow, DateTime? expectedDateForCompletion, bool expectedDateForCompletionEditable)
         {
             var workflowId = workflow.WorkflowId;
             WorkflowRowVersionString = workflow.WorkflowRowVersionString;
@@ -102,7 +102,6 @@ namespace GSA.UnliquidatedObligations.Web.Models
                     QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
                 }
             }
-            MostRecentJustificationKey = mostRecentJustificationKey;
         }
     }
 
@@ -198,8 +197,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
                         workflow.CurrentWorkflowActivityKey);
 
                 var pending = questions.Count > 0 && questions.Last().Pending ? questions.Last() : null;
-                var mostRecentJustificationKey = QuestionsViewModel.Questions?.LastOrDefault(z=>z.JustificationKey!=null && !UnliqudatedObjectsWorkflowQuestion.CommonAnswers.IsAnyTypeOfReassignmentAnswer(z.Answer))?.JustificationKey;
-                AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, pending, workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable, mostRecentJustificationKey);
+                AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, pending, workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable);
                 allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
             RequestForReassignment = Workflow.GetReassignmentRequest();

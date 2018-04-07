@@ -18,5 +18,8 @@
             DeletedByUserId = deletorUserId;
             IsDeleted = true;
         }
+
+        public string CreatedAtLocalTimeString
+            => CreatedAtUtc.ToLocalTime().ToString("MM/dd/yyyy");
     }
 }

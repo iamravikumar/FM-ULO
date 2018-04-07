@@ -475,6 +475,9 @@ warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key
           <Property Name="RetaCnt" Type="int" />
           <Property Name="PegasysObligations192Cnt" Type="int" />
           <Property Name="PegasysObligations442Cnt" Type="int" />
+          <Property Name="CreditCardAliasesCnt" Type="int" />
+          <Property Name="ActiveCardholdersCnt" Type="int" />
+          <Property Name="PegasysOpenItemsCreditCardsCnt" Type="int" />
           <Property Name="UloCnt" Type="int" />
           <Property Name="PersonCnt" Type="int" />
           <Property Name="GroupCnt" Type="int" />
@@ -1052,6 +1055,9 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
     [ReviewStats].[RetaCnt] AS [RetaCnt], 
     [ReviewStats].[PegasysObligations192Cnt] AS [PegasysObligations192Cnt], 
     [ReviewStats].[PegasysObligations442Cnt] AS [PegasysObligations442Cnt], 
+    [ReviewStats].[CreditCardAliasesCnt] AS [CreditCardAliasesCnt], 
+    [ReviewStats].[ActiveCardholdersCnt] AS [ActiveCardholdersCnt], 
+    [ReviewStats].[PegasysOpenItemsCreditCardsCnt] AS [PegasysOpenItemsCreditCardsCnt], 
     [ReviewStats].[UloCnt] AS [UloCnt], 
     [ReviewStats].[PersonCnt] AS [PersonCnt], 
     [ReviewStats].[GroupCnt] AS [GroupCnt], 
@@ -1888,6 +1894,9 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="SystemCnt" Type="Int32" />
           <Property Name="PreAssignmentCnt" Type="Int32" />
           <Property Name="TheCloserCnt" Type="Int32" />
+          <Property Name="CreditCardAliasesCnt" Type="Int32" />
+          <Property Name="ActiveCardholdersCnt" Type="Int32" />
+          <Property Name="PegasysOpenItemsCreditCardsCnt" Type="Int32" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1">
@@ -2860,6 +2869,9 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="ReviewStats">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.ReviewStat">
               <MappingFragment StoreEntitySet="ReviewStats">
+                <ScalarProperty Name="PegasysOpenItemsCreditCardsCnt" ColumnName="PegasysOpenItemsCreditCardsCnt" />
+                <ScalarProperty Name="ActiveCardholdersCnt" ColumnName="ActiveCardholdersCnt" />
+                <ScalarProperty Name="CreditCardAliasesCnt" ColumnName="CreditCardAliasesCnt" />
                 <ScalarProperty Name="TheCloserCnt" ColumnName="TheCloserCnt" />
                 <ScalarProperty Name="PreAssignmentCnt" ColumnName="PreAssignmentCnt" />
                 <ScalarProperty Name="SystemCnt" ColumnName="SystemCnt" />
