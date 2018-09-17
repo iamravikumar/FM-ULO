@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D103EB61-5F0A-4FFB-AFB9-589ABAF6DCFE}"
 EndProject
@@ -16,6 +16,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSA.UnliquidatedObligations.BusinessLayer.Tests", "tests\GSA.UnliquidatedObligations.BusinessLayer.Tests\GSA.UnliquidatedObligations.BusinessLayer.Tests.csproj", "{2777A424-0425-425A-8F11-6CEA280602BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSA.UnliquidatedObligations.UploadTable", "src\GSA.UnliquidatedObligations.UploadTable\GSA.UnliquidatedObligations.UploadTable.csproj", "{15A9F264-48D6-4BD5-A787-93F01091A957}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{10F736F6-D448-42D6-9DD8-9CE61DDA9C7A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,5 +58,8 @@ Global
 		{27BE33B7-1D1D-46C0-92BD-D9375E1AB3C0} = {E65892A2-F6AE-4908-AF7E-4D71AC061DB2}
 		{2777A424-0425-425A-8F11-6CEA280602BA} = {E65892A2-F6AE-4908-AF7E-4D71AC061DB2}
 		{15A9F264-48D6-4BD5-A787-93F01091A957} = {D103EB61-5F0A-4FFB-AFB9-589ABAF6DCFE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FFBFFC68-A66D-497C-B001-948A70DF2F80}
 	EndGlobalSection
 EndGlobal
