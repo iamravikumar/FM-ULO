@@ -82,12 +82,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 () => DB.DocumentTypes.Where(dt => dt.DocType == null || dt.DocType == docType).OrderBy(dt => dt.Name).ToList().AsReadOnly(),
                 UloHelpers.MediumCacheTimeout);
 
-            var workflowAssignedTo = document.DocumentId == 0 ? true : checkOwner(document);
+            var workflowAssignedTo = document.DocumentId == 0 ? true : CheckOwner(document);
 
             return PartialView("~/Views/Ulo/Details/Documents/_View.cshtml", new DocumentModalViewModel(document, documentTypes, workflowAssignedTo));
         }
 
-        private bool checkOwner(Document document)
+        private bool CheckOwner(Document document)
         {
             if (document.Workflow == null)
             {

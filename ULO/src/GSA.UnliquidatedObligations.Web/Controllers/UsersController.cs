@@ -37,11 +37,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [Route("users")]
         [ActionName(ActionNames.Index)]
-        public async Task<ActionResult> Index(string username, string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<ActionResult> Index(string q, string sortCol, string sortDir, int? page, int? pageSize)
         {
-            username = StringHelpers.TrimOrNull(username);
-            var users = ApplyBrowse(
-                DB.AspNetUsers.Where(u => username == null || u.UserName.Contains(username)),
+            q = StringHelpers.TrimOrNull(q);
+            var users = DB.AspNetUsers.Where(u => q == null || u.UserName.Contains(q) || u.Email.Contains(q));
+            users = ApplyBrowse(
+                users,
                 sortCol ?? nameof(AspNetUser.UserName), sortDir, page, pageSize);
             var m = await CreateModelAsync(users);
             return View(m);

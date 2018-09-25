@@ -1,6 +1,7 @@
 ﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
 @using GSA.UnliquidatedObligations.Web.Controllers
 @using GSA.UnliquidatedObligations.Web.Models;
+@using GSA.UnliquidatedObligations.Web;
 @using RevolutionaryStuff.Core;
 @model IEnumerable<UserModel>
 @{
@@ -9,11 +10,16 @@
     var canMakeChanges = User.HasPermission(ApplicationPermissionNames.ManageUsers);
 }
 
-@if (canMakeChanges)
+@using (Html.BeginForm(UsersController.ActionNames.Index, UsersController.Name, FormMethod.Get))
 {
-    <p>
+    <input type="text" name="q" value="@Context.Request["q"]" />
+    <button id="filterWorkflows" class="btn btn-primary">
+        Search
+    </button>
+    if (canMakeChanges)
+    {
         <input type="button" value="Create" class="btn btn-primary" onclick="location.href='@Url.Action(UsersController.ActionNames.Create)'" />
-    </p>
+    }
 }
 
 <table class="table table-responsive users-data">
