@@ -83,11 +83,11 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static readonly IDictionary<ReviewScopeEnum, string> WorkflowDefinitionNameByReviewScope;
 
-        public static string GetStorageFolderPath(string relativePath, bool createFolderInNotExists=true)
+        public static string GetStorageFolderPath(string relativePath, bool createFolderInNotExists = true)
         {
             relativePath = relativePath ?? "";
             var dir = Properties.Settings.Default.DocPath;
-            if (0==string.Compare(dir, "%temp%", true))
+            if (0 == string.Compare(dir, "%temp%", true))
             {
                 dir = Path.GetTempPath();
             }
@@ -130,11 +130,11 @@ namespace GSA.UnliquidatedObligations.Web
                 UloHelpers.ShortCacheTimeout
                 );
 
-            return userClaims!=null && userClaims.GetApplicationPerimissionRegions(permissionName).Count>0;
+            return userClaims != null && userClaims.GetApplicationPerimissionRegions(permissionName).Count > 0;
         }
 
         public static IComponentContext GetComponentContext(this HttpContext context)
-            => (IComponentContext) context.Items["ComponentContext"];
+            => (IComponentContext)context.Items["ComponentContext"];
 
         public static IComponentContext CurrentComponentContext
             => HttpContext.Current.GetComponentContext();
@@ -168,7 +168,7 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static IList<int?> GetUserGroupRegions(this IPrincipal user, string groupNameOrId)
             => Cacher.FindOrCreateValWithSimpleKey(
-                Cache.CreateKey(nameof(GetReassignmentGroupRegions), user.Identity.Name, groupNameOrId),
+                Cache.CreateKey(nameof(GetUserGroupRegions), user.Identity.Name, groupNameOrId),
                 () =>
                 {
                     using (var db = UloDbCreator())
@@ -180,6 +180,26 @@ namespace GSA.UnliquidatedObligations.Web
                         return db.UserUsers
                             .Where(uu => (uu.ParentUserId == groupId || uu.ParentUserId == groupNameOrId) && uu.ChildUserId == userId)
                             .Select(uu => uu.RegionId)
+                            .Distinct()
+                            .ToList()
+                            .AsReadOnly();
+                    }
+                },
+                UloHelpers.MediumCacheTimeout
+                );
+
+        public static IList<string> GetUserGroupNames(this IPrincipal user, int regionId)
+            => Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(nameof(GetUserGroupRegions), user.Identity.Name, regionId),
+                () =>
+                {
+                    using (var db = UloDbCreator())
+                    {
+                        var userId = GetUserId(user?.Identity?.Name);
+
+                        return db.UserUsers
+                            .Where(uu => uu.ChildUserId == userId && uu.RegionId == regionId)
+                            .Select(uu => uu.ParentUser.UserName)
                             .Distinct()
                             .ToList()
                             .AsReadOnly();
@@ -686,10 +706,10 @@ namespace GSA.UnliquidatedObligations.Web
         public static IList<SelectListItem> CreateSelectList(IEnumerable<AspNetUser> aspNetUsers)
             => aspNetUsers.Select(z => CreateUserSelectListItem(z.Id, z.UserName)).ToList();
 
-        public static SelectListItem ToSelectListItem(this AspNetUser u, bool disabled=false)
+        public static SelectListItem ToSelectListItem(this AspNetUser u, bool disabled = false)
             => CreateUserSelectListItem(u.Id, u.UserName, disabled);
 
-        public static SelectListItem CreateUserSelectListItem(string userId, string username, bool disabled=false)
+        public static SelectListItem CreateUserSelectListItem(string userId, string username, bool disabled = false)
             => new SelectListItem
             {
                 Text = username,
@@ -736,7 +756,8 @@ namespace GSA.UnliquidatedObligations.Web
 
             foreach (var workflowDefinition in workFlowDefintions)
             {
-                workFlowDefintionsSelect.Add(new SelectListItem {
+                workFlowDefintionsSelect.Add(new SelectListItem
+                {
                     Text = workflowDefinition.WorkflowDefinitionName,
                     Value = workflowDefinition.WorkflowDefinitionId.ToString()
                 });
@@ -757,7 +778,7 @@ namespace GSA.UnliquidatedObligations.Web
         public static IList<SelectListItem> ConvertNamesToSelectList<T>() where T : struct
             => ((IEnumerable<T>)Enum.GetValues(typeof(T))).ConvertToSelectList(true);
 
-        public static IList<SelectListItem> ConvertToSelectList<T>(this IEnumerable<T> enums, bool names=false) where T : struct
+        public static IList<SelectListItem> ConvertToSelectList<T>(this IEnumerable<T> enums, bool names = false) where T : struct
         {
             if (!typeof(T).IsEnum)
             {
@@ -792,11 +813,30 @@ namespace GSA.UnliquidatedObligations.Web
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
         }
 
+        public static IList<SelectListItem> CreateAllGroupNamesSelectListItems()
+        => Cacher.FindOrCreateValWithSimpleKey(
+            nameof(CreateAllGroupNamesSelectListItems),
+            () =>
+            {
+                using (var db = UloDbCreator())
+                {
+                    return db.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
+                                r => new SelectListItem
+                                {
+                                    Text = r.UserName,
+                                    Value = r.Id
+                                }).
+                                ToList().
+                                AsReadOnly();
+                }
+            },
+            UloHelpers.MediumCacheTimeout
+            ).Copy();
 
         public static IList<SelectListItem> CreateReviewSelectListItems()
         => Cacher.FindOrCreateValWithSimpleKey(
             nameof(CreateReviewSelectListItems),
-            () => 
+            () =>
             {
                 using (var db = UloDbCreator())
                 {
@@ -814,7 +854,7 @@ namespace GSA.UnliquidatedObligations.Web
             ).Copy();
 
         public static IList<SelectListItem> CreateUserTypesSelectListItems(bool creatableOnly = true)
-            =>new[] {
+            => new[] {
                 AspNetUser.UserTypes.Person,
                 AspNetUser.UserTypes.Group,
                 creatableOnly ? null : AspNetUser.UserTypes.System,
@@ -825,10 +865,10 @@ namespace GSA.UnliquidatedObligations.Web
                 Cache.CreateKey(nameof(GetRegionName), regionId),
                 () => CreateRegionSelectListItems(false).FirstOrDefault(i => i.Value == regionId.ToString())?.Text);
 
-        public static IList<SelectListItem> CreateRegionSelectListItems(bool includeAllRegions=false, string allRegionsValue="*")
+        public static IList<SelectListItem> CreateRegionSelectListItems(bool includeAllRegions = false, string allRegionsValue = "*")
             => Cacher.FindOrCreateValWithSimpleKey(
                 nameof(CreateRegionSelectListItems),
-                () => 
+                () =>
                 {
                     using (var db = UloDbCreator())
                     {
@@ -851,12 +891,18 @@ namespace GSA.UnliquidatedObligations.Web
                 r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) }).Copy();
 
         public static IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
-            => items.OrderBy(z=>z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
+            => items.OrderBy(z => z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
 
         public static IList<SelectListItem> PleaseSelect(this IList<SelectListItem> items)
         {
             bool alreadySelected = items.FirstOrDefault(z => z.Selected) != null;
-            items.Insert(0, new SelectListItem { Text = AspHelpers.PleaseSelectOne, Disabled = true, Selected=!alreadySelected, Value="" });
+            items.Insert(0, new SelectListItem { Text = AspHelpers.PleaseSelectOne, Disabled = true, Selected = !alreadySelected, Value = "" });
+            return items;
+        }
+
+        public static IList<SelectListItem> AllItems(this IList<SelectListItem> items)
+        {
+            items.Insert(0, new SelectListItem { Text = Wildcard, Value = "" });
             return items;
         }
 
@@ -916,7 +962,7 @@ namespace GSA.UnliquidatedObligations.Web
             string correlationId = ctx.Response.Headers[CorrelationIdHeaderString];
             if (correlationId == null)
             {
-                correlationId = ctx.Response.Headers[CorrelationIdHeaderString] = ctx.Request.Headers[CorrelationIdHeaderString] ?? "XCID" + Guid.NewGuid().ToString();                
+                correlationId = ctx.Response.Headers[CorrelationIdHeaderString] = ctx.Request.Headers[CorrelationIdHeaderString] ?? "XCID" + Guid.NewGuid().ToString();
             }
             return correlationId;
         }
@@ -1035,7 +1081,7 @@ namespace GSA.UnliquidatedObligations.Web
             return db.Workflows.Where(predicate);
         }
 
-        public static bool HideLoginLinks(dynamic viewBag, bool ?set=null)
+        public static bool HideLoginLinks(dynamic viewBag, bool? set = null)
         {
             if (set.HasValue)
             {

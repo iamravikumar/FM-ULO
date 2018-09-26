@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="OpenItems.Properties.Settings.DefaultConn-Web.config Connection String" description="OpenItems.Properties.Settings.DefaultConn Connection String used in web.config by the application to access the database." defaultValue="server=eaterofjellybeans.database.windows.net; database=OpenItems; User ID=cwatson; Password=examplePass ; Integrated Security=false" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\Development\\OpenItems\\OpenItems\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='OpenItems.Properties.Settings.DefaultConn']/@connectionString" />
-  </parameter>
-  <parameter name="OpenItems.Properties.Settings.DocsConn-Web.config Connection String" description="OpenItems.Properties.Settings.DocsConn Connection String used in web.config by the application to access the database." defaultValue="server=P11H4M-SQLD02\P11SQD02; database=DocStorage; User ID=examplePass ; Password=examplePass ; Integrated Security=false" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\Development\\OpenItems\\OpenItems\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='OpenItems.Properties.Settings.DocsConn']/@connectionString" />
-  </parameter>
-</parameters>

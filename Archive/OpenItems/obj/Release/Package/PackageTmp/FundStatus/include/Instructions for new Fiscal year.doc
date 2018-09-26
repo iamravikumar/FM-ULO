@@ -1,7 +1,0 @@
-
-
-on moving to the next fiscal year, add year to the "FS_SupportedFiscalYears.xml" file, 
-			and don't forget: 
-			- to create new stored procedures that have fiscal year indication in their names (like "spGetobligations_FY09")
-			- to check we have new obligations/income tables
-			

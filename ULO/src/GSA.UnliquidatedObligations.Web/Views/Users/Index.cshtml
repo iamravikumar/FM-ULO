@@ -10,16 +10,51 @@
     var canMakeChanges = User.HasPermission(ApplicationPermissionNames.ManageUsers);
 }
 
+<button type="button" class="btn toggler" toggleSelector=".advanced-search-settings">
+    <span>
+        Hide Filters
+    </span>
+    <span style="display:none">
+        Show Filters
+    </span>
+</button>
+@if (canMakeChanges)
+{
+    <input type="button" value="Create" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action(UsersController.ActionNames.Create)'" />
+}
+
 @using (Html.BeginForm(UsersController.ActionNames.Index, UsersController.Name, FormMethod.Get))
 {
-    <input type="text" name="q" value="@Context.Request["q"]" />
-    <button id="filterWorkflows" class="btn btn-primary">
-        Search
-    </button>
-    if (canMakeChanges)
-    {
-        <input type="button" value="Create" class="btn btn-primary" onclick="location.href='@Url.Action(UsersController.ActionNames.Create)'" />
-    }
+    <div class="container advanced-search-settings">
+        <div class="row">
+            <div class="col-sm-2">
+                <label for="q">Username/Email:</label>
+            </div>
+            <div class="col-sm-2">
+                <input type="text" name="q" value="@Context.Request["q"]" />
+            </div>
+            <div class="col-sm-2">
+                <label for="region">Region:</label>
+            </div>
+            <div class="col-sm-2">
+                @Html.DropDownList("region", PortalHelpers.Select(PortalHelpers.CreateRegionSelectListItems(true), Context.Request["region"]))
+            </div>
+            <div class="col-sm-2">
+                <label for="role">Role:</label>
+            </div>
+            <div class="col-sm-2">
+                @Html.DropDownList("role", PortalHelpers.Select(PortalHelpers.AllItems(PortalHelpers.CreateAllGroupNamesSelectListItems()), Context.Request["role"]))
+            </div>
+        </div>
+        <div class="row">
+            <button id="filterWorkflows" class="btn btn-primary">
+                Apply Filters
+            </button>
+            <button id="clearFilters" class="btn">
+                Clear Filters
+            </button>
+        </div>
+    </div>
 }
 
 <table class="table table-responsive users-data">

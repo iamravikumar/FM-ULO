@@ -281,7 +281,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 int z = 0;
                 foreach (var workflow in workflows)
                 {
-                    await WorkflowManager.AdvanceAsync(workflow, null, true, true, !sendBatchNotifications);
+                    await WorkflowManager.AdvanceAsync(workflow, null, null, true, true, !sendBatchNotifications);
                     if (++z % 10 == 0)
                     {
                         await DB.SaveChangesAsync();

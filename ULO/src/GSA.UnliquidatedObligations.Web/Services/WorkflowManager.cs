@@ -46,7 +46,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, bool forceAdvance, bool ignoreActionResult, bool sendNotifications)
+        async Task<ActionResult> IWorkflowManager.AdvanceAsync(Workflow wf, UnliqudatedObjectsWorkflowQuestion question, IList<string> submitterGroupNames, bool forceAdvance, bool ignoreActionResult, bool sendNotifications)
         {
             Requires.NonNull(wf, nameof(wf));
 
@@ -63,7 +63,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 if (question != null)
                 {
                     var chooser = ComponentContext.ResolveNamed<IActivityChooser>(currentActivity.NextActivityChooserTypeName);
-                    nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig) ?? wf.CurrentWorkflowActivityKey;
+                    nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig, submitterGroupNames) ?? wf.CurrentWorkflowActivityKey;
                     nextActivity = desc.Activities.First(z => z.WorkflowActivityKey == nextActivityKey) ?? currentActivity;
                 }
                 else

@@ -1,4 +1,0 @@
-<PUBLIC:COMPONENT>
-<PUBLIC:ATTACH EVENT="onmouseover" ONEVENT="_q=window.event.srcElement;_q.style.cursor='hand';_q.title='Click to change date'"/>
-<PUBLIC:ATTACH EVENT="onmouseout" ONEVENT="_q=window.event.srcElement;_q.style.cursor='';_q.title=''"/>
-<PUBLIC:ATTACH EVENT="onclick" ONEVENT="expCal()"/>

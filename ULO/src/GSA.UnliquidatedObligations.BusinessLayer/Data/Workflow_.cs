@@ -1,4 +1,5 @@
 ﻿using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.EncoderDecoders;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,6 +34,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         private bool MostRecentNonReassignmentAnswerFound;
 
         public string WorkflowRowVersionString
-            => Raw.Buf2HexString(this.WorkflowRowVersion);
+            => Base16.Encode(this.WorkflowRowVersion);
     }
 }

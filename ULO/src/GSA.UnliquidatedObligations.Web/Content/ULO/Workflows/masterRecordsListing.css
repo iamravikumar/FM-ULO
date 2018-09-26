@@ -1,29 +1,36 @@
-﻿.show-filters {
-    width: 104px;
+﻿div.advanced-search-settings {
+    Zbackground-color: cyan;
 }
 
-.filter-region-workflows {
-    margin: 3px 0;
+.advanced-search-settings .row {
+    padding-bottom: 10px;
 }
 
-.filter-region-workflows select {
+.advanced-search-settings .row:last-child {
+    padding-bottom: 0px;
+}
+
+.advanced-search-settings select {
     height: 26px;
     padding: 3px 12px;
     width: 174px;
     border-radius: 0;
+    border-color: black;
+    display: inline-block;
 }
 
-.filter-region-workflows label {
+.advanced-search-settings input[type="text"] {
+    width: 174px;
+    border: 1px solid black;
+}
+
+.advanced-search-settings input[type="checkbox"] {
+    height: 26px;
+    width: 26px;
+    border: 1px solid black;
+}
+
+.advanced-search-settings label {
     text-align: right;
-}
-
-
-.filter-region-workflows td {
-    border-top: none !important;
-}
-
-.filter-region-workflows td.label-container {
-    text-align: right;
-    font-size: 12px;
-    padding-top: 11px;
+    width: 100%;
 }

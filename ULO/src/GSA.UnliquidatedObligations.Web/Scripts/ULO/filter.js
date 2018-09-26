@@ -23,13 +23,10 @@
         $("#hasBeenAssignedto").val("");
     });
 
-    $("#showFilters").click(function() {
-        $("#filterRegions").toggle();
-        if ($("#filterRegions").is(":visible")) {
-            $(this).html("Hide Filters");
-        } else {
-            $(this).html("Show Filters");
-        }
+    $(".toggler").click(function (e) {
+        $(".toggler span").toggle();
+        var toggleSel = $(e.delegateTarget).attr("toggleSelector");
+        $(toggleSel).toggle();
     });
 });
 

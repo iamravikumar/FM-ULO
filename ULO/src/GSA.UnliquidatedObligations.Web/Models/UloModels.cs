@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
@@ -77,6 +77,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public DateTime EditingBeganAtUtc { get; set; }
 
+        public string PDN { get; set; }
+        public bool? IsValid { get; set; }
+
         public AdvanceViewModel()
         {
 
@@ -93,6 +96,9 @@ namespace GSA.UnliquidatedObligations.Web.Models
             JustificationKey = question?.JustificationKey;
             ExpectedDateForCompletion = expectedDateForCompletion;
             ExpectedDateForCompletionEditable = expectedDateForCompletionEditable;
+            var ulo = workflow.UnliquidatedObligation;
+            PDN = ulo.PegasysDocumentNumber;
+            IsValid = ulo.Valid;
 //            workflow.WorkflowRowVersionString;
             if (workflowQuestionChoices != null)
             {

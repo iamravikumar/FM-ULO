@@ -402,7 +402,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 await DB.SaveChangesAsync();
                 if (submit)
                 {
-                    var ret = await Manager.AdvanceAsync(wf, question, Properties.Settings.Default.ForceAdvanceFromUloSubmit);
+                    var ulo = await DB.UnliquidatedObligations.FindAsync(uloId);
+                    var groupNames = ulo != null && ulo.RegionId != null ? User.GetUserGroupNames(ulo.RegionId.Value) : Empty.StringArray.ToList();
+                    var ret = await Manager.AdvanceAsync(wf, question, groupNames, Properties.Settings.Default.ForceAdvanceFromUloSubmit);
                     await DB.SaveChangesAsync();
                     AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.UnliquidatedObligation.PegasysDocumentNumber} was submitted.", false, PageAlert.AlertTypes.Success, true);
                     return ret;

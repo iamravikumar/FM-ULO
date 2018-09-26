@@ -12,6 +12,20 @@
         <div class="panel-body">
             <div class="form-horizontal">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                @if (Model.IsValid.HasValue) {
+                <div class="row" style="font-weight:bold; padding-top: 5px">
+                    @if (Model.IsValid.Value)
+                    {
+                        <text>@Model.PDN was approved as valid.</text>
+                    }
+                    else
+                    {
+                        <text>@Model.PDN was rejected as invalid.</text>
+                    }
+                </div>
+                }
+
                 <div class="row">
                     @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
                     @Html.DropDownListFor(model => model.Answer, Model.QuestionChoices.CreateSelectListItems().PleaseSelect(), htmlAttributes: new { id = "q", required = "required", @onchange = "ChoiceChange()" })<br />
@@ -29,7 +43,7 @@
                 <div class="row row-space-top" id="expectedDateForCompletionContainer" style="display:none">
                     @Html.LabelFor(model => model.ExpectedDateForCompletion, "Expected Date for Completion/Resolution: ", htmlAttributes: new { @class = "control-label" })
                     @{
-                        var expectedDateOfCompletionHtmlAttrs = Model.ExpectedDateForCompletionEditable ? (object) new { @onchange = "clearDateValidationErrors()" } : (object) new { @readonly = "readonly" };
+                        var expectedDateOfCompletionHtmlAttrs = Model.ExpectedDateForCompletionEditable ? (object)new { @onchange = "clearDateValidationErrors()" } : (object)new { @readonly = "readonly" };
                     }
                     @Html.EditorFor(model => model.ExpectedDateForCompletion, new { @class = "form-control", type = "date", htmlAttributes = expectedDateOfCompletionHtmlAttrs })
                     <div>
