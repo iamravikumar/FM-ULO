@@ -1,9 +1,22 @@
 ﻿div.advanced-search-settings {
     Zbackground-color: cyan;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.advanced-search-settings label {
+    display: inline;
+    Zbackground-color:aquamarine;
 }
 
 .advanced-search-settings .row {
-    padding-bottom: 10px;
+    height: 35px;
+    Zbackground-color: antiquewhite;
+}
+
+.advanced-search-settings div.row div {
+    text-align: right;
+    Zbackground-color: pink;
 }
 
 .advanced-search-settings .row:last-child {
@@ -11,26 +24,25 @@
 }
 
 .advanced-search-settings select {
-    height: 26px;
-    padding: 3px 12px;
-    width: 174px;
+    height: 25px;
+    width: 175px;
     border-radius: 0;
     border-color: black;
     display: inline-block;
+    padding: 0;
 }
 
 .advanced-search-settings input[type="text"] {
-    width: 174px;
+    height: 25px;
+    width: 175px;
     border: 1px solid black;
+    padding: 0;
 }
 
 .advanced-search-settings input[type="checkbox"] {
-    height: 26px;
-    width: 26px;
+    height: 25px;
+    width: 25px;
     border: 1px solid black;
-}
-
-.advanced-search-settings label {
-    text-align: right;
-    width: 100%;
+    margin: 0px 150px 0px 0px;
+    padding: 0;
 }

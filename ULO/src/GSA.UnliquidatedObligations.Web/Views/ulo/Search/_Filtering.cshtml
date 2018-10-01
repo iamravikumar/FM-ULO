@@ -14,147 +14,112 @@
 {
     <div class="container advanced-search-settings">
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="reviewId">Review:</label>
-            </div>
-            <div class="col-sm-2">
                 @Html.DropDownList("reviewId", Model.Reviews, "")
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="organization">Zone:</label>
-            </div>
-            <div class="col-sm-2">
                 @Html.DropDownList("zone", Model.Zones, "")
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="region">Region:</label>
-            </div>
-            <div class="col-sm-2">
                 @Html.DropDownList("region", Model.Regions, "")
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="docType">Doc Type:</label>
-            </div>
-            <div class="col-sm-2">
                 @Html.DropDownList("docType", Model.DocTypes, "")
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="pegasysDocumentNumber">PDN:</label>
-            </div>
-            <div class="col-sm-2">
                 <input type="text" name="pegasysDocumentNumber" id="pegasysDocumentNumber" value="@Context.Request["pegasysDocumentNumber"]" />
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="pegasysTitleNumber">Pegasys Title:</label>
-            </div>
-            <div class="col-sm-2">
                 <input type="text" name="pegasysTitleNumber" id="pegasysTitleNumber" value="@Context.Request["pegasysTitleNumber"]" />
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="fund">Fund:</label>
-            </div>
-            <div class="col-sm-2">
                 <input type="text" name="fund" id="fund" value="@Context.Request["fund"]" />
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="organization">Org:</label>
-            </div>
-            <div class="col-sm-2">
                 <input type="text" name="organization" id="organization" value="@Context.Request["organization"]" />
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="baCode">BA Code:</label>
-            </div>
-            <div class="col-sm-2">
                 @Html.DropDownList("baCode", Model.BaCodes, "")
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="pegasysVendorName">Pegasys Vendor Name:</label>
-            </div>
-            <div class="col-sm-2">
                 <input type="text" name="pegasysVendorName" id="pegasysVendorName" value="@Context.Request["pegasysVendorName"]" />
             </div>
-            <div class="col-sm-2">
-                <label for="contractingOfficersName">Contracting Officers Name:</label>
-            </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
+                <label for="contractingOfficersName">CO Name:</label>
                 <input type="text" name="contractingOfficersName" id="contractingOfficersName" value="@Context.Request["contractingOfficersName"]" />
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="currentlyAssignedTo">Currently Assigned to:</label>
-            </div>
-            <div class="col-sm-2">
                 <input type="text" name="currentlyAssignedTo" id="currentlyAssignedTo" value="@Context.Request["currentlyAssignedTo"]" />
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="hasBeenAssignedto">Has been Assigned to:</label>
-            </div>
-            <div class="col-sm-2">
                 <input type="text" name="hasBeenAssignedto" id="hasBeenAssignedto" value="@Context.Request["hasBeenAssignedto"]" />
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="awardNumber">Award #:</label>
-            </div>
-            <div class="col-sm-2">
                 <input type="text" name="awardNumber" id="awardNumber" value="@Context.Request["awardNumber"]" />
             </div>
-            <div class="col-sm-2">
-                <label for="reasonIncludedInReview">Reason Included In Review:</label>
-            </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
+                <label for="reasonIncludedInReview">Reason in Review:</label>
                 @Html.DropDownList("reasons", Model.Reasons, "")
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="valid">Valid:</label>
-            </div>
-            <div class="col-sm-2">
                 <select id="valid" name="valid">
                     <option></option>
                     <option value="true">Yes</option>
                     <option value="false">No</option>
                 </select>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="status">Status:</label>
-            </div>
-            <div class="col-sm-2">
                 @Html.DropDownList("status", Model.Statuses, "")
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <label for="uloId">Ulo Id:</label>
-            </div>
-            <div class="col-sm-2">
                 <input type="text" name="uloId" id="uloId" value="@Context.Request["uloId"]" />
             </div>
         </div>
         @if (User.HasPermission(ApplicationPermissionNames.CanReassign))
         {
-        <div class="row">
-            <div class="col-sm-2">
-                <label for="reassignable">Reassignable?:</label>
+            <div class="row">
+                <div class="col-sm-4">
+                    <label for="reassignable">Reassignable?:</label>
+                    <input type="checkbox" name="reassignableByMe" id="reassignable" value="true" @(Model.IsReassignable ? "checked=\"checked\"" : "") />
+                </div>
+                <div class="col-sm-8"></div>
             </div>
-            <div class="col-sm-2">
-                <input type="checkbox" name="reassignableByMe" id="reassignable" value="true" @(Model.IsReassignable ? "checked=\"checked\"" : "") />
-            </div>
-        </div>
         }
         <div class="row">
+            <div class="col-sm-12" style="text-align:left">
                 <button id="filterWorkflows" class="btn btn-primary">
                     Apply Filters
                 </button>
                 <button id="clearFilters" class="btn">
                     Clear Filters
                 </button>
+            </div>
         </div>
     </div>
 }
