@@ -2,6 +2,20 @@
     background-color: #8fc7ea;
 }
 
+.viewed {
+    /*color: rgb(2,77,134);*/
+    color: blue;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.viewed a {
+    /*color: rgb(2,77,134) !important;*/
+    color: blue !important;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 div.header{
     font-weight: bold;
     color: black;

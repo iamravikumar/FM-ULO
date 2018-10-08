@@ -60,13 +60,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
 
-        private void PopulateRequestForReassignmentsControllerDetailsBulkTokenInViewBag(IQueryable<Workflow> workflows)
+        private void PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(IQueryable<Workflow> workflows)
         {
             var dbt = new RequestForReassignmentsController.DetailsBulkToken(CurrentUser, this.DB, workflows);
             ViewBag.DetailsBulkToken = dbt;
         }
 
-        private void PopulateWorkflowDescriptionInViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType, string mostRecentNonReassignmentAnswer)
+        private void PopulateWorkflowDescriptionIntoViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType, string mostRecentNonReassignmentAnswer)
         {
             ViewBag.JustificationByKey = workflowDescription.GetJustificationByKey();
             ViewBag.WorkflowDescription = workflowDescription;
@@ -74,6 +74,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var d = new Dictionary<string, QuestionChoice>();
             ViewBag.QuestionChoiceByQuestionChoiceValue = d;
             wawa?.QuestionChoices?.WhereMostApplicable(docType, mostRecentNonReassignmentAnswer).ForEach(z => d[z.Value] = z);
+        }
+        private void PopulateViewInfoIntoViewBag(IEnumerable<Workflow> workflows)
+        {
+            var wfs = workflows.ToList();
+            var ids = wfs.Select(z => z.WorkflowId).ToList();
+            ViewBag.ViewDateByWorkflowId = (from v in DB.MostRecentWorkflowViews
+                                        where ids.Contains(v.WorkflowId) && v.UserId == CurrentUserId
+                                        select new { v.WorkflowId, v.ActionAtUtc, v.ViewAction }).
+                         ToList().
+                         Where(z => z.ViewAction == WorkflowView.CommonActions.View).
+                         ToDictionaryOnConflictKeepLast(z => z.WorkflowId, z => z.ActionAtUtc);
         }
 
         [ActionName(ActionNames.Index)]
@@ -84,15 +95,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.MyTasks)]
         [Route("ulos/myTasks")]
-        public ActionResult MyTasks(string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<ActionResult> MyTasks(string sortCol, string sortDir, int? page, int? pageSize)
         {
             SetNoDataMessage(NoDataMessages.NoTasks);
-            IQueryable<Workflow> workflows;
+
+            var workflows = (IQueryable<Workflow>)DB.Workflows;
             sortCol = sortCol ?? MyTasksReviewStatusColumn;
             if (sortCol == MyTasksReviewStatusColumn)
             {
                 workflows = ApplyBrowse(
-                    DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
+                    workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
                     sortCol,
                     CSV.ParseLine(Properties.Settings.Default.ReviewStatusOrdering),
                     sortDir, page, pageSize);
@@ -100,9 +112,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             else
             {
                 workflows = ApplyBrowse(
-                    DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
+                    workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
                     sortCol, sortDir, page, pageSize);
             }
+
+            PopulateViewInfoIntoViewBag(workflows);
             return View(workflows);
         }
 
@@ -160,7 +174,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 workflows.WhereReviewExists().ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
 
-            PopulateRequestForReassignmentsControllerDetailsBulkTokenInViewBag(workflows);
+            PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(workflows);
+            PopulateViewInfoIntoViewBag(workflows);
 
             return View(workflows);
         }
@@ -190,7 +205,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 .ApplyStandardIncludes(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
 
-            PopulateRequestForReassignmentsControllerDetailsBulkTokenInViewBag(workflows);
+            PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(workflows);
+            PopulateViewInfoIntoViewBag(workflows);
 
             return View(workflows);
         }
@@ -254,6 +270,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     return names.Distinct().OrderBy();
                 },
                 UloHelpers.MediumCacheTimeout);
+
+            PopulateViewInfoIntoViewBag(workflows);
 
             return View(
                 "~/Views/Ulo/Search/Index.cshtml", 
@@ -325,13 +343,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var otherDocs = DB.GetUniqueMissingLineageDocuments(workflow, others.Select(o => o.WorkflowId));
 
+            DB.WorkflowViews.Add(new WorkflowView { ActionAtUtc = DateTime.UtcNow, UserId = CurrentUserId, ViewAction = WorkflowView.CommonActions.View, WorkflowId=workflow.WorkflowId });
+            await DB.SaveChangesAsync();
+
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, otherDocs, belongs));
         }
 
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
         {
             var workflowDescription = await Manager.GetWorkflowDescriptionAsync(wf);
-            PopulateWorkflowDescriptionInViewBag(workflowDescription, wf, wf.UnliquidatedObligation.DocType, wf.MostRecentNonReassignmentAnswer);
+            PopulateWorkflowDescriptionIntoViewBag(workflowDescription, wf, wf.UnliquidatedObligation.DocType, wf.MostRecentNonReassignmentAnswer);
             return workflowDescription;
         }
 

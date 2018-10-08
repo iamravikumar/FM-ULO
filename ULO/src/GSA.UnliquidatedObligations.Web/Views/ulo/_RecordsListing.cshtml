@@ -17,6 +17,7 @@
     {
         hasData = (int)ViewBag.TotalItemCount > 0;
     }
+    var viewDateByWorkflowId = ViewBag.ViewDateByWorkflowId as IDictionary<int, DateTime> ?? new Dictionary<int, DateTime>();
 }
 @if (!hasData)
 {
@@ -66,7 +67,7 @@ else
 
     @foreach (var item in Model)
     {
-        <tr class="active-workflows-record" data-id="@item.WorkflowId">
+        <tr class="active-workflows-record @(viewDateByWorkflowId.ContainsKey(item.WorkflowId)?"viewed":"")" data-id="@item.WorkflowId">
             <td>
                 @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
             </td>

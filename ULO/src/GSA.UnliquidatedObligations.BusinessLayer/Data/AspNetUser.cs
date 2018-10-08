@@ -33,6 +33,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             this.Documents1 = new HashSet<Document>();
             this.Reviews = new HashSet<Review>();
             this.UnliquidatedObligations = new HashSet<UnliquidatedObligation>();
+            this.WorkflowViews = new HashSet<WorkflowView>();
         }
     
         public string Id { get; set; }
@@ -82,5 +83,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual ICollection<Review> Reviews { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UnliquidatedObligation> UnliquidatedObligations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkflowView> WorkflowViews { get; set; }
     }
 }

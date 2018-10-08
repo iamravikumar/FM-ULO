@@ -317,6 +317,16 @@
           <Property Name="DueAtUtc" Type="datetime" StoreGeneratedPattern="Computed" />
           <Property Name="WorkflowRowVersion" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
         </EntityType>
+        <EntityType Name="WorkflowViews">
+          <Key>
+            <PropertyRef Name="WorkflowViewId" />
+          </Key>
+          <Property Name="WorkflowViewId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WorkflowId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ActionAtUtc" Type="datetime" Nullable="false" />
+          <Property Name="ViewAction" Type="char" MaxLength="1" Nullable="false" />
+        </EntityType>
         <EntityType Name="Regions">
           <Key>
             <PropertyRef Name="RegionId" />
@@ -463,6 +473,22 @@ warning 6002: The table/view 'ULODB.dbo.AspnetUserSubjectCategoryClaims' does no
           <Property Name="DocumentType" Type="nvarchar" MaxLength="50" />
           <Property Name="OrgCode" Type="nvarchar" MaxLength="50" />
           <Property Name="ClaimId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'ULODB.dbo.MostRecentWorkflowViews' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="MostRecentWorkflowViews">
+          <Key>
+            <PropertyRef Name="WorkflowViewId" />
+            <PropertyRef Name="WorkflowId" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ActionAtUtc" />
+            <PropertyRef Name="ViewAction" />
+          </Key>
+          <Property Name="WorkflowViewId" Type="int" Nullable="false" />
+          <Property Name="WorkflowId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ActionAtUtc" Type="datetime" Nullable="false" />
+          <Property Name="ViewAction" Type="char" MaxLength="1" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'ULODB.dbo.ReviewStats' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -831,6 +857,30 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__WorkflowV__UserI__7B113988">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="WorkflowViews" Type="Self.WorkflowViews" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="WorkflowViews">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkflowV__Workf__7A1D154F">
+          <End Role="Workflows" Type="Self.Workflows" Multiplicity="1" />
+          <End Role="WorkflowViews" Type="Self.WorkflowViews" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Workflows">
+              <PropertyRef Name="WorkflowId" />
+            </Principal>
+            <Dependent Role="WorkflowViews">
+              <PropertyRef Name="WorkflowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Attachments_ToDocument">
           <End Role="Documents" Type="Self.Documents" Multiplicity="0..1" />
           <End Role="Attachments" Type="Self.Attachments" Multiplicity="*" />
@@ -1015,6 +1065,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySet Name="WorkflowDefinitions" EntityType="Self.WorkflowDefinitions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="WorkflowHistory" EntityType="Self.WorkflowHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Workflows" EntityType="Self.Workflows" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="WorkflowViews" EntityType="Self.WorkflowViews" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Regions" EntityType="Self.Regions" Schema="gsa" store:Type="Tables" />
           <EntitySet Name="Zones" EntityType="Self.Zones" Schema="gsa" store:Type="Tables" />
           <EntitySet Name="AggregatedCounter" EntityType="Self.AggregatedCounter" Schema="HangFire" store:Type="Tables" />
@@ -1047,6 +1098,15 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
     [AspnetUserSubjectCategoryClaims].[OrgCode] AS [OrgCode], 
     [AspnetUserSubjectCategoryClaims].[ClaimId] AS [ClaimId]
     FROM [dbo].[AspnetUserSubjectCategoryClaims] AS [AspnetUserSubjectCategoryClaims]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="MostRecentWorkflowViews" EntityType="Self.MostRecentWorkflowViews" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [MostRecentWorkflowViews].[WorkflowViewId] AS [WorkflowViewId], 
+    [MostRecentWorkflowViews].[WorkflowId] AS [WorkflowId], 
+    [MostRecentWorkflowViews].[UserId] AS [UserId], 
+    [MostRecentWorkflowViews].[ActionAtUtc] AS [ActionAtUtc], 
+    [MostRecentWorkflowViews].[ViewAction] AS [ViewAction]
+    FROM [dbo].[MostRecentWorkflowViews] AS [MostRecentWorkflowViews]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="ReviewStats" EntityType="Self.ReviewStats" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -1183,6 +1243,14 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <AssociationSet Name="FK__Workflows__Targe__4277DAAA" Association="Self.FK__Workflows__Targe__4277DAAA">
             <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
             <End Role="Workflows" EntitySet="Workflows" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkflowV__UserI__7B113988" Association="Self.FK__WorkflowV__UserI__7B113988">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="WorkflowViews" EntitySet="WorkflowViews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkflowV__Workf__7A1D154F" Association="Self.FK__WorkflowV__Workf__7A1D154F">
+            <End Role="Workflows" EntitySet="Workflows" />
+            <End Role="WorkflowViews" EntitySet="WorkflowViews" />
           </AssociationSet>
           <AssociationSet Name="FK_Attachments_ToDocument" Association="Self.FK_Attachments_ToDocument">
             <End Role="Documents" EntitySet="Documents" />
@@ -1445,6 +1513,16 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
           </AssociationSet>
+          <EntitySet Name="WorkflowViews" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowView" />
+          <AssociationSet Name="FK__WorkflowV__UserI__7B113988" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__UserI__7B113988">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="WorkflowView" EntitySet="WorkflowViews" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkflowV__Workf__7A1D154F" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__Workf__7A1D154F">
+            <End Role="Workflow" EntitySet="Workflows" />
+            <End Role="WorkflowView" EntitySet="WorkflowViews" />
+          </AssociationSet>
+          <EntitySet Name="MostRecentWorkflowViews" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.MostRecentWorkflowView" />
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -1523,6 +1601,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="Documents1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Documents__Delet__0F824689" FromRole="AspNetUser" ToRole="Document" />
           <NavigationProperty Name="Reviews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Deleted__3D491139" FromRole="AspNetUser" ToRole="Review" />
           <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Cardh__2CDD9F46" FromRole="AspNetUser" ToRole="UnliquidatedObligation" />
+          <NavigationProperty Name="WorkflowViews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__UserI__7B113988" FromRole="AspNetUser" ToRole="WorkflowView" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -1724,6 +1803,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="UnliqudatedObjectsWorkflowQuestions" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="Workflow" ToRole="UnliqudatedObjectsWorkflowQuestion" />
           <NavigationProperty Name="WorkflowHistories" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowH__Workf__477199F1" FromRole="Workflow" ToRole="WorkflowHistory" />
           <NavigationProperty Name="UnliquidatedObligation" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Workflows__Targe__4277DAAA" FromRole="Workflow" ToRole="UnliquidatedObligation" />
+          <NavigationProperty Name="WorkflowViews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__Workf__7A1D154F" FromRole="Workflow" ToRole="WorkflowView" />
         </EntityType>
         <EntityType Name="Region">
           <Key>
@@ -2457,6 +2537,56 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="WorkflowView">
+          <Key>
+            <PropertyRef Name="WorkflowViewId" />
+          </Key>
+          <Property Name="WorkflowViewId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WorkflowId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ActionAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ViewAction" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__UserI__7B113988" FromRole="WorkflowView" ToRole="AspNetUser" />
+          <NavigationProperty Name="Workflow" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__Workf__7A1D154F" FromRole="WorkflowView" ToRole="Workflow" />
+        </EntityType>
+        <Association Name="FK__WorkflowV__UserI__7B113988">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowView" Role="WorkflowView" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="WorkflowView">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkflowV__Workf__7A1D154F">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow" Role="Workflow" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowView" Role="WorkflowView" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Workflow">
+              <PropertyRef Name="WorkflowId" />
+            </Principal>
+            <Dependent Role="WorkflowView">
+              <PropertyRef Name="WorkflowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MostRecentWorkflowView">
+          <Key>
+            <PropertyRef Name="WorkflowViewId" />
+            <PropertyRef Name="WorkflowId" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="ActionAtUtc" />
+            <PropertyRef Name="ViewAction" />
+          </Key>
+          <Property Name="WorkflowViewId" Type="Int32" Nullable="false" />
+          <Property Name="WorkflowId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ActionAtUtc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ViewAction" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3015,6 +3145,28 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="WorkflowViews">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowView">
+              <MappingFragment StoreEntitySet="WorkflowViews">
+                <ScalarProperty Name="ViewAction" ColumnName="ViewAction" />
+                <ScalarProperty Name="ActionAtUtc" ColumnName="ActionAtUtc" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="WorkflowViewId" ColumnName="WorkflowViewId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MostRecentWorkflowViews">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.MostRecentWorkflowView">
+              <MappingFragment StoreEntitySet="MostRecentWorkflowViews">
+                <ScalarProperty Name="ViewAction" ColumnName="ViewAction" />
+                <ScalarProperty Name="ActionAtUtc" ColumnName="ActionAtUtc" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="WorkflowViewId" ColumnName="WorkflowViewId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

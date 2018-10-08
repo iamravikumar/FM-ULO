@@ -80,6 +80,10 @@
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.PdnAttribute" Width="1.5" PointX="8.25" PointY="24.125" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__PdnAttrib__Regio__7869D707" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Cardh__2CDD9F46" />
+        <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.WorkflowView" Width="1.5" PointX="10.5" PointY="24.125" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__UserI__7B113988" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__Workf__7A1D154F" />
+        <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.MostRecentWorkflowView" Width="1.5" PointX="15.375" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

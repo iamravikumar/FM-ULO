@@ -14,6 +14,7 @@
     {
         hasData = (int)ViewBag.TotalItemCount > 0;
     }
+    var viewDateByWorkflowId = ViewBag.ViewDateByWorkflowId as IDictionary<int, DateTime> ?? new Dictionary<int, DateTime>();
 }
 
 <script type="text/javascript">
@@ -107,7 +108,7 @@ else
 
         @foreach (var item in Model)
         {
-            <tr class="active-workflows-record" data-id="@item.WorkflowId">
+            <tr class="active-workflows-record @(viewDateByWorkflowId.ContainsKey(item.WorkflowId)?"viewed":"")" data-id="@item.WorkflowId">
                 @if (showSelectors)
                 {
                     <td><input type="checkbox" class="itemSelector" onclick="selectorClicked()" value="1" data-id="@item.WorkflowId" /></td>

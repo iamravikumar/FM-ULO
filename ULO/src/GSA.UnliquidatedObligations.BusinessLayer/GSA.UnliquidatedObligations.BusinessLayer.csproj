@@ -334,6 +334,9 @@
     <Compile Include="Data\List.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\MostRecentWorkflowView.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\Note.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -416,6 +419,10 @@
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\WorkflowDefinition_.cs" />
+    <Compile Include="Data\WorkflowView.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\WorkflowView_.cs" />
     <Compile Include="Data\Workflow_.cs" />
     <Compile Include="Data\Zone.cs">
       <DependentUpon>ULO.tt</DependentUpon>
