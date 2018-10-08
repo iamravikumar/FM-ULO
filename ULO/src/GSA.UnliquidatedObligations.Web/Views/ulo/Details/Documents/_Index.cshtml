@@ -1,4 +1,5 @@
-﻿@using GSA.UnliquidatedObligations.Web.Controllers
+﻿@using GSA.UnliquidatedObligations.Web
+@using GSA.UnliquidatedObligations.Web.Controllers
 @using RevolutionaryStuff.Core
 @using System.Linq
 @model GSA.UnliquidatedObligations.Web.Models.DocumentsViewModel
@@ -11,7 +12,7 @@
             <h3 class="panel-title">Documents</h3>
         </div>
         <div class="panel-body">
-            <div class="noDataMessage"  style="@(@Model.Documents.Count == 0 ? "" : "display:none")" id="noDocumentMessage">No documents have been uploaded yet.</div>
+            <div class="noDataMessage" style="@(@Model.Documents.Count == 0 ? "" : "display:none")" id="noDocumentMessage">No documents have been uploaded yet.</div>
             <table class="table table-responsive table-striped documents-list" style="@(@Model.Documents.Count > 0 ? "" : "display:none")" id="documentsTable">
                 <tr class="documents-heading-row">
                     <th>
@@ -58,7 +59,7 @@
                             @document.AspNetUser.UserName
                         </td>
                         <td>
-                            @document.CreatedAtLocalTimeString
+                            @document.CreatedAtUtc.ToLocalizedDisplayDateString()
                         </td>
                         <td>
                             <a data-toggle="modal" data-target="@modalId" href="@modalId">View</a>
@@ -73,13 +74,14 @@
             @if (Model.AllowDocumentsEdit)
             {
                 <button type="button" class="btn btn-primary document-add-btn" data-toggle="modal" data-target="#0Modal" title="Add a new document.">Add...</button>
-                <button 
-                        type="button" 
-                        class="btn document-copy-btn" 
-                        id="copyUniqueMissingLineageDocumentButton" 
-                        @(Model.UniqueMissingLineageDocumentCount==0?"disabled=\"disabled\"":"") 
+                <button type="button"
+                        class="btn document-copy-btn"
+                        id="copyUniqueMissingLineageDocumentButton"
+                        @(Model.UniqueMissingLineageDocumentCount == 0 ? "disabled=\"disabled\"" : "")
                         onclick="copyUniqueMissingLineageDocuments()"
-                        title="Copy documents from other reviews for this PDN:@Model.UniqueMissingLineageDocuments.Select(d=>d.DocumentName).Format("", "\n   - {0}")">Copy (@Model.UniqueMissingLineageDocumentCount)</button>
+                        title="Copy documents from other reviews for this PDN:@Model.UniqueMissingLineageDocuments.Select(d=>d.DocumentName).Format("", "\n   - {0}")">
+                    Copy (@Model.UniqueMissingLineageDocumentCount)
+                </button>
             }
         </div>
     </div>

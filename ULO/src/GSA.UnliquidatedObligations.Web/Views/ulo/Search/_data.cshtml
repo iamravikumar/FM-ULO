@@ -47,61 +47,63 @@ else
     }
 
     <table class="table table-responsive active-workflows">
-
-        <tr>
-            @if (showSelectors)
-            {
-                <th><input type="checkbox" id="allSelector" onclick="allSelectorClicked()" /></th>
-            }
-            <th>@Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")</th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.Zone.ZoneName, overrideDisplayName: "Zone")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
-            </th>
-            @*
+        <thead>
+            <tr>
+                @if (showSelectors)
+                {
+                    <th><input type="checkbox" id="allSelector" onclick="allSelectorClicked()" /></th>
+                }
+                <th>@Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")</th>
                 <th>
-                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Doc Type")
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.Zone.ZoneName, overrideDisplayName: "Zone")
                 </th>
-            *@
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
+                </th>
+                @*
             <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
+                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Doc Type")
             </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysTitleNumber, overrideDisplayName: "Pesasys Title Number")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Fund, overrideDisplayName: "Fund")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.VendorName, overrideDisplayName: "Pegasys Vendor Name")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ContractingOfficersName, overrideDisplayName: "Contracting Officer Name")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.AspNetUser.UserName, overrideDisplayName: "Currently Assigned to")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.AwardNbr, overrideDisplayName: "Award Number")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Status")
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review Id")
-            </th>
-        </tr>
+                *@
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysTitleNumber, overrideDisplayName: "Pesasys Title Number")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Fund, overrideDisplayName: "Fund")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.VendorName, overrideDisplayName: "Pegasys Vendor Name")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ContractingOfficersName, overrideDisplayName: "Contracting Officer Name")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.AspNetUser.UserName, overrideDisplayName: "Currently Assigned to")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.AwardNbr, overrideDisplayName: "Award Number")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Status")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review Id")
+                </th>
+            </tr>
+
+        </thead>
 
         @foreach (var item in Model)
         {

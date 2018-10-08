@@ -1,12 +1,24 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    /*required for footer pinning*/
+    min-height: 100vh;
+    position: relative;
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.footer {
+    width: 100%;
+    line-height: 60px;
+    border-top: 10px solid #af3639;
+    background: #efeadf;
+    position: absolute;
+    bottom: 0;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 

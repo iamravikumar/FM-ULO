@@ -2,25 +2,23 @@
     setValid();
     setReason();
     showHideFiltersInit();
-    $("#clearFilters").click(function () {
-        $("#uloId").val("");
-        $("#pegasysDocumentNumber").val("");
-        $("#organization").val("");
-        $("#region").val("");
-        $("#zone").val("");
-        $("#fund").val("");
-        $("#baCode").val("");
-        $("#docType").val("");
-        $("#pegasysTitleNumber").val("");
-        $("#pegasysVendorName").val("");
-        $("#contractingOfficersName").val("");
-        $("#currentlyAssignedTo").val("");
-        $("#awardNumber").val("");
-        $("#reasonIncludedInReview").val("");
-        $("#valid").val("");
-        $("#status").val("");
-        $("#reviewId").val("");
-        $("#hasBeenAssignedto").val("");
+    $("#clearFilters").click(function (e) {
+        var filterSelector = $(e.delegateTarget).attr("filterSelector");
+        $(filterSelector).find("input,textarea").each(function (ix, el) {
+            var jel = $(el);
+            var inputType = jel.attr("type");
+            if (inputType == "checkbox") {
+                el.checked = false;
+            }
+            else {
+                jel.val("");
+            }
+        });
+        $(filterSelector).find("select").each(function (ix, el) {
+            el.selectedIndex = 0;
+        });
+        e.stopPropagation();
+        return false;
     });
 
     $(".toggler").click(function (e) {

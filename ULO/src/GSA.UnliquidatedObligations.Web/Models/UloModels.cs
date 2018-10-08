@@ -33,7 +33,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string JustificationKey { get; set; }
         public string Justification { get; set; }
         public string Comments { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedAtUtc { get; set; }
 
         public UloWfQuestionViewModel()
         { }
@@ -45,7 +45,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             JustificationKey = question.JustificationKey;
             Justification = justificationByKey.FindOrDefault(question.JustificationKey??"")?.Description;
             Comments = question.Comments;
-            CreatedDate = question.CreatedAtUtc.Date;
+            CreatedAtUtc = question.CreatedAtUtc;
         }
     }
 

@@ -178,7 +178,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     Name = document.DocumentName,
                     DocumentTypeNames = documentTypeNames.WhereNotNull().OrderBy().ToList(),
                     AttachmentCount = document.Attachments.Count,
-                    UploadedDate = document.CreatedAtLocalTimeString
+                    UploadedDate = document.CreatedAtUtc.ToLocalizedDisplayDateString()
                 });
             }
             catch (Exception ex)
@@ -306,7 +306,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     copiedAttachmentCount,
                     documents = copiedDocs.Select(z => new {
                         UserName = CurrentUser.UserName,
-                        UploadedDate = z.CreatedAtLocalTimeString,
+                        UploadedDate = z.CreatedAtUtc.ToLocalizedDisplayDateString(),
                         AttachmentCount = z.Attachments.Count,
                         Name = z.DocumentName,
                         Id = z.DocumentId,

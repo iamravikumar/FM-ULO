@@ -12,25 +12,35 @@
             }
             else
             {
-                <div class="table table-responsive table-striped">
-                    <div class="row header">
-                        <div class="col-md-2">Person</div>
-                        <div class="col-md-2">Answer</div>
-                        <div class="col-md-2">Date</div>
-                        <div class="col-md-3">Justification</div>
-                        <div class="col-md-3">Comments</div>
-                    </div>
+                <table class="table table-responsive table-striped documents-list" id="historyTable">
+                    <tr class="documents-heading-row">
+                        <th>
+                            Person
+                        </th>
+                        <th>
+                            Answer
+                        </th>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Justification
+                        </th>
+                        <th>
+                            Comments
+                        </th>
+                    </tr>
                     @foreach (var question in Model.Questions)
-                {
-                        <div class="row">
-                            <div class="col-md-2">@question.Username</div>
-                            <div class="col-md-2">@question.Answer</div>
-                            <div class="col-md-2">@question.CreatedDate.ToString("MM/dd/yyyy")</div>
-                            <div class="col-md-3">@question.Justification</div>
-                            <div class="col-md-3">@question.Comments</div>
-                        </div>
+                    {
+                        <tr>
+                            <td>@question.Username</td>
+                            <td>@question.Answer</td>
+                            <td>@GSA.UnliquidatedObligations.Web.PortalHelpers.ToLocalizedDisplayDateString(question.CreatedAtUtc) - @question.CreatedAtUtc</td>
+                            <td>@question.Justification</td>
+                            <td>@question.Comments</td>
+                        </tr>
                     }
-                </div>
+                </table>
             }
         </div>
     </div>

@@ -32,6 +32,19 @@ namespace GSA.UnliquidatedObligations.Web
         public static string AttachmentFileUploadAccept => Properties.Settings.Default.AttachmentFileUploadAccept;
         public static string AttachmentFileUploadAcceptMessage => Properties.Settings.Default.AttachmentFileUploadAcceptMessage;
 
+        public static string ToLocalizedDisplayDateString(this DateTime utc)
+        {
+            if (utc.Millisecond == 123)
+            {
+                Stuff.Noop();
+            }
+            if (utc.Kind == DateTimeKind.Unspecified)
+            {
+                utc = new DateTime(utc.Year, utc.Month, utc.Day, utc.Hour, utc.Minute, utc.Second, utc.Millisecond, DateTimeKind.Utc);
+            }
+            return utc.ToTimeZone(DisplayTimeZone).Date.ToString("MM/dd/yyyy");
+        }
+
         public static class TempDataKeys
         {
             public const string Attachments = "attachments";

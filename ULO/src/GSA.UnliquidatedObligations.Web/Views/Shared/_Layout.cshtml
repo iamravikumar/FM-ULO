@@ -1,5 +1,5 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Controllers
-@{ 
+@{
     var pageAlerts = ViewData["PageAlerts"] as IList<PageAlert> ?? new List<PageAlert>();
 }
 <!DOCTYPE html>
@@ -17,7 +17,7 @@
 <body>
     @Html.Partial("_Navigation")
 
-    <div class="container body-content" style="margin-top: 30px">
+    <div class="container-fluid body-content" style="margin-top: 30px">
 
         @if (pageAlerts.Count > 0)
         {
@@ -62,42 +62,44 @@
         }
 
         @if (ViewBag.PageTitle != null)
-            {
+        {
             <div class="row">
                 <div class="col-xs-12">
                     <h1>@ViewBag.PageTitle</h1>
                     @if (ViewBag.PageSubTitle != null)
-            {
+                    {
                         <p class="subheading">@ViewBag.PageSubTitle</p>
-        }
+                    }
                 </div>
             </div>
         }
         @RenderBody()
-        <hr />
-        <footer>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
             <div class="row">
                 <div class="col-sm-4">
                     &copy; @DateTime.Now.Year - ULO
                     @if (PortalHelpers.ShowSprintName)
                     {
-                    <text>
-                    - @PortalHelpers.SprintName
-                    </text>
+                        <text>
+                            - @PortalHelpers.SprintName
+                        </text>
                     }
                     else
                     {
                         <!--
-                    Sprint: @PortalHelpers.SprintName                            
-                        -->
+                        Sprint: @PortalHelpers.SprintName
+                            -->
                     }
                 </div>
                 <div class="col-sm-4 text-center">
-                        @Html.ActionLink("About", HomeController.ActionNames.About, HomeController.Name)
+                    @Html.ActionLink("About", HomeController.ActionNames.About, HomeController.Name)
                 </div>
             </div>
-        </footer>
-    </div>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/ULO")
