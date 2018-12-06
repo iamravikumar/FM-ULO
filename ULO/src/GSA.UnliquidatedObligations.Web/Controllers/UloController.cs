@@ -5,6 +5,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
+using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
@@ -60,30 +61,40 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
 
+        private void PopulateTabsIntoViewBag(IEnumerable<WorkflowListTab> tabs)
+        {
+            var items = (tabs ?? WorkflowListTab.None).ToList();
+            if (items.Count > 0 && !items.Exists(z => z.IsCurrent))
+            {
+                (items.FirstOrDefault(z => z.ItemCount > 0) ?? items.First()).IsCurrent = true;
+            }
+            ViewBag.Tabs = items;
+        }
+
         private void PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(IQueryable<Workflow> workflows)
         {
             var dbt = new RequestForReassignmentsController.DetailsBulkToken(CurrentUser, this.DB, workflows);
             ViewBag.DetailsBulkToken = dbt;
         }
 
-        private void PopulateWorkflowDescriptionIntoViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType, string mostRecentNonReassignmentAnswer)
+        private void PopulateWorkflowDescriptionIntoViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType, string mostRecentNonReassignmentAnswer, string mostRecentRealAnswer)
         {
             ViewBag.JustificationByKey = workflowDescription.GetJustificationByKey();
             ViewBag.WorkflowDescription = workflowDescription;
             var wawa = workflowDescription.Activities.FirstOrDefault(a => a.WorkflowActivityKey == wf.CurrentWorkflowActivityKey) as WebActionWorkflowActivity;
             var d = new Dictionary<string, QuestionChoice>();
             ViewBag.QuestionChoiceByQuestionChoiceValue = d;
-            wawa?.QuestionChoices?.WhereMostApplicable(docType, mostRecentNonReassignmentAnswer).ForEach(z => d[z.Value] = z);
+            wawa?.QuestionChoices?.WhereMostApplicable(docType, mostRecentNonReassignmentAnswer, mostRecentRealAnswer).ForEach(z => d[z.Value] = z);
         }
         private void PopulateViewInfoIntoViewBag(IEnumerable<Workflow> workflows)
         {
             var wfs = workflows.ToList();
             var ids = wfs.Select(z => z.WorkflowId).ToList();
             ViewBag.ViewDateByWorkflowId = (from v in DB.MostRecentWorkflowViews
-                                        where ids.Contains(v.WorkflowId) && v.UserId == CurrentUserId
-                                        select new { v.WorkflowId, v.ActionAtUtc, v.ViewAction }).
+                                            where ids.Contains(v.WorkflowId) && v.UserId == CurrentUserId
+                                            select new { v.WorkflowId, v.ActionAtUtc, v.ViewAction }).
                          ToList().
-                         Where(z => z.ViewAction == WorkflowView.CommonActions.View).
+                         Where(z => z.ViewAction == WorkflowView.CommonActions.Opened || z.ViewAction == WorkflowView.CommonActions.Seen).
                          ToDictionaryOnConflictKeepLast(z => z.WorkflowId, z => z.ActionAtUtc);
         }
 
@@ -91,33 +102,65 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public ActionResult Index()
             => RedirectToAction(ActionNames.MyTasks);
 
-        private const string MyTasksReviewStatusColumn = "UnliquidatedObligation.Status";
-
         [ActionName(ActionNames.MyTasks)]
         [Route("ulos/myTasks")]
-        public async Task<ActionResult> MyTasks(string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<ActionResult> MyTasks(string t, string sortCol, string sortDir, int? page, int? pageSize)
         {
             SetNoDataMessage(NoDataMessages.NoTasks);
 
-            var workflows = (IQueryable<Workflow>)DB.Workflows;
-            sortCol = sortCol ?? MyTasksReviewStatusColumn;
-            if (sortCol == MyTasksReviewStatusColumn)
+            var workflows = DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists();
+
+            var countByKey = new Dictionary<string, int>(workflows.GroupBy(w => w.CurrentWorkflowActivityKey).Select(g => new { CurrentWorkflowActivityKey = g.Key, Count = g.Count() }).ToDictionaryOnConflictKeepLast(z => z.CurrentWorkflowActivityKey, z => z.Count), Comparers.CaseInsensitiveStringComparer);
+
+            var keyByName = Cacher.FindOrCreateValWithSimpleKey("workflowKeyByActivityNameForAllActiveWorkflows", () => {
+                var d = new Dictionary<string, string>(Comparers.CaseInsensitiveStringComparer);
+                foreach (var wfd in DB.WorkflowDefinitions.Where(z => z.IsActive))
+                {
+                    if (wfd.Description == null || wfd.Description.Activities == null) continue;
+                    foreach (var a in wfd.Description.Activities)
+                    {
+                        d[a.ActivityName] = a.WorkflowActivityKey;
+                    }
+                }
+                return d;
+            }, UloHelpers.MediumCacheTimeout);
+
+            var tabs = new List<WorkflowListTab>();
+            foreach (var name in CSV.ParseLine(Properties.Settings.Default.MyTasksTabsCsv))
             {
-                workflows = ApplyBrowse(
-                    workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
+                var tab = new WorkflowListTab { TabName = StringHelpers.TrimOrNull(name) };
+                if (tab.TabName == null) continue;
+                tab.TabKey = keyByName.GetValue(tab.TabName);
+                if (tab.TabKey == null) continue;
+                tab.ItemCount = countByKey.GetValue(tab.TabKey);
+                tab.IsCurrent = tab.TabKey == t;
+                tabs.Add(tab);
+            }
+
+            var items = DB.ListableWorkflows(CurrentUserId, CurrentUserId);
+            if (t != null)
+            {
+                items = items.Where(z => z.CurrentWorkflowActivityKey == t);
+            }
+
+            sortCol = sortCol ?? nameof(ListableWorkflows_Result.Status);
+            if (sortCol == nameof(ListableWorkflows_Result.Status))
+            {
+                items = ApplyBrowse(
+                    items,
                     sortCol,
                     CSV.ParseLine(Properties.Settings.Default.ReviewStatusOrdering),
                     sortDir, page, pageSize);
             }
             else
             {
-                workflows = ApplyBrowse(
-                    workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists().ApplyStandardIncludes(),
+                items = ApplyBrowse(
+                    items,
                     sortCol, sortDir, page, pageSize);
             }
 
-            PopulateViewInfoIntoViewBag(workflows);
-            return View(workflows);
+            PopulateTabsIntoViewBag(tabs);
+            return View(items);
         }
 
         private bool BelongsToMyUnassignmentGroup(string ownerUserId, int regionId)
@@ -137,7 +180,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
             SetNoDataMessage(NoDataMessages.NoUnassigned);
-            ViewBag.AllAreUnassigned = true;         
+            ViewBag.AllAreUnassigned = true;
 
             var predicate = PredicateBuilder.Create<Workflow>(wf => false);
 
@@ -187,7 +230,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             SetNoDataMessage(NoDataMessages.NoReassignments);
             ViewBag.ShowReassignButton = true;
-            var regionIds = (IList<int?>) new List<int?>();
+            var regionIds = (IList<int?>)new List<int?>();
             var reassignGroupUserId = PortalHelpers.ReassignGroupUserId;
 
             foreach (var g in GetUserGroups(CurrentUserId))
@@ -199,7 +242,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             AddPageAlert($"You're not a member of the reassignments group and will not see any items.", false, PageAlert.AlertTypes.Warning);
 
-            Browse:
+Browse:
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId)).WhereReviewExists()
                 .ApplyStandardIncludes(),
@@ -227,17 +270,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.Search)]
         [Route("ulos/search")]
-        public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasons, bool? valid, string status, int? reviewId, bool? reassignableByMe,
+        public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int[] region, int[] zone, string fund, string[] baCode, string pegasysTitleNumber, string pegasysVendorName, string[] docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string[] reasons, bool[] valid, string[] status, int[] reviewId, bool? reassignableByMe,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             SetNoDataMessage(NoDataMessages.NoSearchResults);
             var wfPredicate = PortalHelpers.GenerateWorkflowPredicate(this.User, uloId, pegasysDocumentNumber, organization, region, zone, fund,
               baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId, reassignableByMe);
-            bool hasFilters = true;
-            if (wfPredicate == null)
+            bool hasFilters = wfPredicate != null || Request["f"] != null;
+            if (!hasFilters)
             {
-                hasFilters = false;
                 wfPredicate = PredicateBuilder.Create<Workflow>(wf => false);
+            }
+            else if (wfPredicate == null)
+            {
+                wfPredicate = PredicateBuilder.Create<Workflow>(wf => true);
             }
 
             var workflows = ApplyBrowse(
@@ -260,7 +306,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var statuses = Cacher.FindOrCreateValWithSimpleKey(
                 "AllWorkflowStatusNames",
-                () => 
+                () =>
                 {
                     var names = new List<string>();
                     foreach (var wd in DB.WorkflowDefinitions.Where(wfd => wfd.IsActive == true))
@@ -274,9 +320,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             PopulateViewInfoIntoViewBag(workflows);
 
             return View(
-                "~/Views/Ulo/Search/Index.cshtml", 
+                "~/Views/Ulo/Search/Index.cshtml",
                 new FilterViewModel(
-                    workflows, 
+                    workflows,
                     PortalHelpers.CreateDocumentTypeSelectListItems().Select(docType),
                     PortalHelpers.CreateZoneSelectListItems().Select(zone),
                     PortalHelpers.CreateRegionSelectListItems().Select(region),
@@ -309,10 +355,43 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 UloHelpers.MediumCacheTimeout
                 );
 
+
+        [HttpGet]
+        [Route("ulos/{uloId}/notes")]
+        public async Task<JsonResult> GetNotesAsync(int uloId)
+        {
+            var notes = (await DB.Notes.Include(z=>z.AspNetUser).Where(z => z.UloId == uloId).ToListAsync()).OrderByDescending(z=>z.CreatedAtUtc).Select(z=>new { z.NoteId, CreatedBy = z.AspNetUser.UserName, z.Body, CreatedAt = z.CreatedAtUtc.ToLocalizedDisplayDateString(true) }).ToList();
+            return Json(notes, JsonRequestBehavior.AllowGet);
+        }
+
+        private class CreateNoteData
+        {
+            [JsonProperty("body")]
+            public string Body { get; set; }
+        }
+
+
+        [HttpPost]
+        [Route("ulos/{uloId}/notes/create")]
+        public async Task<JsonResult> CreateNoteAsync(int uloId)
+        {
+            try
+            {
+                var d = this.Request.BodyAsJsonObject<CreateNoteData>();
+                DB.Notes.Add(new Note { UloId = uloId, Body = d.Body, UserId = CurrentUserId, CreatedAtUtc = DateTime.UtcNow });
+                await DB.SaveChangesAsync();
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                return base.CreateJsonError(ex);
+            }
+        }
+
         [Route("ulos/{uloId}/{workflowId}", Order = 1)]
         [Route("ulos/{uloId}", Order = 2)]
         [ActionName(ActionNames.Details)]
-        public async Task<ActionResult> Details(int uloId, int workflowId=0)
+        public async Task<ActionResult> Details(int uloId = 0, int workflowId = 0)
         {
             //TODO: check if current user is able to view
             var ulo = await DB.UnliquidatedObligations.
@@ -321,10 +400,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 Include(u => u.Region.Zone).
                 WhereReviewExists().
                 FirstOrDefaultAsync(u => u.UloId == uloId);
-            if (ulo==null) return HttpNotFound();
-            if (workflowId==0)
+
+            if (ulo == null) return HttpNotFound();
+            if (workflowId == 0)
             {
-                workflowId = (await DB.Workflows.OrderByDescending(z=>z.WorkflowId).FirstOrDefaultAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
+                workflowId = (await DB.Workflows.OrderByDescending(z => z.WorkflowId).FirstOrDefaultAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
                 return RedirectToAction(ActionNames.Details, new { uloId, workflowId });
             }
 
@@ -343,16 +423,46 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var otherDocs = DB.GetUniqueMissingLineageDocuments(workflow, others.Select(o => o.WorkflowId));
 
-            DB.WorkflowViews.Add(new WorkflowView { ActionAtUtc = DateTime.UtcNow, UserId = CurrentUserId, ViewAction = WorkflowView.CommonActions.View, WorkflowId=workflow.WorkflowId });
+            DB.WorkflowViews.Add(new WorkflowView { ActionAtUtc = DateTime.UtcNow, UserId = CurrentUserId, ViewAction = WorkflowView.CommonActions.Opened, WorkflowId = workflow.WorkflowId });
             await DB.SaveChangesAsync();
 
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, otherDocs, belongs));
         }
 
+        private class MarkData
+        {
+            [JsonProperty("workflowIds")]
+            public int[] WorkflowIds { get; set; }
+
+            [JsonProperty("viewed")]
+            public bool Viewed { get; set; }
+        }
+
+
+        [HttpPost]
+        [Route("ulo/mark")]
+        public async Task<JsonResult> Mark()
+        {
+            var md = this.Request.BodyAsJsonObject<MarkData>();
+            var ret = new List<int>();
+            if (md != null && md.WorkflowIds != null && md.WorkflowIds.Length > 0)
+            {
+                var viewAction = md.Viewed ? WorkflowView.CommonActions.Seen : WorkflowView.CommonActions.Unread;
+                foreach (var workflowId in md.WorkflowIds.Distinct())
+                {
+                    DB.WorkflowViews.Add(new WorkflowView { ActionAtUtc = DateTime.UtcNow, UserId = CurrentUserId, ViewAction = viewAction, WorkflowId = workflowId });
+                    ret.Add(workflowId);
+                }
+                await DB.SaveChangesAsync();
+            }
+            return Json(ret, JsonRequestBehavior.DenyGet);
+        }
+
+
         private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
         {
             var workflowDescription = await Manager.GetWorkflowDescriptionAsync(wf);
-            PopulateWorkflowDescriptionIntoViewBag(workflowDescription, wf, wf.UnliquidatedObligation.DocType, wf.MostRecentNonReassignmentAnswer);
+            PopulateWorkflowDescriptionIntoViewBag(workflowDescription, wf, wf.UnliquidatedObligation.DocType, wf.MostRecentNonReassignmentAnswer, wf.MostRecentRealAnswer);
             return workflowDescription;
         }
 

@@ -1,5 +1,5 @@
 ﻿function debugAlert(msg) {
-//    alert("debugAlert: "+msg);
+    //    alert("debugAlert: "+msg);
 }
 
 function popupConfirmHide() {
@@ -58,11 +58,40 @@ $(document).ready(function () {
             }
 
             var message = j.attr("confirmMessage");
-            $('#popup-confirm-message').text(message==null||message==""?"Are you sure?":message);
+            $('#popup-confirm-message').text(message == null || message == "" ? "Are you sure?" : message);
 
             if (!confirm(message)) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
+            }
+        });
+    });
+
+    $(".advanced-search-settings select").multiselect({
+        maxHeight: 320,
+        buttonWidth: '175px',
+        numberDisplayed: 1,
+        includeSelectAllOption: true
+    });
+
+    $("form").submit(function (a) {
+        var formEl = a.target;
+        $(formEl).find("select").each(function (n, el) {
+            if (el.multiple) {
+                var enabledCnt = 0;
+                var selectedCnt = 0;
+                var jel = $(el);
+                jel.find("option").each(function (fdsfdsafsdafs, opt) {
+                    enabledCnt += opt.disabled ? 0 : 1;
+                    selectedCnt += opt.selected ? 1 : 0;
+                });
+                if (enabledCnt == selectedCnt && selectedCnt > 15) {
+                    jel.find("option").each(function (fdsfdsafsdafs, opt) {
+                        if (!opt.disabled) {
+                            opt.selected = false;
+                        }
+                    });
+                }
             }
         });
     });
@@ -115,7 +144,7 @@ function selectionCountChanged() {
     if (checkedCount == 0) {
         sel = ".selectionCount0";
     }
-    else if (checkedCount == 0) {
+    else if (checkedCount == 1) {
         sel = ".selectionCount1";
     }
     else {
@@ -134,19 +163,66 @@ function getSelections(attrName) {
     return selections;
 }
 
+function markViewed(ids, view) {
+    for (var z = 0; z < ids.length; ++z) {
+        var id = parseInt(ids[z]);
+        ids[z] = id;
+        var jel = $("tr[data-id='" + id + "']");
+        if (view) {
+            jel.addClass("viewed");
+        }
+        else {
+            jel.removeClass("viewed");
+        }
+    }
+    markAsViewedAjax(ids, view);
+    return false;
+}
+
+function markAsViewedAjax(workflowIds, viewed, onSuccess) {
+    $.ajax({
+        type: "POST",
+        url: "/ulo/mark",
+        data: JSON.stringify({ workflowIds: workflowIds, viewed: viewed }),
+        success: function (result) {
+            if (onSuccess != null) {
+                onSuccess(result);
+            }
+        },
+        error: standardAjaxErrorHandler
+    });
+}
+
 function getCommonReassignees(workflowIds, onSuccess) {
     $.ajax({
         type: "POST",
         url: "/rfr/getCommonReassignees",
         data: JSON.stringify(workflowIds),
         success: function (result) {
-            onSuccess(result);
+            if (onSuccess != null) {
+                onSuccess(result);
+            }
         },
-        error: function (xhr, status, p3, p4) {
-            var err = "Error " + " " + status + " " + p3 + " " + p4;
-            if (xhr.responseText && xhr.responseText[0] == "{")
-                err = JSON.parse(xhr.responseText).Message;
-            console.log(err);
-        }
+        error: standardAjaxErrorHandler
     });
+}
+
+function getNotes(uloId, onSuccess) {
+    $.ajax({
+        type: "GET",
+        url: "/ulos/" + uloId + "/notes",
+        success: function (result) {
+            if (onSuccess != null) {
+                onSuccess(result);
+            }
+        },
+        error: standardAjaxErrorHandler
+    });
+}
+
+function standardAjaxErrorHandler(xhr, status, p3, p4) {
+    var err = "Error " + " " + status + " " + p3 + " " + p4;
+    if (xhr.responseText && xhr.responseText[0] == "{")
+        err = JSON.parse(xhr.responseText).Message;
+    console.log(err);
 }

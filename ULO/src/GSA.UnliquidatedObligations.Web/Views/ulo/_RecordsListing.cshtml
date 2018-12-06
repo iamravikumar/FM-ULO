@@ -1,4 +1,5 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@using GSA.UnliquidatedObligations.Web.Models
 @using GSA.UnliquidatedObligations.BusinessLayer.Data
 @using System.Linq
 @model IEnumerable<Workflow>
@@ -18,106 +19,136 @@
         hasData = (int)ViewBag.TotalItemCount > 0;
     }
     var viewDateByWorkflowId = ViewBag.ViewDateByWorkflowId as IDictionary<int, DateTime> ?? new Dictionary<int, DateTime>();
+    var tabs = ViewBag.Tabs as IList<WorkflowListTab> ?? WorkflowListTab.None;
+    var currentTab = tabs.FirstOrDefault(z => z.IsCurrent);
+    var showReviewStatusColumn = tabs.Count == 0 || currentTab.IsAggregateTab;
+    var showSelectors = true;
 }
+
+@if (tabs.Count > 0)
+{
+    <ul class="nav nav-tabs">
+        @foreach (var tab in tabs)
+        {
+            <li class="@(tab.IsCurrent?"active":"")"><a href="?t=@tab.TabKey">@tab.TabName (@tab.ItemCount)</a></li>
+        }
+    </ul>
+}
+
 @if (!hasData)
 {
     <div class="noDataMessage">@noDataMessage</div>
 }
 else
 {
-<table class="table table-responsive active-workflows">
-    <tr>
-        <th>
-            @Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")
-        </th>
-        @*
-    <th>
-        @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review ID")
-    </th>
-        *@
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Review.ReviewName, overrideDisplayName: "Review")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionNumber, overrideDisplayName: "Region")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Review Status")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.TotalLine, overrideDisplayName: "Amount")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
-        </th>
-        @if (showReassignmentButton)
-        {
-            <th></th>
-        }
-    </tr>
 
-    @foreach (var item in Model)
-    {
-        <tr class="active-workflows-record @(viewDateByWorkflowId.ContainsKey(item.WorkflowId)?"viewed":"")" data-id="@item.WorkflowId">
-            <td>
-                @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
-            </td>
-            @*
-    <td>
-        @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
-    </td>
-            *@
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Review.ReviewName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
-            </td>
+    <div class="col-sm-12" style="padding-top: 10px; text-align: right">
+        <strong>Batch Actions:</strong>
+        <button disabled="disabled" class="btn btn-primary master request-active selectionCount1 selectionCountMultiple" onclick="markViewed(getSelections('data-id'), false)" data-target="#bulkReassignmentDialog">Mark as unread</button>
+        <button disabled="disabled" class="btn btn-primary master request-active selectionCount1 selectionCountMultiple" onclick="markViewed(getSelections('data-id'), true)" data-target="#bulkReassignmentDialog">Mark as read</button>
+    </div>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
-            </td>
-            <td>
-                @Html.Currency(Convert.ToDecimal(item.UnliquidatedObligation.TotalLine))
-            </td>
-            <td>
-                @Html.DisplayIsValid(item.UnliquidatedObligation.Valid)
-            </td>
-            <td>
+    <table class="table table-responsive active-workflows">
+        <thead>
+            <tr>
+                @if (showSelectors)
+                {
+                    <th><input type="checkbox" id="allSelector" onclick="allSelectorClicked()" /></th>
+                }
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
+                </th>
+                @*
+                    <th>
+                        @Html.SortableHeaderFor(z => z.UnliquidatedObligation.ReviewId, overrideDisplayName: "Review ID")
+                    </th>
+                *@
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Review.ReviewName, overrideDisplayName: "Review")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionNumber, overrideDisplayName: "Region")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Prog, overrideDisplayName: "BA Code")
+                </th>
+                @if (showReviewStatusColumn)
+                {
+                    <th>
+                        @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Status, overrideDisplayName: "Review Status")
+                    </th>
+                }
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Organization, overrideDisplayName: "Org")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.TotalLine, overrideDisplayName: "Amount")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Valid, overrideDisplayName: "Valid")
+                </th>
                 @if (showReassignmentButton)
                 {
-                    int? rfrId = allAreUnassigned ? null : item.GetReassignmentRequest()?.RequestForReassignmentID;
-                    if (allAreUnassigned || rfrId != null)
-                    {
-                        rfrIdByWorkflow[item] = rfrId;
-                        var modalId = "#" + item.WorkflowId + "RequestForReassignModal";
-                        <button type="button" class="btn btn-primary master request-active" data-toggle="modal" data-target="@modalId">
-                            Reassign
-                        </button>
-                    }
+                    <th></th>
                 }
-            </td>
-        </tr>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr class="active-workflows-record @(viewDateByWorkflowId.ContainsKey(item.WorkflowId)?"viewed":"")" data-id="@item.WorkflowId">
+                @if (showSelectors)
+                {
+                    <td><input type="checkbox" class="itemSelector" onclick="selectorClicked()" value="1" data-id="@item.WorkflowId" /></td>
+                }
+                <td>
+                    @Html.ActionLink(item.UnliquidatedObligation.PdnWithInstance, UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+                </td>
+                @*
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnliquidatedObligation.ReviewId)
+                    </td>
+                *@
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Review.ReviewName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.RegionNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Prog)
+                </td>
+                @if (showReviewStatusColumn)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Status)
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Organization)
+                </td>
+                <td>
+                    @Html.Currency(Convert.ToDecimal(item.UnliquidatedObligation.TotalLine))
+                </td>
+                <td>
+                    @Html.DisplayIsValid(item.UnliquidatedObligation.Valid)
+                </td>
+                <td>
+                    @if (showReassignmentButton)
+                    {
+                        int? rfrId = allAreUnassigned ? null : item.GetReassignmentRequest()?.RequestForReassignmentID;
+                        if (allAreUnassigned || rfrId != null)
+                        {
+                            rfrIdByWorkflow[item] = rfrId;
+                            var modalId = "#" + item.WorkflowId + "RequestForReassignModal";
+                            <button type="button" class="btn btn-primary master request-active" data-toggle="modal" data-target="@modalId">
+                                Reassign
+                            </button>
+                        }
                     }
-</table>
+                </td>
+            </tr>
+        }
+    </table>
     if (showReassignmentButton && rfrIdByWorkflow.Count > 0)
     {
         var bulkToken = ViewBag.DetailsBulkToken as RequestForReassignmentsController.DetailsBulkToken;
@@ -128,5 +159,5 @@ else
             Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = wf.WorkflowId, uloRegionId = wf.UnliquidatedObligation.RegionId, isAdmin = true, id = rfrId, bulkToken = bulkToken });
         }
     }
-@Html.Partial("_PaginationPartial")
+    @Html.Partial("_PaginationPartial")
 }

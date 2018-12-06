@@ -16,5 +16,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer
 
         public static string ToRfc8601(this DateTime dt)
             => dt.ToUniversalTime().ToString("o");
+
+        internal static string CreatePdnWithInstance(string pegasysDocumentNumber, int? pegasysDocumentNumberInstance)
+            => pegasysDocumentNumberInstance.HasValue ? $"{pegasysDocumentNumber}.{pegasysDocumentNumberInstance}" : $"{pegasysDocumentNumber}";
     }
 }

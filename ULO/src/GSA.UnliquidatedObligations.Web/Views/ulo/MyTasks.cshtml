@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.ListableWorkflows_Result>
 @using GSA.UnliquidatedObligations.Web;
 
 @{
@@ -6,4 +6,4 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@Html.Partial("~/Views/Ulo/_RecordsListing.cshtml", Model)
+@Html.Partial("~/Views/Ulo/_ListableWorkflowsListing.cshtml", Model)

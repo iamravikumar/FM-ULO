@@ -12,7 +12,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.6.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -134,7 +134,6 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"
-          *,*
           AR,AR
           CL,CL
           CT,CT
@@ -220,15 +219,6 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public bool ShowSprintName {
             get {
                 return ((bool)(this["ShowSprintName"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Eastern Standard Time")]
-        public string TimezoneId {
-            get {
-                return ((string)(this["TimezoneId"]));
             }
         }
         
@@ -437,6 +427,24 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public int BatchAssignmentNotificationEmailTemplateId {
             get {
                 return ((int)(this["BatchAssignmentNotificationEmailTemplateId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Central Standard Time")]
+        public string TimezoneId {
+            get {
+                return ((string)(this["TimezoneId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Region Review,Region Approval,BGP Review 1,BGP Review 2,Action Needed,Deobligate")]
+        public string MyTasksTabsCsv {
+            get {
+                return ((string)(this["MyTasksTabsCsv"]));
             }
         }
     }

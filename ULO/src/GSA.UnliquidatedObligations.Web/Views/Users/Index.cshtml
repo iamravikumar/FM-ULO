@@ -37,17 +37,17 @@
                 <label for="region">Region:</label>
             </div>
             <div class="col-sm-2">
-                @Html.DropDownList("region", PortalHelpers.Select(PortalHelpers.CreateRegionSelectListItems(true), Context.Request["region"]))
+                @Html.ListBox("region", PortalHelpers.Select(PortalHelpers.CreateRegionSelectListItems(), Context.Request["region"]))
             </div>
             <div class="col-sm-2">
                 <label for="role">Role:</label>
             </div>
             <div class="col-sm-2">
-                @Html.DropDownList("role", PortalHelpers.Select(PortalHelpers.AllItems(PortalHelpers.CreateAllGroupNamesSelectListItems()), Context.Request["role"]))
+                @Html.ListBox("role", PortalHelpers.Select(PortalHelpers.CreateAllGroupNamesSelectListItems(), Context.Request["role"]))
             </div>
         </div>
         <div class="row">
-            <button id="filterWorkflows" class="btn btn-primary">
+            <button id="applyFilters" class="btn btn-primary">
                 Apply Filters
             </button>
             <button id="clearFilters" class="btn" filterSelector=".advanced-search-settings">

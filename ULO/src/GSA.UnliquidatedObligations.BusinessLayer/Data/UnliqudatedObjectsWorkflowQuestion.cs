@@ -29,6 +29,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public byte[] WorkflowRowVersion { get; set; }
         public System.DateTime CreatedAtUtc { get; set; }
         public string JustificationKey { get; set; }
+        public Nullable<bool> IsAnswerReassignment { get; set; }
+        public Nullable<bool> IsAnswerQuestionComment { get; set; }
+        public Nullable<bool> IsAnswerReal { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

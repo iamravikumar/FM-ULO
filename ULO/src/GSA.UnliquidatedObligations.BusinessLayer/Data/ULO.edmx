@@ -130,6 +130,8 @@
           <Property Name="UloId" Type="int" Nullable="false" />
           <Property Name="Body" Type="nvarchar(max)" />
           <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
+          <Property Name="DeletedAtUtc" Type="datetime" />
+          <Property Name="DeletedByUserId" Type="nvarchar" MaxLength="128" />
         </EntityType>
         <EntityType Name="PdnAttributes">
           <Key>
@@ -192,6 +194,9 @@
           <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
           <Property Name="JustificationKey" Type="varchar" MaxLength="80" />
           <Property Name="Comments" Type="nvarchar" MaxLength="4000" />
+          <Property Name="IsAnswerReassignment" Type="bit" StoreGeneratedPattern="Computed" />
+          <Property Name="IsAnswerQuestionComment" Type="bit" StoreGeneratedPattern="Computed" />
+          <Property Name="IsAnswerReal" Type="bit" StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="UnliquidatedObligations">
           <Key>
@@ -264,6 +269,7 @@
           <Property Name="CardholderAlias" Type="varchar" MaxLength="50" />
           <Property Name="CardholderEmail" Type="varchar" MaxLength="254" />
           <Property Name="CardholderUserId" Type="nvarchar" MaxLength="128" />
+          <Property Name="PegasysDocumentNumberInstance" Type="int" />
         </EntityType>
         <EntityType Name="UserUsers">
           <Key>
@@ -589,6 +595,18 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Documents">
+              <PropertyRef Name="DeletedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Notes__DeletedBy__24134F1B">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+          <End Role="Notes" Type="Self.Notes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Notes">
               <PropertyRef Name="DeletedByUserId" />
             </Dependent>
           </ReferentialConstraint>
@@ -1037,6 +1055,60 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
         <Function Name="GetUloSummariesByPdn" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="pegasysDocumentNumber" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="ListableWorkflows" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ownerId" Type="nvarchar" Mode="In" />
+          <Parameter Name="viewerId" Type="nvarchar" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="WorkflowId" Type="int" Nullable="false" />
+                <Property Name="WorkflowKey" Type="varchar" MaxLength="80" Nullable="false" />
+                <Property Name="Version" Type="int" Nullable="false" />
+                <Property Name="CurrentWorkflowActivityKey" Type="varchar" MaxLength="80" Nullable="false" />
+                <Property Name="OwnerUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+                <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" />
+                <Property Name="CurrentActivityEnteredAtUtc" Type="datetime" Nullable="false" />
+                <Property Name="TargetUloId" Type="int" Nullable="false" />
+                <Property Name="ExpectedDurationInSeconds" Type="bigint" />
+                <Property Name="DueAtUtc" Type="datetime" />
+                <Property Name="WorkflowRowVersion" Type="timestamp" Nullable="false" />
+                <Property Name="Answer" Type="varchar" MaxLength="100" />
+                <Property Name="AnsweredAtUtc" Type="datetime" />
+                <Property Name="AnsweredByUserName" Type="nvarchar" MaxLength="256" />
+                <Property Name="AnsweredByUserId" Type="nvarchar" MaxLength="128" />
+                <Property Name="ViewedAtUtc" Type="datetime" />
+                <Property Name="IsRead" Type="bit" />
+                <Property Name="ReviewId" Type="int" Nullable="false" />
+                <Property Name="ReviewName" Type="varchar" MaxLength="100" />
+                <Property Name="RegionId" Type="int" Nullable="false" />
+                <Property Name="RegionNumber" Type="varchar" MaxLength="10" Nullable="false" />
+                <Property Name="RegionName" Type="varchar" MaxLength="100" Nullable="false" />
+                <Property Name="ZoneId" Type="int" Nullable="false" />
+                <Property Name="ZoneShortName" Type="varchar" MaxLength="100" />
+                <Property Name="ZoneName" Type="varchar" MaxLength="100" Nullable="false" />
+                <Property Name="PegasysDocumentNumber" Type="varchar" MaxLength="50" />
+                <Property Name="PegasysDocumentNumberInstance" Type="int" />
+                <Property Name="BaCode" Type="varchar" MaxLength="50" />
+                <Property Name="Status" Type="varchar" MaxLength="50" />
+                <Property Name="Org" Type="varchar" MaxLength="50" />
+                <Property Name="Amount" Type="money" />
+                <Property Name="Valid" Type="bit" />
+                <Property Name="Fund" Type="varchar" MaxLength="50" />
+                <Property Name="PegasysTitleNumber" Type="varchar" MaxLength="100" />
+                <Property Name="VendorName" Type="varchar" MaxLength="100" />
+                <Property Name="ContractingOfficersName" Type="varchar" MaxLength="50" />
+                <Property Name="AwardNbr" Type="varchar" MaxLength="50" />
+                <Property Name="ReasonIncludedInReview" Type="nvarchar" MaxLength="500" />
+                <Property Name="AssignedToUserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+                <Property Name="AssignedtoEmail" Type="nvarchar" MaxLength="256" />
+                <Property Name="RequestForReassignmentId" Type="int" />
+                <Property Name="SuggestedReviewerUseId" Type="nvarchar" MaxLength="128" />
+                <Property Name="SuggestedReviewerUserName" Type="nvarchar" MaxLength="256" />
+                <Property Name="NoteCnt" Type="int" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
         <Function Name="SoftDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="tableKey" Type="nvarchar" Mode="In" />
           <Parameter Name="entityKey" Type="nvarchar" Mode="In" />
@@ -1155,6 +1227,10 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <AssociationSet Name="FK__Documents__Delet__125EB334" Association="Self.FK__Documents__Delet__125EB334">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Documents" EntitySet="Documents" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Notes__DeletedBy__24134F1B" Association="Self.FK__Notes__DeletedBy__24134F1B">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Notes" EntitySet="Notes" />
           </AssociationSet>
           <AssociationSet Name="FK__Notes__ParentNot__52793849" Association="Self.FK__Notes__ParentNot__52793849">
             <End Role="Notes" EntitySet="Notes" />
@@ -1523,6 +1599,14 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             <End Role="WorkflowView" EntitySet="WorkflowViews" />
           </AssociationSet>
           <EntitySet Name="MostRecentWorkflowViews" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.MostRecentWorkflowView" />
+          <FunctionImport Name="ListableWorkflows" IsComposable="true" ReturnType="Collection(GSA.UnliquidatedObligations.BusinessLayer.Data.ListableWorkflows_Result)">
+            <Parameter Name="ownerId" Mode="In" Type="String" />
+            <Parameter Name="viewerId" Mode="In" Type="String" />
+          </FunctionImport>
+          <AssociationSet Name="FK__Notes__DeletedBy__24134F1B" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__DeletedBy__24134F1B">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Note" EntitySet="Notes" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -1602,6 +1686,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="Reviews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Reviews__Deleted__3D491139" FromRole="AspNetUser" ToRole="Review" />
           <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Cardh__2CDD9F46" FromRole="AspNetUser" ToRole="UnliquidatedObligation" />
           <NavigationProperty Name="WorkflowViews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__UserI__7B113988" FromRole="AspNetUser" ToRole="WorkflowView" />
+          <NavigationProperty Name="Notes1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__DeletedBy__24134F1B" FromRole="AspNetUser" ToRole="Note" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -1678,6 +1763,8 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="Notes1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__ParentNot__52793849" FromRole="Note" ToRole="Note1" />
           <NavigationProperty Name="Note1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__ParentNot__52793849" FromRole="Note1" ToRole="Note" />
           <NavigationProperty Name="UnliquidatedObligation" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__UloId__5555A4F4" FromRole="Note" ToRole="UnliquidatedObligation" />
+          <Property Name="DeletedByUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__DeletedBy__24134F1B" FromRole="Note" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="ReportDefinition">
           <Key>
@@ -1739,6 +1826,9 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToAspNetUsers" FromRole="UnliqudatedObjectsWorkflowQuestion" ToRole="AspNetUser" />
           <NavigationProperty Name="RequestForReassignments" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__RequestFo__Unliq__74444068" FromRole="UnliqudatedObjectsWorkflowQuestion" ToRole="RequestForReassignment" />
           <NavigationProperty Name="Workflow" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_UnliqudatedObjectsWorkflowQuestions_ToWorkflows" FromRole="UnliqudatedObjectsWorkflowQuestion" ToRole="Workflow" />
+          <Property Name="IsAnswerReassignment" Type="Boolean" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="IsAnswerQuestionComment" Type="Boolean" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="IsAnswerReal" Type="Boolean" annotation:StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="UserUser">
           <Key>
@@ -2378,6 +2468,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="CardholderEmail" Type="String" MaxLength="254" FixedLength="false" Unicode="false" />
           <Property Name="CardholderUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Cardh__2CDD9F46" FromRole="UnliquidatedObligation" ToRole="AspNetUser" />
+          <Property Name="PegasysDocumentNumberInstance" Type="Int32" />
         </EntityType>
         <Association Name="FK__Notes__UloId__5555A4F4">
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
@@ -2587,6 +2678,64 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="ActionAtUtc" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ViewAction" Type="String" Nullable="false" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
+        <ComplexType Name="ListableWorkflows_Result">
+          <Property Type="Int32" Name="WorkflowId" Nullable="false" />
+          <Property Type="String" Name="WorkflowKey" Nullable="false" MaxLength="80" />
+          <Property Type="Int32" Name="Version" Nullable="false" />
+          <Property Type="String" Name="CurrentWorkflowActivityKey" Nullable="false" MaxLength="80" />
+          <Property Type="String" Name="OwnerUserId" Nullable="false" MaxLength="128" />
+          <Property Type="DateTime" Name="CreatedAtUtc" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="CurrentActivityEnteredAtUtc" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="TargetUloId" Nullable="false" />
+          <Property Type="Int64" Name="ExpectedDurationInSeconds" Nullable="true" />
+          <Property Type="DateTime" Name="DueAtUtc" Nullable="true" Precision="23" />
+          <Property Type="Binary" Name="WorkflowRowVersion" Nullable="false" MaxLength="8" />
+          <Property Type="String" Name="Answer" Nullable="true" MaxLength="100" />
+          <Property Type="DateTime" Name="AnsweredAtUtc" Nullable="true" Precision="23" />
+          <Property Type="String" Name="AnsweredByUserName" Nullable="true" MaxLength="256" />
+          <Property Type="String" Name="AnsweredByUserId" Nullable="true" MaxLength="128" />
+          <Property Type="Int32" Name="ReviewId" Nullable="false" />
+          <Property Type="String" Name="ReviewName" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="RegionId" Nullable="false" />
+          <Property Type="String" Name="RegionNumber" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="RegionName" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="ZoneId" Nullable="false" />
+          <Property Type="String" Name="ZoneShortName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ZoneName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="PegasysDocumentNumber" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="PegasysDocumentNumberInstance" Nullable="true" />
+          <Property Type="String" Name="BaCode" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Org" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="Amount" Nullable="true" Precision="19" Scale="4" />
+          <Property Type="Boolean" Name="Valid" Nullable="true" />
+          <Property Type="String" Name="Fund" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PegasysTitleNumber" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="VendorName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ContractingOfficersName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="AwardNbr" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ReasonIncludedInReview" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="AssignedToUserName" Nullable="false" MaxLength="256" />
+          <Property Type="String" Name="AssignedtoEmail" Nullable="true" MaxLength="256" />
+          <Property Type="Int32" Name="RequestForReassignmentId" Nullable="true" />
+          <Property Type="String" Name="SuggestedReviewerUseId" Nullable="true" MaxLength="128" />
+          <Property Type="String" Name="SuggestedReviewerUserName" Nullable="true" MaxLength="256" />
+          <Property Type="DateTime" Name="ViewedAtUtc" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsRead" Nullable="true" />
+          <Property Type="Int32" Name="NoteCnt" Nullable="true" />
+        </ComplexType>
+        <Association Name="FK__Notes__DeletedBy__24134F1B">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser" Role="AspNetUser" Multiplicity="0..1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.Note" Role="Note" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Note">
+              <PropertyRef Name="DeletedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2720,12 +2869,14 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="Notes">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.Note">
               <MappingFragment StoreEntitySet="Notes">
+                <ScalarProperty Name="DeletedByUserId" ColumnName="DeletedByUserId" />
                 <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
                 <ScalarProperty Name="Body" ColumnName="Body" />
                 <ScalarProperty Name="UloId" ColumnName="UloId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="ParentNoteId" ColumnName="ParentNoteId" />
                 <ScalarProperty Name="NoteId" ColumnName="NoteId" />
+                <Condition ColumnName="DeletedAtUtc" IsNull="true" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2772,6 +2923,9 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="UnliqudatedObjectsWorkflowQuestions">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliqudatedObjectsWorkflowQuestion">
               <MappingFragment StoreEntitySet="UnliqudatedObjectsWorkflowQuestions">
+                <ScalarProperty Name="IsAnswerReal" ColumnName="IsAnswerReal" />
+                <ScalarProperty Name="IsAnswerQuestionComment" ColumnName="IsAnswerQuestionComment" />
+                <ScalarProperty Name="IsAnswerReassignment" ColumnName="IsAnswerReassignment" />
                 <ScalarProperty Name="JustificationKey" ColumnName="JustificationKey" />
                 <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
                 <ScalarProperty Name="WorkflowRowVersion" ColumnName="WorkflowRowVersion" />
@@ -3027,6 +3181,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="UnliquidatedObligations">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation">
               <MappingFragment StoreEntitySet="UnliquidatedObligations">
+                <ScalarProperty Name="PegasysDocumentNumberInstance" ColumnName="PegasysDocumentNumberInstance" />
                 <ScalarProperty Name="CardholderUserId" ColumnName="CardholderUserId" />
                 <ScalarProperty Name="CardholderEmail" ColumnName="CardholderEmail" />
                 <ScalarProperty Name="CardholderAlias" ColumnName="CardholderAlias" />
@@ -3167,6 +3322,56 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="ListableWorkflows" FunctionName="GSA.UnliquidatedObligations.BusinessLayer.Data.Store.ListableWorkflows">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.ListableWorkflows_Result">
+                <ScalarProperty Name="WorkflowId" ColumnName="WorkflowId" />
+                <ScalarProperty Name="WorkflowKey" ColumnName="WorkflowKey" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="CurrentWorkflowActivityKey" ColumnName="CurrentWorkflowActivityKey" />
+                <ScalarProperty Name="OwnerUserId" ColumnName="OwnerUserId" />
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="CurrentActivityEnteredAtUtc" ColumnName="CurrentActivityEnteredAtUtc" />
+                <ScalarProperty Name="TargetUloId" ColumnName="TargetUloId" />
+                <ScalarProperty Name="ExpectedDurationInSeconds" ColumnName="ExpectedDurationInSeconds" />
+                <ScalarProperty Name="DueAtUtc" ColumnName="DueAtUtc" />
+                <ScalarProperty Name="WorkflowRowVersion" ColumnName="WorkflowRowVersion" />
+                <ScalarProperty Name="Answer" ColumnName="Answer" />
+                <ScalarProperty Name="AnsweredAtUtc" ColumnName="AnsweredAtUtc" />
+                <ScalarProperty Name="AnsweredByUserName" ColumnName="AnsweredByUserName" />
+                <ScalarProperty Name="AnsweredByUserId" ColumnName="AnsweredByUserId" />
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
+                <ScalarProperty Name="ReviewName" ColumnName="ReviewName" />
+                <ScalarProperty Name="RegionId" ColumnName="RegionId" />
+                <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+                <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+                <ScalarProperty Name="ZoneId" ColumnName="ZoneId" />
+                <ScalarProperty Name="ZoneShortName" ColumnName="ZoneShortName" />
+                <ScalarProperty Name="ZoneName" ColumnName="ZoneName" />
+                <ScalarProperty Name="PegasysDocumentNumber" ColumnName="PegasysDocumentNumber" />
+                <ScalarProperty Name="PegasysDocumentNumberInstance" ColumnName="PegasysDocumentNumberInstance" />
+                <ScalarProperty Name="BaCode" ColumnName="BaCode" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Org" ColumnName="Org" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Valid" ColumnName="Valid" />
+                <ScalarProperty Name="Fund" ColumnName="Fund" />
+                <ScalarProperty Name="PegasysTitleNumber" ColumnName="PegasysTitleNumber" />
+                <ScalarProperty Name="VendorName" ColumnName="VendorName" />
+                <ScalarProperty Name="ContractingOfficersName" ColumnName="ContractingOfficersName" />
+                <ScalarProperty Name="AwardNbr" ColumnName="AwardNbr" />
+                <ScalarProperty Name="ReasonIncludedInReview" ColumnName="ReasonIncludedInReview" />
+                <ScalarProperty Name="AssignedToUserName" ColumnName="AssignedToUserName" />
+                <ScalarProperty Name="AssignedtoEmail" ColumnName="AssignedtoEmail" />
+                <ScalarProperty Name="RequestForReassignmentId" ColumnName="RequestForReassignmentId" />
+                <ScalarProperty Name="SuggestedReviewerUseId" ColumnName="SuggestedReviewerUseId" />
+                <ScalarProperty Name="SuggestedReviewerUserName" ColumnName="SuggestedReviewerUserName" />
+                <ScalarProperty Name="ViewedAtUtc" ColumnName="ViewedAtUtc" />
+                <ScalarProperty Name="IsRead" ColumnName="IsRead" />
+                <ScalarProperty Name="NoteCnt" ColumnName="NoteCnt" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

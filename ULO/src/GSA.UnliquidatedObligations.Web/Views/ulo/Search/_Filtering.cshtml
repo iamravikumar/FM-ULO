@@ -12,25 +12,26 @@
 
 @using (Html.BeginForm("Search", "Ulo", FormMethod.Get))
 {
+    <input type="hidden" name="f" value="1" />
     <div class="container advanced-search-settings">
-        <div class="row">
+        <div class="row vertical-align">
             <div class="col-sm-4">
                 <label for="reviewId">Review:</label>
-                @Html.DropDownList("reviewId", Model.Reviews, "")
+                @Html.ListBox("reviewId", Model.Reviews, new { multiple="multiple" })
             </div>
             <div class="col-sm-4">
                 <label for="organization">Zone:</label>
-                @Html.DropDownList("zone", Model.Zones, "")
+                @Html.ListBox("zone", Model.Zones, new { multiple = "multiple" })
             </div>
             <div class="col-sm-4">
                 <label for="region">Region:</label>
-                @Html.DropDownList("region", Model.Regions, "")
+                @Html.ListBox("region", Model.Regions)
             </div>
         </div>
-        <div class="row">
+        <div class="row vertical-align">
             <div class="col-sm-4">
                 <label for="docType">Doc Type:</label>
-                @Html.DropDownList("docType", Model.DocTypes, "")
+                @Html.ListBox("docType", Model.DocTypes, new { multiple = "multiple" })
             </div>
             <div class="col-sm-4">
                 <label for="pegasysDocumentNumber">PDN:</label>
@@ -41,7 +42,7 @@
                 <input type="text" name="pegasysTitleNumber" id="pegasysTitleNumber" value="@Context.Request["pegasysTitleNumber"]" />
             </div>
         </div>
-        <div class="row">
+        <div class="row vertical-align">
             <div class="col-sm-4">
                 <label for="fund">Fund:</label>
                 <input type="text" name="fund" id="fund" value="@Context.Request["fund"]" />
@@ -52,10 +53,10 @@
             </div>
             <div class="col-sm-4">
                 <label for="baCode">BA Code:</label>
-                @Html.DropDownList("baCode", Model.BaCodes, "")
+                @Html.ListBox("baCode", Model.BaCodes, new { multiple = "multiple" })
             </div>
         </div>
-        <div class="row">
+        <div class="row vertical-align">
             <div class="col-sm-4">
                 <label for="pegasysVendorName">Pegasys Vendor Name:</label>
                 <input type="text" name="pegasysVendorName" id="pegasysVendorName" value="@Context.Request["pegasysVendorName"]" />
@@ -69,7 +70,7 @@
                 <input type="text" name="currentlyAssignedTo" id="currentlyAssignedTo" value="@Context.Request["currentlyAssignedTo"]" />
             </div>
         </div>
-        <div class="row">
+        <div class="row vertical-align">
             <div class="col-sm-4">
                 <label for="hasBeenAssignedto">Has been Assigned to:</label>
                 <input type="text" name="hasBeenAssignedto" id="hasBeenAssignedto" value="@Context.Request["hasBeenAssignedto"]" />
@@ -80,21 +81,20 @@
             </div>
             <div class="col-sm-4">
                 <label for="reasonIncludedInReview">Reason in Review:</label>
-                @Html.DropDownList("reasons", Model.Reasons, "")
+                @Html.ListBox("reasons", Model.Reasons, new { multiple = "multiple" })
             </div>
         </div>
-        <div class="row">
+        <div class="row vertical-align">
             <div class="col-sm-4">
                 <label for="valid">Valid:</label>
-                <select id="valid" name="valid">
-                    <option></option>
+                <select id="valid" name="valid" multiple="multiple">
                     <option value="true">Yes</option>
                     <option value="false">No</option>
                 </select>
             </div>
             <div class="col-sm-4">
                 <label for="status">Status:</label>
-                @Html.DropDownList("status", Model.Statuses, "")
+                @Html.ListBox("status", Model.Statuses, new { multiple = "multiple" })
             </div>
             <div class="col-sm-4">
                 <label for="uloId">Ulo Id:</label>
@@ -103,17 +103,17 @@
         </div>
         @if (User.HasPermission(ApplicationPermissionNames.CanReassign))
         {
-            <div class="row">
+            <div class="row vertical-align">
                 <div class="col-sm-4">
                     <label for="reassignable">Reassignable?:</label>
-                    <input type="checkbox" name="reassignableByMe" id="reassignable" value="true" @(Model.IsReassignable ? "checked=\"checked\"" : "") />
+                    <input type="checkbox" name="reassignableByMe" id="reassignable" class="standalone" value="true" @(Model.IsReassignable ? "checked=\"checked\"" : "") />
                 </div>
                 <div class="col-sm-8"></div>
             </div>
         }
-        <div class="row">
+        <div class="row vertical-align">
             <div class="col-sm-12" style="text-align:left">
-                <button id="filterWorkflows" class="btn btn-primary">
+                <button id="applyFilters" class="btn btn-primary">
                     Apply Filters
                 </button>
                 <button id="clearFilters" class="btn" filterSelector=".advanced-search-settings">

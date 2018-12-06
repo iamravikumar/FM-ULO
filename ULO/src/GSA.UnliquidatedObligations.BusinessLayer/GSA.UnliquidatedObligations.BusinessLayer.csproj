@@ -334,12 +334,17 @@
     <Compile Include="Data\List.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\ListableWorkflows_Result.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ListableWorkflows_Result_.cs" />
     <Compile Include="Data\MostRecentWorkflowView.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\Note.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\Note_.cs" />
     <Compile Include="Data\PdnAttribute.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
@@ -394,6 +399,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ULO.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Data\ULO1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ULO.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Data\ULODBEntities_.cs" />
     <Compile Include="Data\UnliqudatedObjectsWorkflowQuestion.cs">
       <DependentUpon>ULO.tt</DependentUpon>
@@ -402,6 +412,7 @@
     <Compile Include="Data\UnliquidatedObligation.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\UnliquidatedObligation_.cs" />
     <Compile Include="Data\UserTypes.cs" />
     <Compile Include="Data\UserUser.cs">
       <DependentUpon>ULO.tt</DependentUpon>
@@ -452,7 +463,7 @@
     <None Include="App.Config" />
     <EntityDeploy Include="Data\ULO.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ULO.Designer.cs</LastGenOutput>
+      <LastGenOutput>ULO1.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <None Include="Data\ULO.edmx.diagram">
       <DependentUpon>ULO.edmx</DependentUpon>

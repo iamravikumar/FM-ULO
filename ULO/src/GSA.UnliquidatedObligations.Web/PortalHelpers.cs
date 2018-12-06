@@ -32,17 +32,24 @@ namespace GSA.UnliquidatedObligations.Web
         public static string AttachmentFileUploadAccept => Properties.Settings.Default.AttachmentFileUploadAccept;
         public static string AttachmentFileUploadAcceptMessage => Properties.Settings.Default.AttachmentFileUploadAcceptMessage;
 
-        public static string ToLocalizedDisplayDateString(this DateTime utc)
+        public static DateTime ToLocalizedDateTime(this DateTime utc)
         {
-            if (utc.Millisecond == 123)
-            {
-                Stuff.Noop();
-            }
             if (utc.Kind == DateTimeKind.Unspecified)
             {
                 utc = new DateTime(utc.Year, utc.Month, utc.Day, utc.Hour, utc.Minute, utc.Second, utc.Millisecond, DateTimeKind.Utc);
             }
-            return utc.ToTimeZone(DisplayTimeZone).Date.ToString("MM/dd/yyyy");
+            return utc.ToTimeZone(DisplayTimeZone);
+        }
+
+        public static string ToLocalizedDisplayDateString(this DateTime utc, bool includeTime = false)
+        {
+            var local = utc.ToLocalizedDateTime();
+            var s = local.Date.ToString("MM/dd/yyyy");
+            if (includeTime)
+            {
+                s += " " + local.ToString("t");
+            }
+            return s;
         }
 
         public static class TempDataKeys
@@ -230,45 +237,22 @@ namespace GSA.UnliquidatedObligations.Web
         public static IList<int?> GetReassignmentGroupRegions(this IPrincipal user)
             => user.GetUserGroupRegions(Properties.Settings.Default.ReassignGroupUserName);
 
+
         public static Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(IPrincipal currentUser, int? uloId, string pegasysDocumentNumber, string organization,
-           int? region, int? zone, string fund, string baCode, string pegasysTitleNumber, string pegasysVendorName, string docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string reasonIncludedInReview, bool? valid, string status, int? reviewId, bool? reassignableByMe)
+           IList<int> regions, IList<int> zones, string fund, IList<string> baCode, string pegasysTitleNumber, string pegasysVendorName, IList<string> docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, IList<string> reasonIncludedInReview, IList<bool> valid, IList<string> status, IList<int> reviewId, bool? reassignableByMe)
         {
             pegasysDocumentNumber = StringHelpers.TrimOrNull(pegasysDocumentNumber);
             organization = StringHelpers.TrimOrNull(organization);
             fund = StringHelpers.TrimOrNull(fund);
-            baCode = StringHelpers.TrimOrNull(baCode);
             pegasysTitleNumber = StringHelpers.TrimOrNull(pegasysTitleNumber);
             pegasysVendorName = StringHelpers.TrimOrNull(pegasysVendorName);
-            docType = StringHelpers.TrimOrNull(docType);
             contractingOfficersName = StringHelpers.TrimOrNull(contractingOfficersName);
             currentlyAssignedTo = StringHelpers.TrimOrNull(currentlyAssignedTo);
             hasBeenAssignedTo = StringHelpers.TrimOrNull(hasBeenAssignedTo);
             awardNumber = StringHelpers.TrimOrNull(awardNumber);
-            reasonIncludedInReview = StringHelpers.TrimOrNull(reasonIncludedInReview);
-            status = StringHelpers.TrimOrNull(status);
+            reasonIncludedInReview = reasonIncludedInReview ?? Empty.StringArray;
 
-            if (uloId == null &&
-                pegasysDocumentNumber == null &&
-                organization == null &&
-                region == null &&
-                zone == null &&
-                fund == null &&
-                baCode == null &&
-                pegasysTitleNumber == null &&
-                pegasysVendorName == null &&
-                docType == null &&
-                contractingOfficersName == null &&
-                currentlyAssignedTo == null &&
-                hasBeenAssignedTo == null &&
-                awardNumber == null &&
-                reasonIncludedInReview == null &&
-                valid == null &&
-                status == null &&
-                reviewId == null &&
-                !reassignableByMe.GetValueOrDefault())
-            {
-                return null;
-            }
+            bool hasFilters = false;
 
             var originalPredicate = PredicateBuilder.Create<Workflow>(wf => true);
 
@@ -276,11 +260,13 @@ namespace GSA.UnliquidatedObligations.Web
 
             if (uloId != null)
             {
+                hasFilters = true;
                 predicate = predicate.And(wf => wf.TargetUloId == uloId);
             }
 
             if (pegasysDocumentNumber != null)
             {
+                hasFilters = true;
                 var criteria = pegasysDocumentNumber.Replace(Wildcard, "");
                 if (pegasysDocumentNumber.StartsWith(Wildcard) && pegasysDocumentNumber.EndsWith(Wildcard))
                 {
@@ -310,6 +296,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             if (organization != null)
             {
+                hasFilters = true;
                 var criteria = organization.Replace(Wildcard, "");
                 if (organization.StartsWith(Wildcard) && organization.EndsWith(Wildcard))
                 {
@@ -336,18 +323,21 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (region != null)
+            if (regions!=null && regions.Count>0)
             {
-                predicate = predicate.And(wf => wf.UnliquidatedObligation.RegionId == region);
+                hasFilters = true;
+                predicate = predicate.And(wf => wf.UnliquidatedObligation.RegionId!=null && regions.Contains((int)wf.UnliquidatedObligation.RegionId));
             }
 
-            if (zone != null)
+            if (zones!=null && zones.Count>0)
             {
-                predicate = predicate.And(wf => wf.UnliquidatedObligation.Region.ZoneId == zone);
+                hasFilters = true;
+                predicate = predicate.And(wf => zones.Contains(wf.UnliquidatedObligation.Region.ZoneId));
             }
 
             if (fund != null)
             {
+                hasFilters = true;
                 var criteria = fund.Replace(Wildcard, "");
                 if (fund.StartsWith(Wildcard) && fund.EndsWith(Wildcard))
                 {
@@ -373,36 +363,15 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (baCode != null)
+            if (baCode!=null && baCode.Count > 0)
             {
-                var criteria = baCode.Replace(Wildcard, "");
-                if (baCode.StartsWith(Wildcard) && baCode.EndsWith(Wildcard))
-                {
-                    predicate =
-                       predicate.And(
-                           wf => wf.UnliquidatedObligation.Prog.Contains(criteria));
-                }
-                else if (baCode.StartsWith(Wildcard))
-                {
-                    predicate =
-                        predicate.And(
-                            wf => wf.UnliquidatedObligation.Prog.Trim().EndsWith(criteria));
-                }
-                else if (baCode.EndsWith(Wildcard))
-                {
-                    predicate =
-                        predicate.And(
-                            wf => wf.UnliquidatedObligation.Prog.Trim().StartsWith(criteria));
-                }
-                else
-                {
-                    predicate = predicate.And(wf => wf.UnliquidatedObligation.Prog.Trim() == criteria);
-                }
-
+                hasFilters = true;
+                predicate = predicate.And(wf => baCode.Contains(wf.UnliquidatedObligation.Prog.Trim()));
             }
 
             if (pegasysTitleNumber != null)
             {
+                hasFilters = true;
                 var criteria = pegasysTitleNumber.Replace(Wildcard, "");
                 if (pegasysTitleNumber.StartsWith(Wildcard) && pegasysTitleNumber.EndsWith(Wildcard))
                 {
@@ -434,6 +403,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             if (pegasysVendorName != null)
             {
+                hasFilters = true;
                 var criteria = pegasysVendorName.Replace(Wildcard, "");
                 if (pegasysVendorName.StartsWith(Wildcard) && pegasysVendorName.EndsWith(Wildcard))
                 {
@@ -461,15 +431,15 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (docType != null)
+            if (docType!=null && docType.Count>0)
             {
-                predicate =
-                   predicate.And(
-                       wf => wf.UnliquidatedObligation.DocType == docType);
+                hasFilters = true;
+                predicate = predicate.And(wf => docType.Contains(wf.UnliquidatedObligation.DocType));
             }
 
             if (contractingOfficersName != null)
             {
+                hasFilters = true;
                 var criteria = contractingOfficersName.Replace(Wildcard, "");
                 if (contractingOfficersName.StartsWith(Wildcard) && contractingOfficersName.EndsWith(Wildcard))
                 {
@@ -501,6 +471,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             if (currentlyAssignedTo != null)
             {
+                hasFilters = true;
                 var criteria = currentlyAssignedTo.Replace(Wildcard, "");
                 if (currentlyAssignedTo.StartsWith(Wildcard) && currentlyAssignedTo.EndsWith(Wildcard))
                 {
@@ -529,6 +500,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             if (hasBeenAssignedTo != null)
             {
+                hasFilters = true;
                 var criteria = hasBeenAssignedTo.Replace(Wildcard, "");
                 if (hasBeenAssignedTo.StartsWith(Wildcard) && hasBeenAssignedTo.EndsWith(Wildcard))
                 {
@@ -558,6 +530,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             if (awardNumber != null)
             {
+                hasFilters = true;
                 var criteria = awardNumber.Replace(Wildcard, "");
                 if (awardNumber.StartsWith(Wildcard) && awardNumber.EndsWith(Wildcard))
                 {
@@ -584,82 +557,39 @@ namespace GSA.UnliquidatedObligations.Web
 
             }
 
-            if (reasonIncludedInReview != null)
+            if (reasonIncludedInReview !=null && reasonIncludedInReview.Count > 0)
             {
-                var criteria = reasonIncludedInReview.Replace(Wildcard, "");
-                if (reasonIncludedInReview.StartsWith(Wildcard) && reasonIncludedInReview.EndsWith(Wildcard))
-                {
-                    predicate =
-                       predicate.And(
-                           wf => wf.UnliquidatedObligation.ReasonIncludedInReview.Contains(criteria));
-                }
-                else if (reasonIncludedInReview.StartsWith(Wildcard))
-                {
-                    predicate =
-                        predicate.And(
-                            wf => wf.UnliquidatedObligation.ReasonIncludedInReview.Trim().EndsWith(criteria));
-                }
-                else if (reasonIncludedInReview.EndsWith(Wildcard))
-                {
-                    predicate =
-                        predicate.And(
-                            wf => wf.UnliquidatedObligation.ReasonIncludedInReview.Trim().StartsWith(criteria));
-                }
-                else
-                {
-                    predicate =
-                        predicate.And(
-                            wf =>
-                                wf.UnliquidatedObligation.ReasonIncludedInReview.Trim() ==
-                                criteria);
-                }
+                hasFilters = true;
+                predicate = predicate.And(wf => reasonIncludedInReview.Contains(wf.UnliquidatedObligation.ReasonIncludedInReview.Trim()));
             }
 
-            if (valid.HasValue)
+            if (valid!=null && valid.Count==1)
             {
-                predicate = predicate.And(wf => wf.UnliquidatedObligation.Valid == valid);
+                hasFilters = true;
+                var v = valid[0];
+                predicate = predicate.And(wf => wf.UnliquidatedObligation.Valid == v);
             }
 
-            if (status != null)
+            if (status!=null && status.Count>0)
             {
-                var criteria = status.Replace(Wildcard, "");
-                if (status.StartsWith(Wildcard) && status.EndsWith(Wildcard))
-                {
-                    predicate =
-                       predicate.And(
-                           wf => wf.UnliquidatedObligation.Status.Contains(criteria));
-                }
-                else if (status.StartsWith(Wildcard))
-                {
-                    predicate =
-                        predicate.And(
-                            wf => wf.UnliquidatedObligation.Status.Trim().EndsWith(criteria));
-                }
-                else if (status.EndsWith(Wildcard))
-                {
-                    predicate =
-                        predicate.And(
-                            wf => wf.UnliquidatedObligation.Status.Trim().StartsWith(criteria));
-                }
-                else
-                {
-                    predicate = predicate.And(wf => wf.UnliquidatedObligation.Status.Trim() == criteria);
-                }
+                hasFilters = true;
+                predicate = predicate.And(wf => status.Contains(wf.UnliquidatedObligation.Status.Trim()));
             }
 
-            if (reviewId != null)
+            if (reviewId!=null && reviewId.Count>0)
             {
-                predicate = predicate.And(wf => wf.UnliquidatedObligation.ReviewId == reviewId);
+                hasFilters = true;
+                predicate = predicate.And(wf => reviewId.Contains(wf.UnliquidatedObligation.ReviewId));
             }
 
             if (reassignableByMe.GetValueOrDefault())
             {
+                hasFilters = true;
                 var regionIds = GetUserGroupRegions(currentUser, PortalHelpers.ReassignGroupUserId);
                 predicate = predicate.And(GetWorkflowsRegionIdPredicate(regionIds));
-
             }
 
-            return predicate;
+            return hasFilters ? predicate : null;
         }
 
         public static Expression<Func<AspNetUser, bool>> GrouplikeUserPredicate
@@ -880,7 +810,7 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static IList<SelectListItem> CreateRegionSelectListItems(bool includeAllRegions = false, string allRegionsValue = "*")
             => Cacher.FindOrCreateValWithSimpleKey(
-                nameof(CreateRegionSelectListItems),
+                Cache.CreateKey(nameof(CreateRegionSelectListItems), includeAllRegions, allRegionsValue),
                 () =>
                 {
                     using (var db = UloDbCreator())
@@ -985,7 +915,6 @@ namespace GSA.UnliquidatedObligations.Web
 
         internal static IQueryable<Workflow> ApplyStandardIncludes(this IQueryable<Workflow> workflows)
             => workflows.Include(wf => wf.UnliquidatedObligation).Include(wf => wf.UnliquidatedObligation.Region).Include(wf => wf.UnliquidatedObligation.Review);
-
 
         private static Expression NestedProperty(Expression arg, string fieldName)
         {

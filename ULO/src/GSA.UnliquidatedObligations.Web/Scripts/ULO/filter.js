@@ -15,9 +15,11 @@
             }
         });
         $(filterSelector).find("select").each(function (ix, el) {
-            el.selectedIndex = 0;
+            el.selectedIndex = -1;
         });
+        $(".advanced-search-settings select").multiselect("refresh");
         e.stopPropagation();
+        $("#applyFilters").click();
         return false;
     });
 

@@ -19,8 +19,9 @@
     @Html.Partial("Details/_WorkflowStalenessHiddenFields");
     @Html.Partial("Details/_Ulo", Model)
     @Html.Partial("Details/Documents/_Index", Model.WorkflowViewModel.DocumentsViewModel)
-    @*@Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)*@
-
+    @*
+    @Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)
+    *@
     @Html.Partial("Details/Workflow/_Index", Model.WorkflowViewModel)
     @Html.Partial("Details/Workflow/_Others", Model.Others)
 }

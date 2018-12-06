@@ -88,6 +88,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public string CardholderAlias { get; set; }
         public string CardholderEmail { get; set; }
         public string CardholderUserId { get; set; }
+        public Nullable<int> PegasysDocumentNumberInstance { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes { get; set; }

@@ -54,7 +54,9 @@ else
                 {
                     <th><input type="checkbox" id="allSelector" onclick="allSelectorClicked()" /></th>
                 }
-                <th>@Html.SortableHeaderFor(z => z.TargetUloId, overrideDisplayName: "ULO ID")</th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
+                </th>
                 <th>
                     @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.Zone.ZoneName, overrideDisplayName: "Zone")
                 </th>
@@ -62,13 +64,10 @@ else
                     @Html.SortableHeaderFor(z => z.UnliquidatedObligation.Region.RegionName, overrideDisplayName: "Region")
                 </th>
                 @*
-            <th>
-                @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Doc Type")
-            </th>
+        <th>
+            @Html.SortableHeaderFor(z => z.UnliquidatedObligation.DocType, overrideDisplayName: "Doc Type")
+        </th>
                 *@
-                <th>
-                    @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysDocumentNumber, overrideDisplayName: "PDN")
-                </th>
                 <th>
                     @Html.SortableHeaderFor(z => z.UnliquidatedObligation.PegasysTitleNumber, overrideDisplayName: "Pesasys Title Number")
                 </th>
@@ -114,7 +113,7 @@ else
                     <td><input type="checkbox" class="itemSelector" onclick="selectorClicked()" value="1" data-id="@item.WorkflowId" /></td>
                 }
                 <td>
-                    @Html.ActionLink("View ULO " + item.TargetUloId.ToString(), UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
+                    @Html.ActionLink(item.UnliquidatedObligation.PdnWithInstance, UloController.ActionNames.Details, UloController.Name, new { uloId = item.UnliquidatedObligation.UloId, workflowId = item.WorkflowId }, null)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.UnliquidatedObligation.Region.Zone.ZoneShortName)
@@ -127,9 +126,6 @@ else
                         @Html.DisplayFor(modelItem => item.UnliquidatedObligation.DocType)
                     </td>
                 *@
-                <td>
-                    @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysDocumentNumber)
-                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.UnliquidatedObligation.PegasysTitleNumber)
                 </td>

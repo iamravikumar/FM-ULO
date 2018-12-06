@@ -30,6 +30,8 @@ namespace GSA.UnliquidatedObligations.Web
 
         public const string SortDirAscending = "asc";
         public const string SortDirDescending = "desc";
+        private const string SortDirKeyName = "sortDir";
+        private const string SortColKeyName = "sortCol";
 
         public static DateTime ToTimeZone(this DateTime dt, TimeZoneInfo zoneInfo)
             => TimeZoneInfo.ConvertTime(dt, zoneInfo);
@@ -84,31 +86,31 @@ namespace GSA.UnliquidatedObligations.Web
             var colName = columnExpression.GetFullyQualifiedName();
             var displayName = overrideDisplayName ?? hh.FriendlyNameFor(columnExpression);
 
-            var routeValues = new System.Web.Routing.RouteValueDictionary();
-            foreach (string key in hh.ViewContext.HttpContext.Request.QueryString.Keys)
+
+            var d = new RevolutionaryStuff.Core.Collections.MultipleValueDictionary<string, string>();
+            foreach (var kvp in WebHelpers.ParseQueryParams(hh.ViewContext.HttpContext.Request.Url.Query).AtomEnumerable)
             {
-                if (key == null) continue;
-                var val = hh.ViewContext.HttpContext.Request.QueryString[key];
-                if (val != null)
-                {
-                    routeValues[key] = val;
-                }
+                if (kvp.Key == SortColKeyName) continue;
+                if (kvp.Key == SortDirKeyName) continue;
+                if (null == StringHelpers.TrimOrNull(kvp.Value)) continue;
+                d.Add(kvp.Key, kvp.Value);
             }
-            routeValues["sortCol"] = colName;
+            d.Set(SortColKeyName, colName);
             if (colName == currentSortColName)
             {
-                routeValues["sortDir"] = IsSortDirAscending(currentSortDir) ? SortDirDescending : SortDirAscending;
-                var h = hh.ActionLink(
-                    displayName,
-                    actionName,
-                    routeValues);
-                h = h.AppendChildHtml(currentSortDir == SortDirAscending ? " <span class='caret-up'>^</span>" : " <span class='caret-down'>v</span>");
+                if (IsSortDirAscending(currentSortDir))
+                {
+                    d.Set(SortDirKeyName, SortDirDescending);
+                }
+                var url = WebHelpers.AppendParameters("?", d.AtomEnumerable);
+                var h = hh.AnchorTag(url, displayName);
+                h = h.AppendChildHtml(IsSortDirAscending(currentSortDir) ? " <span class='caret-up'>&#9650;</span>" : " <span class='caret-down'>&#9660;</span>");
                 return h;
             }
             else
             {
-                routeValues["sortDir"] = SortDirAscending;
-                return hh.ActionLink(displayName, actionName, routeValues);
+                var url = WebHelpers.AppendParameters("?", d.AtomEnumerable);
+                return hh.AnchorTag(url, displayName);
             }
         }
 
@@ -135,6 +137,13 @@ namespace GSA.UnliquidatedObligations.Web
                 hs = new MvcHtmlString(html);
             }
             return hs;
+        }
+
+        public static MvcHtmlString AnchorTag(this HtmlHelper hh, string url, string displayText)
+        {
+            var u = hh.ViewContext.HttpContext.Server;
+            var html = $"<a href=\"{url}\">{u.HtmlEncode(displayText)}</a>";
+            return new MvcHtmlString(html);
         }
 
         public static string ActionLinkUrl(this HtmlHelper hh, string actionName, string controllerName, object routeValues)

@@ -33,14 +33,45 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
 
         [DataMember(Name = "MostRecentNonReassignmentAnswer")]
         [JsonProperty("mostRecentNonReassignmentAnswer")]
-        public string MostRecentNonReassignmentAnswer { get; set; }
+        public string MostRecentNonReassignmentAnswerCsv
+        {
+            get => MostRecentNonReassignmentAnswerCsv_p;
+            set
+            {
+                MostRecentNonReassignmentAnswerCsv_p = value;
+                MostRecentNonReassignmentAnswers = CSV.ParseLine(value) ?? Empty.StringArray;
+            }
+        }
+        private string MostRecentNonReassignmentAnswerCsv_p;
 
-        public bool IsApplicable(string documentType, string mostRecentNonReassignmentAnswer)
+        private ICollection<string> MostRecentNonReassignmentAnswers;
+
+        [DataMember(Name = "MostRecentRealAnswer")]
+        [JsonProperty("mostRecentRealAnswer")]
+        public string MostRecentRealAnswerCsv
+        {
+            get => MostRecentRealAnswerCsv_p;
+            set
+            {
+                MostRecentRealAnswerCsv_p = value;
+                MostRecentRealAnswers = CSV.ParseLine(value) ?? Empty.StringArray;
+            }
+        }
+        private string MostRecentRealAnswerCsv_p;
+
+        private ICollection<string> MostRecentRealAnswers;
+
+        public bool IsApplicable(string documentType, string mostRecentNonReassignmentAnswer, string mostRecentRealAnswer)
             =>
                 (
-                    MostRecentNonReassignmentAnswer == null ||
-                    MostRecentNonReassignmentAnswer == mostRecentNonReassignmentAnswer ||
-                    CSV.ParseLine(MostRecentNonReassignmentAnswer).Contains(mostRecentNonReassignmentAnswer)
+                    MostRecentNonReassignmentAnswers==null ||
+                    MostRecentNonReassignmentAnswers.Count == 0 ||
+                    MostRecentNonReassignmentAnswers.Contains(mostRecentNonReassignmentAnswer)
+                ) &&
+                (
+                    MostRecentRealAnswers == null ||
+                    MostRecentRealAnswers.Count == 0 ||
+                    MostRecentRealAnswers.Contains(mostRecentRealAnswer)
                 ) &&
                 (
                     DocumentTypes == null ||
@@ -50,6 +81,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
                 );
 
         public override string ToString()
-            => $"{this.GetType().Name} value=[{this.Value}] docTypes=[{CSV.FormatLine(DocumentTypes, false)}]";
+            => $"{this.GetType().Name} value=[{this.Value}] docTypes=[{CSV.FormatLine(DocumentTypes, false)}] mostRecentNonReassignmentAnswers=[{MostRecentNonReassignmentAnswerCsv}] mostRecentRealAnswers=[{MostRecentRealAnswerCsv}]";
     }
 }

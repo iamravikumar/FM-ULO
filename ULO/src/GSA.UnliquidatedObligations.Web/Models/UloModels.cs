@@ -9,6 +9,12 @@ using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
+    public class WorkflowedUloListingItem
+    {
+        public int WorkflowId { get; set; }
+        public int UloId { get; set; }
+    }
+
     public class UloWfQuestionsViewModel
     {
         public List<UloWfQuestionViewModel> Questions { get; set; }
@@ -24,6 +30,16 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 Questions.Add(new UloWfQuestionViewModel(justificationByKey, question));
             }
         }
+    }
+
+    public class WorkflowListTab
+    {
+        public static readonly WorkflowListTab[] None = new WorkflowListTab[0];
+        public string TabName { get; set; }
+        public string TabKey { get; set; }
+        public int ItemCount { get; set; }
+        public bool IsCurrent { get; set; }
+        public bool IsAggregateTab { get; set; }
     }
 
     public class UloWfQuestionViewModel
@@ -103,7 +119,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             if (workflowQuestionChoices != null)
             {
                 QuestionLabel = workflowQuestionChoices.QuestionLabel;
-                foreach (var questionChoice in workflowQuestionChoices.WhereMostApplicable(workflow.UnliquidatedObligation.DocType, workflow.MostRecentNonReassignmentAnswer))
+                foreach (var questionChoice in workflowQuestionChoices.WhereMostApplicable(workflow.UnliquidatedObligation.DocType, workflow.MostRecentNonReassignmentAnswer, workflow.MostRecentRealAnswer))
                 {
                     QuestionChoices.Add(new QuestionChoicesViewModel(questionChoice));
                 }
@@ -117,7 +133,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string Value { get; set; }
         public IList<string> JustificationKeys { get; set; } = new List<string>();
         public bool ExpectedDateAlwaysShow { get; set; }
-        public string MostRecentNonReassignmentAnswer { get; set; }
+//        public string MostRecentNonReassignmentAnswer { get; set; }
+//        public string MostRecentRealAnswer { get; set; }
 
         public QuestionChoicesViewModel()
         {
@@ -129,7 +146,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Text = questionChoice.Text;
             Value = questionChoice.Value;
             ExpectedDateAlwaysShow = questionChoice.ExpectedDateAlwaysShow;
-            MostRecentNonReassignmentAnswer = questionChoice.MostRecentNonReassignmentAnswer;
+  //          MostRecentNonReassignmentAnswer = questionChoice.MostRecentNonReassignmentAnswer;
+    //        MostRecentRealAnswer = questionChoice.MostRecentRealAnswer;
             if (questionChoice.JustificationKeys != null)
             {
                 foreach (var justificationKey in questionChoice.JustificationKeys)

@@ -1,24 +1,32 @@
-﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Note>
- 
-<div class="row ulo-notes">
+﻿@model ICollection<GSA.UnliquidatedObligations.BusinessLayer.Data.Note>
+ <div class="row ulo-notes">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Notes</h3>
+            <h3 class="panel-title">Notes (@Model.Count)</h3>
         </div>
         <div class="panel-body">
-            <div class="row header col-md-8">
-                <div class="col-md-4">Date</div>
-                <div class="col-md-4">Person</div>
-                <div class="col-md-4">Comment</div>
-            </div>
-            @foreach (var note in Model)
-            {
-                <div class="row col-md-8">
-                    <div class="col-md-4">@note.Date</div>
-                    <div class="col-md-4">@note.AspNetUser.UserName</div>
-                    <div class="col-md-4">@note.NoteContents</div>
-                </div>
-            }
+            <table class="table table-responsive table-striped documents-list" id="notesTable">
+                <tr class="documents-heading-row">
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Person
+                    </th>
+                    <th>
+                        Comment
+                    </th>
+                </tr>
+                @foreach (var note in Model)
+                {
+                    var rowId = "note" + note.NoteId;
+                <tr id="@rowId">
+                    <td>@note.CreatedAtUtc.ToLocalizedDisplayDateString()</td>
+                    <td>@note.AspNetUser.UserName</td>
+                    <td>@note.Body</td>
+                </tr>
+                }
+            </table>
         </div>
     </div>
 </div>

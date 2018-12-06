@@ -14,11 +14,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Workflow
         [DataMember(Name = "Choices")]
         public List<QuestionChoice> Choices { get; set; }
 
-        public IEnumerable<QuestionChoice> WhereMostApplicable(string documentType, string mostRecentNonReassignmentAnswer)
+        public IEnumerable<QuestionChoice> WhereMostApplicable(string documentType, string mostRecentNonReassignmentAnswer, string mostRecentRealAnswer)
             => Choices == null ? 
                 QuestionChoice.None : 
-                Choices.Where(z => z.IsApplicable(documentType, mostRecentNonReassignmentAnswer)).
-                    OrderBy(z => z.MostRecentNonReassignmentAnswer == null ? 0 : 1).
+                Choices.Where(z => z.IsApplicable(documentType, mostRecentNonReassignmentAnswer, mostRecentRealAnswer)).
+                    OrderBy(z => (z.MostRecentRealAnswerCsv ?? z.MostRecentNonReassignmentAnswerCsv) == null ? 0 : 1).
                     ToDictionaryOnConflictKeepLast(z=>z.Value, z=>z).Values;
     }
 }

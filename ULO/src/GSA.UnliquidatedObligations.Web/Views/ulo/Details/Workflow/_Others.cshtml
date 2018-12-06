@@ -1,10 +1,10 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Controllers
 @model IList<GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result>
 
-<div class="row documents">
+<div class="row otherReviews">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Other Reviews</h3>
+            <h3 class="panel-title">Other Reviews (@Model.Count)</h3>
         </div>
         <div class="panel-body">
             @if (Model.Count == 0)
@@ -13,9 +13,8 @@
             }
             else
             {
-            <table class="table table-responsive table-striped documents-list">
-                <thead>
-                    <tr>
+            <table class="table table-responsive table-striped documents-list" id="otherReviewsTable">
+                    <tr class="documents-heading-row">
                         <th>Workflow ID</th>
                         <th>Review</th>
                         <th>Review Date</th>
@@ -28,8 +27,6 @@
                         <th>Disposition</th>
                         <th># Documents</th>
                     </tr>
-                </thead>
-                <tbody>
                     @foreach (var o in Model)
                     {
                     <tr>
@@ -64,7 +61,6 @@
                         </td>
                     </tr>
                     }
-                </tbody>
             </table>
             }
         </div>

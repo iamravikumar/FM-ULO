@@ -37,19 +37,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [Route("users")]
         [ActionName(ActionNames.Index)]
-        public async Task<ActionResult> Index(string q, string region, string role, string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<ActionResult> Index(string q, IList<int> region, IList<string> role, string sortCol, string sortDir, int? page, int? pageSize)
         {
             q = StringHelpers.TrimOrNull(q);
-            region = StringHelpers.TrimOrNull(region);
-            role = StringHelpers.TrimOrNull(role);
             var users = DB.AspNetUsers.Where(u => q == null || u.UserName.Contains(q) || u.Email.Contains(q));
-            if (int.TryParse(region, out int regionId))
+            if (region != null && region.Count>0)
             {
-                users = users.Where(u => u.ChildUserUsers.Any(uu => uu.RegionId == regionId));
+                users = users.Where(u => u.ChildUserUsers.Any(uu => uu.RegionId != null && region.Contains((int)uu.RegionId)));
             }
-            if (role != null)
+            if (role != null && role.Count>0)
             {
-                users = users.Where(u => u.ChildUserUsers.Any(uu => uu.ParentUserId == role));
+                users = users.Where(u => u.ChildUserUsers.Any(uu => role.Contains(uu.ParentUserId)));
             }
             users = ApplyBrowse(
                 users,

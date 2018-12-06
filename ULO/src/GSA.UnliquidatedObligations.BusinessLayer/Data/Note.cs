@@ -26,11 +26,13 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public int UloId { get; set; }
         public string Body { get; set; }
         public System.DateTime CreatedAtUtc { get; set; }
+        public string DeletedByUserId { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Note> Notes1 { get; set; }
         public virtual Note Note1 { get; set; }
         public virtual UnliquidatedObligation UnliquidatedObligation { get; set; }
+        public virtual AspNetUser AspNetUser1 { get; set; }
     }
 }

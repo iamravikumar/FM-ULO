@@ -4,8 +4,9 @@
     {
         public static class CommonActions
         {
-            public const string Reset = "r";
-            public const string View = "v";
+            public const string Unread = "u";
+            public const string Opened = "o";
+            public const string Seen ="s";
         }
     }
 }

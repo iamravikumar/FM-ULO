@@ -161,5 +161,19 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetEligibleReviewers_Result>("GetEligibleReviewers", workflowIdCsvParameter, qualifiedOnlyParameter, debugModeParameter);
         }
+    
+        [DbFunction("ULODBEntities", "ListableWorkflows")]
+        public virtual IQueryable<ListableWorkflows_Result> ListableWorkflows(string ownerId, string viewerId)
+        {
+            var ownerIdParameter = ownerId != null ?
+                new ObjectParameter("ownerId", ownerId) :
+                new ObjectParameter("ownerId", typeof(string));
+    
+            var viewerIdParameter = viewerId != null ?
+                new ObjectParameter("viewerId", viewerId) :
+                new ObjectParameter("viewerId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<ListableWorkflows_Result>("[ULODBEntities].[ListableWorkflows](@ownerId, @viewerId)", ownerIdParameter, viewerIdParameter);
+        }
     }
 }

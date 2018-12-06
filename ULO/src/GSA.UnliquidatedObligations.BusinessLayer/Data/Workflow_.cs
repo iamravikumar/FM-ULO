@@ -7,16 +7,31 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     public partial class Workflow
     {
-        public string GetMostRecentAnswer(ICollection<string> ignorableAnswers = null)
+        private string GetMostRecentAnswer(bool? isReal, bool? isReassignment)
         {
-            ignorableAnswers = ignorableAnswers ?? Empty.StringArray;
             foreach (var a in this.UnliqudatedObjectsWorkflowQuestions.OrderByDescending(z => z.UnliqudatedWorkflowQuestionsId))
             {
-                if (a.Pending || ignorableAnswers.Contains(a.Answer)) continue;
-                return a.Answer;
+                if (a.Pending) continue;
+                if (isReal.HasValue && isReal.Value == a.IsAnswerReal) return a.Answer;
+                if (isReassignment.HasValue && isReassignment.Value == a.IsAnswerReassignment) return a.Answer;
             }
             return null;
         }
+
+        public string MostRecentRealAnswer
+        {
+            get
+            {
+                if (!MostRecentRealAnswerFound)
+                {
+                    MostRecentRealAnswer_p = GetMostRecentAnswer(true, null);
+                    MostRecentRealAnswerFound = true;
+                }
+                return MostRecentRealAnswer_p;
+            }
+        }
+        private string MostRecentRealAnswer_p;
+        private bool MostRecentRealAnswerFound;
 
         public string MostRecentNonReassignmentAnswer
         {
@@ -24,7 +39,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             {
                 if (!MostRecentNonReassignmentAnswerFound)
                 {
-                    MostRecentNonReassignmentAnswer_p = GetMostRecentAnswer(UnliqudatedObjectsWorkflowQuestion.CommonAnswers.ReassignmentAnswers);
+                    MostRecentNonReassignmentAnswer_p = GetMostRecentAnswer(null, false);
                     MostRecentNonReassignmentAnswerFound = true;
                 }
                 return MostRecentNonReassignmentAnswer_p;
