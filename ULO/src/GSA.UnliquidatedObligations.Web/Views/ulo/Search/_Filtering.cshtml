@@ -81,7 +81,7 @@
             </div>
             <div class="col-sm-4">
                 <label for="reasonIncludedInReview">Reason in Review:</label>
-                @Html.ListBox("reasons", Model.Reasons, new { multiple = "multiple" })
+                @Html.ListBox("reasons", Model.Reasons, new { multiple = "multiple", @class="no-select-all" })
             </div>
         </div>
         <div class="row vertical-align">

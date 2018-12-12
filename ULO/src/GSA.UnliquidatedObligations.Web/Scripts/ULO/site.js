@@ -67,11 +67,17 @@ $(document).ready(function () {
         });
     });
 
-    $(".advanced-search-settings select").multiselect({
+    $(".advanced-search-settings select").not(".no-select-all").multiselect({
         maxHeight: 320,
         buttonWidth: '175px',
         numberDisplayed: 1,
         includeSelectAllOption: true
+    });
+
+    $(".advanced-search-settings select.no-select-all").multiselect({
+        maxHeight: 320,
+        buttonWidth: '175px',
+        numberDisplayed: 1
     });
 
     $("form").submit(function (a) {
