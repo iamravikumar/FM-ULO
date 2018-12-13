@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSA.UnliquidatedObligations
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSA.UnliquidatedObligations.Web", "src\GSA.UnliquidatedObligations.Web\GSA.UnliquidatedObligations.Web.csproj", "{D81A6DBD-0915-4485-A83C-1971FB1507EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSA.UnliquidatedObligations.Web2", "src\GSA.UnliquidatedObligations.Web2\GSA.UnliquidatedObligations.Web2.csproj", "{7AC41DAD-6A4C-49DC-9303-6E6EC610E746}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D81A6DBD-0915-4485-A83C-1971FB1507EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D81A6DBD-0915-4485-A83C-1971FB1507EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D81A6DBD-0915-4485-A83C-1971FB1507EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AC41DAD-6A4C-49DC-9303-6E6EC610E746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AC41DAD-6A4C-49DC-9303-6E6EC610E746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AC41DAD-6A4C-49DC-9303-6E6EC610E746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AC41DAD-6A4C-49DC-9303-6E6EC610E746}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
