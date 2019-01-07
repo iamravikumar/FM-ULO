@@ -197,7 +197,7 @@ else
                 Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = wf.WorkflowId, uloRegionId = wf.RegionId, isAdmin = true, id = rfrId, bulkToken = bulkToken });
             }
         }
-        @Html.Partial("_PaginationPartial")
-        @Html.Partial("_NotesPanel")
     *@
+    @Html.Partial("_PaginationPartial")
+    @Html.Partial("_NotesPanel")
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GSA.UnliquidatedObligations.Web</title>
+    <title>@ViewData["Title"] - ULO</title>
     <link rel="icon" href="~/images/favicon.png" type="image/png">
 
     <environment include="Development">
@@ -18,6 +18,7 @@
     </environment>
 </head>
 <body>
+
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header" style="height:71px">
@@ -46,7 +47,66 @@
 
     <partial name="_CookieConsentPartial" />
 
-    <div class="container body-content">
+    <div class="container-fluid body-content" style="margin-top: 30px; margin-bottom: 1.5cm">
+
+        @{
+            var pageAlerts = ViewData["PageAlerts"] as IList<PageAlert> ?? new List<PageAlert>();
+        }
+        @if (pageAlerts.Count > 0)
+        {
+            <div style="margin-top:30px">
+                @foreach (var pa in pageAlerts)
+                {
+                    string alertClass;
+                    switch (pa.AlertType)
+                    {
+                        case PageAlert.AlertTypes.Danger:
+                            alertClass = "danger";
+                            break;
+                        case PageAlert.AlertTypes.Success:
+                            alertClass = "success";
+                            break;
+                        case PageAlert.AlertTypes.Warning:
+                            alertClass = "warning";
+                            break;
+                        case PageAlert.AlertTypes.Info:
+                        default:
+                            alertClass = "info";
+                            break;
+                    }
+                    <div class="alert alert-@alertClass alert-dismissable" id="universal-alert-@pa.AlertId">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <i class="fa fa-check" aria-hidden="true"></i> <span id="universal-alert-item-text"> @pa.Message </span>
+                    </div>
+                    if (pa.AutoDismiss)
+                    {
+                        <script type="text/javascript">
+                            $("#universal-alert-@pa.AlertId").fadeIn(500).delay(4000).hide(500);
+                        </script>
+                    }
+                    else
+                    {
+                        <script type="text/javascript">
+                            $("#universal-alert-@pa.AlertId").fadeIn(500).delay(4000);
+                        </script>
+                    }
+                }
+            </div>
+        }
+
+        @if (ViewBag.PageTitle != null)
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1>@ViewBag.PageTitle</h1>
+                    @if (ViewBag.PageSubTitle != null)
+                    {
+                        <p class="subheading">@ViewBag.PageSubTitle</p>
+                    }
+                </div>
+            </div>
+        }
+
         @RenderBody()
     </div>
 
@@ -64,31 +124,33 @@
                 <!--
                 Sprint: @PortalHelpers.SprintConfigOptions.Value.SprintName
                     -->
-            }
-        </p>
-    </footer>
+                }
+            </p>
+        </footer>
 
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-        </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
 
-    @RenderSection("Scripts", required: false)
-</body>
+
+        <environment include="Development">
+            <script src="~/lib/jquery/dist/jquery.js"></script>
+            <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+        </environment>
+        <environment exclude="Development">
+            <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                    asp-fallback-test="window.jQuery"
+                    crossorigin="anonymous"
+                    integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+            </script>
+            <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                    asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                    asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                    crossorigin="anonymous"
+                    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+            </script>
+            <script src="~/js/site.min.js" asp-append-version="true"></script>
+        </environment>
+
+        @RenderSection("Scripts", required: false)
+    </body>
 </html>

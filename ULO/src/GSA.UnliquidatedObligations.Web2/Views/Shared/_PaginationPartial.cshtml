@@ -1,0 +1,97 @@
+﻿@using RevolutionaryStuff.Core
+@using System.Text.RegularExpressions
+@if (ViewBag.PaginationSupported == true)
+{
+    var queryString = this.Context.Request.QueryString.ToString() ?? "";
+    queryString = queryString.StartsWith("?") ? queryString.Substring(1) : queryString;
+    var regexPattern = new Regex(@"(\W?page=\d+)", RegexOptions.IgnoreCase);
+    var match = regexPattern.Match(queryString);
+    if (match.Success)
+    {
+        var firstMatchGroup = match.Groups[1];
+        queryString = queryString.Left(firstMatchGroup.Index) + queryString.Substring(firstMatchGroup.Length + firstMatchGroup.Index);
+    }
+    if (queryString.Length > 0) { queryString = queryString + "&"; }
+    queryString = "?" + queryString + "page";
+    var pageNumber = (int)ViewBag.PageNum;
+    var rowsPerPage = 10;
+    if (ViewBag.PageSize != null)
+    {
+        rowsPerPage = (int)ViewBag.PageSize;
+    }
+    int totalCount = 0;
+    if (ViewBag.TotalItemCount != null)
+    {
+        totalCount = (int)ViewBag.TotalItemCount;
+    }
+    int leftOfRange = ((pageNumber - 1) * rowsPerPage) + 1;
+    var rightOfRange = Math.Min((pageNumber) * rowsPerPage, totalCount);
+
+    <div class="table-controls-row text-right">
+        <ul class="table-controls">
+            @if (totalCount > 0)
+            {
+                <li>
+                    Rows per page:
+                    <select id="rows-per-page">
+                        <option value="10">10</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
+                </li>
+                <li>
+                    @if (pageNumber == 1)
+                    {
+                        <i class="fa fa-chevron-left inactive" aria-hidden="true"></i>
+                    }
+                    else
+                    {
+                        <a href="@queryString=@(pageNumber - 1)"><i class="fa fa-chevron-left" aria-hidden="true">&lt;</i></a>
+                    }
+                    <span>@leftOfRange</span> - <span id="rightOfRange">@rightOfRange</span>
+
+                    @if (totalCount > 0)
+                    {
+                        <span> of @totalCount</span>
+                    }
+
+                    @if (rightOfRange == totalCount)
+                    {
+                        <i class="fa fa-chevron-right inactive" aria-hidden="true"></i>
+                    }
+                    else
+                    {
+                        <a href="@queryString=@(pageNumber + 1)"><i class="fa fa-chevron-right" aria-hidden="true">&gt;</i></a>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+<script type="text/javascript">
+    var rowsPerPageCookieName = "rowsPerPage";
+
+    function onRowsPerPageChange() {
+        var selectedRowsPerPage = parseInt($('#rows-per-page').find(":selected").val());
+        setRootCookie(rowsPerPageCookieName, selectedRowsPerPage, 7);
+    }
+
+    $(document).ready(function () {
+        var rowsPerPageValue = 10;
+        var existingRowsPerPageValue = '@ViewBag.PageSize';
+        if (existingRowsPerPageValue) {
+            rowsPerPageValue = existingRowsPerPageValue;
+        }
+        $('#rows-per-page').val(rowsPerPageValue);
+
+        $('#rows-per-page').change(function () {
+            onRowsPerPageChange();
+            location.reload();
+        });
+    });
+</script>
+
+
+
