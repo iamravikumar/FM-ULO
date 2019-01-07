@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace GSA.UnliquidatedObligations.BusinessLayer.Data
+﻿namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     public partial class UnliqudatedObjectsWorkflowQuestion
     {

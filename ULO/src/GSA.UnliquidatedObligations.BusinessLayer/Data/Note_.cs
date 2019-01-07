@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GSA.UnliquidatedObligations.BusinessLayer.Data
+﻿namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     [TableKey("Notes")]
     public partial class Note : ISoftDelete
