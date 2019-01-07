@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using GSA.UnliquidatedObligations.Web2.Data;
+using GSA.UnliquidatedObligations.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Hangfire;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using RevolutionaryStuff.Core.Caching;
+using GSA.UnliquidatedObligations.Web.Controllers;
 
-namespace GSA.UnliquidatedObligations.Web2
+namespace GSA.UnliquidatedObligations.Web
 {
     public class Startup
     {
@@ -32,6 +30,7 @@ namespace GSA.UnliquidatedObligations.Web2
             services.AddOptions();
             services.Configure<SprintConfig>(Configuration.GetSection(SprintConfig.ConfigSectionName));
             services.Configure<PortalHelpers.Config>(Configuration.GetSection(PortalHelpers.Config.ConfigSectionName));
+            services.Configure<UloController.Config>(Configuration.GetSection(UloController.Config.ConfigSectionName));
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -40,12 +39,19 @@ namespace GSA.UnliquidatedObligations.Web2
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDbContext<UloDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddSingleton<ICacher>(_=>Cache.DataCacher);
+             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton(provider => Serilog.Log.ForContext<Startup>());

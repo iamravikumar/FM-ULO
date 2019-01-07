@@ -18,6 +18,8 @@
 /ULO/src/GSA.UnliquidatedObligations.Web/App_Data/*.ldf
 /ULO/src/GSA.UnliquidatedObligations.Web/GSA.UnliquidatedObligations.Web.csproj.user
 /.vs
+**/appsettings.Development.json
+**/appsettings.Production.json
 **/web.config
 **/Web.bak.config
 **/app.config

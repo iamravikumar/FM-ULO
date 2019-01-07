@@ -1,6 +1,4 @@
-using System;
-
-namespace GSA.UnliquidatedObligations.Web2.Models
+namespace GSA.UnliquidatedObligations.Web.Models
 {
     public class ErrorViewModel
     {

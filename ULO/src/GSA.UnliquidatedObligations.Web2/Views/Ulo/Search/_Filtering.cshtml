@@ -1,0 +1,125 @@
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@model GSA.UnliquidatedObligations.Web.Models.FilterViewModel
+
+<button type="button" class="btn toggler" toggleSelector=".advanced-search-settings">
+    <span>
+        Hide Filters
+    </span>
+    <span style="display:none">
+        Show Filters
+    </span>
+</button>
+
+@using (Html.BeginForm("Search", "Ulo", FormMethod.Get))
+{
+    <input type="hidden" name="f" value="1" />
+    <div class="container advanced-search-settings">
+        <div class="row vertical-align">
+            <div class="col-sm-4">
+                <label for="reviewId">Review:</label>
+                @Html.ListBox("reviewId", Model.Reviews, new { multiple="multiple" })
+            </div>
+            <div class="col-sm-4">
+                <label for="organization">Zone:</label>
+                @Html.ListBox("zone", Model.Zones, new { multiple = "multiple" })
+            </div>
+            <div class="col-sm-4">
+                <label for="region">Region:</label>
+                @Html.ListBox("region", Model.Regions)
+            </div>
+        </div>
+        <div class="row vertical-align">
+            <div class="col-sm-4">
+                <label for="docType">Doc Type:</label>
+                @Html.ListBox("docType", Model.DocTypes, new { multiple = "multiple" })
+            </div>
+            <div class="col-sm-4">
+                <label for="pegasysDocumentNumber">PDN:</label>
+                <input type="text" name="pegasysDocumentNumber" id="pegasysDocumentNumber" value="@Context.Request["pegasysDocumentNumber"]" />
+            </div>
+            <div class="col-sm-4">
+                <label for="pegasysTitleNumber">Pegasys Title:</label>
+                <input type="text" name="pegasysTitleNumber" id="pegasysTitleNumber" value="@Context.Request["pegasysTitleNumber"]" />
+            </div>
+        </div>
+        <div class="row vertical-align">
+            <div class="col-sm-4">
+                <label for="fund">Fund:</label>
+                <input type="text" name="fund" id="fund" value="@Context.Request["fund"]" />
+            </div>
+            <div class="col-sm-4">
+                <label for="organization">Org:</label>
+                <input type="text" name="organization" id="organization" value="@Context.Request["organization"]" />
+            </div>
+            <div class="col-sm-4">
+                <label for="baCode">BA Code:</label>
+                @Html.ListBox("baCode", Model.BaCodes, new { multiple = "multiple" })
+            </div>
+        </div>
+        <div class="row vertical-align">
+            <div class="col-sm-4">
+                <label for="pegasysVendorName">Pegasys Vendor Name:</label>
+                <input type="text" name="pegasysVendorName" id="pegasysVendorName" value="@Context.Request["pegasysVendorName"]" />
+            </div>
+            <div class="col-sm-4">
+                <label for="contractingOfficersName">CO Name:</label>
+                <input type="text" name="contractingOfficersName" id="contractingOfficersName" value="@Context.Request["contractingOfficersName"]" />
+            </div>
+            <div class="col-sm-4">
+                <label for="currentlyAssignedTo">Currently Assigned to:</label>
+                <input type="text" name="currentlyAssignedTo" id="currentlyAssignedTo" value="@Context.Request["currentlyAssignedTo"]" />
+            </div>
+        </div>
+        <div class="row vertical-align">
+            <div class="col-sm-4">
+                <label for="hasBeenAssignedto">Has been Assigned to:</label>
+                <input type="text" name="hasBeenAssignedto" id="hasBeenAssignedto" value="@Context.Request["hasBeenAssignedto"]" />
+            </div>
+            <div class="col-sm-4">
+                <label for="awardNumber">Award #:</label>
+                <input type="text" name="awardNumber" id="awardNumber" value="@Context.Request["awardNumber"]" />
+            </div>
+            <div class="col-sm-4">
+                <label for="reasonIncludedInReview">Reason in Review:</label>
+                @Html.ListBox("reasons", Model.Reasons, new { multiple = "multiple", @class="no-select-all" })
+            </div>
+        </div>
+        <div class="row vertical-align">
+            <div class="col-sm-4">
+                <label for="valid">Valid:</label>
+                <select id="valid" name="valid" multiple="multiple">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <label for="status">Status:</label>
+                @Html.ListBox("status", Model.Statuses, new { multiple = "multiple" })
+            </div>
+            <div class="col-sm-4">
+                <label for="uloId">Ulo Id:</label>
+                <input type="text" name="uloId" id="uloId" value="@Context.Request["uloId"]" />
+            </div>
+        </div>
+        @if (User.HasPermission(ApplicationPermissionNames.CanReassign))
+        {
+            <div class="row vertical-align">
+                <div class="col-sm-4">
+                    <label for="reassignable">Reassignable?:</label>
+                    <input type="checkbox" name="reassignableByMe" id="reassignable" class="standalone" value="true" @(Model.IsReassignable ? "checked=\"checked\"" : "") />
+                </div>
+                <div class="col-sm-8"></div>
+            </div>
+        }
+        <div class="row vertical-align">
+            <div class="col-sm-12" style="text-align:left">
+                <button id="applyFilters" class="btn btn-primary">
+                    Apply Filters
+                </button>
+                <button id="clearFilters" class="btn" filterSelector=".advanced-search-settings">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
+    </div>
+}

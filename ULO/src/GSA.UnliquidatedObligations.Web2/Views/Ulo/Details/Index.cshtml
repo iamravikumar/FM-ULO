@@ -1,0 +1,61 @@
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@using GSA.UnliquidatedObligations.Web.Models
+@model GSA.UnliquidatedObligations.Web.Models.UloViewModel
+@{
+    ViewBag.Title = Model.CurretUnliquidatedObligation.PegasysDocumentNumber;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentUloId = Convert.ToInt32(ViewContext.RouteData.Values["uloId"]);
+    var currentWorkflowId = Convert.ToInt32(ViewContext.RouteData.Values["workflowId"]);
+    ViewData[BaseController.WorkflowStalenessMagicFieldNames.WorkflowRowVersionString] = Model.WorkflowViewModel.Workflow.WorkflowRowVersionString;
+    ViewData[BaseController.WorkflowStalenessMagicFieldNames.EditingBeganAtUtc] = DateTime.UtcNow;
+    ViewData[BaseController.WorkflowStalenessMagicFieldNames.WorkflowId] = Model.WorkflowViewModel.Workflow.WorkflowId;
+}
+<h2>ULO Details</h2>
+@Html.Partial("Details/Workflow/_WorkflowDescription", Model.WorkflowViewModel.WorkflowDescriptionViewModel)
+
+@using (Html.BeginForm(UloController.ActionNames.Save, UloController.Name, new { uloId = @currentUloId, workflowId = @currentWorkflowId }, FormMethod.Post, new { id = "uloDetailsForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Partial("Details/_WorkflowStalenessHiddenFields");
+    @Html.Partial("Details/_Ulo", Model)
+    @Html.Partial("Details/Documents/_Index", Model.WorkflowViewModel.DocumentsViewModel)
+    @*
+    @Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)
+    *@
+    @Html.Partial("Details/Workflow/_Index", Model.WorkflowViewModel)
+    @Html.Partial("Details/Workflow/_Others", Model.Others)
+}
+
+@Html.Partial("Details/Documents/Attachments/_Upload", new UploadViewModel())
+
+@Html.Partial("Details/Workflow/RequestForReassignments/_Index", Model.WorkflowViewModel)
+
+@Html.Partial("Details/Documents/_ViewModals", Model.WorkflowViewModel.DocumentsViewModel)
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryform")
+
+    <script type="text/javascript">
+        var currentUloId = @currentUloId;
+        var currentWorkflowId = @currentWorkflowId;
+
+
+        function loadDocumentModal(documentId) {
+            var url = '@Url.Action("View", "Documents")';
+            url += '/?documentId=' + documentId;
+            var $div = $("#" + "modal-container-" + documentId);
+            var doneFns = Array.prototype.slice.call(arguments);
+            doneFns.shift();
+            if ($div.length === 0) {
+                $div = $(document.createElement('div')).attr('id', "modal-container-" + documentId);
+                $("#document-edit-modals").append($div);
+            }
+            $($div).load(url, function() {
+                doneFns.forEach(function(fn) {
+                    fn();
+                });
+            });
+        }
+    </script>
+}

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace GSA.UnliquidatedObligations.Web2.Data.Migrations
+namespace GSA.UnliquidatedObligations.Web.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {

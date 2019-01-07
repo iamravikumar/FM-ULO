@@ -1,48 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using GSA.UnliquidatedObligations.Web2.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using RevolutionaryStuff.Core.Caching;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using Microsoft.AspNetCore.Authorization;
 
-namespace GSA.UnliquidatedObligations.Web2.Controllers
+namespace GSA.UnliquidatedObligations.Web.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : BasePageController
     {
-        public HomeController(PortalHelpers portalHelpers, ILogger logger)
-            : base(portalHelpers, logger)
+        public const string Name = "Home";
+
+        public static class ActionNames
+        {
+            public const string About = "About";
+        }
+
+        public HomeController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, ILogger logger)
+            : base(db, cacher, portalHelpers, logger)
         { }
 
         public IActionResult Index()
-        {
-            return View();
-        }
+            => RedirectToAction(UloController.ActionNames.Home, UloController.Name);
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        [ActionName(ActionNames.About)]
+        public ActionResult About() 
+            => View();
     }
 }

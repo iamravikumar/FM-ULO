@@ -1,16 +1,10 @@
 ﻿using RevolutionaryStuff.Core;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
-namespace GSA.UnliquidatedObligations.Web2
+namespace GSA.UnliquidatedObligations.Web
 {
     public class Program
     {
@@ -36,9 +30,10 @@ namespace GSA.UnliquidatedObligations.Web2
             {
                 var c = hostingContext.Configuration;
                 var connectionString = c.GetConnectionString(c["SerilogSqlServerSink:ConnectionStringName"]);
+                var logLevel = Parse.ParseEnum<Serilog.Events.LogEventLevel>(c["Logging:LogLevel:Default"], Serilog.Events.LogEventLevel.Warning);
                 var loggerConfiguration = new LoggerConfiguration()
                     .ReadFrom.Configuration(c)
-                    .MinimumLevel.Is(Parse.ParseEnum<Serilog.Events.LogEventLevel>("Logging:LogLevel:Default", Serilog.Events.LogEventLevel.Warning))
+                    .MinimumLevel.Is(logLevel)
                     .Enrich.With<Serilog.Enrichers.MachineNameEnricher>()
                     .Enrich.With<Serilog.Enrichers.ProcessIdEnricher>()
                     .Enrich.With<Serilog.Enrichers.ThreadIdEnricher>()

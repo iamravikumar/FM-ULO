@@ -1,6 +1,6 @@
 ﻿using Hangfire.Dashboard;
 
-namespace GSA.UnliquidatedObligations.Web2
+namespace GSA.UnliquidatedObligations.Web
 {
     public class HangfireDashboardAuthorizer : IDashboardAuthorizationFilter
     {

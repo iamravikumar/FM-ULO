@@ -1,5 +1,4 @@
-﻿using RevolutionaryStuff.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -11,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
+using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.Web
 {

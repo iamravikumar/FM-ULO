@@ -1,0 +1,114 @@
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@model GSA.UnliquidatedObligations.Web.Models.DocumentModalViewModel
+@{
+    var id = Model.DocumentId + "Modal";
+    var label = id + "Label";
+    var body = id + "Body";
+    var documentType = id + "DocumentType";
+    var documentName = id + "DocumentName";
+
+    var deleteConfId = id + "Delete";
+    var deleteConfLabel = deleteConfId + "Label";
+    var deleteConfBody = deleteConfId + "Body";
+    object docNameAttributes = Model.AllowDocumentEdit ? new { id = @documentName, @class = "col-md-8 document-name", maxlength = "255" } : (object)new { id = @documentName, @class = "col-md-8 document-name", @readonly = "readonly" };
+    object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4 } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4, @disabled = "disabled" };
+    var isDisabled = !Model.AllowDocumentEdit ? "disabled" : "";
+    var isReadOnly = !Model.AllowDocumentEdit ? "readonly" : "";
+}
+<div class="modal fade document-modal" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
+    @*TODO: Add antiforgery token*@
+    @*@Html.AntiForgeryToken()*@
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="@label">Document</h5>
+            </div>
+            <div id="@body" class="modal-body">
+                <div class="row">
+                    @Html.LabelFor(model => model.DocumentName, "Document Name:", htmlAttributes: new { @class = "col-md-4" })
+                    @Html.TextBoxFor(model => model.DocumentName, htmlAttributes: docNameAttributes)
+                </div>
+                <div class="row">
+                    @Html.LabelFor(model => model.DocumentTypeIds, "Document Type:", htmlAttributes: new { @class = "col-md-4" })
+                    @Html.ListBoxFor(model => model.DocumentTypeIds, Model.DocumentTypes, htmlAttributes: docTypeAttributes)
+                </div>
+                <div class="row">
+                    <label class="col-md-4">Attachments:</label>
+                    @{ 
+                        var avm = Model.AttachmentsViewModel;
+                    }
+                    <div class="col-md-8" style="padding:0">
+                        <table class="table table-responsive table-striped attachments">
+                            <thead>
+                                <tr class="attachments-heading-row @(@avm.Attachments.Count > 0 ? "show" : "hide")">
+                                    <th>
+                                        File
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var attachment in avm.Attachments)
+                                {
+                                    <tr class="attachment-row" id="attachment@(@attachment.AttachmentsId)">
+                                        <td class="file-name">
+                                            @Html.ToBreakableString(attachment.FileName)
+                                        </td>
+                                        <td class="actions">
+                                            @Html.ActionLink("Download", AttachmentsController.ActionNames.Download, AttachmentsController.Name, new { attachmentId = attachment.AttachmentsId }, null)
+                                            @*
+                            |
+                            @Html.ActionLink("View", AttachmentsController.ActionNames.View, AttachmentsController.Name, new { attachmentId = attachment.AttachmentsId }, new { target="_blank" })
+                                            *@
+                                            @if (Model.AllowDocumentEdit)
+                {
+                                                <text>
+                                                    |
+                                                    <a class='attachments-delete' data-target='@attachment.AttachmentsId'>Delete</a>
+                                                </text>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        @Html.Hidden("documentId" + Model.DocumentId + "Hidden", Model.DocumentId, htmlAttributes: new { @class = "document-id-hidden" })
+
+                        @if (Model.AllowDocumentEdit)
+                        {
+                            <button type="button" class="btn btn-primary attachments-add-btn" title="@PortalHelpers.AttachmentFileUploadAcceptMessage">Add</button>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="document-error-msg">This is an Errors</div>
+                @if (Model.AllowDocumentEdit)
+                {
+                    <button type="button" data-target="@Model.DocumentId" class="btn btn-primary save-document">Save</button>
+                }
+                <button type="button" class="btn btn-secondary close-document-modal" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade delete-document-modal" id="@deleteConfId" tabindex="-1" role="dialog" aria-labelledby="@deleteConfLabel" aria-hidden="true">
+    @*//TODO: Add antiforgery token*@
+    @*@Html.AntiForgeryToken()*@
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id="@deleteConfBody" class="modal-body">
+                <div class="row">
+                   Are you sure you want to delete this document?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-target="@Model.DocumentId" class="btn btn-danger delete-document" data-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

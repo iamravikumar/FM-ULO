@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace GSA.UnliquidatedObligations.Web2.Data
+namespace GSA.UnliquidatedObligations.Web.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

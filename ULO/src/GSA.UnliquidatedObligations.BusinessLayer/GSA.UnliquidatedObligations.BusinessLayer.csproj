@@ -438,7 +438,6 @@
     <Compile Include="Data\Zone.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\XmlHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UloHelpers.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
