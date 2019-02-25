@@ -1,0 +1,185 @@
+﻿alter table [dbo].[AspNetRoles] add [ConcurrencyStamp] [nvarchar](max) NULL
+alter table [dbo].[AspNetRoles] add [NormalizedName] [nvarchar](256) NULL
+alter table [dbo].[AspNetUserLogins] add [ProviderDisplayName] [nvarchar](max) NULL
+CREATE TABLE [dbo].[AspNetUserTokens](   [UserId] [nvarchar](128) NOT NULL,   [LoginProvider] [nvarchar](450) NOT NULL,   [Name] [nvarchar](450) NOT NULL,   [Value] [nvarchar](max) NULL,   CONSTRAINT [PK_AspNetUserTokens] PRIMARY KEY CLUSTERED   (   [UserId] ASC,   [LoginProvider] ASC,   [Name] ASC  )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]  ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE TABLE [dbo].[AspNetRoleClaims](   [Id] [int] IDENTITY(1,1) NOT NULL,   [ClaimType] [nvarchar](max) NULL,   [ClaimValue] [nvarchar](max) NULL,   [RoleId] [nvarchar](128) NOT NULL,   CONSTRAINT [PK_AspNetRoleClaims] PRIMARY KEY CLUSTERED   (   [Id] ASC  )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]  ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+ALTER TABLE [dbo].[AspNetRoleClaims]  WITH CHECK ADD  CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId] FOREIGN KEY([RoleId])  REFERENCES [dbo].[AspNetRoles] ([Id])  ON DELETE CASCADE
+ALTER TABLE [dbo].[AspNetRoleClaims] CHECK CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId]
+update aspnetroles set NormalizedName=name
+
+
+exec db.TablePropertySet  'AspNetUsers', 'IdentityUser', @propertyName='BaseClass'
+exec db.ColumnPropertySet 'AspNetUsers', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'Email', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'EmailConfirmed', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'PasswordHash', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'SecurityStamp', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'PhoneNumber', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'PhoneNumberConfirmed', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'TwoFactorEnabled', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'LockoutEnabled', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'AccessFailedCount', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'UserName', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+exec db.TablePropertySet  'AspNetRoles', 'IdentityRole', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetRoles', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetRoles', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetRoles', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'Name', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'NormalizedName', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'ConcurrencyStamp', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+
+exec db.TablePropertySet  'AspNetUserClaims', 'IdentityUserClaim<string>', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetUserClaims', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetUserClaims', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetUserClaims', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserClaims', 'UserId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserClaims', 'ClaimType', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserClaims', 'ClaimValue', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+exec db.TablePropertySet  'AspNetUserLogins', 'IdentityUserLogin<string>', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetUserLogins', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetUserLogins', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetUserLogins', 'LoginProvider', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserLogins', 'ProviderKey', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserLogins', 'ProviderDisplayName', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserLogins', 'UserId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+exec db.TablePropertySet  'AspNetUserRoles', 'IdentityUserRole<string>', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetUserRoles', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetUserRoles', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetUserRoles', 'UserId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserRoles', 'RoleId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+
+exec db.TablePropertySet  'AspNetUserTokens', 'IdentityUserToken<string>', @propertyName='BaseClass'
+exec db.TablePropertySet  'AspNetUserTokens', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'AspNetUserTokens', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetUserTokens', 'LoginProvider', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserTokens', 'Name', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserTokens', 'Value', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserTokens', 'UserId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+
+exec db.TablePropertySet  'AspNetRoles', 'IdentityRole', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetRoles', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetRoles', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetRoles', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'Name', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'NormalizedName', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'ConcurrencyStamp', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+exec db.TablePropertySet  'AspNetRoleClaims', 'IdentityRoleClaim<string>', @propertyName='BaseClass'
+exec db.TablePropertySet  'AspNetRoleClaims', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'AspNetRoleClaims', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetRoleClaims', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoleClaims', 'RoleId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoleClaims', 'ClaimType', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoleClaims', 'ClaimValue', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+
+/*
+drop procedure [db].[FunctionPropertySet]
+exec [db].[FunctionPropertySet] 'ListableWorkflows', '1', 'dbo', 'AddToDbContext'
+exec [db].[FunctionPropertySet] 'ListableWorkflows', '1', 'dbo', 'GeneratePoco'
+*/
+
+select * from db.schemameta
+
+
+
+
+
+----------------------------------------
+
+
+
+alter table [dbo].[AspNetRoles] add [ConcurrencyStamp] [nvarchar](max) NULL
+alter table [dbo].[AspNetRoles] add [NormalizedName] [nvarchar](256) NULL
+alter table [dbo].[AspNetUserLogins] add [ProviderDisplayName] [nvarchar](max) NULL
+CREATE TABLE [dbo].[AspNetUserTokens](   [UserId] [nvarchar](128) NOT NULL,   [LoginProvider] [nvarchar](450) NOT NULL,   [Name] [nvarchar](450) NOT NULL,   [Value] [nvarchar](max) NULL,   CONSTRAINT [PK_AspNetUserTokens] PRIMARY KEY CLUSTERED   (   [UserId] ASC,   [LoginProvider] ASC,   [Name] ASC  )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]  ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE TABLE [dbo].[AspNetRoleClaims](   [Id] [int] IDENTITY(1,1) NOT NULL,   [ClaimType] [nvarchar](max) NULL,   [ClaimValue] [nvarchar](max) NULL,   [RoleId] [nvarchar](128) NOT NULL,   CONSTRAINT [PK_AspNetRoleClaims] PRIMARY KEY CLUSTERED   (   [Id] ASC  )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]  ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+ALTER TABLE [dbo].[AspNetRoleClaims]  WITH CHECK ADD  CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId] FOREIGN KEY([RoleId])  REFERENCES [dbo].[AspNetRoles] ([Id])  ON DELETE CASCADE
+ALTER TABLE [dbo].[AspNetRoleClaims] CHECK CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId]
+update aspnetroles set NormalizedName=name
+
+
+exec db.TablePropertySet  'AspNetUsers', 'IdentityUser', @propertyName='BaseClass'
+exec db.ColumnPropertySet 'AspNetUsers', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'Email', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'EmailConfirmed', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'PasswordHash', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'SecurityStamp', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'PhoneNumber', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'PhoneNumberConfirmed', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'TwoFactorEnabled', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'LockoutEnabled', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'AccessFailedCount', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUsers', 'UserName', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+exec db.TablePropertySet  'AspNetRoles', 'IdentityRole', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetRoles', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetRoles', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetRoles', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'Name', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'NormalizedName', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'ConcurrencyStamp', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+
+exec db.TablePropertySet  'AspNetUserClaims', 'IdentityUserClaim<string>', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetUserClaims', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetUserClaims', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetUserClaims', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserClaims', 'UserId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserClaims', 'ClaimType', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserClaims', 'ClaimValue', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+exec db.TablePropertySet  'AspNetUserLogins', 'IdentityUserLogin<string>', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetUserLogins', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetUserLogins', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetUserLogins', 'LoginProvider', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserLogins', 'ProviderKey', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserLogins', 'ProviderDisplayName', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserLogins', 'UserId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+exec db.TablePropertySet  'AspNetUserRoles', 'IdentityUserRole<string>', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetUserRoles', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetUserRoles', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetUserRoles', 'UserId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserRoles', 'RoleId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+
+exec db.TablePropertySet  'AspNetUserTokens', 'IdentityUserToken<string>', @propertyName='BaseClass'
+exec db.TablePropertySet  'AspNetUserTokens', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'AspNetUserTokens', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetUserTokens', 'LoginProvider', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserTokens', 'Name', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserTokens', 'Value', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetUserTokens', 'UserId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+
+exec db.TablePropertySet  'AspNetRoles', 'IdentityRole', @propertyName='BaseClass'
+--exec db.TablePropertySet  'AspNetRoles', '0', @propertyName='AddToDbContext'
+--exec db.TablePropertySet  'AspNetRoles', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetRoles', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'Name', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'NormalizedName', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoles', 'ConcurrencyStamp', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+exec db.TablePropertySet  'AspNetRoleClaims', 'IdentityRoleClaim<string>', @propertyName='BaseClass'
+exec db.TablePropertySet  'AspNetRoleClaims', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'AspNetRoleClaims', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'AspNetRoleClaims', 'Id', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoleClaims', 'RoleId', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoleClaims', 'ClaimType', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'AspNetRoleClaims', 'ClaimValue', 'missing', @propertyName='accessModifier', @tableSchema='dbo'
+
+
+/*
+drop procedure [db].[FunctionPropertySet]
+exec [db].[FunctionPropertySet] 'ListableWorkflows', '1', 'dbo', 'AddToDbContext'
+exec [db].[FunctionPropertySet] 'ListableWorkflows', '1', 'dbo', 'GeneratePoco'
+*/
+
+select * from db.schemameta

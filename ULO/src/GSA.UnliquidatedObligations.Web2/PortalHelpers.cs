@@ -15,6 +15,12 @@ namespace GSA.UnliquidatedObligations.Web
         public TimeSpan ShortCacheTimeout =>
             ConfigOptions.Value.ShortCacheTimeout;
 
+        public string AdministratorEmail =>
+            ConfigOptions.Value.AdministratorEmail;
+
+        public bool UseDevAuthentication =>
+            AccountConfigOptions.Value.UseDevAuthentication;
+
         public class Config
         {
             public const string ConfigSectionName = "PortalHelpersConfig";
@@ -24,19 +30,27 @@ namespace GSA.UnliquidatedObligations.Web
             public TimeSpan MediumCacheTimeout { get; set; } = TimeSpan.Parse("00:05:00");
 
             public TimeSpan ShortCacheTimeout { get; set; } = TimeSpan.Parse("00:01:00");
+
+            public string AdministratorEmail { get; set; }
         }
+
 
         public readonly IOptions<SprintConfig> SprintConfigOptions;
 
         private readonly IOptions<Config> ConfigOptions;
 
-        public PortalHelpers(IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions)
+        private readonly IOptions<Controllers.AccountController.Config> AccountConfigOptions;
+
+
+        public PortalHelpers(IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions)
         {
             Requires.NonNull(sprintConfigOptions, nameof(sprintConfigOptions));
             Requires.NonNull(configOptions, nameof(configOptions));
+            Requires.NonNull(accountConfigOptions, nameof(accountConfigOptions));
 
             SprintConfigOptions = sprintConfigOptions;
             ConfigOptions = configOptions;
+            AccountConfigOptions = accountConfigOptions;
         }
 
 
@@ -58,6 +72,20 @@ namespace GSA.UnliquidatedObligations.Web
                 s += " " + local.ToString("t");
             }
             return s;
+        }
+
+        public bool HideLoginLinks(dynamic viewBag, bool? set = null)
+        {
+            if (set.HasValue)
+            {
+                viewBag.HideLoginLinks = set.Value;
+            }
+            var o = viewBag.HideLoginLinks;
+            if (o == null || !(o is bool))
+            {
+                return false;
+            }
+            return (bool)o;
         }
     }
 }

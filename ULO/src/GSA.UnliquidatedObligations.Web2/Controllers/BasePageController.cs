@@ -39,6 +39,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public string CurrentUserId
             => "74AADFE1-6589-4CE6-A1F4-E4039D4D722F";
 
+        protected void OnlySupportedInDevelopmentEnvironment()
+        {
+            if (!PortalHelpers.UseDevAuthentication) throw new NotSupportedException();
+        }
+
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
             var cnt = q.Count();

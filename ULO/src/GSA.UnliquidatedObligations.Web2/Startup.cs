@@ -4,13 +4,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using GSA.UnliquidatedObligations.Web.Data;
+//using GSA.UnliquidatedObligations.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Hangfire;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using RevolutionaryStuff.Core.Caching;
 using GSA.UnliquidatedObligations.Web.Controllers;
+using RevolutionaryStuff.Core;
+using GSA.UnliquidatedObligations.Web.Identity;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -31,6 +33,7 @@ namespace GSA.UnliquidatedObligations.Web
             services.Configure<SprintConfig>(Configuration.GetSection(SprintConfig.ConfigSectionName));
             services.Configure<PortalHelpers.Config>(Configuration.GetSection(PortalHelpers.Config.ConfigSectionName));
             services.Configure<UloController.Config>(Configuration.GetSection(UloController.Config.ConfigSectionName));
+            services.Configure<AccountController.Config>(Configuration.GetSection(AccountController.Config.ConfigSectionName));
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -39,12 +42,18 @@ namespace GSA.UnliquidatedObligations.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            //https://stackoverflow.com/questions/38184583/how-to-add-ihttpcontextaccessor-in-the-startup-class-in-the-di-in-asp-net-core-1
+            services.AddHttpContextAccessor();
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            services
+                .AddIdentity<AspNetUser, AspNetRole>()
+                .AddEntityFrameworkStores<UloDbContext>()
+                .AddUserManager<UloUserManager>()
+                .AddDefaultTokenProviders()
+                .AddSignInManager<UloSignInManager>();
+
+            services.AddAuthentication();
+
 
             services.AddDbContext<UloDbContext>(options =>
                 options.UseSqlServer(
@@ -56,6 +65,8 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddSingleton(provider => Serilog.Log.ForContext<Startup>());
             services.AddSingleton<PortalHelpers>();
+
+            services.AddScoped<UserHelpers>();
 
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString(Configuration["Hangfire:ConnectionStringName"])));
         }
@@ -90,7 +101,7 @@ namespace GSA.UnliquidatedObligations.Web
             app.UseHangfireServer();
             app.UseHangfireDashboard("/Hangfire", new DashboardOptions
             {
-                Authorization = new[] { new HangfireDashboardAuthorizer() }
+//                Authorization = new[] { new HangfireDashboardAuthorizer() }
             });
         }
     }

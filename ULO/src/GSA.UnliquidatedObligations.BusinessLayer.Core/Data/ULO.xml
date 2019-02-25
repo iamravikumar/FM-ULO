@@ -136,17 +136,66 @@
         <Column name="ClaimCnt" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" isComputed="0" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="AspNetRoles" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
+    <Table schema="dbo" name="AspNetRoleClaims" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
         <Property name="AddToDbContext" value="1" />
+        <Property name="BaseClass" value="IdentityRoleClaim&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
-        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
-        <Column name="Name" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="256" isComputed="0" />
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="ClaimType" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="ClaimValue" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="RoleId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetRoles">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="AspNetRoles" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="BaseClass" value="IdentityRole" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="Name" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="256" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="ConcurrencyStamp" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="NormalizedName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="256" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
       </Columns>
       <Collections>
         <Collection schema="dbo" table="AspNetUserRoles" column="RoleId" collectionType="actual" />
+        <Collection schema="dbo" table="AspNetRoleClaims" column="RoleId" collectionType="actual" />
       </Collections>
     </Table>
     <Table schema="dbo" name="AspnetUserApplicationPermissionClaims" tableType="VIEW" isNodeTable="0" isEdgeTable="0">
@@ -165,54 +214,143 @@
     <Table schema="dbo" name="AspNetUserClaims" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
         <Property name="AddToDbContext" value="1" />
+        <Property name="BaseClass" value="IdentityUserClaim&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
-        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
-        <Column name="UserId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers" />
-        <Column name="ClaimType" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
-        <Column name="ClaimValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="UserId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="ClaimType" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="ClaimValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
       </Columns>
     </Table>
     <Table schema="dbo" name="AspNetUserLogins" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
         <Property name="AddToDbContext" value="1" />
+        <Property name="BaseClass" value="IdentityUserLogin&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
-        <Column name="LoginProvider" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
-        <Column name="ProviderKey" position="2" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
-        <Column name="UserId" position="3" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers" />
+        <Column name="LoginProvider" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="ProviderKey" position="2" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="UserId" position="3" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="ProviderDisplayName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
       </Columns>
     </Table>
     <Table schema="dbo" name="AspNetUserRoles" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
         <Property name="AddToDbContext" value="1" />
+        <Property name="BaseClass" value="IdentityUserRole&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
-        <Column name="UserId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers" />
-        <Column name="RoleId" position="2" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetRoles" />
+        <Column name="UserId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="RoleId" position="2" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetRoles">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
       </Columns>
     </Table>
     <Table schema="dbo" name="AspNetUsers" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
         <Property name="AddToDbContext" value="1" />
+        <Property name="BaseClass" value="IdentityUser" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
-        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
-        <Column name="Email" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="256" isComputed="0" />
-        <Column name="EmailConfirmed" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0" />
-        <Column name="PasswordHash" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
-        <Column name="SecurityStamp" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
-        <Column name="PhoneNumber" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
-        <Column name="PhoneNumberConfirmed" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0" />
-        <Column name="TwoFactorEnabled" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0" />
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="Email" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="256" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="EmailConfirmed" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="PasswordHash" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="SecurityStamp" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="PhoneNumber" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="PhoneNumberConfirmed" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="TwoFactorEnabled" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
         <Column name="LockoutEndDateUtc" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" isComputed="0" />
-        <Column name="LockoutEnabled" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0" />
-        <Column name="AccessFailedCount" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
-        <Column name="UserName" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="256" isComputed="0" />
+        <Column name="LockoutEnabled" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="AccessFailedCount" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="UserName" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="256" isComputed="0">
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
         <Column name="UserType" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" default="('Person')" isComputed="0" domainSchema="dbo" domainName="DeveloperName" />
         <Column name="AutoAssignUser" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" isComputed="0" />
       </Columns>
@@ -250,6 +388,19 @@
         <Column name="DocumentType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" isComputed="0" />
         <Column name="OrgCode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" isComputed="0" />
         <Column name="ClaimId" position="7" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="AspNetUserTokens" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="BaseClass" value="IdentityUserToken&lt;string&gt;" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="UserId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="LoginProvider" position="2" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" isComputed="0" />
+        <Column name="Name" position="3" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" isComputed="0" />
+        <Column name="Value" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
       </Columns>
     </Table>
     <Table schema="dbo" name="Attachments" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
@@ -1560,7 +1711,7 @@
         <Arg position="2" mode="IN" name="@viewerId" sqlType="nvarchar" maxLen="128" />
       </Args>
       <ResultSets>
-        <ResultSet resultSetNumber="0" colCount="44" isError="0" name="ListableWorkflows_Result1">
+        <ResultSet resultSetNumber="0" colCount="44" isError="0">
           <Columns>
             <Column name="WorkflowId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
             <Column name="WorkflowKey" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />

@@ -123,18 +123,21 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var countByKey = new Dictionary<string, int>(workflows.GroupBy(w => w.CurrentWorkflowActivityKey).Select(g => new { CurrentWorkflowActivityKey = g.Key, Count = g.Count() }).ToDictionaryOnConflictKeepLast(z => z.CurrentWorkflowActivityKey, z => z.Count), Comparers.CaseInsensitiveStringComparer);
 
-            var keyByName = Cacher.FindOrCreateValWithSimpleKey("workflowKeyByActivityNameForAllActiveWorkflows", () => {
-                var d = new Dictionary<string, string>(Comparers.CaseInsensitiveStringComparer);
-                foreach (var wfd in DB.WorkflowDefinitions.Where(z => z.IsActive))
+            var keyByName = Cacher.FindOrCreateValue(
+                "workflowKeyByActivityNameForAllActiveWorkflows", 
+                () => 
                 {
-                    if (wfd.Description == null || wfd.Description.Activities == null) continue;
-                    foreach (var a in wfd.Description.Activities)
+                    var d = new Dictionary<string, string>(Comparers.CaseInsensitiveStringComparer);
+                    foreach (var wfd in DB.WorkflowDefinitions.Where(z => z.IsActive))
                     {
-                        d[a.ActivityName] = a.WorkflowActivityKey;
+                        if (wfd.Description == null || wfd.Description.Activities == null) continue;
+                        foreach (var a in wfd.Description.Activities)
+                        {
+                            d[a.ActivityName] = a.WorkflowActivityKey;
+                        }
                     }
-                }
-                return d;
-            }, PortalHelpers.MediumCacheTimeout);
+                    return d;
+                }, PortalHelpers.MediumCacheTimeout);
 
             var tabs = new List<WorkflowListTab>();
             foreach (var name in ConfigOptions.Value.MyTasksTabs)
