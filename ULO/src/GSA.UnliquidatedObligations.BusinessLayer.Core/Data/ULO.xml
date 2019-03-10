@@ -138,14 +138,14 @@
     </Table>
     <Table schema="dbo" name="AspNetRoleClaims" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
-        <Property name="AddToDbContext" value="1" />
+        <Property name="AddToDbContext" value="0" />
         <Property name="BaseClass" value="IdentityRoleClaim&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
         <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0">
           <Properties>
-            <Property name="accessModifier" value="missing" />
+            <Property name="InheritanceModifier" value="override" />
           </Properties>
         </Column>
         <Column name="ClaimType" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
@@ -167,14 +167,14 @@
     </Table>
     <Table schema="dbo" name="AspNetRoles" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
-        <Property name="AddToDbContext" value="1" />
+        <Property name="AddToDbContext" value="0" />
         <Property name="BaseClass" value="IdentityRole" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
         <Column name="Id" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0">
           <Properties>
-            <Property name="accessModifier" value="missing" />
+            <Property name="InheritanceModifier" value="override" />
           </Properties>
         </Column>
         <Column name="Name" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="256" isComputed="0">
@@ -213,14 +213,14 @@
     </Table>
     <Table schema="dbo" name="AspNetUserClaims" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
-        <Property name="AddToDbContext" value="1" />
+        <Property name="AddToDbContext" value="0" />
         <Property name="BaseClass" value="IdentityUserClaim&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
         <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0">
           <Properties>
-            <Property name="accessModifier" value="missing" />
+            <Property name="InheritanceModifier" value="override" />
           </Properties>
         </Column>
         <Column name="UserId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers">
@@ -242,7 +242,7 @@
     </Table>
     <Table schema="dbo" name="AspNetUserLogins" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
-        <Property name="AddToDbContext" value="1" />
+        <Property name="AddToDbContext" value="0" />
         <Property name="BaseClass" value="IdentityUserLogin&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
@@ -271,7 +271,7 @@
     </Table>
     <Table schema="dbo" name="AspNetUserRoles" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
-        <Property name="AddToDbContext" value="1" />
+        <Property name="AddToDbContext" value="0" />
         <Property name="BaseClass" value="IdentityUserRole&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
@@ -297,7 +297,7 @@
       <Columns>
         <Column name="Id" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0">
           <Properties>
-            <Property name="accessModifier" value="missing" />
+            <Property name="InheritanceModifier" value="override" />
           </Properties>
         </Column>
         <Column name="Email" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="256" isComputed="0">
@@ -392,15 +392,31 @@
     </Table>
     <Table schema="dbo" name="AspNetUserTokens" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
-        <Property name="AddToDbContext" value="1" />
+        <Property name="AddToDbContext" value="0" />
         <Property name="BaseClass" value="IdentityUserToken&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
-        <Column name="UserId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
-        <Column name="LoginProvider" position="2" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" isComputed="0" />
-        <Column name="Name" position="3" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" isComputed="0" />
-        <Column name="Value" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="UserId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" >
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="LoginProvider" position="2" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" isComputed="0" >
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="Name" position="3" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" isComputed="0" >
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
+        <Column name="Value" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" >
+          <Properties>
+            <Property name="accessModifier" value="missing" />
+          </Properties>
+        </Column>
       </Columns>
     </Table>
     <Table schema="dbo" name="Attachments" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">

@@ -33,8 +33,39 @@ namespace GSA.UnliquidatedObligations.Web
             PortalHelpers = portalHelpers;
         }
 
+        public string GetCurrentUserName(IPrincipal user = null)
+        {
+            user = user ?? Acc.HttpContext?.User;
+            if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+            {
+                return user.Identity.Name;
+            }
+            return null;
+        }
+
+        public string CurrentUserName
+            => GetCurrentUserName();
+
+        public string CurrentUserId
+        {
+            get
+            {
+                var name = CurrentUserName;
+                if (string.IsNullOrEmpty(name)) return null;
+                return Cacher.FindOrCreateValue(
+                    Cache.CreateKey(nameof(CurrentUserId), name),
+                    () =>
+                    {
+                        var z = DB.AspNetUsers.AsNoTracking().FirstOrDefault(u => u.UserName == name);
+                        return z?.Id;
+                    });
+            }
+        }
+
         public bool HasPermission(ApplicationPermissionNames permissionName, IPrincipal user = null)
         {
+            return true;
+            /*
             user = user ?? Acc.HttpContext?.User;
             if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
             {
@@ -52,6 +83,7 @@ namespace GSA.UnliquidatedObligations.Web
                     );
             }
             return false;
+            */
         }
 
     }

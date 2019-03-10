@@ -16,8 +16,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string About = "About";
         }
 
-        public HomeController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, ILogger logger)
-            : base(db, cacher, portalHelpers, logger)
+        public HomeController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+            : base(db, cacher, portalHelpers, userHelpers, logger)
         { }
 
         public IActionResult Index()

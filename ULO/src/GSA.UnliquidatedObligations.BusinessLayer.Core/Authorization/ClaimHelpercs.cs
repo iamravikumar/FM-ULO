@@ -86,12 +86,15 @@ Cleanup:
 
         public static ICollection<Claim> GetClaims(this AspNetUser user)
         {
+            throw new NotImplementedException();
+            /*
             var claims = new List<Claim>();
             foreach (var c in user.UserAspNetUserClaims)
             {
                 claims.Add(new Claim(c.ClaimType, c.ClaimValue, c.ClaimType));
             }
             return claims;
+            */
         }
 
         public static HashSet<int> GetApplicationPerimissionRegions(this AspNetUser user, ApplicationPermissionNames? permission)

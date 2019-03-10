@@ -13,6 +13,9 @@ using RevolutionaryStuff.Core.Caching;
 using GSA.UnliquidatedObligations.Web.Controllers;
 using RevolutionaryStuff.Core;
 using GSA.UnliquidatedObligations.Web.Identity;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -54,10 +57,11 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddAuthentication();
 
+            services.AddScoped<IUserClaimsPrincipalFactory<AspNetUser>, NoUloClaimsUserClaimsPrincipalFactory>();
 
             services.AddDbContext<UloDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection"), z => z.EnableRetryOnFailure(1)));
 
             services.AddSingleton<ICacher>(_=>Cache.DataCacher);
              
@@ -67,6 +71,7 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddSingleton<PortalHelpers>();
 
             services.AddScoped<UserHelpers>();
+
 
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString(Configuration["Hangfire:ConnectionStringName"])));
         }

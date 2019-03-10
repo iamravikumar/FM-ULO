@@ -49,8 +49,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private readonly IOptions<Config> ConfigOptions;
 
-        public UloController(IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, ILogger logger)
-            : base(db, cacher, portalHelpers, logger)
+        public UloController(IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+            : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             ConfigOptions = configOptions;
             //Manager = manager;
@@ -107,12 +107,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 #endif
 
-        [AllowAnonymous] //just during this testing
         [ActionName(ActionNames.Index)]
         public ActionResult Index()
             => RedirectToAction(ActionNames.MyTasks);
 
-        [AllowAnonymous] //just during this testing
         [ActionName(ActionNames.MyTasks)]
         [Route("ulos/myTasks")]
         public IActionResult MyTasks(string t, string sortCol, string sortDir, int? page, int? pageSize)

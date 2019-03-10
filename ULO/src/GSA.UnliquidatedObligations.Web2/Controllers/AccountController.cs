@@ -23,6 +23,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public static class ActionNames
         {
             public const string Login = "Login";
+            public const string Logout = "Logout";
         }
 
         private readonly UloSignInManager SignInManager;
@@ -37,8 +38,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public string SecureAuthCookieName { get; set; }
         }
 
-        public AccountController(IOptions<Config> configOptions, UloSignInManager signInManager, UloUserManager userManager, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, ILogger logger)
-            : base(db, cacher, portalHelpers, logger)
+        public AccountController(IOptions<Config> configOptions, UloSignInManager signInManager, UloUserManager userManager, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+            : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             Requires.NonNull(configOptions, nameof(configOptions));
             Requires.NonNull(signInManager, nameof(signInManager));
@@ -51,7 +52,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private ActionResult RedirectToLocal(string returnUrl)
         {
-            if (Url.IsLocalUrl(returnUrl))
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
@@ -69,6 +70,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (ConfigOptions.Value.UseDevAuthentication)
             {
                 ViewBag.ReturnUrl = returnUrl;
+
                 return View("DevLogin");
             }
 
@@ -88,6 +90,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             OnlySupportedInDevelopmentEnvironment();
 
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -104,7 +107,46 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(model);
         }
 
-#if false
+        [ActionName(ActionNames.Logout)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> LogOff()
+        {
+            if (ConfigOptions.Value.UseDevAuthentication)
+            {
+                Log.Information("Dev LogOff");
+                await SignInManager.SignOutAsync();
+            }
+            else
+            {
+                Log.Information("GSA LogOff");
+            }
+/*
+            Session.Abandon();
+            Response.Cookies.Clear();
+            var requestCookies = new HttpCookieCollection();
+            for (int z = 0; z < Request.Cookies.Count; ++z)
+            {
+                requestCookies.Add(Request.Cookies[z]);
+            }
+            for (int z = 0; z < requestCookies.Count; ++z)
+            {
+                var c = requestCookies[z];
+                Response.Cookies.Add(new HttpCookie(c.Name)
+                {
+                    Domain = c.Domain,
+                    Expires = DateTime.Now.AddYears(-1),
+                    HttpOnly = c.HttpOnly,
+                    Path = c.Path,
+                    Secure = c.Secure,
+                    Shareable = c.Shareable,
+                });
+            }
+            */
+            return RedirectToAction(ActionNames.Login);
+        }
+
+        #if false
         //
         // POST: /Account/DevLogin
         [HttpPost]

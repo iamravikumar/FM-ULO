@@ -17,8 +17,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected readonly ILogger Logger;
         protected readonly ICacher Cacher;
         protected readonly UloDbContext DB;
+        protected readonly UserHelpers UserHelpers;
 
-        protected BasePageController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, ILogger logger)
+        protected BasePageController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
         {
             Requires.NonNull(logger, nameof(logger));
 
@@ -27,6 +28,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             Cacher = cacher;
 
             PortalHelpers = portalHelpers;
+            UserHelpers = userHelpers;
 
             Logger = logger.ForContext(new ILogEventEnricher[]
             {
@@ -37,7 +39,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         public string CurrentUserId
-            => "74AADFE1-6589-4CE6-A1F4-E4039D4D722F";
+            => UserHelpers.CurrentUserId;
 
         protected void OnlySupportedInDevelopmentEnvironment()
         {
