@@ -58,6 +58,15 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public AspNetUser User { get; set; }
     }
 
+    public class PersonUser : AspNetUser
+    { }
+
+    public class GroupUser : AspNetUser
+    { }
+
+    public class SystemUser : AspNetUser
+    { }
+
     public partial class AspNetUser
     {
         public static class UserTypes
