@@ -164,5 +164,8 @@
     <Setting Name="MyTasksTabsCsv" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Region Review,Region Approval,BGP Review 1,BGP Review 2,Action Needed,Deobligate</Value>
     </Setting>
+    <Setting Name="DatabaseSprocCommandTimeout" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">01:00:00</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

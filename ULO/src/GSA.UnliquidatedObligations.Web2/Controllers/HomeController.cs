@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     public class HomeController : BasePageController
     {
         public const string Name = "Home";
@@ -23,6 +23,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public IActionResult Index()
             => RedirectToAction(UloController.ActionNames.Home, UloController.Name);
 
+        [AllowAnonymous]
         [ActionName(ActionNames.About)]
         public ActionResult About() 
             => View();

@@ -185,7 +185,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         {
             using (ULODBEntities _db = DB)
             {
-                _db.Database.CommandTimeout = 60 * 15;
+                _db.Database.CommandTimeout = Convert.ToInt32(Properties.Settings.Default.DatabaseSprocCommandTimeout.TotalSeconds);
                 _db.CreateULOAndAssignWf(reviewId, workflowDefinitionId, reviewDate.Date);
             }
         }

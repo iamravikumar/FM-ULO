@@ -1,21 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
+﻿using GSA.Authentication.LegacyFormsAuthentication;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Web.Controllers;
+using GSA.UnliquidatedObligations.Web.Identity;
+using Hangfire;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 //using GSA.UnliquidatedObligations.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Hangfire;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using RevolutionaryStuff.Core.Caching;
-using GSA.UnliquidatedObligations.Web.Controllers;
-using RevolutionaryStuff.Core;
-using GSA.UnliquidatedObligations.Web.Identity;
-using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -37,6 +34,7 @@ namespace GSA.UnliquidatedObligations.Web
             services.Configure<PortalHelpers.Config>(Configuration.GetSection(PortalHelpers.Config.ConfigSectionName));
             services.Configure<UloController.Config>(Configuration.GetSection(UloController.Config.ConfigSectionName));
             services.Configure<AccountController.Config>(Configuration.GetSection(AccountController.Config.ConfigSectionName));
+            services.Configure<LegacyFormsAuthenticationService.Config>(Configuration.GetSection(LegacyFormsAuthenticationService.Config.ConfigSectionName));
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -57,6 +55,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddAuthentication();
 
+            services.AddScoped<ILegacyFormsAuthenticationService, LegacyFormsAuthenticationService>();
             services.AddScoped<IUserClaimsPrincipalFactory<AspNetUser>, NoUloClaimsUserClaimsPrincipalFactory>();
 
             services.AddDbContext<UloDbContext>(options =>

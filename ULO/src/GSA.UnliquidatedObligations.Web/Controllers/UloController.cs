@@ -104,7 +104,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.MyTasks)]
         [Route("ulos/myTasks")]
-        public async Task<ActionResult> MyTasks(string t, string sortCol, string sortDir, int? page, int? pageSize)
+        public ActionResult MyTasks(string t, string sortCol, string sortDir, int? page, int? pageSize)
         {
             SetNoDataMessage(NoDataMessages.NoTasks);
 

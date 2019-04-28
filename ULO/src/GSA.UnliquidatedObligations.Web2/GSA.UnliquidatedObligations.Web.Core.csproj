@@ -14,29 +14,29 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Hangfire" Version="1.6.22" />
+    <PackageReference Include="Hangfire" Version="1.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.2" />
-    <PackageReference Include="RevolutionaryStuff.Core" Version="2.4.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="2.5.2" />
     <PackageReference Include="Serilog" Version="2.8.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.1.3" />
     <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.1" />
     <PackageReference Include="Serilog.Enrichers.Thread" Version="3.0.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.4" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.1.2" />
     <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="2.1.1" />
     <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
     <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
-    <PackageReference Include="Traffk.StorageProviders.Common" Version="1.16.16" />
-    <PackageReference Include="Traffk.StorageProviders.Interfaces" Version="1.16.16" />
+    <PackageReference Include="Traffk.StorageProviders.Common" Version="1.20.1" />
+    <PackageReference Include="Traffk.StorageProviders.Interfaces" Version="1.20.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GSA.Authentication.LegacyFormsAuthentication\GSA.Authentication.LegacyFormsAuthentication.csproj" />
     <ProjectReference Include="..\GSA.UnliquidatedObligations.BusinessLayer.Core\GSA.UnliquidatedObligations.BusinessLayer.Core.csproj" />
   </ItemGroup>
 
