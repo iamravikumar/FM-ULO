@@ -9,10 +9,18 @@ namespace GSA.UnliquidatedObligations.Web
 {
     public class Program
     {
-        public static class GsaEnvironmentVariableNames
+        internal static class GsaEnvironmentVariableNames
         {
             public const string AppsettingsDirectory = "APPSETTINGS_DIRECTORY";
             public const string LogfileDirectory = "LOGFILE_DIRECTORY";
+        }
+
+        internal static class GsaAppSettingsVariablePaths
+        {
+            private const string Prefix = "GSAIT:";
+            public const string AppPathBase = Prefix+"AppPathBase";
+            public const string AppSetttingsOptional = Prefix + "AppSettingsOptional";
+            public const string AppName = Prefix + "AppName";
         }
 
         private static void ConfigureConfiguration(WebHostBuilderContext hostingContext, IConfigurationBuilder builder)
@@ -24,11 +32,15 @@ namespace GSA.UnliquidatedObligations.Web
 
             var c = builder.Build();
             var appSettingsDirectory = c[GsaEnvironmentVariableNames.AppsettingsDirectory];
-            var appName = c["APP_NAME"];
-
-            if (!string.IsNullOrEmpty(appName))
+            if (!string.IsNullOrEmpty(appSettingsDirectory))
             {
-                builder.AddJsonFile($"{appSettingsDirectory}{appName}_appsettings.json", optional: true, reloadOnChange: true);
+                var appName = c[GsaAppSettingsVariablePaths.AppName];
+                if (!string.IsNullOrEmpty(appName))
+                {
+                    var gsaAppSettingsOptional = Parse.ParseBool(c[GsaAppSettingsVariablePaths.AppSetttingsOptional]);
+                    builder.SetBasePath(appSettingsDirectory);
+                    builder.AddJsonFile($"{appName}_appsettings.json", optional: gsaAppSettingsOptional, reloadOnChange: true);
+                }
             }
 
             if (hostingContext.HostingEnvironment.IsDevelopment())

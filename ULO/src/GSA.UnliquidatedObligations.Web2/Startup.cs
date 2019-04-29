@@ -78,6 +78,12 @@ namespace GSA.UnliquidatedObligations.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var appPathBase = Configuration[Program.GsaAppSettingsVariablePaths.AppPathBase];
+            if (!string.IsNullOrEmpty(appPathBase))
+            {
+                app.UsePathBase(appPathBase);
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
