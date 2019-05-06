@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <RuntimeIdentifiers>win-x64;rhel-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire" Version="1.7.2" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="2.5.2" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\GSA.Authentication.LegacyFormsAuthentication\GSA.Authentication.LegacyFormsAuthentication.csproj" />
+    <ProjectReference Include="..\src\GSA.UnliquidatedObligations.BusinessLayer.Core\GSA.UnliquidatedObligations.BusinessLayer.Core.csproj" />
+  </ItemGroup>
+
+</Project>

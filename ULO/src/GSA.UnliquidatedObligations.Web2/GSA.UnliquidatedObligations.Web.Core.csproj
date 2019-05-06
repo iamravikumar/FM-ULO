@@ -7,14 +7,18 @@
     <UserSecretsId>aspnet-GSA.UnliquidatedObligations.Web2-3FE4A2F6-8F59-4F31-A9F9-C54438F31A3C</UserSecretsId>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <RootNamespace>GSA.UnliquidatedObligations.Web</RootNamespace>
-    <!--
-    <MicrosoftNETPlatformLibrary>Microsoft.NETCore.App</MicrosoftNETPlatformLibrary>
-    <RuntimeIdentifiers>rhel-x64</RuntimeIdentifiers>
-    -->
+    <RuntimeIdentifiers>win-x64;rhel-x64</RuntimeIdentifiers>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\Ulo\Details\Documents\**" />
+    <Content Remove="Views\Ulo\Details\Documents\**" />
+    <EmbeddedResource Remove="Views\Ulo\Details\Documents\**" />
+    <None Remove="Views\Ulo\Details\Documents\**" />
+  </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Hangfire" Version="1.7.1" />
+    <PackageReference Include="Hangfire" Version="1.7.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.4" />
@@ -39,19 +43,15 @@
     <PackageReference Include="Traffk.StorageProviders.Interfaces" Version="1.20.1" />
   </ItemGroup>
 
+  <!--
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
   </ItemGroup>
-
+-->
+  
   <ItemGroup>
     <ProjectReference Include="..\GSA.Authentication.LegacyFormsAuthentication\GSA.Authentication.LegacyFormsAuthentication.csproj" />
     <ProjectReference Include="..\GSA.UnliquidatedObligations.BusinessLayer.Core\GSA.UnliquidatedObligations.BusinessLayer.Core.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Web">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.2\System.Web.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
+  
 </Project>
