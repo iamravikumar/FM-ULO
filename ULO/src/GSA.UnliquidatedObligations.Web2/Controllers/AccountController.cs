@@ -6,6 +6,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Identity;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
@@ -18,11 +19,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     public class AccountController : BasePageController
     {
         public const string Name = "Account";
+        private const string AuthenticationTypeExternalCookie = "ExternalCookie";
 
         public static class ActionNames
         {
             public const string Login = "Login";
+            public const string LoginPostback = "LoginPostback";
             public const string Logout = "Logout";
+            public const string DevLogin = "DevLogin";
         }
 
         private readonly UloSignInManager SignInManager;
@@ -63,18 +67,86 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return RedirectToAction(UloController.ActionNames.Index, UloController.Name);
         }
 
+
+
+        [AllowAnonymous]
+        [ActionName("a")]
+        public ActionResult a()
+        {
+            Logger.Information("Method = {method}", nameof(a));
+            return View();
+        }
+
+        [AllowAnonymous]
+        [ActionName("B")]
+        public ActionResult B()
+        {
+            Logger.Information("Method = {method}", nameof(B));
+            return View();
+        }
+
+        [AllowAnonymous]
+        [ActionName("C")]
+        public ActionResult C()
+        {
+            Logger.Information("Method = {method}", nameof(C));
+            return View();
+        }
+
+        [AllowAnonymous]
+        [ActionName("d")]
+        public ActionResult d(string echo)
+        {
+            Logger.Information("Method = {method}; Echo = {echo}", nameof(d), echo);
+            ViewData["echo"] = echo;
+            return View("dd");
+        }
+
+        [AllowAnonymous]
+        [ActionName("e")]
+        public ActionResult e(string echo)
+        {
+            Logger.Information("Method = {method}; Echo = {echo}", nameof(e), echo);
+            ViewData["echo"] = echo;
+            return View();
+        }
+
+        [AllowAnonymous]
+        [ActionName("f")]
+        public ActionResult f(DevLoginViewModel model=null)
+        {
+            Logger.Information("Method = {method}; Model={isNull}", nameof(f), model==null);
+            return View("devlogin");
+        }
+
+        [Route("/account/g")]
+        [AllowAnonymous]
+        [ActionName("GGG")]
+        public ActionResult GREAT(DevLoginViewModel model = null)
+        {
+            return View("g");
+        }
+
         ////
         // GET: /Account/Login
+        [Route("/account/login")]
         [AllowAnonymous]
         [ActionName(ActionNames.Login)]
-        public async Task<ActionResult> Login(string returnUrl)
+        public async Task<ActionResult> Login(string returnUrl=null)
         {
             PortalHelpers.HideLoginLinks(ViewBag, true);
+
+            Logger.Information(
+                "Login being called.returnUrl={returnUrl} UseDevAuthentication={UseDevAuthentication} SecureAuthCookieName={SecureAuthCookieName} cookie={cookie}", 
+                returnUrl, 
+                ConfigOptions.Value.UseDevAuthentication,
+                ConfigOptions.Value.SecureAuthCookieName,
+                Request.Cookies[ConfigOptions.Value.SecureAuthCookieName]);
 
             if (ConfigOptions.Value.UseDevAuthentication)
             {
                 ViewBag.ReturnUrl = returnUrl;
-                return View("DevLogin");
+                return View("devlogin");
             }
 
             var cookie = Request.Cookies[ConfigOptions.Value.SecureAuthCookieName];
@@ -87,11 +159,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+//        [ValidateAntiForgeryToken]
+        [ActionName(ActionNames.LoginPostback)]
+        public ActionResult LoginPostback(string returnUrl)
+        {
+            var redirectUrl = WebHelpers.AppendParameter(ConfigOptions.Value.SecureAuthUrl, "ReturnUrl", $"https://{Request.Host.Host}/");
+            return new RedirectResult(redirectUrl);
+        }
+
+        [Route("/account/devlogin")]
+        [ActionName(ActionNames.DevLogin)]
+        [HttpPost]
+        [AllowAnonymous]
+//        [ValidateAntiForgeryToken]
         public async Task<ActionResult> DevLogin(DevLoginViewModel model, string returnUrl)
         {
-            OnlySupportedInDevelopmentEnvironment();
+            Logger.Information("DevLogin being called!");
 
+            OnlySupportedInDevelopmentEnvironment();
 
             if (!ModelState.IsValid)
             {
@@ -111,7 +196,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.Logout)]
         [HttpPost]
-        [ValidateAntiForgeryToken]
+//        [ValidateAntiForgeryToken]
         public async Task<ActionResult> LogOff()
         {
             if (ConfigOptions.Value.UseDevAuthentication)
@@ -149,7 +234,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
 #if false
-        private const string AuthenticationTypeExternalCookie = "ExternalCookie";
 
         //
         // POST: /Account/DevLogin

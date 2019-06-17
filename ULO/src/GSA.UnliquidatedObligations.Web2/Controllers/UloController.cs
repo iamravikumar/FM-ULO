@@ -115,9 +115,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("ulos/myTasks")]
         public IActionResult MyTasks(string t, string sortCol, string sortDir, int? page, int? pageSize)
         {
+            Logger.Information("{method}({t}, {sortCol}, {sortDir}, {page}, {pageSize})", nameof(MyTasks), t, sortCol, sortDir, page, pageSize);
+
             SetNoDataMessage(ConfigOptions.Value.NoTasks);
 
-            var workflows = DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists();
+            var workflows = DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId && wf.TargetUlo.Review.DeletedAtUtc == null).WhereReviewExists();
 
             var countByKey = new Dictionary<string, int>(workflows.GroupBy(w => w.CurrentWorkflowActivityKey).Select(g => new { CurrentWorkflowActivityKey = g.Key, Count = g.Count() }).ToDictionaryOnConflictKeepLast(z => z.CurrentWorkflowActivityKey, z => z.Count), Comparers.CaseInsensitiveStringComparer);
 
@@ -145,7 +147,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 tab.TabKey = keyByName.GetValue(tab.TabName);
                 if (tab.TabKey == null) continue;
                 tab.ItemCount = countByKey.GetValue(tab.TabKey);
+                if (t == null && tab.ItemCount > 0)
+                {
+                    t = tab.TabKey;
+                    Logger.Information("Tabkey was null.  Setting it to the first tab that has data = {tabTabKey}", t);
+                }
                 tab.IsCurrent = tab.TabKey == t;
+                Logger.Information(
+                    "TABITERATION: {controller} {name} {tabIsCurrent} {tabTabKey} {t}", 
+                    this.GetType().Name, name, tab.IsCurrent, tab.TabKey, t);
                 tabs.Add(tab);
             }
 

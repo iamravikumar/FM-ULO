@@ -1,8 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome from WebCoreL2</h1>
     <p>This is a ASP MVC Core 2 application running on Linux.  This is the default hello world project with RSLLC and Hangfire and SubProject dependencies added.  AppInstanceId=@(RevolutionaryStuff.Core.Stuff.ApplicationInstanceId) UloDbContext=@(typeof(GSA.UnliquidatedObligations.BusinessLayer.Data.UloDbContext).Name)</p>
+    Uses:
+    <ul>
+        @{
+            foreach (var a in System.Reflection.Assembly.GetEntryAssembly().GetReferencedAssemblies())
+            {
+                <li>@a.Name</li>
+            }
+        }
+    </ul>
 </div>

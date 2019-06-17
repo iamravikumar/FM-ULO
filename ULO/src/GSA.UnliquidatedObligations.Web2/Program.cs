@@ -4,11 +4,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
+using System.Collections.Generic;
 
 namespace GSA.UnliquidatedObligations.Web
 {
     public class Program
     {
+        public static readonly IDictionary<string, object> EnvironmentInfo = new Dictionary<string, object>();
+
         internal static class GsaEnvironmentVariableNames
         {
             public const string AppsettingsDirectory = "APPSETTINGS_DIRECTORY";
@@ -28,22 +31,34 @@ namespace GSA.UnliquidatedObligations.Web
             builder.AddEnvironmentVariables();
 
             builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            EnvironmentInfo["hostingContext.HostingEnvironment.EnvironmentName"] = hostingContext.HostingEnvironment.EnvironmentName;
             builder.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
             var c = builder.Build();
             var appSettingsDirectory = c[GsaEnvironmentVariableNames.AppsettingsDirectory];
+            var appName = c[GsaAppSettingsVariablePaths.AppName];
+            EnvironmentInfo[GsaEnvironmentVariableNames.AppsettingsDirectory] = appSettingsDirectory;
+            EnvironmentInfo[GsaEnvironmentVariableNames.LogfileDirectory] = c[GsaEnvironmentVariableNames.LogfileDirectory];
+            EnvironmentInfo[GsaAppSettingsVariablePaths.AppName] = appName;
             if (!string.IsNullOrEmpty(appSettingsDirectory))
             {
-                var appName = c[GsaAppSettingsVariablePaths.AppName];
+                EnvironmentInfo[nameof(appName)] = appName;
                 if (!string.IsNullOrEmpty(appName))
                 {
                     var gsaAppSettingsOptional = Parse.ParseBool(c[GsaAppSettingsVariablePaths.AppSetttingsOptional]);
                     builder.SetBasePath(appSettingsDirectory);
-                    builder.AddJsonFile($"{appName}_appsettings.json", optional: gsaAppSettingsOptional, reloadOnChange: true);
+                    var itAppSettingsFile = $"{appName}_appsettings.json";
+                    builder.AddJsonFile(itAppSettingsFile, optional: gsaAppSettingsOptional, reloadOnChange: true);
+                    EnvironmentInfo[nameof(itAppSettingsFile)] = itAppSettingsFile;
                 }
             }
 
             if (hostingContext.HostingEnvironment.IsDevelopment())
+            {
+                EnvironmentInfo["IsDevelopment"] = true;
+                builder.AddUserSecrets<Program>();
+            }
+            else
             {
                 builder.AddUserSecrets<Program>();
             }
@@ -74,11 +89,21 @@ namespace GSA.UnliquidatedObligations.Web
                 {
                     loggerConfiguration.WriteTo.MSSqlServer(connectionString, c["SerilogSqlServerSink:TableName"], schemaName: c["SerilogSqlServerSink:SchemaName"]);
                 }
-                var appName = c["APP_NAME"];
+                var appName = c[GsaAppSettingsVariablePaths.AppName];
                 var logDirectory = c[GsaEnvironmentVariableNames.LogfileDirectory];
-                if (!string.IsNullOrEmpty(logDirectory) && !string.IsNullOrEmpty(appName))
+                if (!string.IsNullOrEmpty(logDirectory))
                 {
-                    loggerConfiguration.WriteTo.RollingFile($"{logDirectory}{appName}.log", logLevel, flushToDiskInterval: TimeSpan.FromSeconds(5));
+                    try
+                    {
+                        System.IO.Directory.CreateDirectory(logDirectory);
+                        var logRotatingFileName = $"{logDirectory}{appName}.log";
+                        EnvironmentInfo[nameof(logRotatingFileName)] = logRotatingFileName;
+                        loggerConfiguration.WriteTo.RollingFile(logRotatingFileName, logLevel, flushToDiskInterval: TimeSpan.FromSeconds(5));
+                    }
+                    catch (Exception ex)
+                    {
+                        EnvironmentInfo["OnDiskLogSetupError"] = ex.Message;
+                    }
                 }
                 Log.Logger = loggerConfiguration.CreateLogger();
                 logging.AddSerilog();

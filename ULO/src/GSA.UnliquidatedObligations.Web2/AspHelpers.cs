@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
@@ -252,5 +253,48 @@ namespace GSA.UnliquidatedObligations.Web
             return new HtmlString(sb.ToString());
         }
 #endif
+
+        #region SelectListItems
+
+        public static SelectListItem CreateSelectListItem(Justification j)
+            => new SelectListItem { Value = j.Key, Text = j.Description };
+
+        public static IList<SelectListItem> CreateSelectList(IEnumerable<Justification> justifications)
+            => justifications.ConvertAll(j => CreateSelectListItem(j)).ToList();
+
+        public static IList<SelectListItem> CreateSelectList(this IEnumerable<string> stringsToConvert)
+        {
+            var stringsSelect = new List<SelectListItem>();
+
+            foreach (var stringToConvert in stringsToConvert)
+            {
+                stringsSelect.Add(new SelectListItem { Text = stringToConvert, Value = stringToConvert });
+            }
+            return stringsSelect;
+        }
+
+        public static IList<SelectListItem> CreateSelectList(this IEnumerable<SelectListItem> selectListItems)
+        {
+            var selectList = new List<SelectListItem>();
+
+            foreach (var selectListItem in selectListItems)
+            {
+                selectList.Add(selectListItem);
+            }
+            return selectList;
+        }
+
+        public static IList<SelectListItem> CreateSelectList(this IEnumerable<int> nums)
+        {
+            var numsSelect = new List<SelectListItem>();
+
+            foreach (var num in nums)
+            {
+                numsSelect.Add(new SelectListItem { Text = num.ToString(), Value = num.ToString() });
+            }
+            return numsSelect;
+        }
+
+        #endregion
     }
 }

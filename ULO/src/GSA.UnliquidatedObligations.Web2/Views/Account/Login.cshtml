@@ -1,0 +1,47 @@
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@model GSA.UnliquidatedObligations.Web.Models.LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+<h2>@ViewBag.Title</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <section id="loginForm">
+            @using (Html.BeginForm(AccountController.ActionNames.LoginPostback, AccountController.Name, new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", style = "margin-top:20px" }))
+            {
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    <div class="col-md-8">
+                        @if (!Model.ShowUserNotInDBMessage)
+                        {
+                            <input type="submit" value="Log in" class="btn btn-default btn-primary" />
+                        }
+                        else
+                        {
+                            @Html.Encode("You do not have access to the ULO system. Please contact your Ulo coordinator.")
+                        }
+                    </div>
+                </div>
+                @* Enable this once you have account confirmation enabled for password reset functionality
+                    <p>
+                        @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                    </p>*@
+            }
+        </section>
+    </div>
+    <div class="col-md-8">
+        @if (User.Identity.IsAuthenticated && !UserHelpers.HasPermission(ApplicationPermissionNames.ApplicationUser))
+        {
+            <partial name="~/Views/Shared/_AuthenticatedNotAuthorized.cshtml" />
+            <hr />
+        }
+        <partial name="~/Views/Shared/_ApplicationDescription.cshtml" />
+    </div>
+</div>
+@*
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+*@

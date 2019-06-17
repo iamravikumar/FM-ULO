@@ -1,13 +1,32 @@
 ﻿using System;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
+using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web
 {
     public class PortalHelpers
     {
-        public TimeZoneInfo DisplayTimeZone =>
-            TimeZoneInfo.FindSystemTimeZoneById(ConfigOptions.Value.TimezoneId);
+        public TimeZoneInfo DisplayTimeZone
+        {
+            get
+            {
+                if (DisplayTimeZone_p == null)
+                {
+                    try
+                    {
+                        DisplayTimeZone_p = TimeZoneInfo.FindSystemTimeZoneById(ConfigOptions.Value.TimezoneId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, "Problem loading timezone with id = {timezoneId}", ConfigOptions.Value.TimezoneId);
+                        DisplayTimeZone_p = TimeZoneInfo.Local;
+                    }
+                }
+                return DisplayTimeZone_p;
+            }
+        }
+        private TimeZoneInfo DisplayTimeZone_p;
 
         public TimeSpan MediumCacheTimeout =>
             ConfigOptions.Value.MediumCacheTimeout;
@@ -34,15 +53,14 @@ namespace GSA.UnliquidatedObligations.Web
             public string AdministratorEmail { get; set; }
         }
 
-
         public readonly IOptions<SprintConfig> SprintConfigOptions;
 
         private readonly IOptions<Config> ConfigOptions;
 
         private readonly IOptions<Controllers.AccountController.Config> AccountConfigOptions;
+        private readonly ILogger Logger;
 
-
-        public PortalHelpers(IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions)
+        public PortalHelpers(IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, ILogger logger)
         {
             Requires.NonNull(sprintConfigOptions, nameof(sprintConfigOptions));
             Requires.NonNull(configOptions, nameof(configOptions));
@@ -51,6 +69,7 @@ namespace GSA.UnliquidatedObligations.Web
             SprintConfigOptions = sprintConfigOptions;
             ConfigOptions = configOptions;
             AccountConfigOptions = accountConfigOptions;
+            Logger = logger;
         }
 
 

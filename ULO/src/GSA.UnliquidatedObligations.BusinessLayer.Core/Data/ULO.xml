@@ -1689,6 +1689,10 @@
       </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="GetUloSummariesByPdn" routineType="PROCEDURE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
       <Args>
         <Arg position="1" mode="IN" name="@pegasysDocumentNumber" sqlType="varchar" maxLen="50" />
       </Args>

@@ -2,23 +2,38 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <UserSecretsId>aspnet-GSA.UnliquidatedObligations.Web2-3FE4A2F6-8F59-4F31-A9F9-C54438F31A3C</UserSecretsId>
+    <!--
     <MvcRazorCompileOnPublish>true</MvcRazorCompileOnPublish>
     <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
-    <UserSecretsId>aspnet-GSA.UnliquidatedObligations.Web2-3FE4A2F6-8F59-4F31-A9F9-C54438F31A3C</UserSecretsId>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    -->
     <RootNamespace>GSA.UnliquidatedObligations.Web</RootNamespace>
     <RuntimeIdentifiers>win-x64;rhel-x64</RuntimeIdentifiers>
   </PropertyGroup>
+<!--
+  <ItemGroup>
+    <Compile Remove="Views\Ulo\Details\**" />
+    <Compile Remove="Views\Ulo\Search\**" />
+    <Content Remove="Views\Ulo\Details\**" />
+    <Content Remove="Views\Ulo\Search\**" />
+    <EmbeddedResource Remove="Views\Ulo\Details\**" />
+    <EmbeddedResource Remove="Views\Ulo\Search\**" />
+    <None Remove="Views\Ulo\Details\**" />
+    <None Remove="Views\Ulo\Search\**" />
+  </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\Ulo\Details\Documents\**" />
-    <Content Remove="Views\Ulo\Details\Documents\**" />
-    <EmbeddedResource Remove="Views\Ulo\Details\Documents\**" />
-    <None Remove="Views\Ulo\Details\Documents\**" />
+    <Content Remove="Views\Ulo\BulkReassignments.cshtml" />
+    <Content Remove="Views\Ulo\RequestForReassignments.cshtml" />
+    <Content Remove="Views\Ulo\Unassigned.cshtml" />
+    <Content Remove="Views\Ulo\_MyJustifications.cshtml" />
+    <Content Remove="Views\Ulo\_RecordsListing.cshtml" />
   </ItemGroup>
+ -->
   
   <ItemGroup>
-    <PackageReference Include="Hangfire" Version="1.7.2" />
+    <PackageReference Include="Hangfire" Version="1.7.3" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.4" />
@@ -28,19 +43,19 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
-    <PackageReference Include="RevolutionaryStuff.Core" Version="2.5.2" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="2.6.2" />
     <PackageReference Include="Serilog" Version="2.8.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.1.3" />
     <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.1" />
-    <PackageReference Include="Serilog.Enrichers.Thread" Version="3.0.0" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.4" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.1.2" />
-    <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="2.1.1" />
+    <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="2.2.0" />
     <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
     <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
-    <PackageReference Include="Traffk.StorageProviders.Common" Version="1.20.1" />
-    <PackageReference Include="Traffk.StorageProviders.Interfaces" Version="1.20.1" />
+    <PackageReference Include="Traffk.StorageProviders.Common" Version="1.20.2" />
+    <PackageReference Include="Traffk.StorageProviders.Interfaces" Version="1.20.2" />
   </ItemGroup>
 
   <!--

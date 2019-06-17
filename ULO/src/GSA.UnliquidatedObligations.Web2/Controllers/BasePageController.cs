@@ -13,6 +13,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     public abstract class BasePageController : Controller
     {
+        public static class WorkflowStalenessMagicFieldNames
+        {
+            public const string WorkflowRowVersionString = "StalenessWorkflowRowVersionString";
+            public const string EditingBeganAtUtc = "StalenessEditingBeganAtUtc";
+            public const string WorkflowId = "StalenessWorkflowId";
+        }
+
         protected readonly PortalHelpers PortalHelpers;
         protected readonly ILogger Logger;
         protected readonly ICacher Cacher;
@@ -43,13 +50,22 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         protected void OnlySupportedInDevelopmentEnvironment()
         {
-            if (!PortalHelpers.UseDevAuthentication) throw new NotSupportedException();
+            if (!PortalHelpers.UseDevAuthentication)
+            {
+                throw new NotSupportedException($"You are trying to make a call that is only allowed when {PortalHelpers}.{PortalHelpers.UseDevAuthentication}=true");
+            } 
+        }
+
+        private int SetTotalItemCount<T>(IQueryable<T> q)
+        {
+            var cnt = q.Count();
+            ViewBag.TotalItemCount = cnt;
+            return cnt;
         }
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
-            var cnt = q.Count();
-            ViewBag.TotalItemCount = cnt;
+            var cnt = SetTotalItemCount(q);
             if (cnt == 0)
             {
                 q = (new T[0]).AsQueryable();
@@ -64,7 +80,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, Type enumType, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
-            ViewBag.TotalItemCount = q.Count();
+            SetTotalItemCount(q);
             bool isAscending = AspHelpers.IsSortDirAscending(sortDir);
             ViewBag.SortCol = sortCol;
             ViewBag.SortDir = sortDir;
@@ -75,7 +91,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, IEnumerable<string> orderedValues, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
-            ViewBag.TotalItemCount = q.Count();
+            SetTotalItemCount(q);
             bool isAscending = AspHelpers.IsSortDirAscending(sortDir);
             ViewBag.SortCol = sortCol;
             ViewBag.SortDir = sortDir;

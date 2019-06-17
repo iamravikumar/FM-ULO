@@ -13,9 +13,13 @@
 
     var hasData = false;
     var noDataMessage = ViewBag.NoDataMessage as string ?? AspHelpers.NoResultsMessage;
+
+    Logger.Information("Inside {view}", this.GetType().Name);
     if (ViewBag.TotalItemCount != null)
     {
-        hasData = (int)ViewBag.TotalItemCount > 0;
+        int totalItemCount = (int)ViewBag.TotalItemCount;
+        hasData = totalItemCount > 0;
+        Logger.Information("{totalItemCount} and {hasData}", totalItemCount, hasData);
     }
     var tabs = ViewBag.Tabs as IList<WorkflowListTab> ?? WorkflowListTab.None;
     var currentTab = tabs.FirstOrDefault(z => z.IsCurrent);
@@ -36,6 +40,10 @@
             }
         }
     </ul>
+}
+
+@{ 
+    Logger.Information("{tabs.Count} {tabsWithData} {hasData}", tabs.Count, tabsWithData, hasData);
 }
 
 @if (!hasData || (tabsWithData == 0 && tabs.Count > 0))

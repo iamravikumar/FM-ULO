@@ -5,3 +5,14 @@
 <h3>@ViewBag.Message</h3>
 
 @Html.Partial("~/Views/Shared/_ApplicationDescription.cshtml")
+
+<h3>Debug Information:</h3>
+<dl>
+    @{
+        foreach (var kvp in Program.EnvironmentInfo)
+        {
+            <dt>@kvp.Key</dt>
+            <dd>@kvp.Value</dd>
+        }
+    }
+</dl>

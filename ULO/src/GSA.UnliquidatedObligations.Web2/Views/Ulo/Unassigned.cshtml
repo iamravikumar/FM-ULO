@@ -1,9 +1,0 @@
-﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
-@using GSA.UnliquidatedObligations.Web;
-
-@{
-    this.SetTitles(PageKeys.Unassigned, "Unassigned");
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-@Html.Partial("~/Views/Ulo/_RecordsListing.cshtml", Model)
