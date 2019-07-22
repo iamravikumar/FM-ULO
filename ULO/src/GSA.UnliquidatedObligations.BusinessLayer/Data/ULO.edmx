@@ -471,8 +471,9 @@ warning 6002: The table/view 'ULODB.dbo.AspnetUserSubjectCategoryClaims' does no
           <Key>
             <PropertyRef Name="UserId" />
             <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="uniqueidentifier" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Region" Type="int" />
           <Property Name="BACode" Type="nvarchar" MaxLength="50" />
@@ -2040,8 +2041,9 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Key>
             <PropertyRef Name="UserId" />
             <PropertyRef Name="ClaimId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Guid" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Region" Type="Int32" />
           <Property Name="BACode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />

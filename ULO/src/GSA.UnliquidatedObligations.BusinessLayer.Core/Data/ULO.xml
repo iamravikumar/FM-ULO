@@ -1192,6 +1192,10 @@
       </Columns>
     </Table>
     <Table schema="gsa" name="Regions" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
       <Columns>
         <Column name="RegionId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
         <Column name="ZoneId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="gsa" refTable="Zones" />
@@ -1207,6 +1211,10 @@
       </Collections>
     </Table>
     <Table schema="gsa" name="Zones" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
       <Columns>
         <Column name="ZoneId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
         <Column name="ZoneName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="100" isComputed="0" />

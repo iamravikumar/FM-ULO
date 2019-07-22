@@ -37,6 +37,22 @@ function itemCountString(itemCount, itemTypeString) {
     return itemCount + " " + itemTypeString + "s";
 }
 
+function setupFancyMultiselect(el)
+{
+    $(el).find("select").not(".no-select-all").multiselect({
+        maxHeight: 320,
+        buttonWidth: '175px',
+        numberDisplayed: 1,
+        includeSelectAllOption: true
+    });
+
+    $(el).find("select.no-select-all").multiselect({
+        maxHeight: 320,
+        buttonWidth: '175px',
+        numberDisplayed: 1
+    });
+}
+
 $(document).ready(function () {
 
     $(".confirm-on-click").each(function () {
@@ -67,21 +83,13 @@ $(document).ready(function () {
         });
     });
 
-    $(".advanced-search-settings select").not(".no-select-all").multiselect({
-        maxHeight: 320,
-        buttonWidth: '175px',
-        numberDisplayed: 1,
-        includeSelectAllOption: true
-    });
-
-    $(".advanced-search-settings select.no-select-all").multiselect({
-        maxHeight: 320,
-        buttonWidth: '175px',
-        numberDisplayed: 1
+    $(".advanced-search-settings").each(function (n, el) {
+        setupFancyMultiselect(el);
     });
 
     $("form").submit(function (a) {
         var formEl = a.target;
+        var isPost = formEl.method == "post";
         $(formEl).find("select").each(function (n, el) {
             if (el.multiple) {
                 var enabledCnt = 0;
@@ -91,7 +99,7 @@ $(document).ready(function () {
                     enabledCnt += opt.disabled ? 0 : 1;
                     selectedCnt += opt.selected ? 1 : 0;
                 });
-                if (enabledCnt == selectedCnt && selectedCnt > 15) {
+                if (enabledCnt == selectedCnt && selectedCnt > 15 && !isPost) {
                     jel.find("option").each(function (fdsfdsafsdafs, opt) {
                         if (!opt.disabled) {
                             opt.selected = false;

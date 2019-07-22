@@ -4,6 +4,7 @@
 @{
     var createMode = Model.UserId == null;
     var canMakeChanges = User.HasPermission(ApplicationPermissionNames.ManageUsers);
+    var hiddenHtmlAttributes = new { @class = "hidden" };
     var readonlyHtmlAttributes = new { @readonly = "readonly" };
     var disabledHtmlAttributes = new { @disabled = "disabled" };
     var textboxHtmlAttributes = canMakeChanges ? (object) new { } : (object) readonlyHtmlAttributes;
@@ -54,7 +55,7 @@
                 Group Membership Regions
             </div>
             <div class="col-sm-10">
-                @Html.ListBoxFor(z=>z.GroupMembershipRegionIds, PortalHelpers.CreateRegionSelectListItems(), canMakeChanges ? (object) new { size=12 } : (object)new { size = 12, @disabled = "disabled" })
+                @Html.ListBoxFor(z => z.GroupMembershipRegionIds, PortalHelpers.CreateRegionSelectListItems(), canMakeChanges ? (object)new { size = 12 } : (object)new { size = 12, @disabled = "disabled" })
             </div>
         </div>
         <div class="form-row">
@@ -78,7 +79,7 @@
                 @Html.DisplayNameFor(model => model.Claims)
             </div>
             <div class="col-sm-10">
-                <table class="table table-responsive users-data" id="SCClaimsTable">
+                <table class="table table-responsive users-data advanced-search-settings" id="SCClaimsTable">
                     <thead>
                         <tr>
                             <th>Doc Type</th>
@@ -88,13 +89,38 @@
                             <th></th>
                         </tr>
                     </thead>
-                    @foreach (var claim in Model.SubjectCategoryClaims)
+                    @{ 
+                        var m = new RevolutionaryStuff.Core.Collections.MultipleValueDictionary<string, GSA.UnliquidatedObligations.BusinessLayer.Data.AspnetUserSubjectCategoryClaim>();
+                        foreach (var claim in Model.SubjectCategoryClaims)
+                        {
+                            var key = RevolutionaryStuff.Core.Caching.Cache.CreateKey(claim.BACode, claim.OrgCode, claim.Region);
+                            m.Add(key, claim);
+                        }
+                    }
+                    @foreach (var key in m.Keys)
                     {
+                        var claim = m[key].First();
+                        var items = PortalHelpers.CreateDocumentTypeSelectListItems().SelectedValues(m[key].Select(z => z.DocumentType));
                         <tr>
-                            <td>@Html.TextBox("scc.docType", claim.DocumentType, readonlyHtmlAttributes)</td>
-                            <td>@Html.TextBox("scc.bacode", claim.BACode, readonlyHtmlAttributes)</td>
-                            <td>@Html.TextBox("scc.orgcode", claim.OrgCode, readonlyHtmlAttributes)</td>
-                            <td>@Html.TextBox("scc.region", claim.Region, readonlyHtmlAttributes)</td>
+                            <td>
+                                @Html.ListBox("scc.docType", items, new { multiple = "multiple" })
+                                <input name="scc.docType" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+                            </td>
+                            <td>
+                                @claim.BACode
+                                @Html.TextBox("scc.bacode", claim.BACode, hiddenHtmlAttributes)
+                                <input name="scc.bacode" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+                            </td>
+                            <td>
+                                @claim.OrgCode
+                                @Html.TextBox("scc.orgcode", claim.OrgCode, hiddenHtmlAttributes)
+                                <input name="scc.orgcode" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+                            </td>
+                            <td>
+                                @(claim.Region==null?"*":claim.Region.ToString())
+                                @Html.TextBox("scc.region", claim.Region, hiddenHtmlAttributes)
+                                <input name="scc.region" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+                            </td>
                             <td>
 @if (canMakeChanges)
 {
@@ -122,10 +148,22 @@
 
 <table class="hidden" id="SCClaimTemplateRowContainer">
     <tr>
-        <td>@Html.DropDownList("scc.docType", PortalHelpers.CreateDocumentTypeSelectListItems())</td>
-        <td><input type="text" name="scc.bacode" required="required" maxlength="4" /></td>
-        <td><input type="text" name="scc.orgcode" required="required" maxlength="8" /></td>
-        <td>@Html.DropDownList("scc.region", PortalHelpers.CreateRegionSelectListItems(true))</td>
+        <td>
+            @Html.ListBox("scc.docType", PortalHelpers.CreateDocumentTypeSelectListItems(), new { multiple = "multiple" })
+            <input name="scc.docType" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+        </td>
+        <td>
+            <input type="text" name="scc.bacode" required="required" maxlength="4" />
+            <input name="scc.bacode" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+        </td>
+        <td>
+            <input type="text" name="scc.orgcode" required="required" maxlength="8" />
+            <input name="scc.orgcode" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+        </td>
+        <td>
+            @Html.DropDownList("scc.region", PortalHelpers.CreateRegionSelectListItems(false), new { multiple = "multiple" })
+            <input name="scc.region" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+        </td>
         <td><a href="#" onclick="DeleteMyRow(event, this)">Delete</a></td>
     </tr>
 </table>
@@ -147,7 +185,8 @@
         //alert("adding");
         var template = $("#SCClaimTemplateRowContainer").children(0);
         //alert(template.html());
-        template.clone().appendTo("#SCClaimsTable");
+        var jel = template.clone().appendTo("#SCClaimsTable");
+        jel.each(function (n, el) { setupFancyMultiselect(el); });        
         event.stopPropagation();
         return false;
     }

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
+using GSA.UnliquidatedObligations.BusinessLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,9 @@ using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
+using System;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using GSA.UnliquidatedObligations.Web.Services;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -48,12 +53,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         private readonly IOptions<Config> ConfigOptions;
+        protected readonly IWorkflowManager Manager;
 
-        public UloController(IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+        public UloController(IWorkflowManager manager, IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             ConfigOptions = configOptions;
-            //Manager = manager;
+            Manager = manager;
             //UserManager = userManager;
             //PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
@@ -68,22 +74,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ViewBag.Tabs = items;
         }
 
-        private void SetNoDataMessage(string message)
-        {
-            ViewBag.NoDataMessage = message;
-        }
-
-#if false
-
-        protected readonly IWorkflowManager Manager;
-        private readonly ApplicationUserManager UserManager;
-
-        private void PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(IQueryable<Workflow> workflows)
-        {
-            var dbt = new RequestForReassignmentsController.DetailsBulkToken(CurrentUser, this.DB, workflows);
-            ViewBag.DetailsBulkToken = dbt;
-        }
-
         private void PopulateWorkflowDescriptionIntoViewBag(IWorkflowDescription workflowDescription, Workflow wf, string docType, string mostRecentNonReassignmentAnswer, string mostRecentRealAnswer)
         {
             ViewBag.JustificationByKey = workflowDescription.GetJustificationByKey();
@@ -93,6 +83,70 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ViewBag.QuestionChoiceByQuestionChoiceValue = d;
             wawa?.QuestionChoices?.WhereMostApplicable(docType, mostRecentNonReassignmentAnswer, mostRecentRealAnswer).ForEach(z => d[z.Value] = z);
         }
+
+        private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
+        {
+            var workflowDescription = await Manager.GetWorkflowDescriptionAsync(wf);
+            PopulateWorkflowDescriptionIntoViewBag(workflowDescription, wf, wf.TargetUlo.DocType, wf.MostRecentNonReassignmentAnswer, wf.MostRecentRealAnswer);
+            return workflowDescription;
+        }
+
+        private void SetNoDataMessage(string message)
+        {
+            ViewBag.NoDataMessage = message;
+        }
+
+        [Route("ulos/{uloId}/{workflowId}", Order = 1)]
+        [Route("ulos/{uloId}", Order = 2)]
+        [ActionName(ActionNames.Details)]
+        public async Task<IActionResult> Details(int uloId = 0, int workflowId = 0)
+        {
+            //TODO: check if current user is able to view
+            var ulo = await DB.UnliquidatedObligations.
+                Include(u => u.UloNotes).
+                Include(u => u.Region).
+                Include(u => u.Region.Zone).
+                WhereReviewExists().
+                FirstOrDefaultAsync(u => u.UloId == uloId);
+
+            if (ulo == null) return NotFound();
+            if (workflowId == 0)
+            {
+                workflowId = (await DB.Workflows.OrderByDescending(z => z.WorkflowId).FirstOrDefaultAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
+                return RedirectToAction(ActionNames.Details, new { uloId, workflowId });
+            }
+
+            Log.Information("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
+
+            var workflow = await DB.FindWorkflowAsync(workflowId);
+            var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
+
+            var belongs =
+                workflow.OwnerUser.UserType == AspNetUser.UserTypes.Group &&
+                BelongsToMyUnassignmentGroup(workflow.OwnerUserId, ulo.RegionId.GetValueOrDefault(-1));
+
+            var workflowDesc = await FindWorkflowDescAsync(workflow);
+
+            var others = DB.GetUloSummariesByPdn(ulo.PegasysDocumentNumber).ToList().Where(z => z.WorkflowId != workflowId).OrderBy(z => z.WorkflowId).ToList();
+
+            var otherDocs = DB.GetUniqueMissingLineageDocuments(workflow, others.Select(o => o.WorkflowId));
+
+            DB.WorkflowViews.Add(new WorkflowView { ActionAtUtc = DateTime.UtcNow, UserId = CurrentUserId, ViewAction = WorkflowView.CommonActions.Opened, WorkflowId = workflow.WorkflowId });
+            await DB.SaveChangesAsync();
+
+            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, otherDocs, belongs));
+        }
+
+        #if false
+
+        private readonly ApplicationUserManager UserManager;
+
+        private void PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(IQueryable<Workflow> workflows)
+        {
+            var dbt = new RequestForReassignmentsController.DetailsBulkToken(CurrentUser, this.DB, workflows);
+            ViewBag.DetailsBulkToken = dbt;
+        }
+
         private void PopulateViewInfoIntoViewBag(IEnumerable<Workflow> workflows)
         {
             var wfs = workflows.ToList();
@@ -411,47 +465,6 @@ Browse:
             }
         }
 
-        [Route("ulos/{uloId}/{workflowId}", Order = 1)]
-        [Route("ulos/{uloId}", Order = 2)]
-        [ActionName(ActionNames.Details)]
-        public async Task<ActionResult> Details(int uloId = 0, int workflowId = 0)
-        {
-            //TODO: check if current user is able to view
-            var ulo = await DB.UnliquidatedObligations.
-                Include(u => u.Notes).
-                Include(u => u.Region).
-                Include(u => u.Region.Zone).
-                WhereReviewExists().
-                FirstOrDefaultAsync(u => u.UloId == uloId);
-
-            if (ulo == null) return HttpNotFound();
-            if (workflowId == 0)
-            {
-                workflowId = (await DB.Workflows.OrderByDescending(z => z.WorkflowId).FirstOrDefaultAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
-                return RedirectToAction(ActionNames.Details, new { uloId, workflowId });
-            }
-
-            Log.Information("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
-
-            var workflow = await DB.FindWorkflowAsync(workflowId);
-            var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
-
-            var belongs =
-                workflow.AspNetUser.UserType == AspNetUser.UserTypes.Group &&
-                BelongsToMyUnassignmentGroup(workflow.OwnerUserId, ulo.RegionId.GetValueOrDefault(-1));
-
-            var workflowDesc = await FindWorkflowDescAsync(workflow);
-
-            var others = DB.GetUloSummariesByPdn(ulo.PegasysDocumentNumber).ToList().Where(z => z.WorkflowId != workflowId).OrderBy(z => z.WorkflowId).ToList();
-
-            var otherDocs = DB.GetUniqueMissingLineageDocuments(workflow, others.Select(o => o.WorkflowId));
-
-            DB.WorkflowViews.Add(new WorkflowView { ActionAtUtc = DateTime.UtcNow, UserId = CurrentUserId, ViewAction = WorkflowView.CommonActions.Opened, WorkflowId = workflow.WorkflowId });
-            await DB.SaveChangesAsync();
-
-            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, otherDocs, belongs));
-        }
-
         private class MarkData
         {
             [JsonProperty("workflowIds")]
@@ -481,14 +494,6 @@ Browse:
             return Json(ret, JsonRequestBehavior.DenyGet);
         }
 
-
-        private async Task<IWorkflowDescription> FindWorkflowDescAsync(Workflow wf)
-        {
-            var workflowDescription = await Manager.GetWorkflowDescriptionAsync(wf);
-            PopulateWorkflowDescriptionIntoViewBag(workflowDescription, wf, wf.UnliquidatedObligation.DocType, wf.MostRecentNonReassignmentAnswer, wf.MostRecentRealAnswer);
-            return workflowDescription;
-        }
-
         //Referred to by WebActionWorkflowActivity
         //TODO: Attributes will probably change
         [ActionName("Advance")]
@@ -496,7 +501,7 @@ Browse:
         public async Task<ActionResult> Advance(int workflowId)
         {
             var wf = await DB.FindWorkflowAsync(workflowId);
-            if (wf == null) return HttpNotFound();
+            if (wf == null) return NotFound();
             return View(new FormAModel(wf));
         }
 
@@ -517,7 +522,7 @@ Browse:
             AdvanceViewModel advanceModel=null)
         {
             var wf = await DB.FindWorkflowAsync(workflowId);
-            if (wf == null) return HttpNotFound();
+            if (wf == null) return NotFound();
             if (ModelState.IsValid)
             {
                 Log.Information("Altering ULO {UloId} with Workflow {WorkflowId} via command {AlterCommand}", uloId, workflowId, Request["WhatNext"]);

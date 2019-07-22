@@ -31,6 +31,7 @@ namespace GSA.UnliquidatedObligations.Web
         public static string AdministratorEmail => Properties.Settings.Default.AdminstratorEmail;
         public static string AttachmentFileUploadAccept => Properties.Settings.Default.AttachmentFileUploadAccept;
         public static string AttachmentFileUploadAcceptMessage => Properties.Settings.Default.AttachmentFileUploadAcceptMessage;
+        public const string FormFieldsBreak = "`";
 
         public static DateTime ToLocalizedDateTime(this DateTime utc)
         {
@@ -808,6 +809,9 @@ namespace GSA.UnliquidatedObligations.Web
                 Cache.CreateKey(nameof(GetRegionName), regionId),
                 () => CreateRegionSelectListItems(false).FirstOrDefault(i => i.Value == regionId.ToString())?.Text);
 
+        public static int RegionCount
+            => CreateRegionSelectListItems(false).Count;
+
         public static IList<SelectListItem> CreateRegionSelectListItems(bool includeAllRegions = false, string allRegionsValue = "*")
             => Cacher.FindOrCreateValWithSimpleKey(
                 Cache.CreateKey(nameof(CreateRegionSelectListItems), includeAllRegions, allRegionsValue),
@@ -828,6 +832,15 @@ namespace GSA.UnliquidatedObligations.Web
                 },
                 UloHelpers.MediumCacheTimeout
                 ).Copy();
+
+        public static IList<SelectListItem> SelectedValues(this IList<SelectListItem> items, IEnumerable<string> values)
+        {
+            foreach (var item in items)
+            {
+                item.Selected = values!=null && values.Contains(item.Value);
+            }
+            return items;
+        }
 
         public static IList<SelectListItem> CreateDocumentTypeSelectListItems()
             => CSV.ParseText(Properties.Settings.Default.DocTypesCsv).Where(r => r.Length == 2).ConvertAll(
@@ -1056,5 +1069,37 @@ namespace GSA.UnliquidatedObligations.Web
                 .Include(q => q.UnliqudatedObjectsWorkflowQuestions)
                 .WhereReviewExists()
                 .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
+
+
+        public static int? IndexOfOccurrence<T>(this IList<T> items, Func<T, bool> test, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
+        {
+            Requires.NonNegative(nthOccurrence, nameof(nthOccurrence));
+
+            if (nthOccurrence == 0) return zeroThValue;
+
+            int cnt = 0;
+            for (int z = 0; z < items.Count; ++z)
+            {
+                var i = items[z];
+                bool hit = test(i);
+                if (hit && ++cnt == nthOccurrence)
+                {
+                    return z;
+                }
+            }
+            return missingValue;
+        }
+
+        public static int? IndexOfOccurrence<T>(this IList<T> items, T match, int nthOccurrence, int? zeroThValue = null, int ? missingValue = null)
+            => items.IndexOfOccurrence(i => {
+                if (i == null)
+                {
+                    return match == null;
+                }
+                else
+                {
+                    return i.Equals(match);
+                }
+            }, nthOccurrence, zeroThValue, missingValue);
     }
 }

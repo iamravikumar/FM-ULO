@@ -4,6 +4,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -199,18 +200,35 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var sccRegions = HttpContext.Request.Form.GetValues("scc.region") ?? Empty.StringArray;
                 m.Claims.Clear();
                 m.SubjectCategoryClaims = new List<AspnetUserSubjectCategoryClaim>();
+                int n = 0;
                 for (int z = 0; z < sccDocTypes.Length; ++z)
                 {
+                    var docType = StringHelpers.TrimOrNull(sccDocTypes[z]);
+                    if (docType==null) continue;
+                    if (docType == PortalHelpers.FormFieldsBreak)
+                    {
+                        ++n;
+                        continue;
+                    }
                     var sccv = new SubjectCatagoryClaimValue
                     {
-                        BACode = sccBaCodes[z],
-                        DocType = sccDocTypes[z],
-                        OrgCode = sccOrgCodes[z]
+                        DocType = docType,
+                        BACode = sccBaCodes[sccBaCodes.IndexOfOccurrence(PortalHelpers.FormFieldsBreak, n, -1).Value + 1],
+                        OrgCode = sccOrgCodes[sccOrgCodes.IndexOfOccurrence(PortalHelpers.FormFieldsBreak, n, -1).Value + 1]
                     };
-                    if (null == StringHelpers.TrimOrNull(sccv.DocType)) continue;
-                    int regionId = Parse.ParseInt32(sccRegions[z]);
-                    sccv.Regions = sccv.Regions ?? new HashSet<int>();
-                    sccv.Regions.Add(regionId);
+                    sccv.Regions = new HashSet<int>();
+                    for (int rn= sccRegions.IndexOfOccurrence(PortalHelpers.FormFieldsBreak, n, -1).Value+1; ; ++rn)
+                    {
+                        if (sccRegions[rn] == PortalHelpers.FormFieldsBreak) break;
+                        if (int.TryParse(sccRegions[rn], out int regionId))
+                        {
+                            sccv.Regions.Add(regionId);
+                        }                        
+                    }
+                    if (sccv.Regions.Count == PortalHelpers.RegionCount)
+                    {
+                        sccv.Regions.Clear();
+                    }
                     DB.AspNetUserClaims.Add(new AspNetUserClaim
                     {
                         ClaimType = SubjectCatagoryClaimValue.ClaimType,

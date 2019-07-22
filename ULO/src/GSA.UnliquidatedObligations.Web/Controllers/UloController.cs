@@ -109,7 +109,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             SetNoDataMessage(NoDataMessages.NoTasks);
 
             var workflows = DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId).WhereReviewExists();
-
             var countByKey = new Dictionary<string, int>(workflows.GroupBy(w => w.CurrentWorkflowActivityKey).Select(g => new { CurrentWorkflowActivityKey = g.Key, Count = g.Count() }).ToDictionaryOnConflictKeepLast(z => z.CurrentWorkflowActivityKey, z => z.Count), Comparers.CaseInsensitiveStringComparer);
 
             var keyByName = Cacher.FindOrCreateValWithSimpleKey("workflowKeyByActivityNameForAllActiveWorkflows", () => {
