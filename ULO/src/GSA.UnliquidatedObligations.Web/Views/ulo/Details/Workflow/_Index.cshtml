@@ -2,20 +2,24 @@
 
 <div class="container-fluid row">
     <div class="row">
-        <div class="col-sm-6" style="padding-left:0px">
-            @Html.Partial("Details/Workflow/_Questions", Model.WorkflowViewModel.QuestionsViewModel)
-        </div>
-        <div class="col-sm-6" style="padding-right:0px">
-            @Html.Partial("Details/_FinancialActivities", Model.CurretUnliquidatedObligation)
-        </div>
+        @Html.Partial("Details/Workflow/_Questions", Model.WorkflowViewModel.QuestionsViewModel)
     </div>
 </div>
 
-<div class="row advance">
-
-    @if (Model.WorkflowViewModel.WorkflowAssignedToCurrentUser && Model.WorkflowViewModel.AdvanceViewModel.QuestionChoices.Count > 0)
-    {
-        @Html.Partial("Details/Workflow/_Advance", Model.WorkflowViewModel.AdvanceViewModel)
-    }
-
+<div class="container-fluid row">
+    <div class="row advance">
+        @if (Model.WorkflowViewModel.WorkflowAssignedToCurrentUser && Model.WorkflowViewModel.AdvanceViewModel.QuestionChoices.Count > 0)
+        {
+            <div class="col-sm-6" style="padding-left:0px">
+                @Html.Partial("Details/Workflow/_Advance", Model.WorkflowViewModel.AdvanceViewModel)
+            </div>
+            <div class="col-sm-6" style="padding-right:0px">
+                @Html.Partial("Details/_FinancialActivities", Model.CurretUnliquidatedObligation)
+            </div>
+        }
+        else
+        {
+            @Html.Partial("Details/_FinancialActivities", Model.CurretUnliquidatedObligation)
+        }
+    </div>
 </div>

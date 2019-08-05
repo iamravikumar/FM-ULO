@@ -2,12 +2,12 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title">Financial Activities</h3>
+        <h3 class="panel-title">Financial Activity Since Review Date</h3>
     </div>
     <div class="panel-body">
         @if (Model.FinancialActivities.Count == 0)
         {
-            <div class="noDataMessage">No financial activites have been recorded yet.</div>
+            <div class="noDataMessage">No financial activity has been recorded yet.</div>
         }
         else
         {
@@ -56,26 +56,52 @@
                 <h5 class="modal-title" id="new-fa-label">New Financial Activity</h5>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <label class="col-md-4">Activity Date</label>
-                    <input class="col-md-8" type="date" id="newfaActivityDate" />
-                </div>
-                <div class="row">
-                    <label class="col-md-4">Activity Type</label>
-                    <input class="col-md-8" type="text" maxlength="50" id="newfaActivityType" />
-                </div>
-                <div class="row">
-                    <label class="col-md-4">Reference Number</label>
-                    <input class="col-md-8" type="text" maxlength="100" id="newfaReferenceNumber" />
-                </div>
-                <div class="row">
-                    <label class="col-md-4">Amount</label>
-                    <input class="col-md-8" type="number" id="newfaAmount" />
-                </div>
-                <div class="row">
-                    <label class="col-md-4">Description</label>
-                    <textarea class="col-md-8" id="newfaDescription"></textarea>
-                </div>
+                <table>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaActivityDate">Activity Date</label>
+                        </td>
+                        <td>
+                            <input class="col-md-8" type="date" id="newfaActivityDate" name="newfaActivityDate" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaActivityType">Activity Type</label>
+                        </td>
+                        <td>
+                            <select id="newfaActivityType" class="col-md-8" style="margin:0;padding:0" name="newfaActivityType">
+                                <option>Payment</option>
+                                <option>Receipt</option>
+                                <option>Modification</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaReferenceNumber">Reference Number</label>
+                        </td>
+                        <td>
+                            <input class="col-md-8" type="text" maxlength="100" id="newfaReferenceNumber" name="newfaReferenceNumber" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaAmount">Amount</label>
+                        </td>
+                        <td>
+                            <input class="col-md-8" type="number" id="newfaAmount" name="newfaAmount" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaDescription">Description</label>
+                        </td>
+                        <td>
+                            <textarea class="col-md-8" id="newfaDescription" name="newfaDescription"></textarea>
+                        </td>
+                    </tr>
+                </table>
             </div>
             <div class="modal-footer">
                 <div class="document-error-msg">This is an Errors</div>
