@@ -10,6 +10,7 @@
     ViewData[BaseController.WorkflowStalenessMagicFieldNames.EditingBeganAtUtc] = DateTime.UtcNow;
     ViewData[BaseController.WorkflowStalenessMagicFieldNames.WorkflowId] = Model.WorkflowViewModel.Workflow.WorkflowId;
 }
+
 <h2>ULO Details</h2>
 @Html.Partial("Details/Workflow/_WorkflowDescription", Model.WorkflowViewModel.WorkflowDescriptionViewModel)
 
@@ -20,9 +21,9 @@
     @Html.Partial("Details/_Ulo", Model)
     @Html.Partial("Details/Documents/_Index", Model.WorkflowViewModel.DocumentsViewModel)
     @*
-    @Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)
+        @Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)
     *@
-    @Html.Partial("Details/Workflow/_Index", Model.WorkflowViewModel)
+    @Html.Partial("Details/Workflow/_Index", Model)
     @Html.Partial("Details/Workflow/_Others", Model.Others)
 }
 

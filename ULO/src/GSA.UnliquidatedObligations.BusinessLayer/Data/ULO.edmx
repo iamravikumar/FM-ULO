@@ -21,6 +21,8 @@
           </Key>
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ConcurrencyStamp" Type="nvarchar(max)" />
+          <Property Name="NormalizedName" Type="nvarchar" MaxLength="256" />
         </EntityType>
         <EntityType Name="AspNetUserClaims">
           <Key>
@@ -40,6 +42,7 @@
           <Property Name="LoginProvider" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="ProviderKey" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ProviderDisplayName" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="AspNetUserRoles">
           <Key>
@@ -67,6 +70,10 @@
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="UserType" Type="varchar" MaxLength="80" Nullable="false" />
           <Property Name="AutoAssignUser" Type="bit" Nullable="false" />
+          <Property Name="ConcurrencyStamp" Type="nvarchar(max)" />
+          <Property Name="LockoutEnd" Type="datetimeoffset" Precision="7" />
+          <Property Name="NormalizedEmail" Type="nvarchar" MaxLength="256" />
+          <Property Name="NormalizedUserName" Type="nvarchar" MaxLength="256" />
         </EntityType>
         <EntityType Name="Attachments">
           <Key>
@@ -119,6 +126,20 @@
           <Property Name="EmailBody" Type="varchar" MaxLength="500" />
           <Property Name="EmailSubject" Type="varchar" MaxLength="200" />
           <Property Name="EmailHtmlBody" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="FinancialActivities">
+          <Key>
+            <PropertyRef Name="FinancialActivityId" />
+          </Key>
+          <Property Name="FinancialActivityId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CreatedAtUtc" Type="datetime" Nullable="false" StoreGeneratedPattern="Computed" />
+          <Property Name="DeletedAtUtc" Type="datetime" />
+          <Property Name="UloId" Type="int" Nullable="false" />
+          <Property Name="ActivityDate" Type="datetime" Nullable="false" />
+          <Property Name="ActivityType" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ReferenceNumber" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Notes">
           <Key>
@@ -597,6 +618,18 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </Principal>
             <Dependent Role="Documents">
               <PropertyRef Name="DeletedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Financial__UloId__30441BD6">
+          <End Role="UnliquidatedObligations" Type="Self.UnliquidatedObligations" Multiplicity="1" />
+          <End Role="FinancialActivities" Type="Self.FinancialActivities" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnliquidatedObligations">
+              <PropertyRef Name="UloId" />
+            </Principal>
+            <Dependent Role="FinancialActivities">
+              <PropertyRef Name="UloId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1127,6 +1160,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySet Name="Documents" EntityType="Self.Documents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentTypes" EntityType="Self.DocumentTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EmailTemplates" EntityType="Self.EmailTemplates" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FinancialActivities" EntityType="Self.FinancialActivities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Notes" EntityType="Self.Notes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PdnAttributes" EntityType="Self.PdnAttributes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ReportDefinitions" EntityType="Self.ReportDefinitions" Schema="dbo" store:Type="Tables" />
@@ -1228,6 +1262,10 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <AssociationSet Name="FK__Documents__Delet__125EB334" Association="Self.FK__Documents__Delet__125EB334">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Documents" EntitySet="Documents" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Financial__UloId__30441BD6" Association="Self.FK__Financial__UloId__30441BD6">
+            <End Role="UnliquidatedObligations" EntitySet="UnliquidatedObligations" />
+            <End Role="FinancialActivities" EntitySet="FinancialActivities" />
           </AssociationSet>
           <AssociationSet Name="FK__Notes__DeletedBy__24134F1B" Association="Self.FK__Notes__DeletedBy__24134F1B">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -1608,6 +1646,11 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Note" EntitySet="Notes" />
           </AssociationSet>
+          <EntitySet Name="FinancialActivities" EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.FinancialActivity" />
+          <AssociationSet Name="FK__Financial__UloId__2C738AF2" Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Financial__UloId__2C738AF2">
+            <End Role="UnliquidatedObligation" EntitySet="UnliquidatedObligations" />
+            <End Role="FinancialActivity" EntitySet="FinancialActivities" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="GetMyGroups_Result">
           <Property Type="String" Name="UserId" Nullable="true" MaxLength="128" />
@@ -1630,6 +1673,8 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUsers" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserRoles" FromRole="AspNetRole" ToRole="AspNetUser" />
+          <Property Name="ConcurrencyStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NormalizedName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="AspNetUserClaim">
           <Key>
@@ -1651,6 +1696,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="ProviderKey" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogin" ToRole="AspNetUser" />
+          <Property Name="ProviderDisplayName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="AspNetUser">
           <Key>
@@ -1688,6 +1734,10 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <NavigationProperty Name="UnliquidatedObligations" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Cardh__2CDD9F46" FromRole="AspNetUser" ToRole="UnliquidatedObligation" />
           <NavigationProperty Name="WorkflowViews" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__UserI__7B113988" FromRole="AspNetUser" ToRole="WorkflowView" />
           <NavigationProperty Name="Notes1" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__DeletedBy__24134F1B" FromRole="AspNetUser" ToRole="Note" />
+          <Property Name="ConcurrencyStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LockoutEnd" Type="DateTimeOffset" Precision="7" />
+          <Property Name="NormalizedEmail" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="NormalizedUserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Attachment">
           <Key>
@@ -2471,6 +2521,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <Property Name="CardholderUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Unliquida__Cardh__2CDD9F46" FromRole="UnliquidatedObligation" ToRole="AspNetUser" />
           <Property Name="PegasysDocumentNumberInstance" Type="Int32" />
+          <NavigationProperty Name="FinancialActivities" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Financial__UloId__2C738AF2" FromRole="UnliquidatedObligation" ToRole="FinancialActivity" />
         </EntityType>
         <Association Name="FK__Notes__UloId__5555A4F4">
           <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
@@ -2738,6 +2789,32 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="FinancialActivity">
+          <Key>
+            <PropertyRef Name="FinancialActivityId" />
+          </Key>
+          <Property Name="FinancialActivityId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UloId" Type="Int32" Nullable="false" />
+          <Property Name="ActivityDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ActivityType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ReferenceNumber" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UnliquidatedObligation" Relationship="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Financial__UloId__2C738AF2" FromRole="FinancialActivity" ToRole="UnliquidatedObligation" />
+          <Property Name="CreatedAtUtc" Type="DateTime" Nullable="false" Precision="3" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <Association Name="FK__Financial__UloId__2C738AF2">
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation" Role="UnliquidatedObligation" Multiplicity="1" />
+          <End Type="GSA.UnliquidatedObligations.BusinessLayer.Data.FinancialActivity" Role="FinancialActivity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UnliquidatedObligation">
+              <PropertyRef Name="UloId" />
+            </Principal>
+            <Dependent Role="FinancialActivity">
+              <PropertyRef Name="UloId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2767,6 +2844,8 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="AspNetRoles">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetRole">
               <MappingFragment StoreEntitySet="AspNetRoles">
+                <ScalarProperty Name="NormalizedName" ColumnName="NormalizedName" />
+                <ScalarProperty Name="ConcurrencyStamp" ColumnName="ConcurrencyStamp" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
@@ -2785,6 +2864,7 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="AspNetUserLogins">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUserLogin">
               <MappingFragment StoreEntitySet="AspNetUserLogins">
+                <ScalarProperty Name="ProviderDisplayName" ColumnName="ProviderDisplayName" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
                 <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
@@ -2794,6 +2874,10 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
           <EntitySetMapping Name="AspNetUsers">
             <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.AspNetUser">
               <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="NormalizedUserName" ColumnName="NormalizedUserName" />
+                <ScalarProperty Name="NormalizedEmail" ColumnName="NormalizedEmail" />
+                <ScalarProperty Name="LockoutEnd" ColumnName="LockoutEnd" />
+                <ScalarProperty Name="ConcurrencyStamp" ColumnName="ConcurrencyStamp" />
                 <ScalarProperty Name="AutoAssignUser" ColumnName="AutoAssignUser" />
                 <ScalarProperty Name="UserType" ColumnName="UserType" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
@@ -3374,6 +3458,21 @@ warning 6002: The table/view 'ULODB.dbo.WorkflowProhibitedOwners' does not have 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="FinancialActivities">
+            <EntityTypeMapping TypeName="GSA.UnliquidatedObligations.BusinessLayer.Data.FinancialActivity">
+              <MappingFragment StoreEntitySet="FinancialActivities">
+                <ScalarProperty Name="CreatedAtUtc" ColumnName="CreatedAtUtc" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="ReferenceNumber" ColumnName="ReferenceNumber" />
+                <ScalarProperty Name="ActivityType" ColumnName="ActivityType" />
+                <ScalarProperty Name="ActivityDate" ColumnName="ActivityDate" />
+                <ScalarProperty Name="UloId" ColumnName="UloId" />
+                <ScalarProperty Name="FinancialActivityId" ColumnName="FinancialActivityId" />
+                <Condition ColumnName="DeletedAtUtc" IsNull="true" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -4,72 +4,70 @@
 
 @Html.HiddenFor(model => model.UnliqudatedWorkflowQuestionsId)
 
-<div class="row advance">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Decision</h3>
-        </div>
-        <div class="panel-body">
-            <div class="form-horizontal">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Decision</h3>
+    </div>
+    <div class="panel-body">
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                @if (Model.IsValid.HasValue) {
-                <div class="row" style="font-weight:bold; padding-top: 5px">
-                    @if (Model.IsValid.Value)
-                    {
-                        <text>@Model.PDN was marked as valid.</text>
-                    }
-                    else
-                    {
-                        <text>@Model.PDN was marked as invalid.</text>
-                    }
-                </div>
+            @if (Model.IsValid.HasValue) {
+            <div class="row" style="font-weight:bold; padding-top: 5px">
+                @if (Model.IsValid.Value)
+                {
+                    <text>@Model.PDN was marked as valid.</text>
                 }
+                else
+                {
+                    <text>@Model.PDN was marked as invalid.</text>
+                }
+            </div>
+            }
 
-                <div class="row">
-                    @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
-                    @Html.DropDownListFor(model => model.Answer, Model.QuestionChoices.CreateSelectListItems().PleaseSelect(), htmlAttributes: new { id = "q", required = "required", @onchange = "ChoiceChange()" })<br />
-                    <div>
-                        @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id = "validateAnswerMessage", @class = "text-danger" })
-                    </div>
+            <div class="row">
+                @Html.LabelFor(model => model.Answer, string.Format("{0}:", Model.QuestionLabel), htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => model.Answer, Model.QuestionChoices.CreateSelectListItems().PleaseSelect(), htmlAttributes: new { id = "q", required = "required", @onchange = "ChoiceChange()" })<br />
+                <div>
+                    @Html.ValidationMessageFor(model => model.Answer, "Must select an Answer", new { id = "validateAnswerMessage", @class = "text-danger" })
                 </div>
-                <div class="row row-space-top" style="display:none">
-                    @Html.LabelFor(model => model.JustificationKey, "Justification:", htmlAttributes: new { @class = "control-label" })
-                    @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications", mrjk = Model.JustificationKey, @onchange = "clearJustificationValidationErrors()" })<br />
-                    <div>
-                        @Html.ValidationMessageFor(model => model.JustificationKey, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
-                    </div>
+            </div>
+            <div class="row row-space-top" style="display:none">
+                @Html.LabelFor(model => model.JustificationKey, "Justification:", htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications", mrjk = Model.JustificationKey, @onchange = "clearJustificationValidationErrors()" })<br />
+                <div>
+                    @Html.ValidationMessageFor(model => model.JustificationKey, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
                 </div>
-                <div class="row row-space-top" id="expectedDateForCompletionContainer" style="display:none">
-                    @Html.LabelFor(model => model.ExpectedDateForCompletion, "Expected Date for Completion/Resolution: ", htmlAttributes: new { @class = "control-label" })
-                    @{
-                        var expectedDateOfCompletionHtmlAttrs = Model.ExpectedDateForCompletionEditable ? (object)new { @onchange = "clearDateValidationErrors()" } : (object)new { @readonly = "readonly" };
-                    }
-                    @Html.EditorFor(model => model.ExpectedDateForCompletion, new { @class = "form-control", type = "date", htmlAttributes = expectedDateOfCompletionHtmlAttrs })
-                    <div>
-                        @Html.ValidationMessageFor(model => model.ExpectedDateForCompletion, "Must select Expected Date of Completion", new { id = "validateExpectedDateMessage", @class = "text-danger" })
-                    </div>
-                    @Html.HiddenFor(model => model.ExpectedDateForCompletionEditable)
+            </div>
+            <div class="row row-space-top" id="expectedDateForCompletionContainer" style="display:none">
+                @Html.LabelFor(model => model.ExpectedDateForCompletion, "Expected Date for Completion/Resolution: ", htmlAttributes: new { @class = "control-label" })
+                @{
+                    var expectedDateOfCompletionHtmlAttrs = Model.ExpectedDateForCompletionEditable ? (object)new { @onchange = "clearDateValidationErrors()" } : (object)new { @readonly = "readonly" };
+                }
+                @Html.EditorFor(model => model.ExpectedDateForCompletion, new { @class = "form-control", type = "date", htmlAttributes = expectedDateOfCompletionHtmlAttrs })
+                <div>
+                    @Html.ValidationMessageFor(model => model.ExpectedDateForCompletion, "Must select Expected Date of Completion", new { id = "validateExpectedDateMessage", @class = "text-danger" })
                 </div>
-                <div class="row row-space-top">
-                    @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
-                    <div>
-                        @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6", maxlength = 4000, id = "advanceCommentsBox" })
-                    </div>
-                    <div style="clear:both">
-                        @Html.ValidationMessageFor(model => model.Comments, "Must enter Comment when Other is selected", new { id = "validateCommentMessage", @class = "text-danger" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.Comments, "Maximum comment size is 4000", new { id = "validateCommentMessageMax", @class = "text-danger", style = "display:none" })
-                    <div>
-                        <span id="advanceCommentsBoxRemainingCharacters"></span><span id="advanceCommentsBoxRemainingCharactersSuffix"></span>
-                    </div>
+                @Html.HiddenFor(model => model.ExpectedDateForCompletionEditable)
+            </div>
+            <div class="row row-space-top">
+                @Html.LabelFor(model => model.Comments, "Comments:", new { @class = "control-label col-md-12" })
+                <div>
+                    @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "col-md-6", maxlength = 4000, id = "advanceCommentsBox" })
                 </div>
-                <div class="row row-space-top">
-                    @Html.HiddenFor(model => model.WorkflowRowVersionString)
-                    @Html.HiddenFor(model => model.EditingBeganAtUtc)
-                    <input type="submit" value="Save" name="WhatNext" class="btn btn-default" onclick="allowSubmitWithoutRequiredValidations();" />
-                    <input type="submit" value="Submit" name="WhatNext" class="btn btn-primary confirm-on-click" confirmMessage="Are you sure you're ready to submit?" />
+                <div style="clear:both">
+                    @Html.ValidationMessageFor(model => model.Comments, "Must enter Comment when Other is selected", new { id = "validateCommentMessage", @class = "text-danger" })
                 </div>
+                @Html.ValidationMessageFor(model => model.Comments, "Maximum comment size is 4000", new { id = "validateCommentMessageMax", @class = "text-danger", style = "display:none" })
+                <div>
+                    <span id="advanceCommentsBoxRemainingCharacters"></span><span id="advanceCommentsBoxRemainingCharactersSuffix"></span>
+                </div>
+            </div>
+            <div class="row row-space-top">
+                @Html.HiddenFor(model => model.WorkflowRowVersionString)
+                @Html.HiddenFor(model => model.EditingBeganAtUtc)
+                <input type="submit" value="Save" name="WhatNext" class="btn btn-default" onclick="allowSubmitWithoutRequiredValidations();" />
+                <input type="submit" value="Submit" name="WhatNext" class="btn btn-primary confirm-on-click" confirmMessage="Are you sure you're ready to submit?" />
             </div>
         </div>
     </div>

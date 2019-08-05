@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -354,6 +355,67 @@ Browse:
                 UloHelpers.MediumCacheTimeout
                 );
 
+        private async Task<JsonResult> CreateFromJsonBody<TJsonBody>(Func<TJsonBody, Task> addAsync)
+        {
+            try
+            {
+                var d = this.Request.BodyAsJsonObject<TJsonBody>();
+                await addAsync(d);
+                await DB.SaveChangesAsync();
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                return base.CreateJsonError(ex);
+            }
+        }
+
+        private class CreateFinancialActivityData
+        {
+            [JsonProperty("activityDate")]
+            public System.DateTime ActivityDate { get; set; }
+
+            [JsonProperty("activityType")]
+            public string ActivityType { get; set; }
+
+            [JsonProperty("referenceNumber")]
+            public string ReferenceNumber { get; set; }
+
+            [JsonProperty("amount")]
+            public decimal Amount { get; set; }
+
+            [JsonProperty("description")]
+            public string Description { get; set; }
+        }
+
+        /// <remarks>THIS IS FOR THE BOT!  DO NOT CHANGE THE SIGNATURE</remarks>
+        [HttpPost]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CreateFinancialActivity)]
+        [Route("ulos/{uloId}/financialActivities/create")]
+        public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
+            => CreateFromJsonBody<CreateFinancialActivityData>(async d => 
+            {
+                var fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
+                if (fa == null)
+                {
+                    DB.FinancialActivities.Add(new FinancialActivity
+                    {
+                        UloId = uloId,
+                        ActivityDate = d.ActivityDate,
+                        ActivityType = d.ActivityType,
+                        ReferenceNumber = d.ReferenceNumber,
+                        Amount = d.Amount,
+                        Description = d.Description
+                    });
+                }
+                else
+                {
+                    fa.ActivityDate = d.ActivityDate;
+                    fa.ActivityType = d.ActivityType;
+                    fa.Amount = d.Amount;
+                    fa.Description = d.Description;
+                }
+            });
 
         [HttpGet]
         [Route("ulos/{uloId}/notes")]
@@ -369,23 +431,14 @@ Browse:
             public string Body { get; set; }
         }
 
-
         [HttpPost]
         [Route("ulos/{uloId}/notes/create")]
-        public async Task<JsonResult> CreateNoteAsync(int uloId)
-        {
-            try
+        public Task<JsonResult> CreateNoteAsync(int uloId)
+            => CreateFromJsonBody<CreateNoteData>(d =>
             {
-                var d = this.Request.BodyAsJsonObject<CreateNoteData>();
                 DB.Notes.Add(new Note { UloId = uloId, Body = d.Body, UserId = CurrentUserId, CreatedAtUtc = DateTime.UtcNow });
-                await DB.SaveChangesAsync();
-                return Json(true);
-            }
-            catch (Exception ex)
-            {
-                return base.CreateJsonError(ex);
-            }
-        }
+                return Task.CompletedTask;
+            });
 
         [Route("ulos/{uloId}/{workflowId}", Order = 1)]
         [Route("ulos/{uloId}", Order = 2)]
@@ -397,6 +450,7 @@ Browse:
                 Include(u => u.Notes).
                 Include(u => u.Region).
                 Include(u => u.Region.Zone).
+                Include(u => u.FinancialActivities).
                 WhereReviewExists().
                 FirstOrDefaultAsync(u => u.UloId == uloId);
 

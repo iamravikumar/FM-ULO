@@ -67,6 +67,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public virtual DbSet<PdnAttribute> PdnAttributes { get; set; }
         public virtual DbSet<WorkflowView> WorkflowViews { get; set; }
         public virtual DbSet<MostRecentWorkflowView> MostRecentWorkflowViews { get; set; }
+        public virtual DbSet<FinancialActivity> FinancialActivities { get; set; }
     
         public virtual int CreateULOAndAssignWf(Nullable<int> reviewId, Nullable<int> workflowDefinitionId, Nullable<System.DateTime> reviewDate)
         {

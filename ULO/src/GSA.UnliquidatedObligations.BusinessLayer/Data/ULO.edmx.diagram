@@ -85,6 +85,8 @@
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__WorkflowV__Workf__7A1D154F" />
         <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.MostRecentWorkflowView" Width="1.5" PointX="15.375" PointY="3.75" />
         <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Notes__DeletedBy__24134F1B" />
+        <EntityTypeShape EntityType="GSA.UnliquidatedObligations.BusinessLayer.Data.FinancialActivity" Width="1.5" PointX="15.5" PointY="19" />
+        <AssociationConnector Association="GSA.UnliquidatedObligations.BusinessLayer.Data.FK__Financial__UloId__2C738AF2" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

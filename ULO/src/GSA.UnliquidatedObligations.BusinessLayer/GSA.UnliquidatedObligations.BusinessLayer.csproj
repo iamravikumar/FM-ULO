@@ -309,6 +309,9 @@
     <Compile Include="Data\EmailTemplate.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\FinancialActivity.cs">
+      <DependentUpon>ULO.tt</DependentUpon>
+    </Compile>
     <Compile Include="Data\GetEligibleReviewers_Result.cs">
       <DependentUpon>ULO.tt</DependentUpon>
     </Compile>

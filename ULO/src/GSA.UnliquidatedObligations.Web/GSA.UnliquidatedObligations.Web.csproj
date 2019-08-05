@@ -537,6 +537,7 @@
     <Content Include="Views\Ulo\Details\_WorkflowStalenessHiddenFields.cshtml" />
     <Content Include="Views\Ulo\_ListableWorkflowsListing.cshtml" />
     <Content Include="Views\Ulo\_NotesPanel.cshtml" />
+    <Content Include="Views\Ulo\Details\_FinancialActivities.cshtml" />
     <None Include="Web.bak.config">
       <SubType>Designer</SubType>
     </None>
