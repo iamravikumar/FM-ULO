@@ -95,6 +95,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             ViewBag.NoDataMessage = message;
         }
+#if false
 
         [Route("ulos/{uloId}/{workflowId}", Order = 1)]
         [Route("ulos/{uloId}", Order = 2)]
@@ -136,8 +137,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, otherDocs, belongs));
         }
-
-        #if false
 
         private readonly ApplicationUserManager UserManager;
 

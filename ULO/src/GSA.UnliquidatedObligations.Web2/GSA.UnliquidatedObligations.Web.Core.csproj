@@ -66,6 +66,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\GSA.Authentication.LegacyFormsAuthentication\GSA.Authentication.LegacyFormsAuthentication.csproj" />
+    <ProjectReference Include="..\GSA.UnliquidatedObligations.BusinessLayer.Core\GSA.UnliquidatedObligations.BusinessLayer.Core.csproj" />
   </ItemGroup>
   
 </Project>
