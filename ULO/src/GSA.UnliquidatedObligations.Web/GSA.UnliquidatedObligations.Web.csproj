@@ -485,6 +485,7 @@
     <Content Include="Content\bootstrap.min.css.map" />
     <None Include="Properties\PublishProfiles\2ULO - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\2ULO - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
