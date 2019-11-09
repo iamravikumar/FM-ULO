@@ -53,13 +53,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly IOptions<Config> ConfigOptions;
         protected readonly IWorkflowManager Manager;
 
-        //public UloController(IWorkflowManager manager, IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
-        //    : base(db, cacher, portalHelpers, userHelpers, logger)
-         public UloController(IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+        public UloController(IWorkflowManager manager, IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             ConfigOptions = configOptions;
-            //Manager = manager;
+            Manager = manager;
             //UserManager = userManager;
             //PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
