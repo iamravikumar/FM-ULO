@@ -7,6 +7,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 
@@ -15,18 +16,26 @@ namespace GSA.UnliquidatedObligations.Web
     public class UserHelpers
     {
         private readonly ICacher Cacher;
+        private readonly IOptions<Config> ConfigOptions;
         private readonly UloDbContext DB;
         private readonly IHttpContextAccessor Acc;
 
         private readonly PortalHelpers PortalHelpers;
 
-        public UserHelpers(UloDbContext db, ICacher cacher, IHttpContextAccessor acc, PortalHelpers portalHelpers)
+        public class Config
+        {
+            public const string ConfigSectionName = "UserHelpersConfig";
+            public string PreAssignmentUserUsername { get; set; }
+            public string ReassignGroupUserName { get; set; }
+        }
+
+        public UserHelpers(IOptions<Config> configOptions, UloDbContext db, ICacher cacher, IHttpContextAccessor acc, PortalHelpers portalHelpers)
         {
             Requires.NonNull(db, nameof(db));
             Requires.NonNull(acc, nameof(acc));
             Requires.NonNull(cacher, nameof(cacher));
             Requires.NonNull(portalHelpers, nameof(portalHelpers));
-
+            ConfigOptions = configOptions;
             DB = db;
             Cacher = cacher;
             Acc = acc;
@@ -61,6 +70,28 @@ namespace GSA.UnliquidatedObligations.Web
                     });
             }
         }
+
+        public string GetUserId(string username)
+        {
+            if (username != null)
+            {
+                return Cacher.FindOrCreateValue(
+                    username,
+                    () => DB.AspNetUsers.Where(z => z.UserName == username).Select(z => z.Id).FirstOrDefault(),
+                    PortalHelpers.MediumCacheTimeout
+                    );
+            }
+            return null;
+        }
+
+        public string PreAssignmentUserUserId
+            => GetUserId(ConfigOptions.Value.PreAssignmentUserUsername);
+
+        public string ReassignGroupUserId
+            => GetUserId(ReassignGroupUserName);
+
+        public string ReassignGroupUserName
+            => ConfigOptions.Value.ReassignGroupUserName;
 
         public bool HasPermission(ApplicationPermissionNames permissionName, IPrincipal user = null)
         {

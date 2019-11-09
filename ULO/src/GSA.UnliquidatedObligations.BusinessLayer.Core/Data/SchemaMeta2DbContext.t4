@@ -225,6 +225,11 @@ foreach (var a in z.XPathSelectElements("Args/Arg"))
 	#><#=argNum==0?"":", "#><#=dataType#><#=nullable?"?":""#> <#=memberName#> = null<#+
 	++argNum;
 }
+if (argNum>0)
+{
+#>, <#+
+}
+#> TimeSpan? commandTimeout=null<#+
 if (isReader)
 {#>, params Action<IDataReader>[] actions<#+}#>) <#=collectionTypeConstraint#>
 		{
@@ -270,17 +275,17 @@ if (isReader)
 <#+
 			if (isNonQuery)
 			{
-#>            return await conn.ExecuteNonQueryAsync(null, "<#=GetAttrVal(z, "schema")#>.<#=GetAttrVal(z, "name")#>", null, ps);
+#>            return await conn.ExecuteNonQueryAsync(null, "<#=GetAttrVal(z, "schema")#>.<#=GetAttrVal(z, "name")#>", commandTimeout, ps);
 <#+
 			}
 			else if (isReader)
 			{
-#>            return await conn.ExecuteReaderForEachAsync(null, "<#=GetAttrVal(z, "schema")#>.<#=GetAttrVal(z, "name")#>", null, ps, actions);
+#>            return await conn.ExecuteReaderForEachAsync(null, "<#=GetAttrVal(z, "schema")#>.<#=GetAttrVal(z, "name")#>", commandTimeout, ps, actions);
 <#+		
 			}
 			else if (isCollection)
 			{
-#>            return await conn.ExecuteReaderAsync<<#=collectionType#>>(null, "<#=GetAttrVal(z, "schema")#>.<#=GetAttrVal(z, "name")#>", null, ps);
+#>            return await conn.ExecuteReaderAsync<<#=collectionType#>>(null, "<#=GetAttrVal(z, "schema")#>.<#=GetAttrVal(z, "name")#>", commandTimeout, ps);
 <#+			
 			}
 #>

@@ -1203,8 +1203,10 @@
         <Column name="RegionName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="100" isComputed="0" />
       </Columns>
       <Collections>
+        <!--
         <Collection schema="dbo" table="Reviews" column="RegionId" collectionType="actual" />
         <Collection schema="dbo" table="Reviews" column="RegionId" collectionType="actual" />
+        -->
         <Collection schema="dbo" table="UserUsers" column="RegionId" collectionType="actual" />
         <Collection schema="dbo" table="UnliquidatedObligations" column="RegionId" collectionType="actual" />
         <Collection schema="dbo" table="PdnAttributes" column="RegionId" collectionType="actual" />
@@ -1589,6 +1591,9 @@
       </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="CreateULOAndAssignWf" routineType="PROCEDURE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+      </Properties>
       <Args>
         <Arg position="1" mode="IN" name="@reviewId" sqlType="int" />
         <Arg position="2" mode="IN" name="@workflowDefinitionId" sqlType="int" />
@@ -1676,6 +1681,9 @@
       </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="GetNextLevelOwnerId" routineType="PROCEDURE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+      </Properties>
       <Args>
         <Arg position="1" mode="IN" name="@proposedOwnerId" sqlType="varchar" maxLen="128" />
         <Arg position="2" mode="IN" name="@workflowId" sqlType="int" />
