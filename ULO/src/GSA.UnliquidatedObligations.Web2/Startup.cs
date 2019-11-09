@@ -1,7 +1,10 @@
-﻿using GSA.Authentication.LegacyFormsAuthentication;
+﻿using System.Net.Mail;
+using GSA.Authentication.LegacyFormsAuthentication;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Identity;
+using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,9 +12,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-//using GSA.UnliquidatedObligations.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 
 namespace GSA.UnliquidatedObligations.Web
@@ -25,16 +28,43 @@ namespace GSA.UnliquidatedObligations.Web
 
         public IConfiguration Configuration { get; }
 
+        private IServiceCollection ConfigureOptionsServices;
+
+        public void ConfigureOptions<TOptions>(string sectionName) where TOptions : class
+        {
+            Requires.NonNull(ConfigureOptionsServices, nameof(ConfigureOptionsServices));
+            ConfigureOptionsServices.Configure<TOptions>(Configuration.GetSection(sectionName));
+        }
+
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureOptionsServices = services;
+            try
+            {
+                OnConfigureServices(services);
+            }
+            finally
+            {
+                ConfigureOptionsServices = null;
+            }
+        }
+
+        protected virtual void OnConfigureServices(IServiceCollection services)
+        {
             services.Add(new ServiceDescriptor(typeof(IConfiguration), Configuration));
+
             services.AddOptions();
-            services.Configure<SprintConfig>(Configuration.GetSection(SprintConfig.ConfigSectionName));
-            services.Configure<PortalHelpers.Config>(Configuration.GetSection(PortalHelpers.Config.ConfigSectionName));
-            services.Configure<UloController.Config>(Configuration.GetSection(UloController.Config.ConfigSectionName));
-            services.Configure<AccountController.Config>(Configuration.GetSection(AccountController.Config.ConfigSectionName));
-            services.Configure<LegacyFormsAuthenticationService.Config>(Configuration.GetSection(LegacyFormsAuthenticationService.Config.ConfigSectionName));
+
+            ConfigureOptions<SprintConfig>(SprintConfig.ConfigSectionName);
+            ConfigureOptions<PortalHelpers.Config>(PortalHelpers.Config.ConfigSectionName);
+            ConfigureOptions<UserHelpers.Config>(UserHelpers.Config.ConfigSectionName);
+            ConfigureOptions<BackgroundTasks>(BackgroundTasks.Config.ConfigSectionName);
+            ConfigureOptions<UloController.Config>(UloController.Config.ConfigSectionName);
+            ConfigureOptions<AccountController.Config>(AccountController.Config.ConfigSectionName);
+            ConfigureOptions<LegacyFormsAuthenticationService.Config>(LegacyFormsAuthenticationService.Config.ConfigSectionName);
+            ConfigureOptions<WorkflowManager.Config>(WorkflowManager.Config.ConfigSectionName);
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -55,6 +85,11 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddAuthentication();
 
+            services.AddScoped<IBackgroundTasks, BackgroundTasks>();
+            services.AddScoped<SmtpClient>();
+            services.AddScoped<IEmailServer, EmailServer>();
+            services.AddScoped<IWorkflowDescriptionFinder, DatabaseWorkflowDescriptionFinder>();
+            services.AddScoped<IWorkflowManager, WorkflowManager>();
             services.AddScoped<ILegacyFormsAuthenticationService, LegacyFormsAuthenticationService>();
             services.AddScoped<IUserClaimsPrincipalFactory<AspNetUser>, NoUloClaimsUserClaimsPrincipalFactory>();
 
