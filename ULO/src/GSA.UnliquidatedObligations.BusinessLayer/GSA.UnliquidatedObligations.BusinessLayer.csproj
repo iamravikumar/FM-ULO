@@ -462,7 +462,6 @@
     <Compile Include="Workflow\WorkflowDescription.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
     <EntityDeploy Include="Data\ULO.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ULO1.Designer.cs</LastGenOutput>
