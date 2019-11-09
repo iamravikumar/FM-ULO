@@ -60,6 +60,23 @@ namespace GSA.UnliquidatedObligations.Web
             return data.ToString("C", culture);
         }
 
+        public static IList<SelectListItem> Copy(this IEnumerable<SelectListItem> items)
+        {
+            var ret = new List<SelectListItem>();
+            foreach (var i in items)
+            {
+                ret.Add(new SelectListItem
+                {
+                    Disabled = i.Disabled,
+                    Group = i.Group,
+                    Selected = i.Selected,
+                    Text = i.Text,
+                    Value = i.Value
+                });
+            }
+            return ret;
+        }
+
         public static string DisplayIsValid(this IHtmlHelper hh, bool? isValid)
             => isValid.HasValue ? (isValid.Value ? "Yes" : "No") : null;
 
