@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
 using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web
@@ -58,9 +63,11 @@ namespace GSA.UnliquidatedObligations.Web
         private readonly IOptions<Config> ConfigOptions;
 
         private readonly IOptions<Controllers.AccountController.Config> AccountConfigOptions;
+        private readonly UloDbContext DB;
+        private readonly ICacher Cacher;
         private readonly ILogger Logger;
 
-        public PortalHelpers(IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, ILogger logger)
+        public PortalHelpers(IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
         {
             Requires.NonNull(sprintConfigOptions, nameof(sprintConfigOptions));
             Requires.NonNull(configOptions, nameof(configOptions));
@@ -69,9 +76,52 @@ namespace GSA.UnliquidatedObligations.Web
             SprintConfigOptions = sprintConfigOptions;
             ConfigOptions = configOptions;
             AccountConfigOptions = accountConfigOptions;
+            DB = db;
+            Cacher = cacher;
             Logger = logger;
         }
 
+        public IList<SelectListItem> CreateZoneSelectListItems()
+            => Cacher.FindOrCreateValue(
+                nameof(CreateZoneSelectListItems),
+                () =>
+                    DB.Zones.OrderBy(z => z.ZoneName).ConvertAll(
+                        z => new SelectListItem { Text = $"{z.ZoneName}", Value = z.ZoneId.ToString() }).
+                        OrderBy(z => z.Text).
+                        ToList().
+                        AsReadOnly(),
+                MediumCacheTimeout
+                ).Copy();
+
+        public IList<SelectListItem> CreateAllGroupNamesSelectListItems()
+        => Cacher.FindOrCreateValue(
+            nameof(CreateAllGroupNamesSelectListItems),
+            () =>
+            DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
+                                r => new SelectListItem
+                                {
+                                    Text = r.UserName,
+                                    Value = r.Id
+                                }).
+                                ToList().
+                                AsReadOnly(),
+            MediumCacheTimeout
+            ).Copy();
+
+        public IList<SelectListItem> CreateReviewSelectListItems()
+        => Cacher.FindOrCreateValue(
+            nameof(CreateReviewSelectListItems),
+            () =>
+                DB.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
+                                r => new SelectListItem
+                                {
+                                    Text = $"{r.ReviewName} (#{r.ReviewId}) - {AspHelpers.GetDisplayName(r.ReviewScopeId)} - {AspHelpers.GetDisplayName(r.ReviewTypeId)}",
+                                    Value = r.ReviewId.ToString()
+                                }).
+                                ToList().
+                                AsReadOnly(),
+            ShortCacheTimeout
+            ).Copy();
 
         public DateTime ToLocalizedDateTime(DateTime utc)
         {
