@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -273,7 +274,27 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     PortalHelpers.MediumCacheTimeout
                     );
 
+            var ReasonIncludedInReviewList = Cacher.FindOrCreateValue(
+                    Cache.CreateKey(nameof(Search), "ReasonIncludedInReviewList"),
+                    () => DB.UnliquidatedObligations.Select(u => u.ReasonIncludedInReview).Distinct().OrderBy(p => p).ToList().AsReadOnly(),
+                    PortalHelpers.MediumCacheTimeout
+                    );
+           
             var activityNames = GetOrderedActivityNameByWorkflowName().AtomEnumerable.ConvertAll(z => z.Value).Distinct().OrderBy().ToList();
+
+            
+            //var reviewListItems = Cacher.FindOrCreateValue(Cache.CreateKey(nameof(Search), "reviewListItems"),
+            //   () =>
+            //       DB.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
+            //                       r => new SelectListItem
+            //                       {
+            //                           Text = $"{r.ReviewName} (#{r.ReviewId}) - {AspHelpers.GetDisplayName(r.ReviewScopeId)} - {AspHelpers.GetDisplayName(r.ReviewTypeId)}",
+            //                           Value = r.ReviewId.ToString()
+            //                       }).
+            //                       ToList().
+            //                       AsReadOnly(),
+            //   PortalHelpers.ShortCacheTimeout
+            //   );           
 
             var statuses = Cacher.FindOrCreateValue(
                 "AllWorkflowStatusNames",
@@ -300,11 +321,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     baCodes,
                     activityNames,
                     statuses,
-                    Cacher.FindOrCreateValue(
-                        "ReasonsIncludedInReview",
-                        () => DB.UnliquidatedObligations.Select(z => z.ReasonIncludedInReview).Distinct().WhereNotNull().OrderBy().AsReadOnly(),
-                        PortalHelpers.MediumCacheTimeout),
-                    PortalHelpers.CreateReviewSelectListItems(),
+                    ReasonIncludedInReviewList,
+                    //reviewListItems,
                     hasFilters
                 ));
         }

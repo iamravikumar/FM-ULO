@@ -119,7 +119,8 @@ namespace GSA.UnliquidatedObligations.Web
                    }
                },
                MediumCacheTimeout
-               ).Copy();       
+               ).Copy();
+       
 
         public IList<SelectListItem> CreateAllGroupNamesSelectListItems()
         => Cacher.FindOrCreateValue(
@@ -137,8 +138,7 @@ namespace GSA.UnliquidatedObligations.Web
             ).Copy();
 
         public IList<SelectListItem> CreateReviewSelectListItems()
-        => Cacher.FindOrCreateValue(
-            nameof(CreateReviewSelectListItems),
+        => Cacher.FindOrCreateValue(Cache.CreateKey(nameof(CreateReviewSelectListItems)),
             () =>
                 DB.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
                                 r => new SelectListItem

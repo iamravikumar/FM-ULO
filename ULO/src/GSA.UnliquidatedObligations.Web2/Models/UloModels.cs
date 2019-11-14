@@ -280,6 +280,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public IEnumerable<SelectListItem> Zones { get; set; }
         public IEnumerable<SelectListItem> Regions { get; set; }
         public IEnumerable<SelectListItem> BaCodes { get; set; }
+        public IEnumerable<SelectListItem> ActivityNames { get; set; }
         public IEnumerable<SelectListItem> Statuses { get; set; }
         public IEnumerable<SelectListItem> Reasons { get; set; }
         
@@ -289,16 +290,17 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public FilterViewModel()
         { }
 
-        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> activityNames, IEnumerable<string> statuses, IEnumerable<string> reasons, IEnumerable<SelectListItem> reviews, bool hasFilters)
+        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> activityNames, IEnumerable<string> statuses, IEnumerable<string> reasons,bool hasFilters)
         {
             Workflows = workflows;
             DocTypes = docTypes;
             Zones = zones;
             Regions = regions;
             BaCodes = baCodes.CreateSelectList();
+            ActivityNames=activityNames.CreateSelectList();
             Statuses = statuses.CreateSelectList();
             Reasons = reasons.CreateSelectList();
-            Reviews = reviews;
+            //Reviews = reviews;
             HasFilters = hasFilters;
             
         }
