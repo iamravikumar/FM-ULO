@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Collections.Generic;
 using System.Security.Principal;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
@@ -89,6 +90,36 @@ namespace GSA.UnliquidatedObligations.Web
 
         public string ReassignGroupUserName
             => ConfigOptions.Value.ReassignGroupUserName;
+
+        public IList<int?> GetReassignmentGroupRegions(IPrincipal user)
+           => GetUserGroupRegions(user, ReassignGroupUserName);
+
+        public IList<int?> GetUserGroupRegions(IPrincipal user, string groupNameOrId)
+          => Cacher.FindOrCreateValue(
+              Cache.CreateKey(nameof(GetUserGroupRegions), user.Identity.Name, groupNameOrId),
+              () =>
+                  DB.UserUsers
+                          .Where(uu => (uu.ParentUserId == GetUserId(groupNameOrId) || uu.ParentUserId == groupNameOrId) && uu.ChildUserId == GetUserId(user.Identity.Name))
+                          .Select(uu => uu.RegionId)
+                          .Distinct()
+                          .ToList()
+                          .AsReadOnly(),
+              PortalHelpers.MediumCacheTimeout
+              );
+
+        public IList<string> GetUserGroupNames(IPrincipal user, int regionId)
+           => Cacher.FindOrCreateValue(
+               Cache.CreateKey(nameof(GetUserGroupNames), user.Identity.Name, regionId),
+               () =>
+                       DB.UserUsers
+                           .Where(uu => uu.ChildUserId == GetUserId(user.Identity.Name) && uu.RegionId == regionId)
+                           .Select(uu => uu.ParentUser.UserName)
+                           .Distinct()
+                           .ToList()
+                           .AsReadOnly()
+                   ,
+               PortalHelpers.MediumCacheTimeout
+               );
 
         public bool HasPermission(ApplicationPermissionNames permissionName, IPrincipal user = null)
         {

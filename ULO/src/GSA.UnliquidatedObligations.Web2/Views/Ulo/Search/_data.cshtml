@@ -1,0 +1,173 @@
+﻿@using GSA.UnliquidatedObligations.Web.Models
+@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.Web.Controllers
+@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+@{
+    var todaysDate = DateTime.Today;
+    var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
+    var canReassign = UserHelpers.HasPermission(ApplicationPermissionNames.CanReassign);
+    var showSelectors = canReassign;
+
+    var hasData = false;
+    var noDataMessage = ViewBag.NoDataMessage as string ?? AspHelpers.NoResultsMessage;
+    if (ViewBag.TotalItemCount != null)
+    {
+        hasData = (int)ViewBag.TotalItemCount > 0;
+    }
+    var viewDateByWorkflowId = ViewBag.ViewDateByWorkflowId as IDictionary<int, DateTime> ?? new Dictionary<int, DateTime>();
+}
+
+<script type="text/javascript">
+    function gcr(ids) {
+        showBulkReassignmentsLoading();
+        for (var z = 0; z < ids.length; ++z) {
+            ids[z] = parseInt(ids[z]);
+        }
+        var cr = getCommonReassignees(ids, function (reassigners) {
+            fillBulkReassignments(ids, reassigners);
+        });
+        return false;
+    }
+</script>
+
+@if (!hasData)
+{
+    <div class="noDataMessage">@noDataMessage</div>
+}
+else
+{
+    if (canReassign || false) //add other batch action buttons here
+    {
+        <div class="col-sm-12" style="padding-bottom: 10px; text-align: right">
+            <strong>Batch Actions:</strong>
+            @if (canReassign)
+            {
+                <button disabled="disabled" class="btn btn-primary master request-active selectionCountMultiple" data-toggle="modal" onclick="gcr(getSelections('data-id'))" data-target="#bulkReassignmentDialog">Reassign</button>
+            }
+        </div>
+    }
+
+    <table class="table table-responsive active-workflows">
+        <thead>
+            <tr>
+                @if (showSelectors)
+                {
+                    <th><input type="checkbox" id="allSelector" onclick="allSelectorClicked()" /></th>
+                }
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.PegasysDocumentNumber, overrideDisplayName: "PDN")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Region.Zone.ZoneName, overrideDisplayName: "Zone")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Region.RegionName, overrideDisplayName: "Region")
+                </th>
+                @*
+                    <th>
+                        @Html.SortableHeaderFor(z => z.TargetUlo.DocType, overrideDisplayName: "Doc Type")
+                    </th>
+                *@
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.PegasysTitleNumber, overrideDisplayName: "Pegasys Title Number")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Fund, overrideDisplayName: "Fund")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Organization, overrideDisplayName: "Org")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Prog, overrideDisplayName: "BA Code")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.VendorName, overrideDisplayName: "Pegasys Vendor Name")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.ContractingOfficersName, overrideDisplayName: "Contracting Officer Name")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.OwnerUser.UserName, overrideDisplayName: "Currently Assigned to")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.AwardNbr, overrideDisplayName: "Award Number")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Valid, overrideDisplayName: "Valid")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Status, overrideDisplayName: "Status")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.ReviewId, overrideDisplayName: "Review Id")
+                </th>
+            </tr>
+
+        </thead>
+
+        @foreach (var item in Model)
+        {
+            <tr class="active-workflows-record @(viewDateByWorkflowId.ContainsKey(item.WorkflowId)?"viewed":"")" data-id="@item.WorkflowId">
+                @if (showSelectors)
+                {
+                    <td><input type="checkbox" class="itemSelector" onclick="selectorClicked()" value="1" data-id="@item.WorkflowId" /></td>
+                }
+                <td>
+                    @Html.ActionLink(item.TargetUlo.PdnWithInstance, UloController.ActionNames.Details, UloController.Name, new { uloId = item.TargetUlo.UloId, workflowId = item.WorkflowId }, null)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.Region.Zone.ZoneShortName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.Region.RegionNumber)
+                </td>
+                @*
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TargetUlo.DocType)
+                    </td>
+                *@
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.PegasysTitleNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.Fund)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.Organization)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.Prog)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.VendorName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.ContractingOfficersName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OwnerUser.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.AwardNbr)
+                </td>
+                <td>
+                    @Html.DisplayIsValid(item.TargetUlo.Valid)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.ReviewId)
+                </td>
+            </tr>
+        }
+    </table>
+
+    @await Html.PartialAsync("_PaginationPartial")
+
+}
+
+@if (canReassign)
+{
+    @await Html.PartialAsync("~/Views/Ulo/BulkReassignments.cshtml")
+}

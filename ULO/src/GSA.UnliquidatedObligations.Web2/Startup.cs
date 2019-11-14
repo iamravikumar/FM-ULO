@@ -102,7 +102,7 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSingleton(provider => Serilog.Log.ForContext<Startup>());
-            services.AddSingleton<PortalHelpers>();
+            services.AddScoped<PortalHelpers>();
 
             services.AddScoped<UserHelpers>();
 
