@@ -17,17 +17,17 @@
             Status = IsClosed ? StatusNames.Closed : StatusNames.Open;
         }
 
-        public bool IsDeleted
-        {
-            get; private set;
-        }
+        //public bool IsDeleted
+        //{
+        //    get; private set;
+        //}
 
         string ISoftDelete.DeleteKey
             => ReviewId.ToString();
 
         public void Delete(string deletorUserId=null)
         {
-            IsDeleted = true;
+            //IsDeleted = true;
             DeletedByUserId = deletorUserId;
         }
     }

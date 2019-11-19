@@ -42,3 +42,4 @@ ULO/.vs/**
 !**/packages/build/
  ULO\src\GSA.UnliquidatedObligations.Web\Web.bak.config 
 "ULO\src\GSA.UnliquidatedObligations.Web\Web.bak.config" 
+/ULO/src/GSA.UnliquidatedObligations.Web2/Views/Shared/_ApplicationInformation.cshtml

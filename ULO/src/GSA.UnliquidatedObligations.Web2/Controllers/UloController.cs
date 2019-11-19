@@ -282,19 +282,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
            
             var activityNames = GetOrderedActivityNameByWorkflowName().AtomEnumerable.ConvertAll(z => z.Value).Distinct().OrderBy().ToList();
 
-            
-            //var reviewListItems = Cacher.FindOrCreateValue(Cache.CreateKey(nameof(Search), "reviewListItems"),
-            //   () =>
-            //       DB.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
-            //                       r => new SelectListItem
-            //                       {
-            //                           Text = $"{r.ReviewName} (#{r.ReviewId}) - {AspHelpers.GetDisplayName(r.ReviewScopeId)} - {AspHelpers.GetDisplayName(r.ReviewTypeId)}",
-            //                           Value = r.ReviewId.ToString()
-            //                       }).
-            //                       ToList().
-            //                       AsReadOnly(),
-            //   PortalHelpers.ShortCacheTimeout
-            //   );           
+
+            var reviewListItems = Cacher.FindOrCreateValue(Cache.CreateKey(nameof(Search), "reviewListItems"),
+               () =>
+                   DB.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
+                                   r => new SelectListItem
+                                   {
+                                       Text = $"{r.ReviewName} (#{r.ReviewId}) - {AspHelpers.GetDisplayName(r.ReviewScopeId)} - {AspHelpers.GetDisplayName(r.ReviewTypeId)}",
+                                       Value = r.ReviewId.ToString()
+                                   }).
+                                   ToList().
+                                   AsReadOnly(),
+               PortalHelpers.ShortCacheTimeout
+               );
 
             var statuses = Cacher.FindOrCreateValue(
                 "AllWorkflowStatusNames",
@@ -322,7 +322,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     activityNames,
                     statuses,
                     ReasonIncludedInReviewList,
-                    //reviewListItems,
+                    reviewListItems,
                     hasFilters
                 ));
         }

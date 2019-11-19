@@ -290,7 +290,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public FilterViewModel()
         { }
 
-        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> activityNames, IEnumerable<string> statuses, IEnumerable<string> reasons,bool hasFilters)
+        public FilterViewModel(IEnumerable<Workflow> workflows, IEnumerable<SelectListItem> docTypes, IEnumerable<SelectListItem> zones, IEnumerable<SelectListItem> regions, IEnumerable<string> baCodes, IEnumerable<string> activityNames, IEnumerable<string> statuses, IEnumerable<string> reasons, IEnumerable<SelectListItem> reviews, bool hasFilters)
         {
             Workflows = workflows;
             DocTypes = docTypes;
@@ -300,9 +300,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
             ActivityNames=activityNames.CreateSelectList();
             Statuses = statuses.CreateSelectList();
             Reasons = reasons.CreateSelectList();
-            //Reviews = reviews;
-            HasFilters = hasFilters;
-            
+            Reviews = reviews; 
+            HasFilters = hasFilters;            
         }
     }
 
