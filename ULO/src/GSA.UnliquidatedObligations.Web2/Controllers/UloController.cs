@@ -14,6 +14,8 @@ using RevolutionaryStuff.Core.Collections;
 using Serilog;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Services;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+using System;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -354,6 +356,77 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                          ToList().
                          Where(z => z.ViewAction == WorkflowView.CommonActions.Opened || z.ViewAction == WorkflowView.CommonActions.Seen).
                          ToDictionaryOnConflictKeepLast(z => z.WorkflowId, z => z.ActionAtUtc);
+        }
+
+
+        //unassigned tab
+        [ActionName(ActionNames.Unassigned)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
+        [Route("ulos/unassigned")]
+        public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
+        {
+            SetNoDataMessage(ConfigOptions.Value.NoUnassigned);
+            ViewBag.AllAreUnassigned = true;
+
+            var predicate = PredicateBuilder.Create<Workflow>(wf => false);
+
+            var m = new MultipleValueDictionary<string, Tuple<List<int?>, string>>();
+            foreach (var g in GetUserGroups(CurrentUserId))
+            {
+                if (g.UserId == UserHelpers.ReassignGroupUserId) continue;
+                var regionIds = UserHelpers.GetUserGroupRegions(g).OrderBy(z => z.GetValueOrDefault()).ToList();
+                predicate = predicate.Or(wf => wf.OwnerUserId == g.UserId && regionIds.Contains(wf.TargetUlo.RegionId));
+                m.Add(Cache.CreateKey(regionIds), Tuple.Create(regionIds, g.UserName));
+            }
+
+            if (m.Count > 0)
+            {
+                foreach (var k in m.Keys)
+                {
+                    var tuples = m[k];
+                    var groupNames = tuples.Select(z => z.Item2).OrderBy();
+                    ShowGroupRegionMembershipAlert(groupNames, tuples.First().Item1);
+                }
+            }
+            else
+            {
+                AddPageAlert($"You're not a member of any related groups and will not have any unassigned items.", false, PageAlert.AlertTypes.Warning);
+            }
+
+            var prohibitedWorkflowIds = await DB.WorkflowProhibitedOwners.Where(z => z.ProhibitedOwnerUserId == CurrentUserId).Select(z => z.WorkflowId).ToListAsync();
+
+            var workflows = from wf in DB.Workflows.Where(predicate)
+                            where !prohibitedWorkflowIds.Contains(wf.WorkflowId)
+                            select wf;
+
+            workflows = ApplyBrowse(
+                workflows.WhereReviewExists(),
+                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+
+            PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(workflows);
+            PopulateViewInfoIntoViewBag(workflows);
+
+            return View(workflows);
+        }
+
+        private void PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(IQueryable<Workflow> workflows)
+        {
+            var dbt = new RequestForReassignmentsController.DetailsBulkToken(CurrentUser, DB, workflows);
+            ViewBag.DetailsBulkToken = dbt;
+        }
+
+        private bool ShowGroupRegionMembershipAlert(IEnumerable<string> groupNames, ICollection<int?> regionIds)
+        {
+            if (regionIds.Count > 0)
+            {
+                var myRegions = regionIds.ConvertAll(rid => PortalHelpers.GetRegionName(rid.GetValueOrDefault())).WhereNotNull().Format(", ");
+                AddPageAlert($"You're a member of the groups: {groupNames.Format(", ")}; with regions: {myRegions}", false, PageAlert.AlertTypes.Info);
+            }
+            else
+            {
+                AddPageAlert($"You're a member of the groups: {groupNames.Format(", ")}; but haven't been assigned any regions", false, PageAlert.AlertTypes.Warning);
+            }
+            return true;
         }
 
 

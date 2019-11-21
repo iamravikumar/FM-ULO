@@ -1668,6 +1668,11 @@
       </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="GetMyGroups" routineType="PROCEDURE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="SprocType" value="Collection:GetMyGroups_Result0" />
+      </Properties>
       <Args>
         <Arg position="1" mode="IN" name="@proposedOwnerId" sqlType="nvarchar" maxLen="128" />
       </Args>

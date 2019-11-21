@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Web;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
@@ -47,6 +49,12 @@ namespace GSA.UnliquidatedObligations.Web
         public string AdministratorEmail =>
             ConfigOptions.Value.AdministratorEmail;
 
+        public bool UseOldGetEligibleReviewersAlgorithm => ConfigOptions.Value.UseOldGetEligibleReviewersAlgorithm;
+
+        public string GetEligibleReviewersQualifiedUsernameFormat => ConfigOptions.Value.GetEligibleReviewersQualifiedUsernameFormat;
+
+        public string GetEligibleReviewersNotQualifiedUsernameFormat => ConfigOptions.Value.GetEligibleReviewersNotQualifiedUsernameFormat;
+
         public bool UseDevAuthentication =>
             AccountConfigOptions.Value.UseDevAuthentication;
 
@@ -63,6 +71,12 @@ namespace GSA.UnliquidatedObligations.Web
             public string AdministratorEmail { get; set; }
 
             public string[][] DocTypes { get; set; }
+
+            public bool UseOldGetEligibleReviewersAlgorithm { get; }
+
+            public string GetEligibleReviewersQualifiedUsernameFormat { get; set; }
+
+            public string GetEligibleReviewersNotQualifiedUsernameFormat { get; set; }
         }
 
         public readonly IOptions<SprintConfig> SprintConfigOptions;
@@ -220,7 +234,15 @@ namespace GSA.UnliquidatedObligations.Web
                MediumCacheTimeout
                );
 
-       
+        public string GetRegionName(int regionId)
+          => Cacher.FindOrCreateValue(
+              Cache.CreateKey(nameof(GetRegionName), regionId),
+              () => CreateRegionSelectListItems(false).FirstOrDefault(i => i.Value == regionId.ToString())?.Text);
+
+        public int RegionCount
+            => CreateRegionSelectListItems(false).Count;
+
+
         public Expression<Func<Workflow, bool>> GetWorkflowsRegionIdPredicate(IEnumerable<int?> regionIds)
         {
             var predicate = PredicateBuilder.Create<Workflow>(wf => false);
@@ -231,6 +253,23 @@ namespace GSA.UnliquidatedObligations.Web
             }
             return predicate;
         }
+
+        public Expression<Func<Workflow, bool>> GetWorkflowsWorkflowIdPredicate(IEnumerable<int> workflowIds)
+        {
+            /*
+            var workflows = DB.Workflows.Where(w => workflowIds.Contains(w.WorkflowId));
+            For whatever reason, linq 2 sql wont translate the above into an IN statement (maybe it only does this for string),
+            As such, we have to build out a big long nasty OR predicate then apply which we do below.             
+             */
+            var predicate = PredicateBuilder.Create<Workflow>(wf => false);
+            foreach (var wfid in workflowIds)
+            {
+                predicate = predicate.Or(wf => wf.WorkflowId == wfid);
+            }
+            return predicate;
+        }
+
+       
 
         public Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(IPrincipal currentUser, int? uloId, string pegasysDocumentNumber, string organization,
          IList<int> regions, IList<int> zones, string fund, IList<string> baCode, string pegasysTitleNumber, string pegasysVendorName, IList<string> docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, IList<string> reasonIncludedInReview, IList<bool> valid, IList<string> status, IList<int> reviewId, bool? reassignableByMe)

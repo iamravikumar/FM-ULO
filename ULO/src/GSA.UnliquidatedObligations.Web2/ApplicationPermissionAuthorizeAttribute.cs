@@ -1,44 +1,44 @@
-﻿#if false
-
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+﻿using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace GSA.UnliquidatedObligations.Web
 {
-    public class ApplicationPermissionAuthorizeAttribute : AuthorizeAttribute
+    public class ApplicationPermissionAuthorizeAttribute : TypeFilterAttribute
     {
         private readonly ApplicationPermissionNames[] ApplicationPermissions;
-
         public ApplicationPermissionAuthorizeAttribute(params ApplicationPermissionNames[] applicationPermissions)
+        : base(typeof(AuthorizeActionFilter))
         {
             ApplicationPermissions = applicationPermissions;
         }
+    }
 
-        protected override bool AuthorizeCore(HttpContextBase httpContext)
+    public class AuthorizeActionFilter : IAuthorizationFilter
+    {
+        private readonly ApplicationPermissionNames[] AppPermissions;
+        public AuthorizeActionFilter(ApplicationPermissionNames[] ApplicationPermissions)
         {
-            try
-            {
-                var user = httpContext.GetOwinContext().Authentication.User;
-                foreach (var p in ApplicationPermissions)
-                {
-                    if (HasPermission(user, p)) return true;
-                }
-            }
-            catch (Exception)
-            { }
-            return false;
+            AppPermissions = ApplicationPermissions;
+            
         }
-
-        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var c = filterContext.Controller as Controllers.BaseController;
-            if (c != null)
+            bool isAuthorized = false;
+
+            foreach (var p in AppPermissions)
+            {                
+                isAuthorized = HasPermission(context.HttpContext.User, p);
+            }             
+
+            if (!isAuthorized)
             {
-                c.Log.Error("Unauthorized access attempt.  User does not have any of the specified application persissions {@ApplicationPermissions}", ApplicationPermissions);
-            }
-            base.HandleUnauthorizedRequest(filterContext);
+                context.Result = new ForbidResult();
+            }            
         }
 
         public static bool HasPermission(ClaimsPrincipal user, ApplicationPermissionNames permission)
@@ -53,6 +53,8 @@ namespace GSA.UnliquidatedObligations.Web
             }
         }
     }
+
+
 }
 
-#endif
+

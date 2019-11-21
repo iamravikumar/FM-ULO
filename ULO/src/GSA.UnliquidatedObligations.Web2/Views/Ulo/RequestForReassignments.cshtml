@@ -1,0 +1,9 @@
+﻿@model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Workflow>
+@using GSA.UnliquidatedObligations.Web;
+
+@{
+    //this.SetTitles(PageKeys.ReassignmentRequests, "Reassignment Requests");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@await Html.PartialAsync("~/Views/Ulo/_RecordsListing.cshtml", Model)

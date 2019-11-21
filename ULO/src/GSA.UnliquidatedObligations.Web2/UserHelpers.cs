@@ -20,6 +20,8 @@ namespace GSA.UnliquidatedObligations.Web
 
         private readonly PortalHelpers PortalHelpers;
 
+        
+
         public class Config
         {
             public const string ConfigSectionName = "UserHelpersConfig";
@@ -107,6 +109,19 @@ namespace GSA.UnliquidatedObligations.Web
               PortalHelpers.MediumCacheTimeout
               );
 
+        public IList<int?> GetUserGroupRegions(GetMyGroups_Result0 user)
+         => Cacher.FindOrCreateValue(
+             Cache.CreateKey(nameof(GetUserGroupRegions), user.UserName),
+             () =>
+                 DB.UserUsers
+                         .Where(uu => uu.ChildUserId == user.UserId)
+                         .Select(uu => uu.RegionId)
+                         .Distinct()
+                         .ToList()
+                         .AsReadOnly(),
+             PortalHelpers.MediumCacheTimeout
+             );
+
         public IList<string> GetUserGroupNames(IPrincipal user, int regionId)
            => Cacher.FindOrCreateValue(
                Cache.CreateKey(nameof(GetUserGroupNames), user.Identity.Name, regionId),
@@ -119,7 +134,7 @@ namespace GSA.UnliquidatedObligations.Web
                            .AsReadOnly()
                    ,
                PortalHelpers.MediumCacheTimeout
-               );
+               );       
 
         public bool HasPermission(ApplicationPermissionNames permissionName, IPrincipal user = null)
         {
@@ -144,6 +159,8 @@ namespace GSA.UnliquidatedObligations.Web
             return false;
             */
         }
+
+        
 
     }
 }
