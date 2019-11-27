@@ -225,11 +225,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
                 AdvanceViewModel = new AdvanceViewModel(WorkflowDescriptionViewModel.CurrentActivity.QuestionChoices, pending, workflow, expectedDateForCompletion, WorkflowDescriptionViewModel.CurrentActivity.ExpectedDateForCompletionEditable);
                 allowDocumentEdits = workflowAssignedToCurrentUser && WorkflowDescriptionViewModel.CurrentActivity.AllowDocumentEdit;
             }
-            throw new NotImplementedException("old code in need for porting!");
-            /*
-            RequestForReassignment = Workflow.GetReassignmentRequest();
+            //throw new NotImplementedException("old code in need for porting!");
+
+            RequestForReassignment = Workflow.WorkflowRequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault();
             DocumentsViewModel = new DocumentsViewModel(workflow.WorkflowDocuments.ToList(), allowDocumentEdits, workflow.TargetUlo.DocType, uniqueMissingLineageDocuments, workflow.WorkflowId);
-            */
+
         }
     }
 

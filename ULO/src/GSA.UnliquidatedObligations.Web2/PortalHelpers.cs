@@ -625,7 +625,10 @@ namespace GSA.UnliquidatedObligations.Web
             return hasFilters ? predicate : null;
         }
 
+        //SuggestedReviewerRequestForReassignments
 
+        //public RequestForReassignment GetReassignmentRequest(this Workflow wf)
+        //   => wf.WorkflowRequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault();
 
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -139,28 +140,75 @@ namespace GSA.UnliquidatedObligations.Web
         public bool HasPermission(ApplicationPermissionNames permissionName, IPrincipal user = null)
         {
             return true;
-            /*
-            user = user ?? Acc.HttpContext?.User;
-            if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
-            {
-                return Cacher.FindOrCreateValue(
-                    Cache.CreateKey(user.Identity.Name, permissionName),
-                    () =>
-                    {
-                        var claims = DB.AspNetUsers.Include(u => u.UserAspNetUserClaims).AsNoTracking().FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims();
-                        if (claims != null)
-                        {
-                            return claims.GetApplicationPerimissionRegions(permissionName).Count > 0;
-                        }
-                        return false;
-                    }, PortalHelpers.ShortCacheTimeout
-                    );
-            }
-            return false;
-            */
+
+            //user = user ?? Acc.HttpContext?.User;
+            //if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+            //{
+            //    return Cacher.FindOrCreateValue(
+            //        Cache.CreateKey(user.Identity.Name, permissionName),
+            //        () =>
+            //        {
+            //            var claims = DB.AspNetUsers.Include(u => u.UserAspNetUserClaims).AsNoTracking().FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims();
+            //            if (claims != null)
+            //            {
+            //                return claims.GetApplicationPerimissionRegions(permissionName).Count > 0;
+            //            }
+            //            return false;
+            //        }, PortalHelpers.ShortCacheTimeout
+            //        );
+            //}
+            //return false;
+
         }
 
-        
+        public  IList<SelectListItem> CreateSelectList(IEnumerable<AspNetUser> aspNetUsers)
+          => aspNetUsers.Select(z => CreateUserSelectListItem(z.Id, z.UserName)).ToList();
+
+        public  SelectListItem ToSelectListItem(AspNetUser u, bool disabled = false)
+            => CreateUserSelectListItem(u.Id, u.UserName, disabled);
+
+        public  SelectListItem CreateUserSelectListItem(string userId, string username, bool disabled = false)
+            => new SelectListItem
+            {
+                Text = username,
+                Value = userId,
+                Disabled = disabled
+            };
+
+        public  IList<SelectListItem> ConvertToSelectList(IEnumerable<string> stringsToConvert)
+        {
+            var stringsSelect = new List<SelectListItem>();
+
+            foreach (var stringToConvert in stringsToConvert)
+            {
+                stringsSelect.Add(new SelectListItem { Text = stringToConvert, Value = stringToConvert });
+            }
+            return stringsSelect;
+        }
+
+        public  IList<SelectListItem> ConvertToSelectList(IEnumerable<SelectListItem> selectListItems)
+        {
+            var selectList = new List<SelectListItem>();
+
+            foreach (var selectListItem in selectListItems)
+            {
+                selectList.Add(selectListItem);
+            }
+            return selectList;
+        }
+
+        public  IList<SelectListItem> ConvertToSelectList(IEnumerable<int> nums)
+        {
+            var numsSelect = new List<SelectListItem>();
+
+            foreach (var num in nums)
+            {
+                numsSelect.Add(new SelectListItem { Text = num.ToString(), Value = num.ToString() });
+            }
+            return numsSelect;
+        }
+
+
 
     }
 }

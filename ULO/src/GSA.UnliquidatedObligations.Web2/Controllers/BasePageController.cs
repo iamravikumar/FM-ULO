@@ -177,6 +177,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 () => DB.GetMyGroupsAsync(userId ?? CurrentUserId).ExecuteSynchronously().ToList().AsReadOnly(),
                 PortalHelpers.ShortCacheTimeout
                 );
+
+       
     }
 
     

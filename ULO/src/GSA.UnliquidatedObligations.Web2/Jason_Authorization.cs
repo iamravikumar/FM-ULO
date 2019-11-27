@@ -19,7 +19,7 @@
 //                {
 //                    o.AddPolicy(CreatePolicyName(p), policy => policy.AddRequirements(new PermissionRequirement<ApplicationPermissionNames>(p)));
 //                }
-               
+
 //            });
 //            services.AddTransient<IAuthorizationHandler, PermissionHandler>();
 //        }
@@ -55,27 +55,27 @@
 //        }
 
 //        public abstract class PermissionRequirementBase : IAuthorizationRequirement
+//        {
+//            protected PermissionRequirementBase(string claimType, string permissionName)
 //            {
-//                protected PermissionRequirementBase(string claimType, string permissionName)
-//                {
-//                    ClaimType = claimType;
-//                    PermissionName = permissionName;
-//                }
-
-//                public string ClaimType { get; protected set; }
-//                public string PermissionName { get; protected set; }
-
-//                public override string ToString() => $"{GetType().Name} permission={PermissionName} claimType=[{ClaimType}]";
+//                ClaimType = claimType;
+//                PermissionName = permissionName;
 //            }
 
-//            public class PermissionRequirement<T> : PermissionRequirementBase
-//                where T : struct
+//            public string ClaimType { get; protected set; }
+//            public string PermissionName { get; protected set; }
+
+//            public override string ToString() => $"{GetType().Name} permission={PermissionName} claimType=[{ClaimType}]";
+//        }
+
+//        public class PermissionRequirement<T> : PermissionRequirementBase
+//            where T : struct
+//        {
+//            public PermissionRequirement(T permission)
+//                : base(PermissionHelpers.CreateClaimType(permission), permission.ToString())
 //            {
-//                public PermissionRequirement(T permission)
-//                    : base(PermissionHelpers.CreateClaimType(permission), permission.ToString())
-//                {
-//                }
 //            }
+//        }
 
 //        public static string CreateClaimType(ApplicationPermissionNames permissionName)
 //        => $"urn:gsa.gov/unliquidatedObligation/claims/ApplicationPermissionClaim";
