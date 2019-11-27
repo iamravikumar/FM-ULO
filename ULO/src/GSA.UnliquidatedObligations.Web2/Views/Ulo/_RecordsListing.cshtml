@@ -94,60 +94,62 @@ else
             </tr>
         </thead>
         @foreach (var item in Model)
-        {
+        {@if (item.TargetUlo != null)
+            { 
             <tr class="active-workflows-record @(viewDateByWorkflowId.ContainsKey(item.WorkflowId)?"viewed":"")" data-id="@item.WorkflowId">
-                @if (showSelectors)
-                {
-                    <td><input type="checkbox" class="itemSelector" onclick="selectorClicked()" value="1" data-id="@item.WorkflowId" /></td>
-                }
-                <td>
-                    @Html.ActionLink(item.TargetUlo.PdnWithInstance, UloController.ActionNames.Details, UloController.Name, new { uloId = item.TargetUloId, workflowId = item.WorkflowId }, null)
-                </td>
+            @if (showSelectors)
+            {
+                <td><input type="checkbox" class="itemSelector" onclick="selectorClicked()" value="1" data-id="@item.WorkflowId" /></td>
+            }
+            <td>
+                @Html.ActionLink(item.TargetUlo.PdnWithInstance, UloController.ActionNames.Details, UloController.Name, new { uloId = item.TargetUloId, workflowId = item.WorkflowId }, null)
+            </td>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.TargetUlo.ReviewId)
-                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.ReviewId)
+            </td>
 
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.Review.ReviewName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.Region.RegionNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.Prog)
+            </td>
+            @if (showReviewStatusColumn)
+            {
                 <td>
-                    @Html.DisplayFor(modelItem => item.TargetUlo.Review.ReviewName)
+                    @Html.DisplayFor(modelItem => item.TargetUlo.Status)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TargetUlo.Region.RegionNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TargetUlo.Prog)
-                </td>
-                @if (showReviewStatusColumn)
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.Organization)
+            </td>
+            <td>
+                @Html.Currency(Convert.ToDecimal(item.TargetUlo.TotalLine))
+            </td>
+            <td>
+                @Html.DisplayIsValid(item.TargetUlo.Valid)
+            </td>
+            <td>
+                @if (showReassignmentButton)
                 {
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TargetUlo.Status)
-                    </td>
-                }
-                <td>
-                    @Html.DisplayFor(modelItem => item.TargetUlo.Organization)
-                </td>
-                <td>
-                    @Html.Currency(Convert.ToDecimal(item.TargetUlo.TotalLine))
-                </td>
-                <td>
-                    @Html.DisplayIsValid(item.TargetUlo.Valid)
-                </td>
-                <td>
-                    @if (showReassignmentButton)
+                    int? rfrId = allAreUnassigned ? null : item.WorkflowRequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault()?.RequestForReassignmentID;
+                    if (allAreUnassigned || rfrId != null)
                     {
-                        int? rfrId = allAreUnassigned ? null : item.WorkflowRequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault()?.RequestForReassignmentID;
-                        if (allAreUnassigned || rfrId != null)
-                        {
-                            rfrIdByWorkflow[item] = rfrId;
-                            var modalId = "#" + item.WorkflowId + "RequestForReassignModal";
-                            <button type="button" class="btn btn-primary master request-active" data-toggle="modal" data-target="@modalId">
-                                Reassign
-                            </button>
-                        }
+                        rfrIdByWorkflow[item] = rfrId;
+                        var modalId = "#" + item.WorkflowId + "RequestForReassignModal";
+                        <button type="button" class="btn btn-primary master request-active" data-toggle="modal" data-target="@modalId">
+                            Reassign
+                        </button>
                     }
-                </td>
-            </tr>
+                }
+            </td>
+        </tr>
         }
+    }
     </table>
     if (showReassignmentButton && rfrIdByWorkflow.Count > 0)
     {

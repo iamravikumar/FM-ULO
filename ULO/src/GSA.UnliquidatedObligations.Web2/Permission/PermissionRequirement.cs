@@ -13,14 +13,14 @@ namespace GSA.UnliquidatedObligations.Web.Permission
 {
     public class PermissionRequirement : IAuthorizationRequirement
     {
-        public PermissionRequirement(string claimType)
+        public PermissionRequirement(string claimType, ApplicationPermissionNames permissionName)
         {
             ClaimType = claimType;
-            //PermissionName = permissionName;
+            PermissionName = permissionName;
         }
 
         public string ClaimType { get; protected set; }
-        //public string PermissionName { get; protected set; }
+        public ApplicationPermissionNames PermissionName { get; protected set; }
 
         
     }

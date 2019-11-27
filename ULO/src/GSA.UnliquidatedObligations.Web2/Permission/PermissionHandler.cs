@@ -7,42 +7,36 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 
 
 namespace GSA.UnliquidatedObligations.Web.Permission
 {
     public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
     {
-        public const string GsaUrn = "urn:gsa.gov/";
-        public const string UloUrn = GsaUrn + "unliquidatedObligation/";
-        public const string ClaimTypePrefix = UloUrn + "claims/";
-        public const string ClaimType = ClaimTypePrefix + "ApplicationPermissionClaim";
-
         private readonly IServiceProvider ServiceProvider;
-
         public PermissionHandler(IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
-        {
-            
+        {            
             var UserManager = ServiceProvider.GetRequiredService<UserManager<AspNetUser>>();
 
             var user = await UserManager.GetUserAsync(context.User);           
 
-            var claimList = (await UserManager.GetClaimsAsync(user)).Select(p => p.Type);
-            if (!claimList.Contains("ApplicationPermissionClaim"))
+            var claimList = (await UserManager.GetClaimsAsync(user)).Select(p => p.Value);            
+
+            foreach (var currentClaim in claimList)
             {
-                await UserManager.AddClaimAsync(user, new Claim("ApplicationPermissionClaim", "CanViewUnassigned"));
+                var pcv = ApplicationPermissionClaimValue.Load(currentClaim);
+                    if (pcv.ApplicationPermissionName == requirement.PermissionName)
+                {
+                    context.Succeed(requirement);
+                    break;
+                }               
             }
-                                                 
-                foreach (var c in claimList)
-                {                
-                        context.Succeed(requirement);
-                        break;                   
-                }            
         }
        
     }

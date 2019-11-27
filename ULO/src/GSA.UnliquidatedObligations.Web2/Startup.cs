@@ -7,6 +7,7 @@ using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Identity;
 using GSA.UnliquidatedObligations.Web.Permission;
 using GSA.UnliquidatedObligations.Web.Services;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -89,9 +90,12 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddAuthentication();
             
             services.AddAuthorization(options =>
-            {
-                options.AddPolicy("ApplicationPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("ApplicationPermissionClaim")));               
-
+            {                
+                foreach (ApplicationPermissionNames permissionName in Enum.GetValues(typeof(ApplicationPermissionNames)))
+                {
+                    options.AddPolicy("ApplicationPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("ApplicationPermissionClaim", permissionName)));
+                    options.AddPolicy("SubjectCategoryPolicy", policy => policy.Requirements.Add(new PermissionRequirement("SubjectCategoryClaim", permissionName)));
+                }
             });
             services.AddTransient<IAuthorizationHandler, PermissionHandler>();       
             
