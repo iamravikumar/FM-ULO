@@ -158,7 +158,7 @@ else
         {
             var rfrId = kvp.Value;
             var wf = kvp.Key;
-            @*@await Html.RenderPartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = wf.WorkflowId, uloRegionId = wf.TargetUlo.RegionId, isAdmin = true, id = rfrId, bulkToken = bulkToken });*@
+            @*@await Html.PartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { id = rfrId, workflowId = wf.WorkflowId, uloRegionId = wf.TargetUlo.RegionId, isAdmin = true, bulkToken = bulkToken });*@
         }
     }
     @await Html.PartialAsync("_PaginationPartial")

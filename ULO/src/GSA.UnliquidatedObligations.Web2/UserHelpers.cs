@@ -110,6 +110,19 @@ namespace GSA.UnliquidatedObligations.Web
               PortalHelpers.MediumCacheTimeout
               );
 
+        public IList<int?> GetUserGroupRegions(string userName, string groupNameOrId)
+         => Cacher.FindOrCreateValue(
+             Cache.CreateKey(nameof(GetUserGroupRegions), userName, groupNameOrId),
+             () =>
+                 DB.UserUsers
+                         .Where(uu => (uu.ParentUserId == GetUserId(groupNameOrId) || uu.ParentUserId == groupNameOrId) && uu.ChildUserId == GetUserId(userName))
+                         .Select(uu => uu.RegionId)
+                         .Distinct()
+                         .ToList()
+                         .AsReadOnly(),
+             PortalHelpers.MediumCacheTimeout
+             );
+
         public IList<int?> GetUserGroupRegions(GetMyGroups_Result0 user)
          => Cacher.FindOrCreateValue(
              Cache.CreateKey(nameof(GetUserGroupRegions), user.UserName),

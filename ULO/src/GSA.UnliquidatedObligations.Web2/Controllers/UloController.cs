@@ -21,6 +21,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     //[Authorize]
     //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
+    [Authorize(Policy = "ApplicationUser")]
     public class UloController : BasePageController
     {
         public const string Name = "Ulo";
@@ -362,7 +363,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         //unassigned tab
         [ActionName(ActionNames.Unassigned)]
         //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
-        [Authorize(Policy = "ApplicationPermissionPolicy")]
+        [Authorize(Policy = "CanViewUnassigned")]
         [Route("ulos/unassigned")]
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -396,7 +397,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var prohibitedWorkflowIds = await DB.WorkflowProhibitedOwners.Where(z => z.ProhibitedOwnerUserId == CurrentUserId).Select(z => z.WorkflowId).ToListAsync();
 
-            var workflows = from wf in DB.Workflows.Where(z => z.OwnerUserId == "C446AFC7-66ED-4738-8733-A7FF11043AED")
+            var workflows = from wf in DB.Workflows.Where(z => z.OwnerUserId == "C446AFC7-66ED-4738-8733-A7FF11043AED").Include(z=>z.TargetUlo)
                             where !prohibitedWorkflowIds.Contains(wf.WorkflowId)
                             select wf;
 

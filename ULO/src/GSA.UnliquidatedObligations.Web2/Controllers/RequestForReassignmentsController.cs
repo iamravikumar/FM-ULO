@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-   
+
     //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class RequestForReassignmentsController : BasePageController
     {
@@ -42,15 +42,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly UloUserManager UserManager;
         private readonly IBackgroundJobClient BackgroundJobClient;
 
-       
-        public RequestForReassignmentsController(IBackgroundJobClient backgroundJobClient, IWorkflowManager manager, UloUserManager userManager, UloDbContext db, PortalHelpers portalHelpers, UserHelpers userHelpers,ICacher cacher, Serilog.ILogger logger)
-            : base(db, cacher, portalHelpers,userHelpers,  logger)
+
+        public RequestForReassignmentsController(IBackgroundJobClient backgroundJobClient, IWorkflowManager manager, UloUserManager userManager, UloDbContext db, PortalHelpers portalHelpers, UserHelpers userHelpers, ICacher cacher, Serilog.ILogger logger)
+            : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             BackgroundJobClient = backgroundJobClient;
             Manager = manager;
-            UserManager = userManager;            
+            UserManager = userManager;
         }
-      
+
 
         private IQueryable<Workflow> GetWorkflows(IEnumerable<int> workflowIds)
         {
@@ -61,7 +61,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("rfr/getCommonReassignees")]
         [ActionName(ActionNames.GetCommonReassignees)]
         public JsonResult GetCommonReassignees()
-        {            
+        {
             var json = new System.IO.StreamReader(Request.Body).ReadToEnd();
             var workflowIds = (JsonConvert.DeserializeObject<int[]>(json) ?? Empty.IntArray).Distinct().ToArray();
             var workflows = GetWorkflows(workflowIds);
@@ -94,7 +94,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return Json(eligibleReviewers.OrderBy(z => z.UserName));
         }
 
-       
+
 
         public class DetailsBulkToken
         {
@@ -124,24 +124,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 else
                 {
-                   PotentialReviewersByWorkflowId = db.GetEligibleReviewersAsync(CSV.FormatLine(ids, false), true, false).ExecuteSynchronously().ToList().ToMultipleValueDictionary(z => z.WorkflowId, z => z);                   
+                    PotentialReviewersByWorkflowId = db.GetEligibleReviewersAsync(CSV.FormatLine(ids, false), true, false).ExecuteSynchronously().ToList().ToMultipleValueDictionary(z => z.WorkflowId, z => z);
                 }
                 IsValid = true;
             }
             internal DetailsBulkToken(AspNetUser currentUser, UloDbContext db, int workflowId)
                 : this(currentUser, db, new[] { db.Workflows.Find(workflowId) }.AsQueryable())
             { }
-           
+
         }
 
         private string MungeReviewerName(string username, bool? isQualified)
             => string.Format(
-                isQualified.GetValueOrDefault() ? PortalHelpers.GetEligibleReviewersQualifiedUsernameFormat : PortalHelpers.GetEligibleReviewersNotQualifiedUsernameFormat,username);
+                isQualified.GetValueOrDefault() ? PortalHelpers.GetEligibleReviewersQualifiedUsernameFormat : PortalHelpers.GetEligibleReviewersNotQualifiedUsernameFormat, username);
 
 
 
         [ActionName(ActionNames.Details)]
-        public ActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false, DetailsBulkToken bulkToken = null)
+        public IActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false, DetailsBulkToken bulkToken = null)
         {
             bulkToken = (bulkToken != null && bulkToken.IsValid) ? bulkToken : new DetailsBulkToken(CurrentUser, DB, workflowId);
             var db = bulkToken.DB;
@@ -185,12 +185,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     () =>
                     {
                         var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
-                        //return User.HasClaim(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId); //sreen : need change back to this statement after Claims fix
-                        return userReassignRegions.Contains(uloRegionId);
+                        return User.HasClaim("Application", ApplicationPermissionNames.CanReassign.ToString()) && userReassignRegions.Contains(uloRegionId); //sreen : need change back to this statement after Claims fix
+
                     },
                     PortalHelpers.MediumCacheTimeout
                     ))
-                {                    
+                {
                     userSelectItems.Add(UserHelpers.ToSelectListItem(bulkToken.CurrentUser));
                 }
             }
@@ -206,7 +206,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             if (workflow.OwnerUserId == CurrentUserId)
             {
-                 userSelectItems.Remove(userSelectItems.Where(z => z.Value == CurrentUserId).ToList());
+                userSelectItems.Remove(userSelectItems.Where(z => z.Value == CurrentUserId).ToList());
             }
 
             userSelectItems = userSelectItems.OrderBy(z => z.Text).ToList();
@@ -229,9 +229,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private async Task<IActionResult> HandleReassignmentRequestAsync(int workflowId, RequestForReassignmentViewModel m)
         {
             var wf = await FindWorkflowAsync(workflowId, false);
-            //if (wf == null) return HttpNotFound();
+            if (wf == null) return StatusCode(404);
 
-            var canHandleReassignment = true;//User.HasPermission(ApplicationPermissionNames.CanReassign);
+            var canHandleReassignment = true;
+            //User.HasPermission(ApplicationPermissionNames.CanReassign);
             //if (!canHandleReassignment && m.SuggestedReviewerId == CurrentUserId)
             //{
             //    canHandleReassignment = UserHelpers.GetUserGroupRegions(wf.OwnerUser.GetClaims, wf.OwnerUserId).Contains(wf.TargetUlo.RegionId);
@@ -272,97 +273,100 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //[ActionName(ActionNames.BulkReassign)]
-        ////[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
-        //public async Task<ActionResult> BulkReassign()
-        //{
-        //    var workflowIds = JsonConvert.DeserializeObject<int[]>(Request.Form["WorkflowIds"]);
-        //    var reviewerId = Request.Form["SuggestedReviewerId"];
-        //    var comment = Request.Form["Comments"];
-        //    var regionIds = User.GetUserGroupRegions(PortalHelpers.ReassignGroupUserId);
-        //    var regionIdPredicate = PortalHelpers.GetWorkflowsRegionIdPredicate(regionIds);
-        //    var workflowIdPredicate = PortalHelpers.GetWorkflowsWorkflowIdPredicate(workflowIds);
-        //    var workflows = await DB.Workflows.Where(regionIdPredicate.And(workflowIdPredicate)).ToListAsync();
-        //    workflows.ForEach(wf => wf.OwnerUserId = reviewerId);
-        //    await DB.SaveChangesAsync();
-        //    BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.SendAssignWorkFlowsBatchNotifications(workflowIds, reviewerId));
-        //    AddPageAlert($"Reassigned {workflows.Count}/{workflowIds.Length} items", true, PageAlert.AlertTypes.Info, true);
-        //    return Redirect(Request.UrlReferrer.ToString());
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName(ActionNames.BulkReassign)]
+        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
+        public async Task<ActionResult> BulkReassign()
+        {
+            var workflowIds = JsonConvert.DeserializeObject<int[]>(Request.Form["WorkflowIds"]);
+            var reviewerId = Request.Form["SuggestedReviewerId"];
+            var comment = Request.Form["Comments"];
+            var regionIds = UserHelpers.GetUserGroupRegions(CurrentUserName,UserHelpers.ReassignGroupUserId);
+            var regionIdPredicate = PortalHelpers.GetWorkflowsRegionIdPredicate(regionIds);
+            var workflowIdPredicate = PortalHelpers.GetWorkflowsWorkflowIdPredicate(workflowIds);
+            var workflows = await DB.Workflows.Where(regionIdPredicate.And(workflowIdPredicate)).ToListAsync();
+            workflows.ForEach(wf => wf.OwnerUserId = reviewerId);
+            await DB.SaveChangesAsync();
+            BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.SendAssignWorkFlowsBatchNotifications(workflowIds, reviewerId));
+            AddPageAlert($"Reassigned {workflows.Count}/{workflowIds.Length} items", true, PageAlert.AlertTypes.Info, true);
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> ReassignFromList(
-        //    int workflowId,
-        //    [Bind(Include =
-        //            nameof(RequestForReassignmentViewModel.SuggestedReviewerId)+","+
-        //            nameof(RequestForReassignmentViewModel.Comments)+","+
-        //            nameof(RequestForReassignmentViewModel.JustificationKey)
-        //        )]
-        //        RequestForReassignmentViewModel requestForReassignmentViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        return await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel) ?? RedirectToHome();
-        //    }
-        //    return Redirect(Request.UrlReferrer?.ToString());
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReassignFromList(
+            int workflowId,
+            [Bind(new[]{
+                    nameof(RequestForReassignmentViewModel.SuggestedReviewerId),
+                    nameof(RequestForReassignmentViewModel.Comments),
+                    nameof(RequestForReassignmentViewModel.JustificationKey)
+                   }
+                )]
+                RequestForReassignmentViewModel requestForReassignmentViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                return await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel) ?? RedirectToHome();
+            }
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
 
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Reassign(
-        //    int workflowId,
-        //    [Bind(Include =
-        //            nameof(RequestForReassignmentViewModel.SuggestedReviewerId)+","+
-        //            nameof(RequestForReassignmentViewModel.Comments)+","+
-        //            nameof(RequestForReassignmentViewModel.JustificationKey)
-        //        )]
-        //        RequestForReassignmentViewModel requestForReassignmentViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        return await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel) ?? RedirectToHome();
-        //    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reassign(
+            int workflowId,
+            [Bind(new[]{
+                    nameof(RequestForReassignmentViewModel.SuggestedReviewerId),
+                    nameof(RequestForReassignmentViewModel.Comments),
+                    nameof(RequestForReassignmentViewModel.JustificationKey)
+                   }
+                )]
+                RequestForReassignmentViewModel requestForReassignmentViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                return await HandleReassignmentRequestAsync(workflowId, requestForReassignmentViewModel) ?? RedirectToHome();
+            }
 
-        //    return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);
-        //}
+            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);
+        }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> RequestReassign(
-        //    int workflowId,
-        //    [Bind(Include =
-        //        nameof(RequestForReassignmentViewModel.WorkflowId)+","+
-        //        nameof(RequestForReassignmentViewModel.SuggestedReviewerId)+","+
-        //        nameof(RequestForReassignmentViewModel.JustificationKey)+","+
-        //        nameof(RequestForReassignmentViewModel.Comments))]
-        //    RequestForReassignmentViewModel requestForReassignmentViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var wf = await FindWorkflowAsync(workflowId);
-        //        if (wf == null) return null;// HttpNotFound();
-        //        var question = new UnliqudatedObjectsWorkflowQuestion
-        //        {
-        //            JustificationKey = requestForReassignmentViewModel.JustificationKey,
-        //            UserId = CurrentUserId,
-        //            Answer = UnliqudatedObjectsWorkflowQuestion.CommonAnswers.RequestForReasssignment,
-        //            WorkflowId = workflowId,
-        //            Comments = requestForReassignmentViewModel.Comments,
-        //            WorkflowRowVersion = wf.WorkflowRowVersion,
-        //            CreatedAtUtc = DateTime.UtcNow
-        //        };
-        //        DB.UnliqudatedObjectsWorkflowQuestions.Add(question);
-        //        await DB.SaveChangesAsync();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestReassign(
+            int workflowId,
+            [Bind(new[]{
+                nameof(RequestForReassignmentViewModel.WorkflowId),
+                nameof(RequestForReassignmentViewModel.SuggestedReviewerId),
+                nameof(RequestForReassignmentViewModel.JustificationKey),
+                nameof(RequestForReassignmentViewModel.Comments)
+            })]
+            RequestForReassignmentViewModel requestForReassignmentViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var wf = await FindWorkflowAsync(workflowId);
+                if (wf == null) return StatusCode(404); 
+                var question = new UnliqudatedObjectsWorkflowQuestion
+                {
+                    JustificationKey = requestForReassignmentViewModel.JustificationKey,
+                    UserId = CurrentUserId,
+                    Answer = UnliqudatedObjectsWorkflowQuestion.CommonAnswers.RequestForReasssignment,
+                    WorkflowId = workflowId,
+                    Comments = requestForReassignmentViewModel.Comments,
+                    WorkflowRowVersion = wf.WorkflowRowVersion,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+                DB.UnliqudatedObjectsWorkflowQuestions.Add(question);
+                await DB.SaveChangesAsync();
 
-        //        return await RequestReassign(wf, question, requestForReassignmentViewModel.SuggestedReviewerId);
-        //    }
+                return await RequestReassign(wf, question, requestForReassignmentViewModel.SuggestedReviewerId);
+            }
 
-        //    return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);
-        //}
+            return PartialView("~/Views/Ulo/Details/Workflow/RequestForReassignments/_Details.cshtml", requestForReassignmentViewModel);
+        }
 
 
         //    // GET: RequestForReassignments/Delete/5
@@ -370,12 +374,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (id == null)
             {
-                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return StatusCode(400);
             }
-            RequestForReassignment requestForReassignment = await DB.RequestForReassignment.FindAsync(id);
+            var requestForReassignment = await DB.RequestForReassignment.FindAsync(id);
             if (requestForReassignment == null)
             {
-               // return HttpNotFound();
+                return StatusCode(404);
             }
             return View(requestForReassignment);
         }

@@ -22,6 +22,6 @@ namespace GSA.UnliquidatedObligations.Web.Permission
         public string ClaimType { get; protected set; }
         public ApplicationPermissionNames PermissionName { get; protected set; }
 
-        
+
     }
 }

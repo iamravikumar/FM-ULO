@@ -177,8 +177,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 () => DB.GetMyGroupsAsync(userId ?? CurrentUserId).ExecuteSynchronously().ToList().AsReadOnly(),
                 PortalHelpers.ShortCacheTimeout
                 );
+        protected ActionResult RedirectToHome()
+           => RedirectToAction(UloController.ActionNames.Home, UloController.Name);
 
-       
+        protected virtual ActionResult RedirectToIndex()
+            => RedirectToAction("Index");
+
     }
 
     

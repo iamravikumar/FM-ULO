@@ -88,17 +88,16 @@ namespace GSA.UnliquidatedObligations.Web
                 .AddSignInManager<UloSignInManager>();
 
             services.AddAuthentication();
-            
+
             services.AddAuthorization(options =>
-            {                
+            {
                 foreach (ApplicationPermissionNames permissionName in Enum.GetValues(typeof(ApplicationPermissionNames)))
                 {
-                    options.AddPolicy("ApplicationPermissionPolicy", policy => policy.Requirements.Add(new PermissionRequirement("ApplicationPermissionClaim", permissionName)));
-                    options.AddPolicy("SubjectCategoryPolicy", policy => policy.Requirements.Add(new PermissionRequirement("SubjectCategoryClaim", permissionName)));
+                    options.AddPolicy(permissionName.ToString(), policy => policy.Requirements.Add(new PermissionRequirement(permissionName.ToString(),permissionName)));                    
                 }
             });
-            services.AddTransient<IAuthorizationHandler, PermissionHandler>();       
-            
+            services.AddTransient<IAuthorizationHandler, PermissionHandler>();
+
             services.AddScoped<IBackgroundTasks, BackgroundTasks>();
             services.AddScoped<SmtpClient>();
             services.AddScoped<IEmailServer, EmailServer>();

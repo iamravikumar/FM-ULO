@@ -21,23 +21,23 @@ namespace GSA.UnliquidatedObligations.Web.Permission
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
-        {            
+        {
             var UserManager = ServiceProvider.GetRequiredService<UserManager<AspNetUser>>();
 
-            var user = await UserManager.GetUserAsync(context.User);           
+            var user = await UserManager.GetUserAsync(context.User);
 
-            var claimList = (await UserManager.GetClaimsAsync(user)).Select(p => p.Value);            
+            var claimList = (await UserManager.GetClaimsAsync(user)).Select(p => p.Value);
 
             foreach (var currentClaim in claimList)
             {
                 var pcv = ApplicationPermissionClaimValue.Load(currentClaim);
-                    if (pcv.ApplicationPermissionName == requirement.PermissionName)
+                if (pcv.ApplicationPermissionName == requirement.PermissionName)
                 {
                     context.Succeed(requirement);
                     break;
-                }               
+                }
             }
         }
-       
+
     }
 }

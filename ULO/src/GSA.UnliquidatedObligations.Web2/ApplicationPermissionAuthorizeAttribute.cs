@@ -1,62 +1,58 @@
-﻿//using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-//using Microsoft.AspNetCore.Authorization;
+﻿
 //using System;
 //using System.Security.Claims;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Mvc.Filters;
 //using System.Linq;
 //using System.Threading.Tasks;
-//using System.Collections.Generic;
+//using Microsoft.AspNetCore.Identity;
+//using Microsoft.AspNetCore.Authorization;
+//using Microsoft.Extensions.DependencyInjection;
+//using GSA.UnliquidatedObligations.BusinessLayer.Data;
+//using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.AspNetCore.Mvc.Filters;
 
 //namespace GSA.UnliquidatedObligations.Web
 //{
 //    public class PermissionRequirement : IAuthorizationRequirement
 //    {
-//        public IEnumerable<ApplicationPermissionNames> RequiredPermissions { get; }
-//        public PermissionRequirement(IEnumerable<ApplicationPermissionNames> requiredpermissions)
+//        public PermissionRequirement(ApplicationPermissionNames permissionName)
 //        {
-//            RequiredPermissions = requiredpermissions;
+//            //ClaimType = claimType;
+//            PermissionName = permissionName;
 //        }
+
+//       // public string ClaimType { get; protected set; }
+//        public ApplicationPermissionNames PermissionName { get; protected set; }
+
 
 //    }
 
 //    public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
 //    {
-
-//        private readonly IEnumerable<ApplicationPermissionNames> PermissionRepository;
-
-//        public PermissionHandler(IEnumerable<ApplicationPermissionNames> permissionRepository)
+//        private readonly IServiceProvider ServiceProvider;
+//        public PermissionHandler(IServiceProvider serviceProvider)
 //        {
-//            if (permissionRepository == null)
-//                throw new ArgumentNullException(nameof(permissionRepository));
-
-//            PermissionRepository = permissionRepository;
+//            ServiceProvider = serviceProvider;
 //        }
 
-//        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+//        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
 //        {
-//            bool hasPermission = false;
+//            var UserManager = ServiceProvider.GetRequiredService<UserManager<AspNetUser>>();
 
+//            var user = await UserManager.GetUserAsync(context.User);
 
-//            foreach (var p in requirement.RequiredPermissions)
+//            var claimList = (await UserManager.GetClaimsAsync(user)).Select(p => p.Value);
+
+//            foreach (var currentClaim in claimList)
 //            {
-//                hasPermission = HasPermission(context.User, p);
+//                var pcv = ApplicationPermissionClaimValue.Load(currentClaim);
+//                if (pcv.ApplicationPermissionName == requirement.PermissionName)
+//                {
+//                    context.Succeed(requirement);
+//                    break;
+//                }
 //            }
-
-//            if (hasPermission)
-//            {
-//                context.Succeed(requirement);
-//            }
-//            else
-//            {
-//                context.Fail();
-//            }
-
-//            return Task.CompletedTask;
 //        }
-
-
 
 //        public static bool HasPermission(ClaimsPrincipal user, ApplicationPermissionNames permission)
 //        {
