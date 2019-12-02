@@ -48,6 +48,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public string CurrentUserId
             => UserHelpers.CurrentUserId;
 
+        public string CurrentUserName
+            => UserHelpers.CurrentUserName;  
+        
+        public bool UseOldGetEligibleReviewersAlgorithm => PortalHelpers.UseOldGetEligibleReviewersAlgorithm;
+
+        protected AspNetUser CurrentUser
+        {
+            get
+            {
+                if (CurrentUser_p == null)
+                {
+                    CurrentUser_p = DB.AspNetUsers.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                }
+                return CurrentUser_p;
+            }
+        }
+        private AspNetUser CurrentUser_p;
+
         protected void OnlySupportedInDevelopmentEnvironment()
         {
             if (!PortalHelpers.UseDevAuthentication)
@@ -121,6 +139,21 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return q;
         }
 
+        protected void AddPageAlert(string toastMessage, bool autoDismiss = false, PageAlert.AlertTypes pageAlertType = PageAlert.AlertTypes.Info, bool nextRequest = false)
+           => AddPageAlert(new PageAlert(toastMessage, autoDismiss, pageAlertType), nextRequest);
+
+        protected void AddPageAlert(PageAlert pa, bool nextRequest = false)
+        {
+            if (pa == null || string.IsNullOrEmpty(pa.Message)) return;
+            var d = nextRequest ? (IDictionary<string, object>)TempData : (IDictionary<string, object>)ViewData;
+            var pageAlerts = d["PageAlerts"] as IList<PageAlert>;
+            if (pageAlerts == null)
+            {
+                d["PageAlerts"] = pageAlerts = new List<PageAlert>();
+            }
+            pageAlerts.Add(pa);
+        }
+
         protected IQueryable<T> ApplyPagination<T>(IQueryable<T> q, int? page = null, int? pageSize = null)
         {
             var rowsPerPageString = Request.Cookies["rowsPerPage"];
@@ -137,5 +170,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ViewBag.PageSize = s;
             return q.Skip((p - 1) * s).Take(s).ToList().AsQueryable();
         }
+
+        public IEnumerable<GetMyGroups_Result0> GetUserGroups(string userId = null)
+            => Cacher.FindOrCreateValue(
+                Cache.CreateKey(nameof(GetUserGroups), userId ?? CurrentUserId),
+                () => DB.GetMyGroupsAsync(userId ?? CurrentUserId).ExecuteSynchronously().ToList().AsReadOnly(),
+                PortalHelpers.ShortCacheTimeout
+                );
+        protected ActionResult RedirectToHome()
+           => RedirectToAction(UloController.ActionNames.Home, UloController.Name);
+
+        protected virtual ActionResult RedirectToIndex()
+            => RedirectToAction("Index");
+
     }
+
+    
 }

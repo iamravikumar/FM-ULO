@@ -126,6 +126,7 @@
         <Column name="Account e-mail Address" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="254" isComputed="0" domainSchema="dbo" domainName="EmailAddress" />
       </Columns>
     </Table>
+    
     <Table schema="dbo" name="ApplicationUsers" tableType="VIEW" isNodeTable="0" isEdgeTable="0">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -1651,23 +1652,33 @@
       </Args>
     </Sproc>
     <Sproc schema="dbo" name="GetEligibleReviewers" routineType="PROCEDURE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="SprocType" value="Collection:GetEligibleReviewers_Result0" />
+      </Properties>
       <Args>
         <Arg position="1" mode="IN" name="@workflowIdCsv" sqlType="nvarchar" maxLen="4000" />
         <Arg position="2" mode="IN" name="@qualifiedOnly" sqlType="bit" />
         <Arg position="3" mode="IN" name="@debugMode" sqlType="bit" />
       </Args>
       <ResultSets>
-        <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>
-            The metadata could not be determined because statement 'with
-            relatedWorkflowIds(PegasysDocumentNumber, ParentWorkflowId, WorkflowId) as
-            (
-            select dis' in procedure 'GetEligibleReviewers' uses a temp table.
-          </Error>
+        <ResultSet resultSetNumber="0" colCount="4" isError="0">
+          <Columns>
+            <Column name="WorkflowId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" maxLen="4" />
+            <Column name="UserId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="256" />
+            <Column name="IsQualified" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" maxLen="1" />
+            <Column name="UserName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="512" />
+          </Columns>
         </ResultSet>
       </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="GetMyGroups" routineType="PROCEDURE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="SprocType" value="Collection:GetMyGroups_Result0" />
+      </Properties>
       <Args>
         <Arg position="1" mode="IN" name="@proposedOwnerId" sqlType="nvarchar" maxLen="128" />
       </Args>

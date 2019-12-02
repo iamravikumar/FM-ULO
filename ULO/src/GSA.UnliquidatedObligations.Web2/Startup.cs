@@ -1,11 +1,15 @@
-﻿using System.Net.Mail;
+﻿using System;
+using System.Net.Mail;
 using GSA.Authentication.LegacyFormsAuthentication;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Identity;
+using GSA.UnliquidatedObligations.Web.Permission;
 using GSA.UnliquidatedObligations.Web.Services;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -85,6 +89,15 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddAuthentication();
 
+            services.AddAuthorization(options =>
+            {
+                foreach (ApplicationPermissionNames permissionName in Enum.GetValues(typeof(ApplicationPermissionNames)))
+                {
+                    options.AddPolicy(permissionName.ToString(), policy => policy.Requirements.Add(new PermissionRequirement(permissionName.ToString(),permissionName)));                    
+                }
+            });
+            services.AddTransient<IAuthorizationHandler, PermissionHandler>();
+
             services.AddScoped<IBackgroundTasks, BackgroundTasks>();
             services.AddScoped<SmtpClient>();
             services.AddScoped<IEmailServer, EmailServer>();
@@ -108,10 +121,12 @@ namespace GSA.UnliquidatedObligations.Web
 
 
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString(Configuration["Hangfire:ConnectionStringName"])));
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             var appPathBase = Configuration[Program.GsaAppSettingsVariablePaths.AppPathBase];
             if (!string.IsNullOrEmpty(appPathBase))
@@ -147,7 +162,8 @@ namespace GSA.UnliquidatedObligations.Web
             app.UseHangfireDashboard("/Hangfire", new DashboardOptions
             {
 //                Authorization = new[] { new HangfireDashboardAuthorizer() }
-            });
-        }
+            });           
+        }       
+
     }
 }

@@ -42,7 +42,7 @@
     </ul>
 }
 
-@{ 
+@{
     Logger.Information("{tabs.Count} {tabsWithData} {hasData}", tabs.Count, tabsWithData, hasData);
 }
 
@@ -206,6 +206,6 @@ else
             }
         }
     *@
-    @Html.Partial("_PaginationPartial")
-    @Html.Partial("_NotesPanel")
+    @await Html.PartialAsync("_PaginationPartial")
+    @await Html.PartialAsync("_NotesPanel")
 }

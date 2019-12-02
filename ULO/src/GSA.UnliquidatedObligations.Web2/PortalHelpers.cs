@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Web;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Security.Principal;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
@@ -31,8 +35,11 @@ namespace GSA.UnliquidatedObligations.Web
                 return DisplayTimeZone_p;
             }
         }
+        
+        
         private TimeZoneInfo DisplayTimeZone_p;
 
+        public const string Wildcard = "*";
         public TimeSpan MediumCacheTimeout =>
             ConfigOptions.Value.MediumCacheTimeout;
 
@@ -41,6 +48,12 @@ namespace GSA.UnliquidatedObligations.Web
 
         public string AdministratorEmail =>
             ConfigOptions.Value.AdministratorEmail;
+
+        public bool UseOldGetEligibleReviewersAlgorithm => ConfigOptions.Value.UseOldGetEligibleReviewersAlgorithm;
+
+        public string GetEligibleReviewersQualifiedUsernameFormat => ConfigOptions.Value.GetEligibleReviewersQualifiedUsernameFormat;
+
+        public string GetEligibleReviewersNotQualifiedUsernameFormat => ConfigOptions.Value.GetEligibleReviewersNotQualifiedUsernameFormat;
 
         public bool UseDevAuthentication =>
             AccountConfigOptions.Value.UseDevAuthentication;
@@ -56,6 +69,14 @@ namespace GSA.UnliquidatedObligations.Web
             public TimeSpan ShortCacheTimeout { get; set; } = TimeSpan.Parse("00:01:00");
 
             public string AdministratorEmail { get; set; }
+
+            public string[][] DocTypes { get; set; }
+
+            public bool UseOldGetEligibleReviewersAlgorithm { get; }
+
+            public string GetEligibleReviewersQualifiedUsernameFormat { get; set; }
+
+            public string GetEligibleReviewersNotQualifiedUsernameFormat { get; set; }
         }
 
         public readonly IOptions<SprintConfig> SprintConfigOptions;
@@ -93,6 +114,28 @@ namespace GSA.UnliquidatedObligations.Web
                 MediumCacheTimeout
                 ).Copy();
 
+        public IList<SelectListItem> CreateRegionSelectListItems(bool includeAllRegions = false, string allRegionsValue = "*")
+           => Cacher.FindOrCreateValue(
+               nameof(CreateRegionSelectListItems),
+               () =>
+               {
+                   using (var db = DB)
+                   {
+                       var items = db.Regions.OrderBy(r => r.RegionName).ConvertAll(
+                           r => new SelectListItem { Text = $"{r.RegionNumber.PadLeft(2, '0')} - {r.RegionName}", Value = r.RegionId.ToString() }).
+                           OrderBy(z => z.Text).
+                           ToList();
+                       if (includeAllRegions)
+                       {
+                           items.Insert(0, new SelectListItem { Text = "*", Value = allRegionsValue });
+                       }
+                       return items.AsReadOnly();
+                   }
+               },
+               MediumCacheTimeout
+               ).Copy();
+       
+
         public IList<SelectListItem> CreateAllGroupNamesSelectListItems()
         => Cacher.FindOrCreateValue(
             nameof(CreateAllGroupNamesSelectListItems),
@@ -109,8 +152,7 @@ namespace GSA.UnliquidatedObligations.Web
             ).Copy();
 
         public IList<SelectListItem> CreateReviewSelectListItems()
-        => Cacher.FindOrCreateValue(
-            nameof(CreateReviewSelectListItems),
+        => Cacher.FindOrCreateValue(Cache.CreateKey(nameof(CreateReviewSelectListItems)),
             () =>
                 DB.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
                                 r => new SelectListItem
@@ -156,5 +198,437 @@ namespace GSA.UnliquidatedObligations.Web
             }
             return (bool)o;
         }
+
+        ////Sreeni changes
+        ///
+        public IList<SelectListItem> CreateDocumentTypeSelectListItems()
+          => ConfigOptions.Value.DocTypes.Where(r => r.Length == 2).ConvertAll(
+              r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) }).Copy();
+
+        //public IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
+        //    => items.OrderBy(z => z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
+        public string GetUserId(string username)
+        {
+            if (username != null)
+            {
+                return Cacher.FindOrCreateValue(
+                    username,
+                    () =>
+                     DB.AspNetUsers.Where(z => z.UserName == username).Select(z => z.Id).FirstOrDefault(),
+                    MediumCacheTimeout
+                    );
+            }
+            return null;
+        }
+
+        public IList<int?> GetUserGroupRegions(IPrincipal user, string groupNameOrId)
+           => Cacher.FindOrCreateValue(
+               Cache.CreateKey(nameof(GetUserGroupRegions), user.Identity.Name, groupNameOrId),
+               () =>
+                   DB.UserUsers
+                           .Where(uu => (uu.ParentUserId == GetUserId(groupNameOrId) || uu.ParentUserId == groupNameOrId) && uu.ChildUserId == GetUserId(user.Identity.Name))
+                           .Select(uu => uu.RegionId)
+                           .Distinct()
+                           .ToList()
+                           .AsReadOnly(),
+               MediumCacheTimeout
+               );
+
+        public string GetRegionName(int regionId)
+          => Cacher.FindOrCreateValue(
+              Cache.CreateKey(nameof(GetRegionName), regionId),
+              () => CreateRegionSelectListItems(false).FirstOrDefault(i => i.Value == regionId.ToString())?.Text);
+
+        public int RegionCount
+            => CreateRegionSelectListItems(false).Count;
+
+
+        public Expression<Func<Workflow, bool>> GetWorkflowsRegionIdPredicate(IEnumerable<int?> regionIds)
+        {
+            var predicate = PredicateBuilder.Create<Workflow>(wf => false);
+            foreach (var regionId in regionIds)
+            {
+                var rid = regionId.GetValueOrDefault();
+                predicate = predicate.Or(wf => wf.TargetUlo.RegionId == rid);
+            }
+            return predicate;
+        }
+
+        public Expression<Func<Workflow, bool>> GetWorkflowsWorkflowIdPredicate(IEnumerable<int> workflowIds)
+        {
+            /*
+            var workflows = DB.Workflows.Where(w => workflowIds.Contains(w.WorkflowId));
+            For whatever reason, linq 2 sql wont translate the above into an IN statement (maybe it only does this for string),
+            As such, we have to build out a big long nasty OR predicate then apply which we do below.             
+             */
+            var predicate = PredicateBuilder.Create<Workflow>(wf => false);
+            foreach (var wfid in workflowIds)
+            {
+                predicate = predicate.Or(wf => wf.WorkflowId == wfid);
+            }
+            return predicate;
+        }
+
+       
+
+        public Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(IPrincipal currentUser, int? uloId, string pegasysDocumentNumber, string organization,
+         IList<int> regions, IList<int> zones, string fund, IList<string> baCode, string pegasysTitleNumber, string pegasysVendorName, IList<string> docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, IList<string> reasonIncludedInReview, IList<bool> valid, IList<string> status, IList<int> reviewId, bool? reassignableByMe)
+        {
+            pegasysDocumentNumber = StringHelpers.TrimOrNull(pegasysDocumentNumber);
+            organization = StringHelpers.TrimOrNull(organization);
+            fund = StringHelpers.TrimOrNull(fund);
+            pegasysTitleNumber = StringHelpers.TrimOrNull(pegasysTitleNumber);
+            pegasysVendorName = StringHelpers.TrimOrNull(pegasysVendorName);
+            contractingOfficersName = StringHelpers.TrimOrNull(contractingOfficersName);
+            currentlyAssignedTo = StringHelpers.TrimOrNull(currentlyAssignedTo);
+            hasBeenAssignedTo = StringHelpers.TrimOrNull(hasBeenAssignedTo);
+            awardNumber = StringHelpers.TrimOrNull(awardNumber);
+            reasonIncludedInReview = reasonIncludedInReview ?? Empty.StringArray;
+
+            bool hasFilters = false;
+
+            var originalPredicate = PredicateBuilder.Create<Workflow>(wf => true);
+
+            var predicate = originalPredicate;
+
+            if (uloId != null)
+            {
+                hasFilters = true;
+                predicate = predicate.And(wf => wf.TargetUloId == uloId);
+            }
+
+            if (pegasysDocumentNumber != null)
+            {
+                hasFilters = true;
+                var criteria = pegasysDocumentNumber.Replace(Wildcard, "");
+                if (pegasysDocumentNumber.StartsWith(Wildcard) && pegasysDocumentNumber.EndsWith(Wildcard))
+                {
+                    predicate =
+                       predicate.And(
+                           wf => wf.TargetUlo.PegasysDocumentNumber.Contains(criteria));
+                }
+                else if (pegasysDocumentNumber.StartsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.PegasysDocumentNumber.TrimEnd().EndsWith(criteria));
+                }
+                else if (pegasysDocumentNumber.EndsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.PegasysDocumentNumber.TrimStart().StartsWith(criteria));
+                }
+                else
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.PegasysDocumentNumber.Trim() == criteria);
+                }
+            }
+
+            if (organization != null)
+            {
+                hasFilters = true;
+                var criteria = organization.Replace(Wildcard, "");
+                if (organization.StartsWith(Wildcard) && organization.EndsWith(Wildcard))
+                {
+                    predicate =
+                       predicate.And(
+                           wf => wf.TargetUlo.Organization.Contains(criteria));
+                }
+                else if (organization.StartsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.Organization.Trim().EndsWith(criteria));
+                }
+                else if (organization.EndsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.Organization.Trim().StartsWith(criteria));
+                }
+                else
+                {
+                    predicate =
+                        predicate.And(wf => wf.TargetUlo.Organization.Trim() == criteria);
+                }
+            }
+
+            if (regions != null && regions.Count > 0)
+            {
+                hasFilters = true;
+                predicate = predicate.And(wf => wf.TargetUlo.RegionId != null && regions.Contains((int)wf.TargetUlo.RegionId));
+            }
+
+            if (zones != null && zones.Count > 0)
+            {
+                hasFilters = true;
+                predicate = predicate.And(wf => zones.Contains(wf.TargetUlo.Region.ZoneId));
+            }
+
+            if (fund != null)
+            {
+                hasFilters = true;
+                var criteria = fund.Replace(Wildcard, "");
+                if (fund.StartsWith(Wildcard) && fund.EndsWith(Wildcard))
+                {
+                    predicate =
+                       predicate.And(
+                           wf => wf.TargetUlo.Fund.Contains(criteria));
+                }
+                else if (fund.StartsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.Fund.Trim().EndsWith(criteria));
+                }
+                else if (fund.EndsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.Fund.StartsWith(criteria));
+                }
+                else
+                {
+                    predicate = predicate.And(wf => wf.TargetUlo.Fund.Trim() == criteria);
+                }
+            }
+
+            if (baCode != null && baCode.Count > 0)
+            {
+                hasFilters = true;
+                predicate = predicate.And(wf => baCode.Contains(wf.TargetUlo.Prog.Trim()));
+            }
+
+            if (pegasysTitleNumber != null)
+            {
+                hasFilters = true;
+                var criteria = pegasysTitleNumber.Replace(Wildcard, "");
+                if (pegasysTitleNumber.StartsWith(Wildcard) && pegasysTitleNumber.EndsWith(Wildcard))
+                {
+                    predicate =
+                       predicate.And(
+                           wf => wf.TargetUlo.PegasysTitleNumber.Contains(criteria));
+                }
+                else if (pegasysTitleNumber.StartsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.PegasysTitleNumber.Trim().EndsWith(criteria));
+                }
+                else if (pegasysTitleNumber.EndsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.PegasysTitleNumber.Trim().StartsWith(criteria));
+                }
+                else
+                {
+                    predicate =
+                        predicate.And(
+                            wf =>
+                                wf.TargetUlo.PegasysTitleNumber.Trim() ==
+                                criteria);
+                }
+            }
+
+            if (pegasysVendorName != null)
+            {
+                hasFilters = true;
+                var criteria = pegasysVendorName.Replace(Wildcard, "");
+                if (pegasysVendorName.StartsWith(Wildcard) && pegasysVendorName.EndsWith(Wildcard))
+                {
+                    predicate =
+                       predicate.And(
+                           wf => wf.TargetUlo.VendorName.Contains(criteria));
+                }
+                else if (pegasysVendorName.StartsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.VendorName.Trim().EndsWith(criteria));
+                }
+                else if (pegasysVendorName.EndsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.VendorName.Trim().StartsWith(criteria));
+                }
+                else
+                {
+                    predicate =
+                        predicate.And(wf =>
+                            wf.TargetUlo.VendorName.Trim() == criteria);
+                }
+            }
+
+            if (docType != null && docType.Count > 0)
+            {
+                hasFilters = true;
+                predicate = predicate.And(wf => docType.Contains(wf.TargetUlo.DocType));
+            }
+
+            if (contractingOfficersName != null)
+            {
+                hasFilters = true;
+                var criteria = contractingOfficersName.Replace(Wildcard, "");
+                if (contractingOfficersName.StartsWith(Wildcard) && contractingOfficersName.EndsWith(Wildcard))
+                {
+                    predicate =
+                       predicate.And(
+                           wf => wf.TargetUlo.ContractingOfficersName.Contains(criteria));
+                }
+                else if (contractingOfficersName.StartsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.ContractingOfficersName.Trim().EndsWith(criteria));
+                }
+                else if (contractingOfficersName.EndsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.ContractingOfficersName.StartsWith(criteria));
+                }
+                else
+                {
+                    predicate =
+                        predicate.And(
+                            wf =>
+                                wf.TargetUlo.ContractingOfficersName.Trim() ==
+                                criteria);
+                }
+            }
+
+            if (currentlyAssignedTo != null)
+            {
+                hasFilters = true;
+                var criteria = currentlyAssignedTo.Replace(Wildcard, "");
+                if (currentlyAssignedTo.StartsWith(Wildcard) && currentlyAssignedTo.EndsWith(Wildcard))
+                {
+                    predicate =
+                       predicate.And(
+                           wf => wf.OwnerUser.UserName.Contains(criteria));
+                }
+                else if (currentlyAssignedTo.StartsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.OwnerUser.UserName.Trim().EndsWith(criteria));
+                }
+                else if (currentlyAssignedTo.EndsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.OwnerUser.UserName.Trim().StartsWith(criteria));
+                }
+                else
+                {
+                    predicate = predicate.And(wf => wf.OwnerUser.UserName.Trim() == currentlyAssignedTo);
+                }
+
+            }
+
+            if (hasBeenAssignedTo != null)
+            {
+                hasFilters = true;
+                var criteria = hasBeenAssignedTo.Replace(Wildcard, "");
+                if (hasBeenAssignedTo.StartsWith(Wildcard) && hasBeenAssignedTo.EndsWith(Wildcard))
+                {
+                    predicate =
+                       predicate.And(
+                           wf => wf.WorkflowWorkflowHistorys.Any(wfh => wfh.OwnerUser.UserName.Contains(criteria)));
+                }
+                else if (hasBeenAssignedTo.StartsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.WorkflowWorkflowHistorys.Any(wfh => wfh.OwnerUser.UserName.EndsWith(criteria)));
+                }
+                else if (hasBeenAssignedTo.EndsWith(Wildcard))
+                {
+                    predicate =
+                     predicate.And(
+                         wf => wf.WorkflowWorkflowHistorys.Any(wfh => wfh.OwnerUser.UserName.StartsWith(criteria)));
+                }
+                else
+                {
+                    predicate =
+                     predicate.And(
+                         wf => wf.WorkflowWorkflowHistorys.Any(wfh => wfh.OwnerUser.UserName == criteria));
+                }
+            }
+
+            if (awardNumber != null)
+            {
+                hasFilters = true;
+                var criteria = awardNumber.Replace(Wildcard, "");
+                if (awardNumber.StartsWith(Wildcard) && awardNumber.EndsWith(Wildcard))
+                {
+                    predicate =
+                       predicate.And(
+                           wf => wf.TargetUlo.AwardNbr.Contains(criteria));
+                }
+                else if (awardNumber.StartsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.AwardNbr.Trim().EndsWith(criteria));
+                }
+                else if (awardNumber.EndsWith(Wildcard))
+                {
+                    predicate =
+                        predicate.And(
+                            wf => wf.TargetUlo.AwardNbr.Trim().StartsWith(criteria));
+                }
+                else
+                {
+                    predicate = predicate.And(wf => wf.TargetUlo.AwardNbr.Trim() == criteria);
+                }
+
+            }
+
+            if (reasonIncludedInReview != null && reasonIncludedInReview.Count > 0)
+            {
+                hasFilters = true;
+                predicate = predicate.And(wf => reasonIncludedInReview.Contains(wf.TargetUlo.ReasonIncludedInReview.Trim()));
+            }
+
+            if (valid != null && valid.Count == 1)
+            {
+                hasFilters = true;
+                var v = valid[0];
+                predicate = predicate.And(wf => wf.TargetUlo.Valid == v);
+            }
+
+            if (status != null && status.Count > 0)
+            {
+                hasFilters = true;
+                predicate = predicate.And(wf => status.Contains(wf.TargetUlo.Status.Trim()));
+            }
+
+            if (reviewId != null && reviewId.Count > 0)
+            {
+                hasFilters = true;
+                predicate = predicate.And(wf => reviewId.Contains(wf.TargetUlo.ReviewId));
+            }
+
+            if (reassignableByMe.GetValueOrDefault())
+            {
+                hasFilters = true;
+                var regionIds = GetUserGroupRegions(currentUser, GetUserId("Reassign Group"));
+                predicate = predicate.And(GetWorkflowsRegionIdPredicate(regionIds));
+            }
+
+            return hasFilters ? predicate : null;
+        }
+
+        //SuggestedReviewerRequestForReassignments
+
+        //public RequestForReassignment GetReassignmentRequest(this Workflow wf)
+        //   => wf.WorkflowRequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault();
+
     }
 }

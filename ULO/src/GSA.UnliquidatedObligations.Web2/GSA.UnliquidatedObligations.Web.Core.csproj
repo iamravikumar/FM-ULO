@@ -11,6 +11,10 @@
     <RootNamespace>GSA.UnliquidatedObligations.Web</RootNamespace>
     <RuntimeIdentifiers>win-x64;rhel-x64</RuntimeIdentifiers>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\GetMyGroupsModel.cs" />
+  </ItemGroup>
 <!--
   <ItemGroup>
     <Compile Remove="Views\Ulo\Details\**" />

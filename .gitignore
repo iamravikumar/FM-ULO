@@ -42,3 +42,7 @@ ULO/.vs/**
 !**/packages/build/
  ULO\src\GSA.UnliquidatedObligations.Web\Web.bak.config 
 "ULO\src\GSA.UnliquidatedObligations.Web\Web.bak.config" 
+/ULO/src/GSA.UnliquidatedObligations.Web2/Views/Shared/_ApplicationInformation.cshtml
+/ULO/src/GSA.UnliquidatedObligations.BusinessLayer.Core/Data/SPModels/GetMyGroups.cs
+/ULO/src/GSA.UnliquidatedObligations.Web2/Models/GetMyGroupsModel.cs
+/ULO/src/GSA.UnliquidatedObligations.Web2/PermissionRequirement.cs

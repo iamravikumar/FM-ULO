@@ -1,58 +1,73 @@
-﻿#if false
+﻿
+//using System;
+//using System.Security.Claims;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using Microsoft.AspNetCore.Identity;
+//using Microsoft.AspNetCore.Authorization;
+//using Microsoft.Extensions.DependencyInjection;
+//using GSA.UnliquidatedObligations.BusinessLayer.Data;
+//using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.AspNetCore.Mvc.Filters;
 
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Security.Claims;
+//namespace GSA.UnliquidatedObligations.Web
+//{
+//    public class PermissionRequirement : IAuthorizationRequirement
+//    {
+//        public PermissionRequirement(ApplicationPermissionNames permissionName)
+//        {
+//            //ClaimType = claimType;
+//            PermissionName = permissionName;
+//        }
 
-namespace GSA.UnliquidatedObligations.Web
-{
-    public class ApplicationPermissionAuthorizeAttribute : AuthorizeAttribute
-    {
-        private readonly ApplicationPermissionNames[] ApplicationPermissions;
+//       // public string ClaimType { get; protected set; }
+//        public ApplicationPermissionNames PermissionName { get; protected set; }
 
-        public ApplicationPermissionAuthorizeAttribute(params ApplicationPermissionNames[] applicationPermissions)
-        {
-            ApplicationPermissions = applicationPermissions;
-        }
 
-        protected override bool AuthorizeCore(HttpContextBase httpContext)
-        {
-            try
-            {
-                var user = httpContext.GetOwinContext().Authentication.User;
-                foreach (var p in ApplicationPermissions)
-                {
-                    if (HasPermission(user, p)) return true;
-                }
-            }
-            catch (Exception)
-            { }
-            return false;
-        }
+//    }
 
-        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
-        {
-            var c = filterContext.Controller as Controllers.BaseController;
-            if (c != null)
-            {
-                c.Log.Error("Unauthorized access attempt.  User does not have any of the specified application persissions {@ApplicationPermissions}", ApplicationPermissions);
-            }
-            base.HandleUnauthorizedRequest(filterContext);
-        }
+//    public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
+//    {
+//        private readonly IServiceProvider ServiceProvider;
+//        public PermissionHandler(IServiceProvider serviceProvider)
+//        {
+//            ServiceProvider = serviceProvider;
+//        }
 
-        public static bool HasPermission(ClaimsPrincipal user, ApplicationPermissionNames permission)
-        {
-            try
-            {
-                return user.Claims.GetApplicationPerimissionRegions(permission).Count > 0;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-    }
-}
+//        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+//        {
+//            var UserManager = ServiceProvider.GetRequiredService<UserManager<AspNetUser>>();
 
-#endif
+//            var user = await UserManager.GetUserAsync(context.User);
+
+//            var claimList = (await UserManager.GetClaimsAsync(user)).Select(p => p.Value);
+
+//            foreach (var currentClaim in claimList)
+//            {
+//                var pcv = ApplicationPermissionClaimValue.Load(currentClaim);
+//                if (pcv.ApplicationPermissionName == requirement.PermissionName)
+//                {
+//                    context.Succeed(requirement);
+//                    break;
+//                }
+//            }
+//        }
+
+//        public static bool HasPermission(ClaimsPrincipal user, ApplicationPermissionNames permission)
+//        {
+//            try
+//            {
+//                return user.Claims.GetApplicationPerimissionRegions(permission).Count > 0;
+//            }
+//            catch (Exception)
+//            {
+//                return false;
+//            }
+//        }
+//    }
+
+//    ////
+//}
+
+

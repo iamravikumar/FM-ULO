@@ -4,7 +4,10 @@
 <h2>@ViewBag.Title</h2>
 <h3>@ViewBag.Message</h3>
 
-@Html.Partial("~/Views/Shared/_ApplicationDescription.cshtml")
+@*@Html.Partial("~/Views/Shared/_ApplicationDescription.cshtml")*@
+
+@Html.RenderPartialAsync("~/Views/Shared/_ApplicationDescription.cshtml")
+
 
 <h3>Debug Information:</h3>
 <dl>

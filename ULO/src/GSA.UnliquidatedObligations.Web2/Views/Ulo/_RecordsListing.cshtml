@@ -1,0 +1,165 @@
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@using GSA.UnliquidatedObligations.Web.Models
+@using GSA.UnliquidatedObligations.BusinessLayer.Data
+@using System.Linq
+@model IEnumerable<Workflow>
+@{
+    var workflowDescription = (GSA.UnliquidatedObligations.BusinessLayer.Workflow.IWorkflowDescription)ViewBag.WorkflowDescription;
+    var todaysDate = DateTime.Today;
+    var allAreUnassigned = ViewBag.AllAreUnassigned is bool ? (bool)ViewBag.AllAreUnassigned : false;
+    var showReassignmentButton = allAreUnassigned || (ViewBag.ShowReassignButton is bool ? (bool)ViewBag.ShowReassignButton : false);
+    var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
+    var rfrIdByWorkflow = new Dictionary<Workflow, int?>();
+
+
+    var hasData = false;
+    var noDataMessage = ViewBag.NoDataMessage as string ?? AspHelpers.NoResultsMessage;
+    if (ViewBag.TotalItemCount != null)
+    {
+        hasData = (int)ViewBag.TotalItemCount > 0;
+    }
+    var viewDateByWorkflowId = ViewBag.ViewDateByWorkflowId as IDictionary<int, DateTime> ?? new Dictionary<int, DateTime>();
+    var tabs = ViewBag.Tabs as IList<WorkflowListTab> ?? WorkflowListTab.None;
+    var currentTab = tabs.FirstOrDefault(z => z.IsCurrent);
+    var showReviewStatusColumn = tabs.Count == 0 || currentTab.IsAggregateTab;
+    var showSelectors = true;
+}
+
+@if (tabs.Count > 0)
+{
+    <ul class="nav nav-tabs">
+        @foreach (var tab in tabs)
+        {
+            <li class="@(tab.IsCurrent?"active":"")"><a href="?t=@tab.TabKey">@tab.TabName (@tab.ItemCount)</a></li>
+        }
+    </ul>
+}
+
+@if (!hasData)
+{
+    <div class="noDataMessage">@noDataMessage</div>
+}
+else
+{
+
+    <div class="col-sm-12" style="padding-top: 10px; text-align: right">
+        <strong>Batch Actions:</strong>
+        <button disabled="disabled" class="btn btn-primary master request-active selectionCount1 selectionCountMultiple" onclick="markViewed(getSelections('data-id'), false)" data-target="#bulkReassignmentDialog">Mark as unread</button>
+        <button disabled="disabled" class="btn btn-primary master request-active selectionCount1 selectionCountMultiple" onclick="markViewed(getSelections('data-id'), true)" data-target="#bulkReassignmentDialog">Mark as read</button>
+    </div>
+
+    <table class="table table-responsive active-workflows">
+        <thead>
+            <tr>
+                @if (showSelectors)
+                {
+                    <th><input type="checkbox" id="allSelector" onclick="allSelectorClicked()" /></th>
+                }
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.PegasysDocumentNumber, overrideDisplayName: "PDN")
+                </th>
+
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.ReviewId, overrideDisplayName: "Review ID")
+                </th>
+
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Review.ReviewName, overrideDisplayName: "Review")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Region.RegionNumber, overrideDisplayName: "Region")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Prog, overrideDisplayName: "BA Code")
+                </th>
+                @if (showReviewStatusColumn)
+                {
+                    <th>
+                        @Html.SortableHeaderFor(z => z.TargetUlo.Status, overrideDisplayName: "Review Status")
+                    </th>
+                }
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Organization, overrideDisplayName: "Org")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.TotalLine, overrideDisplayName: "Amount")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TargetUlo.Valid, overrideDisplayName: "Valid")
+                </th>
+                @if (showReassignmentButton)
+                {
+                    <th></th>
+                }
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {@if (item.TargetUlo != null)
+            { 
+            <tr class="active-workflows-record @(viewDateByWorkflowId.ContainsKey(item.WorkflowId)?"viewed":"")" data-id="@item.WorkflowId">
+            @if (showSelectors)
+            {
+                <td><input type="checkbox" class="itemSelector" onclick="selectorClicked()" value="1" data-id="@item.WorkflowId" /></td>
+            }
+            <td>
+                @Html.ActionLink(item.TargetUlo.PdnWithInstance, UloController.ActionNames.Details, UloController.Name, new { uloId = item.TargetUloId, workflowId = item.WorkflowId }, null)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.ReviewId)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.Review.ReviewName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.Region.RegionNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.Prog)
+            </td>
+            @if (showReviewStatusColumn)
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetUlo.Status)
+                </td>
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.TargetUlo.Organization)
+            </td>
+            <td>
+                @Html.Currency(Convert.ToDecimal(item.TargetUlo.TotalLine))
+            </td>
+            <td>
+                @Html.DisplayIsValid(item.TargetUlo.Valid)
+            </td>
+            <td>
+                @if (showReassignmentButton)
+                {
+                    int? rfrId = allAreUnassigned ? null : item.WorkflowRequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault()?.RequestForReassignmentID;
+                    if (allAreUnassigned || rfrId != null)
+                    {
+                        rfrIdByWorkflow[item] = rfrId;
+                        var modalId = "#" + item.WorkflowId + "RequestForReassignModal";
+                        <button type="button" class="btn btn-primary master request-active" data-toggle="modal" data-target="@modalId">
+                            Reassign
+                        </button>
+                    }
+                }
+            </td>
+        </tr>
+        }
+    }
+    </table>
+    if (showReassignmentButton && rfrIdByWorkflow.Count > 0)
+    {
+        var bulkToken = ViewBag.DetailsBulkToken as RequestForReassignmentsController.DetailsBulkToken;
+        foreach (var kvp in rfrIdByWorkflow)
+        {
+            var rfrId = kvp.Value;
+            var wf = kvp.Key;
+            @*@await Html.PartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { id = rfrId, workflowId = wf.WorkflowId, uloRegionId = wf.TargetUlo.RegionId, isAdmin = true, bulkToken = bulkToken });*@
+        }
+    }
+    @await Html.PartialAsync("_PaginationPartial")
+}
