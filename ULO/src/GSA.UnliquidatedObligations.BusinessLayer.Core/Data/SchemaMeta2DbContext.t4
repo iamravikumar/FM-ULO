@@ -404,8 +404,16 @@ if (superclass==null) foreach (var ip in z.XPathSelectElements("Collections/Coll
 	 continue;
 	}
 
-	var inversePropertyTypeName = GetClassName(doc, GetAttrVal(ip, "schema"), GetAttrVal(ip, "table"));
-	var inversePropertyFieldName = GetPropertyNameFromColumnName(GetAttrVal(ip, "column"))+inversePropertyTypeName+"s";
+    var ipSchema = GetAttrVal(ip, "schema");
+    var ipTable = GetAttrVal(ip, "table");
+    var ipColumn = GetAttrVal(ip, "column");
+	var inversePropertyTypeName = GetClassName(doc, ipSchema, ipTable);
+	var inversePropertyFieldName = GetPropertyNameFromColumnName(ipColumn)+inversePropertyTypeName+"s";
+
+    var xp = "/SchemaMeta/Tables/Table[@name='"+ipTable+"' and @schema='"+ipSchema+"']/Columns/Column[@name='"+ipColumn+"']";
+    var it = doc.XPathSelectElements(xp).FirstOrDefault();
+    var accessModifier = GetAccessModifier(it);
+    if (accessModifier=="missing") continue;
 	copyConstructorFieldNames.Add(inversePropertyFieldName);
 
 	//https://github.com/aspnet/EntityFrameworkCore/issues/9180

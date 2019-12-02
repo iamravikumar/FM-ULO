@@ -213,7 +213,7 @@
     </Table>
     <Table schema="dbo" name="AspNetUserClaims" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
-        <Property name="AddToDbContext" value="0" />
+        <Property name="AddToDbContext" value="1" />
         <Property name="BaseClass" value="IdentityUserClaim&lt;string&gt;" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
