@@ -1,8 +1,11 @@
-﻿namespace GSA.UnliquidatedObligations.BusinessLayer.Data
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     [TableKey("Attachments")]
     public partial class Attachment : ISoftDelete
     {
+        [NotMapped]
         public bool IsDeleted
         {
             get; private set;

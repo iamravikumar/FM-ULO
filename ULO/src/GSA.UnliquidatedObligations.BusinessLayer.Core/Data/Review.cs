@@ -1,4 +1,6 @@
-﻿namespace GSA.UnliquidatedObligations.BusinessLayer.Data
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     [TableKey("Reviews")]
     public partial class Review : ISoftDelete
@@ -17,24 +19,20 @@
             Status = IsClosed ? StatusNames.Closed : StatusNames.Open;
         }
 
-       
-
         string ISoftDelete.DeleteKey
-            => ReviewId.ToString();        
+            => ReviewId.ToString();
 
-        bool ISoftDelete.IsDeleted
-       => IsDeleted;
-
-        private bool IsDeleted { get; set; }
-
+        [NotMapped]
+        public bool IsDeleted
+        {
+            get; private set;
+        }
 
         public void Delete(string deletorUserId=null)
         {
             IsDeleted = true;
             DeletedByUserId = deletorUserId;
-        }
-
-       
+        }       
     }
 }
 
