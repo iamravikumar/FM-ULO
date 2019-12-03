@@ -40,6 +40,8 @@ namespace GSA.UnliquidatedObligations.Web
         private TimeZoneInfo DisplayTimeZone_p;
 
         public const string Wildcard = "*";
+
+        public const string FormFieldsBreak = "`";
         public TimeSpan MediumCacheTimeout =>
             ConfigOptions.Value.MediumCacheTimeout;
 
@@ -625,10 +627,48 @@ namespace GSA.UnliquidatedObligations.Web
             return hasFilters ? predicate : null;
         }
 
-        //SuggestedReviewerRequestForReassignments
+        public IList<SelectListItem> Select(IList<SelectListItem> items, object selectedValue)
+        {
+            var v = Stuff.ObjectToString(selectedValue);
+            foreach (var i in items)
+            {
+                i.Selected = i.Value == v;
+            }
+            return items;
+        }
 
-        //public RequestForReassignment GetReassignmentRequest(this Workflow wf)
-        //   => wf.WorkflowRequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault();
+        public int? IndexOfOccurrence<T>(IList<T> items, Func<T, bool> test, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
+        {
+            Requires.NonNegative(nthOccurrence, nameof(nthOccurrence));
 
+            if (nthOccurrence == 0) return zeroThValue;
+
+            int cnt = 0;
+            for (int z = 0; z < items.Count; ++z)
+            {
+                var i = items[z];
+                bool hit = test(i);
+                if (hit && ++cnt == nthOccurrence)
+                {
+                    return z;
+                }
+            }
+            return missingValue;
+        }
+
+        //public int? IndexOfOccurrence<T>(IList<T> items, T match, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
+        //{
+        //    return items.IndexOfOccurrence(i =>
+        //    {
+        //        if (i == null)
+        //        {
+        //            return match == null;
+        //        }
+        //        else
+        //        {
+        //            return i.Equals(match);
+        //        }
+        //    }, nthOccurrence, zeroThValue, missingValue);
+        //}
     }
 }

@@ -309,7 +309,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 			Requires.Text(UserId, nameof(UserId), true, 0, 128);
 			PartialValidate();
         }
-	}//end of entity class ApplicationUser
+
+       
+    }//end of entity class ApplicationUser
 
 	[Table("AspNetRoleClaims", Schema = "dbo")]
 	public partial class AspNetRoleClaim : IdentityRoleClaim<string>, IRdbDataEntity, IValidate, IPreSave, IPrimaryKey<int>

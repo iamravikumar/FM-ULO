@@ -1,0 +1,10 @@
+﻿@model GSA.UnliquidatedObligations.Web.Models.UserModel
+@{
+    ViewBag.Title = Model.UserName;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.SubmitButtonText = "Save";
+}
+
+<h2>@Model.UserName</h2>
+
+@Html.PartialAsync("~/Views/Users/_Details.cshtml", Model)

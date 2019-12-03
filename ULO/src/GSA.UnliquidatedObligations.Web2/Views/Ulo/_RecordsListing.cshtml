@@ -158,7 +158,14 @@ else
         {
             var rfrId = kvp.Value;
             var wf = kvp.Key;
-            @*@await Html.PartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { id = rfrId, workflowId = wf.WorkflowId, uloRegionId = wf.TargetUlo.RegionId, isAdmin = true, bulkToken = bulkToken });*@
+            @*@await Html.PartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name,
+                                        new ViewDataDictionary(ViewData) {
+                                            { "workflowId" , wf.WorkflowId },
+                                            { "uloRegionId" , wf.TargetUlo.RegionId },
+                                            { "isAdmin" , true },
+                                            { "id" , rfrId }
+                                            ,{ "bulkToken", bulkToken }
+                                        });*@
         }
     }
     @await Html.PartialAsync("_PaginationPartial")
