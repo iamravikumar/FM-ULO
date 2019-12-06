@@ -30,12 +30,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string Save = "Save";
         }
 
-        private readonly ApplicationUser UserManager;
+        //private readonly ApplicationUser UserManager;
 
-        public UsersController(ApplicationUser userManager, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
+       
+
+        public UsersController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
-            UserManager = userManager;
+            //UserManager = userManager;
         }
 
         [Route("users")]
@@ -81,15 +83,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [Route("users/{username}", Order = 2)]
-        public async Task<ActionResult> Details(string username)
+        public async Task<PartialViewResult> Details(string username)
         {
             var users = await DB.AspNetUsers.Where(u => u.UserName == username).ToListAsync();
-            if (users.Count != 1) return StatusCode(404);
+            //if (users.Count != 1) return StatusCode(404);
             var user = users[0];
             Log.Information("Viewing user with UserId={UserId} => UserName={UserName}, Email={Email}", user.Id, user.UserName, user.Email);
             var m = await CreateModelAsync(users);
             await PopulateDetailsViewBag();
-            return View(m.Single());
+            return PartialView(m.Single());
         }
 
         [Route("users/create", Order = 1)]
@@ -197,68 +199,58 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     });
                 }
 
-                var sccDocTypes = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
-                sccDocTypes["scc.docType"] = "scc.docType";
 
-                var sccBaCodes = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
-                sccBaCodes["scc.bacode"] = "scc.bacode";
-
-                var sccOrgCodes = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
-                sccOrgCodes["scc.orgcode"] = "scc.orgcode";
-
-                var sccRegions = Request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
-                sccRegions["scc.region"] = "scc.region";
-                //var sccDocTypes = HttpContext.Request.Form.ToDictionary(x=>x.Key"scc.docType") ?? Empty.StringArray;
-                //var sccBaCodes = HttpContext.Request.Form.GetValues("scc.bacode") ?? Empty.StringArray;
-                //var sccOrgCodes = HttpContext.Request.Form.GetValues("scc.orgcode") ?? Empty.StringArray;
-                //var sccRegions = HttpContext.Request.Form.GetValues("scc.region") ?? Empty.StringArray;
+                var sccDocTypes = HttpContext.Request.Form["scc.docType"];
+                var sccBaCodes = HttpContext.Request.Form["scc.bacode"];
+                var sccOrgCodes = HttpContext.Request.Form["scc.orgcode"];
+                var sccRegions = HttpContext.Request.Form["scc.region"];
                 m.Claims.Clear();
                 m.SubjectCategoryClaims = new List<AspnetUserSubjectCategoryClaim>();
-                //int n = 0;
-                //for (int z = 0; z < sccDocTypes.Count; ++z)
-                //{
-                //    //var docType = StringHelpers.TrimOrNull(sccDocTypes[z]);
-                //    if (docType==null) continue;
-                //    if (docType == PortalHelpers.FormFieldsBreak)
-                //    {
-                //        ++n;
-                //        continue;
-                //    }
-                //    var sccv = new SubjectCatagoryClaimValue
-                //    {
-                //        //DocType = docType,
-                //        //BACode = sccBaCodes[sccBaCodes.IndexOfOccurrence(PortalHelpers.FormFieldsBreak, n, -1).Value + 1],
-                //        //OrgCode = sccOrgCodes[sccOrgCodes.IndexOfOccurrence(PortalHelpers.FormFieldsBreak, n, -1).Value + 1]
-                //    };
-                //    sccv.Regions = new HashSet<int>();
-                //    for (int rn= sccRegions.IndexOfOccurrence(PortalHelpers.FormFieldsBreak, n, -1).Value+1; ; ++rn)
-                //    {
-                //        if (sccRegions[rn] == PortalHelpers.FormFieldsBreak) break;
-                //        if (int.TryParse(sccRegions[rn], out int regionId))
-                //        {
-                //            sccv.Regions.Add(regionId);
-                //        }                        
-                //    }
-                //    if (sccv.Regions.Count == PortalHelpers.RegionCount)
-                //    {
-                //        sccv.Regions.Clear();
-                //    }
-                //    DB.AspNetUserClaims.Add(new AspNetUserClaim
-                //    {
-                //        ClaimType = SubjectCatagoryClaimValue.ClaimType,
-                //        UserId = u.Id,
-                //        //AspNetUser = u,
-                //        ClaimValue = sccv.ToXml()
-                //    });
-                //    var scc = new AspnetUserSubjectCategoryClaim
-                //    {
-                //        BACode = sccv.BACode,
-                //        DocumentType = sccv.DocType,
-                //        OrgCode = sccv.OrgCode,
-                //    };
-                //    m.SubjectCategoryClaims.Add(scc);
-                //    m.Claims.Add(scc.ToString());
-                //}
+                int n = 0;
+                for (int z = 0; z < sccDocTypes.Count; ++z)
+                {
+                    var docType = StringHelpers.TrimOrNull(sccDocTypes[z]);
+                    if (docType == null) continue;
+                    if (docType == PortalHelpers.FormFieldsBreak)
+                    {
+                        ++n;
+                        continue;
+                    }
+                    var sccv = new SubjectCatagoryClaimValue
+                    {
+                        DocType = docType,
+                        BACode = sccBaCodes[sccBaCodes.IndexOfOccurrence(PortalHelpers.FormFieldsBreak, n, -1).Value + 1],
+                        OrgCode = sccOrgCodes[sccOrgCodes.IndexOfOccurrence(PortalHelpers.FormFieldsBreak, n, -1).Value + 1]
+                    };
+                    sccv.Regions = new HashSet<int>();
+                    for (int rn = sccRegions.IndexOfOccurrence(PortalHelpers.FormFieldsBreak, n, -1).Value + 1; ; ++rn)
+                    {
+                        if (sccRegions[rn] == PortalHelpers.FormFieldsBreak) break;
+                        if (int.TryParse(sccRegions[rn], out int regionId))
+                        {
+                            sccv.Regions.Add(regionId);
+                        }
+                    }
+                    if (sccv.Regions.Count == PortalHelpers.RegionCount)
+                    {
+                        sccv.Regions.Clear();
+                    }
+                    DB.AspNetUserClaims.Add(new AspNetUserClaim
+                    {
+                        ClaimType = SubjectCatagoryClaimValue.ClaimType,
+                        UserId = u.Id,
+                        //AspNetUser = u,
+                        ClaimValue = sccv.ToXml()
+                    });
+                    var scc = new AspnetUserSubjectCategoryClaim
+                    {
+                        BACode = sccv.BACode,
+                        DocumentType = sccv.DocType,
+                        OrgCode = sccv.OrgCode,
+                    };
+                    m.SubjectCategoryClaims.Add(scc);
+                    m.Claims.Add(scc.ToString());
+                }
                 await DB.SaveChangesAsync();
                 return RedirectToIndex();
             }

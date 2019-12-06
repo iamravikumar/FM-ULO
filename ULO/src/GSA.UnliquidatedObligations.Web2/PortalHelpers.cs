@@ -138,20 +138,20 @@ namespace GSA.UnliquidatedObligations.Web
                ).Copy();
        
 
-        public IList<SelectListItem> CreateAllGroupNamesSelectListItems()
-        => Cacher.FindOrCreateValue(
-            nameof(CreateAllGroupNamesSelectListItems),
-            () =>
-            DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
-                                r => new SelectListItem
-                                {
-                                    Text = r.UserName,
-                                    Value = r.Id
-                                }).
-                                ToList().
-                                AsReadOnly(),
-            MediumCacheTimeout
-            ).Copy();
+        //public IList<SelectListItem> CreateAllGroupNamesSelectListItems()
+        //=> Cacher.FindOrCreateValue(
+        //    nameof(CreateAllGroupNamesSelectListItems),
+        //    () =>
+        //    DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
+        //                        r => new SelectListItem
+        //                        {
+        //                            Text = r.UserName,
+        //                            Value = r.Id
+        //                        }).
+        //                        ToList().
+        //                        AsReadOnly(),
+        //    MediumCacheTimeout
+        //    ).Copy();
 
         public IList<SelectListItem> CreateReviewSelectListItems()
         => Cacher.FindOrCreateValue(Cache.CreateKey(nameof(CreateReviewSelectListItems)),
@@ -205,10 +205,9 @@ namespace GSA.UnliquidatedObligations.Web
         ///
         public IList<SelectListItem> CreateDocumentTypeSelectListItems()
           => ConfigOptions.Value.DocTypes.Where(r => r.Length == 2).ConvertAll(
-              r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) }).Copy();
+              r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) }).Copy();      
 
-        //public IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
-        //    => items.OrderBy(z => z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
+       
         public string GetUserId(string username)
         {
             if (username != null)
@@ -626,49 +625,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             return hasFilters ? predicate : null;
         }
-
-        public IList<SelectListItem> Select(IList<SelectListItem> items, object selectedValue)
-        {
-            var v = Stuff.ObjectToString(selectedValue);
-            foreach (var i in items)
-            {
-                i.Selected = i.Value == v;
-            }
-            return items;
-        }
-
-        public int? IndexOfOccurrence<T>(IList<T> items, Func<T, bool> test, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
-        {
-            Requires.NonNegative(nthOccurrence, nameof(nthOccurrence));
-
-            if (nthOccurrence == 0) return zeroThValue;
-
-            int cnt = 0;
-            for (int z = 0; z < items.Count; ++z)
-            {
-                var i = items[z];
-                bool hit = test(i);
-                if (hit && ++cnt == nthOccurrence)
-                {
-                    return z;
-                }
-            }
-            return missingValue;
-        }
-
-        //public int? IndexOfOccurrence<T>(IList<T> items, T match, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
-        //{
-        //    return items.IndexOfOccurrence(i =>
-        //    {
-        //        if (i == null)
-        //        {
-        //            return match == null;
-        //        }
-        //        else
-        //        {
-        //            return i.Equals(match);
-        //        }
-        //    }, nthOccurrence, zeroThValue, missingValue);
-        //}
+       
+       
     }
 }

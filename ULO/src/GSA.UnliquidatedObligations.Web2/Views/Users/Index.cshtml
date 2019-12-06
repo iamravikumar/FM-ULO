@@ -37,13 +37,13 @@
                 <label for="region">Region:</label>
             </div>
             <div class="col-sm-2">
-                @Html.ListBox("region", PortalHelpers.Select(PortalHelpers.CreateRegionSelectListItems(), Context.Request.Query["region"]))
+                @Html.ListBox("region", AspHelpers.Select(PortalHelpers.CreateRegionSelectListItems(), Context.Request.Query["region"]))
             </div>
             <div class="col-sm-2">
                 <label for="role">Role:</label>
             </div>
             <div class="col-sm-2">
-                @Html.ListBox("role", PortalHelpers.Select(PortalHelpers.CreateAllGroupNamesSelectListItems(), Context.Request.Query["role"]))
+                @*@Html.ListBox("role", AspHelpers.Select(PortalHelpers.CreateAllGroupNamesSelectListItems(), Context.Request.Query["role"]))*@
             </div>
         </div>
         <div class="row">

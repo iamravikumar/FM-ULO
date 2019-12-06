@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using RevolutionaryStuff.Core;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -41,15 +43,8 @@ namespace GSA.UnliquidatedObligations.Web
         public static bool IsSortDirAscending(string sortDir)
             => !(0 == string.Compare(SortDirDescending, sortDir, true));
 
-        public static string GetDisplayName(Enum e)
-            => e.GetCustomAttributes<DisplayAttribute>().FirstOrDefault(a => a.Name != null)?.Name ?? e.ToString();
-
-        public static string GetDisplayDescription(Enum e)
-        {
-            var da = e.GetCustomAttributes<DisplayAttribute>().FirstOrDefault(a => a.Description != null);
-            return da?.Description ?? da.Name ?? e.ToString();
-        }
-
+       
+       
         public static string Currency(this IHtmlHelper helper, decimal data, string locale = "en-US", bool woCurrency = false)
         {
             var culture = new System.Globalization.CultureInfo(locale);
@@ -161,6 +156,7 @@ namespace GSA.UnliquidatedObligations.Web
 
 
 #if false
+
         public static HtmlString AnchorTag(this IHtmlHelper hh, string url, string displayText)
         {
             var u = hh.ViewContext.HttpContext.Server;
@@ -310,6 +306,128 @@ namespace GSA.UnliquidatedObligations.Web
                 numsSelect.Add(new SelectListItem { Text = num.ToString(), Value = num.ToString() });
             }
             return numsSelect;
+        }
+
+        public static int? IndexOfOccurrence<T>(this IList<T> items, Func<T, bool> test, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
+        {
+            Requires.NonNegative(nthOccurrence, nameof(nthOccurrence));
+
+            if (nthOccurrence == 0) return zeroThValue;
+
+            int cnt = 0;
+            for (int z = 0; z < items.Count; ++z)
+            {
+                var i = items[z];
+                bool hit = test(i);
+                if (hit && ++cnt == nthOccurrence)
+                {
+                    return z;
+                }
+            }
+            return missingValue;
+        }
+
+        public static int? IndexOfOccurrence<T>(this IList<T> items, T match, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
+           => items.IndexOfOccurrence(i => {
+               if (i == null)
+               {
+                   return match == null;
+               }
+               else
+               {
+                   return i.Equals(match);
+               }
+           }, nthOccurrence, zeroThValue, missingValue);
+
+        public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<string> stringsToConvert)
+        {
+            var stringsSelect = new List<SelectListItem>();
+
+            foreach (var stringToConvert in stringsToConvert)
+            {
+                stringsSelect.Add(new SelectListItem { Text = stringToConvert, Value = stringToConvert });
+            }
+            return stringsSelect;
+        }
+
+        public static string GetDisplayName(this Enum value)
+            => value.GetDisplayAttribute()?.GetName() ?? value.ToString();
+
+        public static string GetDescription(this Enum value)
+            => value.GetDisplayAttribute()?.GetDescription();
+
+        private static DisplayAttribute GetDisplayAttribute(this Enum value)
+        {
+            var type = value.GetType();
+            if (!type.IsEnum) throw new ArgumentException(String.Format("Type '{0}' is not Enum", type));
+
+            var members = type.GetMember(value.ToString());
+            if (members.Length == 0) throw new ArgumentException(String.Format("Member '{0}' not found in type '{1}'", value, type.Name));
+
+            var member = members[0];
+            var attributes = member.GetCustomAttributes(typeof(DisplayAttribute), false);
+            return (DisplayAttribute)attributes.FirstOrDefault();
+        }
+
+        public static IList<SelectListItem> ConvertNamesToSelectList<T>() where T : struct
+           => ((IEnumerable<T>)Enum.GetValues(typeof(T))).ConvertToSelectList(true);
+
+        public static IList<SelectListItem> ConvertToSelectList<T>(this IEnumerable<T> enums, bool names = false) where T : struct
+        {
+            if (!typeof(T).IsEnum)
+            {
+                throw new ArgumentException("T must be an enumerated type");
+            }
+
+            var eNumsSelect = new List<SelectListItem>();
+
+            foreach (var enu in Enum.GetValues(typeof(T)))
+            {
+                var e = (Enum)Enum.Parse(typeof(T), enu.ToString());
+                var displayName = e.GetDisplayName();
+                var desc = e.GetDescription();
+                string value;
+                if (names)
+                {
+                    value = enu.ToString();
+                }
+                else
+                {
+                    value = ((int)Enum.Parse(typeof(T), enu.ToString())).ToString();
+                }
+                eNumsSelect.Add(new ExtendedSelectListItem { Text = displayName, Value = value, Description = desc });
+            }
+            return eNumsSelect;
+        }
+
+        public static IList<SelectListItem> CreateUserTypesSelectListItems(bool creatableOnly = true)
+          => new[] {
+                AspNetUser.UserTypes.Person,
+                AspNetUser.UserTypes.Group,
+                creatableOnly ? null : AspNetUser.UserTypes.System,
+          }.WhereNotNull().OrderBy().ConvertToSelectList();
+
+        
+        public static IList<SelectListItem> SelectedValues(this IList<SelectListItem> items, IEnumerable<string> values)
+        {
+            foreach (var item in items)
+            {
+                item.Selected = values != null && values.Contains(item.Value);
+            }
+            return items;
+        }
+
+        public static IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
+            => items.OrderBy(z => z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
+
+        public static IList<SelectListItem> Select(this IList<SelectListItem> items, object selectedValue)
+        {
+            var v = Stuff.ObjectToString(selectedValue);
+            foreach (var i in items)
+            {
+                i.Selected = i.Value == v;
+            }
+            return items;
         }
 
         #endregion

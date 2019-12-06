@@ -1,4 +1,4 @@
-﻿@*@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
 @using GSA.UnliquidatedObligations.Web.Controllers
 @model GSA.UnliquidatedObligations.Web.Models.UserModel
 @{
@@ -10,7 +10,7 @@
     var textboxHtmlAttributes = canMakeChanges ? (object) new { } : (object) readonlyHtmlAttributes;
     var checkboxHtmlAttributes = canMakeChanges ? (object)new { } : (object) disabledHtmlAttributes;
     var groupNameSelectItems = ((IList<string>)ViewBag.GroupNames).ConvertToSelectList();
-    var applicationPermissionSelectItems = PortalHelpers.ConvertNamesToSelectList<ApplicationPermissionNames>();
+    var applicationPermissionSelectItems = AspHelpers.ConvertNamesToSelectList<ApplicationPermissionNames>();
 }
 @using (Html.BeginForm(UsersController.ActionNames.Save, UsersController.Name, FormMethod.Post))
 {
@@ -42,7 +42,7 @@
             <div class="col-sm-10">
                 @if (createMode)
                 {
-                    @Html.DropDownListFor(z => z.UserType, PortalHelpers.CreateUserTypesSelectListItems(), AspHelpers.PleaseSelectOne)
+                    @Html.DropDownListFor(z => z.UserType, AspHelpers.CreateUserTypesSelectListItems(), AspHelpers.PleaseSelectOne)
                 }
                 else
                 {
@@ -63,7 +63,7 @@
                 @Html.DisplayNameFor(model => model.Groups)
             </div>
             <div class="col-sm-10">
-                @Html.CheckBoxListFor(z => z.Groups, groupNameSelectItems, htmlAttributes: checkboxHtmlAttributes)
+                @*@Html.CheckBoxListFor(z => z.Groups, groupNameSelectItems, htmlAttributes: checkboxHtmlAttributes)*@
             </div>
         </div>
         <div class="form-row">
@@ -71,7 +71,7 @@
                 @Html.DisplayNameFor(model => model.Permissions)
             </div>
             <div class="col-sm-10">
-                @Html.CheckBoxListFor(z => z.Permissions, applicationPermissionSelectItems, htmlAttributes: checkboxHtmlAttributes)
+                @*@Html.CheckBoxListFor(z => z.Permissions, applicationPermissionSelectItems, htmlAttributes: checkboxHtmlAttributes)*@
             </div>
         </div>
         <div class="form-row">
@@ -190,4 +190,4 @@
         event.stopPropagation();
         return false;
     }
-</script>*@
+</script>
