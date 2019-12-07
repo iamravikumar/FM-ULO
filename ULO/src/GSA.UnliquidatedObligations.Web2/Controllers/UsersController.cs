@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -83,15 +82,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [Route("users/{username}", Order = 2)]
-        public async Task<PartialViewResult> Details(string username)
+        public async Task<ActionResult> Details(string username)
         {
             var users = await DB.AspNetUsers.Where(u => u.UserName == username).ToListAsync();
-            //if (users.Count != 1) return StatusCode(404);
+            if (users.Count != 1) return StatusCode(404);
             var user = users[0];
             Log.Information("Viewing user with UserId={UserId} => UserName={UserName}, Email={Email}", user.Id, user.UserName, user.Email);
             var m = await CreateModelAsync(users);
             await PopulateDetailsViewBag();
-            return PartialView(m.Single());
+            return View(m.Single());
         }
 
         [Route("users/create", Order = 1)]
@@ -158,8 +157,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 if (u == null && m.UserId == null)
                 {
-                    //var res = await UserManager.CreateAsync(new ApplicationUser { UserName = m.UserName, Email = StringHelpers.TrimOrNull(m.Email) });
+                    //var res = await UserManager.CreateAsync(new AspNetUser { UserName = m.UserName, Email = StringHelpers.TrimOrNull(m.Email) });
                     u = await DB.AspNetUsers.FirstOrDefaultAsync(z => z.UserName == m.UserName);
+                    if(u != null)
                     Log.Information("Created new user UserId={UserId} => UserName={UserName}, Email={Email}", u.Id, u.UserName, u.Email);
                 }
                 else if (u==null)
