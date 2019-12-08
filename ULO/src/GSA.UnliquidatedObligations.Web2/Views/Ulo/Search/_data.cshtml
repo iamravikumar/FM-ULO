@@ -162,12 +162,17 @@ else
             </tr>
         }
     </table>
-
-    @await Html.PartialAsync("_PaginationPartial")
+    <div>
+        <partial name="_PaginationPartial" />
+    </div>
+    @*@await Html.PartialAsync("_PaginationPartial")*@
 
 }
 
 @if (canReassign)
 {
-    @await Html.PartialAsync("~/Views/Ulo/BulkReassignments.cshtml")
+    <div>
+        <partial name="BulkReassignments" />
+    </div>
+    @*@await Html.PartialAsync("~/Views/Ulo/BulkReassignments.cshtml")*@
 }

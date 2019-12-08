@@ -29,14 +29,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string Save = "Save";
         }
 
-        //private readonly ApplicationUser UserManager;
+        private readonly UloUserManager UserManager;
 
        
 
-        public UsersController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
+        public UsersController(UloDbContext db,UloUserManager userManager, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
-            //UserManager = userManager;
+            UserManager = userManager;
         }
 
         [Route("users")]
@@ -157,7 +157,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 if (u == null && m.UserId == null)
                 {
-                    //var res = await UserManager.CreateAsync(new AspNetUser { UserName = m.UserName, Email = StringHelpers.TrimOrNull(m.Email) });
+                    var res = await UserManager.CreateAsync(new AspNetUser { UserName = m.UserName, Email = StringHelpers.TrimOrNull(m.Email) });
                     u = await DB.AspNetUsers.FirstOrDefaultAsync(z => z.UserName == m.UserName);
                     if(u != null)
                     Log.Information("Created new user UserId={UserId} => UserName={UserName}, Email={Email}", u.Id, u.UserName, u.Email);

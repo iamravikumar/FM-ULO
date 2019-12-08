@@ -21,7 +21,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     //[Authorize]
     //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    [Authorize(Policy = "ApplicationUser")]
+    //[Authorize(Policy = "ApplicationUser")]
     public class UloController : BasePageController
     {
         public const string Name = "Ulo";
@@ -363,7 +363,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         //unassigned tab
         [ActionName(ActionNames.Unassigned)]
         //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
-        [Authorize(Policy = "CanViewUnassigned")]
+        //[Authorize(Policy = "CanViewUnassigned")]
         [Route("ulos/unassigned")]
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {

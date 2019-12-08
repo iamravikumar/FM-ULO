@@ -5,9 +5,12 @@
 @using RevolutionaryStuff.Core;
 @model IEnumerable<UserModel>
 @{
-    //this.SetTitles(PageKeys.ManageUsers, "Manage Users");
+    //AspHelpers.SetTitles(PageKeys.ManageUsers, "Manage Users");
     Layout = "~/Views/Shared/_Layout.cshtml";
     var canMakeChanges = UserHelpers.HasPermission(ApplicationPermissionNames.ManageUsers);
+    var userRoles = PortalHelpers.CreateAllGroupNamesSelectListItems();
+    var userRegions = PortalHelpers.CreateRegionSelectListItems();
+
 }
 
 <button type="button" class="btn toggler" toggleSelector=".advanced-search-settings">
@@ -37,13 +40,13 @@
                 <label for="region">Region:</label>
             </div>
             <div class="col-sm-2">
-                @Html.ListBox("region", AspHelpers.Select(PortalHelpers.CreateRegionSelectListItems(), Context.Request.Query["region"]))
+                @Html.ListBox("region", AspHelpers.Select(userRegions, Context.Request.Query["region"]))
             </div>
             <div class="col-sm-2">
                 <label for="role">Role:</label>
             </div>
             <div class="col-sm-2">
-                @*@Html.ListBox("role", AspHelpers.Select(PortalHelpers.CreateAllGroupNamesSelectListItems(), Context.Request.Query["role"]))*@
+                @Html.ListBox("role", AspHelpers.Select(userRoles, Context.Request.Query["role"]))
             </div>
         </div>
         <div class="row">
@@ -127,5 +130,8 @@
         </tr>
     }
 </table>
+<div>
+    <partial name="_PaginationPartial" />
+</div>
 
-@Html.PartialAsync("_PaginationPartial")
+@*@Html.PartialAsync("_PaginationPartial")*@

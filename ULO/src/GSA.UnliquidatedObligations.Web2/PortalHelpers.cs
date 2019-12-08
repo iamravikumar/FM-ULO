@@ -136,22 +136,22 @@ namespace GSA.UnliquidatedObligations.Web
                },
                MediumCacheTimeout
                ).Copy();
-       
 
-        //public IList<SelectListItem> CreateAllGroupNamesSelectListItems()
-        //=> Cacher.FindOrCreateValue(
-        //    nameof(CreateAllGroupNamesSelectListItems),
-        //    () =>
-        //    DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
-        //                        r => new SelectListItem
-        //                        {
-        //                            Text = r.UserName,
-        //                            Value = r.Id
-        //                        }).
-        //                        ToList().
-        //                        AsReadOnly(),
-        //    MediumCacheTimeout
-        //    ).Copy();
+
+        public IList<SelectListItem> CreateAllGroupNamesSelectListItems()
+      => Cacher.FindOrCreateValue(
+          nameof(CreateAllGroupNamesSelectListItems),
+          () =>
+          DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
+                              r => new SelectListItem
+                              {
+                                  Text = r.UserName,
+                                  Value = r.Id
+                              }).
+                              ToList().
+                              AsReadOnly(),
+          MediumCacheTimeout
+          ).Copy();
 
         public IList<SelectListItem> CreateReviewSelectListItems()
         => Cacher.FindOrCreateValue(Cache.CreateKey(nameof(CreateReviewSelectListItems)),

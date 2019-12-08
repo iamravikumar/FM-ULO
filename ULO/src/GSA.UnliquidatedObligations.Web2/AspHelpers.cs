@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using RevolutionaryStuff.Core;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
-
+using System.Text;
+using System.Web;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -230,9 +231,9 @@ namespace GSA.UnliquidatedObligations.Web
             }
             return new HtmlString(HttpUtility.HtmlEncode(s));
         }
-
+#endif
         public static HtmlString CheckBoxListFor<TModelItem>(
-            this HtmlHelper<TModelItem> hh,
+            this IHtmlHelper<TModelItem> hh,
             Expression<Func<TModelItem, IEnumerable<string>>> columnExpression,
             IEnumerable<SelectListItem> items,
             object htmlAttributes=null)
@@ -265,7 +266,7 @@ namespace GSA.UnliquidatedObligations.Web
             }
             return new HtmlString(sb.ToString());
         }
-#endif
+
 
         #region SelectListItems
 
