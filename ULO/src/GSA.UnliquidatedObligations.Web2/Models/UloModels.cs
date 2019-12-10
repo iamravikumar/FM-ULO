@@ -57,7 +57,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public UloWfQuestionViewModel(IDictionary<string, Justification> justificationByKey, UnliqudatedObjectsWorkflowQuestion question)
         {
-            Username = question.User.UserName;
+            //Username = question.User.UserName;
+            Username = question.UserId;
             Answer = question.Answer;
             JustificationKey = question.JustificationKey;
             Justification = justificationByKey.FindOrDefault(question.JustificationKey ?? "")?.Description;

@@ -94,11 +94,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return workflowDescription;
         }
 
+        private async Task<Workflow> FindWorkflowAsync(int workflowId)
+            => await DB.Workflows
+                .Include(q => q.OwnerUser)
+                .Include(q => q.WorkflowDocuments)
+                .Include(q => q.TargetUlo)
+                .Include(q => q.WorkflowUnliqudatedObjectsWorkflowQuestions)
+                .WhereReviewExists()
+                .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
+
         private void SetNoDataMessage(string message)
         {
             ViewBag.NoDataMessage = message;
         }
-#if false
+
 
         [Route("ulos/{uloId}/{workflowId}", Order = 1)]
         [Route("ulos/{uloId}", Order = 2)]
@@ -122,7 +131,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             Log.Information("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
 
-            var workflow = await DB.FindWorkflowAsync(workflowId);
+            var workflow = await FindWorkflowAsync(workflowId);
             var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
 
             var belongs =
@@ -131,16 +140,42 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var workflowDesc = await FindWorkflowDescAsync(workflow);
 
-            var others = DB.GetUloSummariesByPdn(ulo.PegasysDocumentNumber).ToList().Where(z => z.WorkflowId != workflowId).OrderBy(z => z.WorkflowId).ToList();
+            //var others = await DB.GetUloSummariesByPdnAsync(ulo.PegasysDocumentNumber).ToList().Where(z => z.WorkflowId != workflowId).OrderBy(z => z.WorkflowId).ToList();
 
-            var otherDocs = DB.GetUniqueMissingLineageDocuments(workflow, others.Select(o => o.WorkflowId));
+            //var otherDocs = DB.GetUniqueMissingLineageDocuments(workflow, others.Select(o => o.WorkflowId));
 
             DB.WorkflowViews.Add(new WorkflowView { ActionAtUtc = DateTime.UtcNow, UserId = CurrentUserId, ViewAction = WorkflowView.CommonActions.Opened, WorkflowId = workflow.WorkflowId });
             await DB.SaveChangesAsync();
 
-            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, otherDocs, belongs));
+            return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, null, null, belongs));
         }
 
+        //private ICollection<Document> GetUniqueMissingLineageDocuments(Workflow wf)
+        //   => DB.GetUniqueMissingLineageDocuments(wf, DB.GetUloSummariesByPdnAsync(wf.TargetUlo.PegasysDocumentNumber).Select(z => z.WorkflowId));
+
+        private ICollection<Document> GetUniqueMissingLineageDocuments(Workflow wf, IEnumerable<int> otherWorkflowIds)
+        {
+            var others = new List<int>(otherWorkflowIds);
+            var otherDocsByName = DB.Documents.Where(d => others.Contains(d.WorkflowId)).OrderByDescending(d => d.CreatedAtUtc).ToDictionaryOnConflictKeepLast(d => d.DocumentName, d => d);
+            wf.WorkflowDocuments.ForEach(d => otherDocsByName.Remove(d.DocumentName));
+            return otherDocsByName.Values;
+        }
+        private bool BelongsToMyUnassignmentGroup(string ownerUserId, int regionId)
+        {
+
+            foreach (var g in GetUserGroups(CurrentUserId))
+            {
+                if (g.UserId == UserHelpers.ReassignGroupUserId) continue;
+                var regionIds = UserHelpers.GetUserGroupRegions(g.UserName,UserHelpers.ReassignGroupUserName).OrderBy(z => z.GetValueOrDefault()).ToList();
+                if (ownerUserId == g.UserId && regionIds.Contains(regionId)) return true;
+            }
+            return false;
+        }
+
+       
+
+
+#if false
         private readonly ApplicationUserManager UserManager;
 
         private void PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(IQueryable<Workflow> workflows)

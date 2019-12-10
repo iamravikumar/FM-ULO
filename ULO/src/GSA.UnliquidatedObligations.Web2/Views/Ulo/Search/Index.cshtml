@@ -2,16 +2,23 @@
 @{
     //this.SetTitles(PageKeys.Search, "Search");
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var modelFilter = Model;
 }
 
-@await Html.PartialAsync("~/Views/Ulo/Search/_Filtering.cshtml", Model)
-<div id="masterRecordsListing">
-    @if (Model.HasFilters)
-    {
-        @await Html.PartialAsync("~/Views/Ulo/Search/_Data.cshtml", Model.Workflows)
-    }
-    else
-    {
-        <div class="noDataMessage">Please enter a search criteria then press the <span style="font-style: italic">Apply Filters</span> button.</div>
-    }
-</div>
+    <div>
+        <partial name="Search/_Filtering" model=Model/>
+    </div>
+@*@await Html.PartialAsync("~/Views/Ulo/Search/_Filtering.cshtml", Model)*@
+    <div id="masterRecordsListing">
+        @if (Model.HasFilters)
+        {
+            <div>
+                <partial name="Search/_Data" model=Model.Workflows/>
+            </div>
+            @*@await Html.PartialAsync("~/Views/Ulo/Search/_Data.cshtml", Model.Workflows)*@
+        }
+        else
+        {
+            <div class="noDataMessage">Please enter a search criteria then press the <span style="font-style: italic">Apply Filters</span> button.</div>
+        }
+    </div>
