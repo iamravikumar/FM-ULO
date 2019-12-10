@@ -1,0 +1,9 @@
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@{
+    var editingBeganAtUtc = (DateTime)ViewData[BasePageController.WorkflowStalenessMagicFieldNames.EditingBeganAtUtc];
+    var workflowId = (int)ViewData[BasePageController.WorkflowStalenessMagicFieldNames.WorkflowId];
+    var workflowRowVersionString = ViewData[BasePageController.WorkflowStalenessMagicFieldNames.WorkflowRowVersionString] as string;
+}
+@Html.Hidden(BasePageController.WorkflowStalenessMagicFieldNames.WorkflowRowVersionString, workflowRowVersionString)
+@Html.Hidden(BasePageController.WorkflowStalenessMagicFieldNames.EditingBeganAtUtc, editingBeganAtUtc.ToString())
+@Html.Hidden(BasePageController.WorkflowStalenessMagicFieldNames.WorkflowId, workflowId.ToString())

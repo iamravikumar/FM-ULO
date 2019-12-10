@@ -1,0 +1,489 @@
+﻿@using GSA.UnliquidatedObligations.Web
+@model GSA.UnliquidatedObligations.Web.Models.UloViewModel
+@{
+    var ulo = Model.CurretUnliquidatedObligation;
+    var wf = Model.WorkflowViewModel.Workflow;
+    var totalPayments = ulo.PendPayments.GetValueOrDefault() + ulo.PymtsInTransit.GetValueOrDefault() + ulo.PymtsConfirmed.GetValueOrDefault();
+}
+<div class="row documents">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Details</h3>
+        </div>
+        <div class="panel-body ulo-details">
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            PDN:
+                        </dt>
+                        <dd>
+                            @ulo.PdnWithInstance
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Pegasys Title:
+                        </dt>
+                        <dd>
+                            @ulo.PegasysTitleNumber
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Pegasys Contract #:
+                        </dt>
+                        <dd>
+                            @ulo.ContractNum
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Date of Last Activity:
+                        </dt>
+                        <dd>
+                            @ulo.DateOfLastActivity.ToShortDateString()
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Accounting Period:
+                        </dt>
+                        <dd>
+                            @ulo.ActgPd
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal-middle">
+                        <dt>
+                            Assigned To:
+                        </dt>
+                        <dd>
+                            @if (wf.OwnerUser == null || wf.OwnerUser.IsGroup)
+                    {
+                        <text>Unassigned</text>
+            }
+            else
+            {
+                <text>@wf.OwnerUser.UserName</text>
+    }
+                            @{
+                                string reassignButtonText = null;
+                                if (wf.OwnerUserId == PortalHelpers.GetUserId(User?.Identity?.Name))
+                                {
+                                    reassignButtonText = "Reassign";
+                                }
+                                else if (Model.BelongsToMyUnassignmentGroup)
+                                {
+                                    reassignButtonText = "Reassign";
+                                }
+                                //else if (UserHelper.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanReassign))
+                                //{
+                                //    var userReassignRegions = User.GetReassignmentGroupRegions();
+                                //    if (userReassignRegions.Contains(ulo.RegionId))
+                                //    {
+                                //        reassignButtonText = "Reassign";
+                                //    }
+                                //}
+                                if (reassignButtonText != null)
+                                {
+                                    var modalId = "#" + wf.WorkflowId + "RequestForReassignModal";
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">@reassignButtonText</button>
+                }
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Zone:
+                        </dt>
+                        <dd>
+                            @ulo.Region.Zone.ZoneShortName
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>Region:</dt>
+                        <dd>
+                            @ulo.Region.RegionNumber
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Budget Activity:
+                        </dt>
+                        <dd>
+                            @ulo.Prog
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Fund:
+                        </dt>
+                        <dd>
+                            @ulo.Fund
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Organization:
+                        </dt>
+                        <dd>
+                            @ulo.Organization
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Vendor Name:
+                        </dt>
+                        <dd>
+                            @ulo.VendorName
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Agreement:
+                        </dt>
+                        <dd>
+                            @ulo.Agreement
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            RWA Completion Date:
+                        </dt>
+                        <dd>
+                            @ulo.RWACompletionDate.ToShortDateString()
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Award #:
+                        </dt>
+                        <dd>
+                            @ulo.AwardNbr
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Award Expiration Date:
+                        </dt>
+                        <dd>
+                            @ulo.EASiAwdExpirationDate.ToShortDateString()
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            GSA FSS/Other #:
+                        </dt>
+                        <dd>
+                            @ulo.EASi_GSA_FSS_Other__
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Lease #:
+                        </dt>
+                        <dd>
+                            @ulo.LeaseNumber
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Project #:
+                        </dt>
+                        <dd>
+                            @ulo.Project
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Building #:
+                        </dt>
+                        <dd>
+                            @ulo.Bldg
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Contracting Officers Name:
+                        </dt>
+                        <dd>
+                            @ulo.ContractingOfficersName
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Contracting Officers Email:
+                        </dt>
+                        <dd>
+                            @ulo.ContractingOfficerEmail
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Contracting Specialist Name:
+                        </dt>
+                        <dd>
+                            @ulo.ContractingSpecialistName
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Contracting Specialist Email:
+                        </dt>
+                        <dd>
+                            @ulo.ContractingSpecialistEmail
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="dl-horizontal hidden">
+                        <dt>
+                            Budget Analyst Name:
+                        </dt>
+                        <dd class="huh">
+                            ___FUTURE___
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Budget Analyst Email:
+                        </dt>
+                        <dd>
+                            @ulo.BudgetAnalystEmail
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Credit Card Holder Alias:
+                        </dt>
+                        <dd title="@ulo.CardholderAlias">
+                            @ulo.CardholderAlias8
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Credit Card Holder Email:
+                        </dt>
+                        <dd title="@ulo.CardholderName">
+                            @ulo.CardholderEmail
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            @*
+        <div class="row hidden">
+            <div class="col-md-6">
+                <dl class="dl-horizontal">
+                    <dt>
+                        Credit Card Holder Username:
+                    </dt>
+                    <dd class="huh">
+                        ___FUTURE___
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="dl-horizontal">
+                    <dt>
+                        Credit Card Holder Email:
+                    </dt>
+                    <dd class="huh">
+                        ___FUTURE___
+                    </dd>
+                </dl>
+            </div>
+        </div>
+            *@
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Review Name:
+                        </dt>
+                        <dd>
+                            @if (ulo.Review != null)
+                            {
+                                @ulo.Review.ReviewName
+                            }
+                            </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Review Type:
+                        </dt>
+                        <dd>
+                            @if (ulo.Review != null)
+                            {
+                                @ulo.Review.ReviewTypeIdRawValue
+                            }
+
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Reason in Review:
+                        </dt>
+                        <dd>
+                            @ulo.ReasonIncludedInReview
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            ULO ID:
+                        </dt>
+                        <dd>
+                            @ulo.UloId
+                        </dd>
+                    </dl>
+                </div>
+                @if (wf != null)
+        {
+            <div class="col-md-4">
+                <dl class="dl-horizontal">
+                    <dt>
+                        Workflow ID:
+                    </dt>
+                    <dd>
+                        @(wf.WorkflowId)
+                    </dd>
+                </dl>
+            </div>
+}
+            </div>
+            <div class="row">
+                <div style="padding-left: 7px">
+                    <table class="table table-responsive table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Pending Payment</th>
+                                <td>@Html.Currency(ulo.PendPayments.GetValueOrDefault())</td>
+                                <th>Total Payments</th>
+                                <td>@Html.Currency(totalPayments)</td>
+                            </tr>
+                            <tr>
+                                <th>Payments (In Transit)</th>
+                                <td>@Html.Currency(ulo.PymtsInTransit.GetValueOrDefault())</td>
+                                <th>Receipt</th>
+                                <td>@Html.Currency(ulo.Rcpt.GetValueOrDefault())</td>
+                            </tr>
+                            <tr>
+                                <th>Payments (Confirmed)</th>
+                                <td>@Html.Currency(ulo.PymtsConfirmed.GetValueOrDefault())</td>
+                                <th>Accrual</th>
+                                <td>@Html.Currency(ulo.Accrual.GetValueOrDefault())</td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td></td>
+                                <th>Holdbacks</th>
+                                <td>@Html.Currency(ulo.Holdbacks.GetValueOrDefault())</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="border-top: 2px solid black">
+                                <th>Total Payments</th>
+                                <td>@Html.Currency(totalPayments)</td>
+                                <th>Total Delivered Orders (DO)</th>
+                                <td>@Html.Currency(ulo.TotalDO.GetValueOrDefault())</td>
+                                <th>Total Undelivered Orders (UDO)</th>
+                                <td>@Html.Currency(ulo.UndelOrders.GetValueOrDefault())</td>
+                                <th>Total Orders</th>
+                                <td>@Html.Currency(ulo.TotalUDOAndDO.GetValueOrDefault())</td>
+                            </tr>
+                            <tr style="border-top: 1px dashed black">
+                                <th>Commitments</th>
+                                <td>@Html.Currency(ulo.Commitments.GetValueOrDefault())</td>
+                                <th>Prepayments</th>
+                                <td>@Html.Currency(ulo.Prepayments.GetValueOrDefault())</td>
+                                <th>Total Orders</th>
+                                <td>@Html.Currency(ulo.TotalUDOAndDO.GetValueOrDefault())</td>
+                                <th>Total Line</th>
+                                <td>@Html.Currency(ulo.TotalLine.GetValueOrDefault())</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

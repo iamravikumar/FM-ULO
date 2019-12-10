@@ -35,8 +35,30 @@ namespace GSA.UnliquidatedObligations.Web
         private const string SortDirKeyName = "sortDir";
         private const string SortColKeyName = "sortCol";
 
+        public static readonly TimeZoneInfo DisplayTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+
         public static string ToShortDateString(this DateTime? dt)
             => dt.HasValue ? dt.Value.ToShortDateString() : "";
+
+        public static DateTime ToLocalizedDateTime(this DateTime utc)
+        {
+            if (utc.Kind == DateTimeKind.Unspecified)
+            {
+                utc = new DateTime(utc.Year, utc.Month, utc.Day, utc.Hour, utc.Minute, utc.Second, utc.Millisecond, DateTimeKind.Utc);
+            }
+            return utc.ToTimeZone(DisplayTimeZone);
+        }
+
+        public static string ToLocalizedDisplayDateString(this DateTime utc, bool includeTime = false)
+        {
+            var local = utc.ToLocalizedDateTime();
+            var s = local.Date.ToString("MM/dd/yyyy");
+            if (includeTime)
+            {
+                s += " " + local.ToString("t");
+            }
+            return s;
+        }
 
         public static DateTime ToTimeZone(this DateTime dt, TimeZoneInfo zoneInfo)
             => TimeZoneInfo.ConvertTime(dt, zoneInfo);
@@ -55,6 +77,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             return data.ToString("C", culture);
         }
+
 
         public static IList<SelectListItem> Copy(this IEnumerable<SelectListItem> items)
         {

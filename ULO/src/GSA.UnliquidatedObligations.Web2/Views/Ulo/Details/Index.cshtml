@@ -1,0 +1,92 @@
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@using GSA.UnliquidatedObligations.Web.Models
+@model GSA.UnliquidatedObligations.Web.Models.UloViewModel
+@{
+    ViewBag.Title = Model.CurretUnliquidatedObligation.PegasysDocumentNumber;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentUloId = Convert.ToInt32(ViewContext.RouteData.Values["uloId"]);
+    var currentWorkflowId = Convert.ToInt32(ViewContext.RouteData.Values["workflowId"]);
+    var uploadViewModal = new UploadViewModel();
+    ViewData[BasePageController.WorkflowStalenessMagicFieldNames.WorkflowRowVersionString] = Model.WorkflowViewModel.Workflow.WorkflowRowVersionString;
+    ViewData[BasePageController.WorkflowStalenessMagicFieldNames.EditingBeganAtUtc] = DateTime.UtcNow;
+    ViewData[BasePageController.WorkflowStalenessMagicFieldNames.WorkflowId] = Model.WorkflowViewModel.Workflow.WorkflowId;
+}
+
+<h2>ULO Details</h2>
+<div>
+    <partial name="Details/Workflow/_WorkflowDescription" model=Model.WorkflowViewModel.WorkflowDescriptionViewModel />
+</div>
+@*@Html.Partial("Details/Workflow/_WorkflowDescription", Model.WorkflowViewModel.WorkflowDescriptionViewModel)*@
+
+@using (Html.BeginForm(UloController.ActionNames.Save, UloController.Name, new { uloId = @currentUloId, workflowId = @currentWorkflowId }, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div>
+        <partial name="Details/_WorkflowStalenessHiddenFields" model=Model.WorkflowViewModel.WorkflowDescriptionViewModel />
+    </div>
+    @*@Html.Partial("Details/_WorkflowStalenessHiddenFields");*@
+    <div>
+        <partial name="Details/_Ulo" model=Model />
+    </div>
+    @*@Html.Partial("Details/_Ulo", Model)*@
+    <div>
+        <partial name="Details/Documents/_Index" model=Model.WorkflowViewModel.DocumentsViewModel />
+    </div>
+    @*@Html.Partial("Details/Documents/_Index", Model.WorkflowViewModel.DocumentsViewModel)*@
+    @*
+        @Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)
+    *@
+    <div>
+        @*<partial name="Details/Workflow/_Index" model=Model />*@
+    </div>
+    @* @Html.Partial("Details/Workflow/_Index", Model)*@
+    <div>
+        @*<partial name="Details/Workflow/_Others" model=Model.Others />*@
+    </div>
+    @*@Html.Partial("Details/Workflow/_Others", Model.Others)*@
+}
+
+<div>
+    <partial name="Details/Documents/Attachments/_Upload" model=uploadViewModal />
+</div>
+@*@Html.Partial("Details/Documents/Attachments/_Upload", new UploadViewModel())*@
+
+<div>
+    <partial name="Details/Workflow/RequestForReassignments/_Index" model=Model.WorkflowViewModel />
+</div>
+
+@*@Html.Partial("Details/Workflow/RequestForReassignments/_Index", Model.WorkflowViewModel)*@
+
+<div>
+    <partial name="Details/Documents/_ViewModals" model=Model.WorkflowViewModel.DocumentsViewModel />
+</div>
+
+@*@Html.Partial("Details/Documents/_ViewModals", Model.WorkflowViewModel.DocumentsViewModel)*@
+
+@section Scripts {
+    @*@Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryform")*@
+
+    <script type="text/javascript">
+        var currentUloId = @currentUloId;
+        var currentWorkflowId = @currentWorkflowId;
+
+
+        function loadDocumentModal(documentId) {
+            var url = '@Url.Action("View", "Documents")';
+            url += '/?documentId=' + documentId;
+            var $div = $("#" + "modal-container-" + documentId);
+            var doneFns = Array.prototype.slice.call(arguments);
+            doneFns.shift();
+            if ($div.length === 0) {
+                $div = $(document.createElement('div')).attr('id', "modal-container-" + documentId);
+                $("#document-edit-modals").append($div);
+            }
+            $($div).load(url, function() {
+                doneFns.forEach(function(fn) {
+                    fn();
+                });
+            });
+        }
+    </script>
+}

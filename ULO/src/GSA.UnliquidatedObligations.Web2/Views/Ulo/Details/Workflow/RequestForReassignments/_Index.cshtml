@@ -1,0 +1,13 @@
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
+@{
+    var rfr = Model.RequestForReassignment;
+    if (rfr==null)
+    {
+        @*@Html.RenderPartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new {workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.TargetUlo.RegionId, wfDefintionOwnerName = Model.WorkflowDescriptionViewModel.CurrentActivity.OwnerUserName });*@
+    }
+    else
+    {
+        @*@Html.RenderPartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { id = rfr.RequestForReassignmentID, workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.TargetUlo.RegionId });*@
+    }
+}

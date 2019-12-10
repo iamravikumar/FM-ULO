@@ -1,0 +1,121 @@
+﻿@*@using GSA.UnliquidatedObligations.Web
+@using GSA.UnliquidatedObligations.Web.Controllers
+@using RevolutionaryStuff.Core
+@using System.Linq
+@model GSA.UnliquidatedObligations.Web.Models.DocumentsViewModel
+@{
+    var documentTypeNameByDocumentTypeId = (IDictionary<int, string>)ViewBag.DocumentTypeNameByDocumentTypeId;
+}
+<div class="row documents">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Documents (@Model.Documents.Count)</h3>
+        </div>
+        <div class="panel-body">
+            <div class="noDataMessage" style="@(@Model.Documents.Count == 0 ? "" : "display:none")" id="noDocumentMessage">No documents have been uploaded yet.</div>
+            <table class="table table-responsive table-striped documents-list" style="@(@Model.Documents.Count > 0 ? "" : "display:none")" id="documentsTable">
+                <tr class="documents-heading-row">
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Document Types
+                    </th>
+                    <th>
+                        Attachments
+                    </th>
+                    <th>
+                        Uploaded By
+                    </th>
+                    <th>
+                        Uploaded Date
+                    </th>
+                    <th></th>
+                </tr>
+                @foreach (var document in Model.Documents)
+                {
+                    var rowId = "document" + document.DocumentId;
+                    var modalId = "#" + @document.DocumentId + "Modal";
+                    var deleteModalId = modalId + "Delete";
+                    <tr id="@rowId">
+                        <td>
+                            @document.DocumentName
+                        </td>
+                        <td>
+                            @if (document.DocumentDocumentTypes != null && document.DocumentDocumentTypes.Count > 0)
+                            {
+                                <ul class="document-type-list">
+                                    @foreach (var ddt in document.DocumentDocumentTypes)
+                                    {
+                                        <li>@documentTypeNameByDocumentTypeId.FindOrDefault(ddt.DocumentTypeId)</li>
+                                    }
+                                </ul>
+                            }
+                        </td>
+                        <td>
+                            @((document.Attachments?.Count).GetValueOrDefault())
+                        </td>
+                        <td>
+                            @document.AspNetUser.UserName
+                        </td>
+                        <td>
+                            @document.CreatedAtUtc.ToLocalizedDisplayDateString()
+                        </td>
+                        <td>
+                            <a data-toggle="modal" data-target="@modalId" href="@modalId">View</a>
+                            @if (Model.AllowDocumentsEdit)
+                            {
+                                @Html.Raw("| <a data-toggle='modal' data-target='" + @deleteModalId + "' href='" + @deleteModalId + "'>Delete</a>")
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+            @if (Model.AllowDocumentsEdit)
+            {
+                <button type="button" class="btn btn-primary document-add-btn" data-toggle="modal" data-target="#0Modal" title="Add a new document.">Add...</button>
+                <button type="button"
+                        class="btn document-copy-btn"
+                        id="copyUniqueMissingLineageDocumentButton"
+                        @(Model.UniqueMissingLineageDocumentCount == 0 ? "disabled=\"disabled\"" : "")
+                        onclick="copyUniqueMissingLineageDocuments()"
+                        title="Copy documents from other reviews for this PDN:@Model.UniqueMissingLineageDocuments.Select(d=>d.DocumentName).Format("", "\n   - {0}")">
+                    Copy (@Model.UniqueMissingLineageDocumentCount)
+                </button>
+            }
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function copyUniqueMissingLineageDocuments() {
+        $("#copyUniqueMissingLineageDocumentButton").attr("disabled", "disabled");
+        $.ajax({
+            type: "POST",
+            url: "@Html.ActionLinkUrl(DocumentsController.ActionNames.CopyUniqueMissingLineageDocuments, DocumentsController.Name, new { workflowId = Model.WorkflowId })",
+            success: function (result) {
+            //alert("deleteAttachment success: " + JSON.stringify(result));
+            if (result.ErrorMessage != null) {
+                alert(result.ErrorMessage);
+                return;
+                }
+                for (z in result.documents) {
+                    var doc = result.documents[z];
+                    //alert(JSON.stringify(doc, null, 4));
+                    updateDocumentList(0, doc);
+                }
+                alert("Copied " + itemCountString(result.copiedDocumentCount, "document") + " containing " + itemCountString(result.copiedAttachmentCount, "attachment"))
+            },
+            error: function (xhr, status, p3, p4) {
+            //alert("deleteAttachment fail: ");
+            var err = "Error " + " " + status + " " + p3 + " " + p4;
+            if (xhr.responseText && xhr.responseText[0] == "{")
+                err = JSON.parse(xhr.responseText).Message;
+            console.log(err);
+        },
+            data: appendStalenessData({})
+        });
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return false;
+    }
+</script>*@

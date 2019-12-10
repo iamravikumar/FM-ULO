@@ -1,0 +1,140 @@
+﻿@*@model GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Financial Activity Since Review Date</h3>
+    </div>
+    <div class="panel-body">
+        @if (Model.FinancialActivities.Count == 0)
+        {
+            <div class="noDataMessage">No financial activity has been recorded yet.</div>
+        }
+        else
+        {
+            <table class="table table-responsive table-striped documents-list" id="historyTable">
+                <tr class="documents-heading-row">
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Reference Number
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                </tr>
+                @foreach (var z in Model.FinancialActivities)
+                {
+                    <tr>
+                        <td>@GSA.UnliquidatedObligations.Web.PortalHelpers.ToLocalizedDateTime(z.ActivityDate)</td>
+                        <td>@z.ActivityType</td>
+                        <td>@z.ReferenceNumber</td>
+                        <td>@Html.Currency(z.Amount)</td>
+                        <td>@z.Description</td>
+                    </tr>
+                }
+                <tr style="display:none" id="newFinancialActivityCreatedRow"><th colspan="5">New financial activities have been created. Refresh to see them.</th></tr>
+            </table>
+        }
+        @if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CreateFinancialActivity))
+        {
+            <button type="button" class="btn btn-primary finac-add-btn" data-toggle="modal" data-target="#newFinancialActivityDialog" title="Add a new document." onclick="resetCreateFinancialActivityFields()">Add...</button>
+        }
+    </div>
+</div>
+
+<div class="modal fade document-modal" id="newFinancialActivityDialog" tabindex="-1" role="dialog" aria-labelledby="new-fa-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="new-fa-label">New Financial Activity</h5>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaActivityDate">Activity Date</label>
+                        </td>
+                        <td>
+                            <input class="col-md-8" type="date" id="newfaActivityDate" name="newfaActivityDate" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaActivityType">Activity Type</label>
+                        </td>
+                        <td>
+                            <select id="newfaActivityType" class="col-md-8" style="margin:0;padding:0" name="newfaActivityType">
+                                <option>Payment</option>
+                                <option>Receipt</option>
+                                <option>Modification</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaReferenceNumber">Reference Number</label>
+                        </td>
+                        <td>
+                            <input class="col-md-8" type="text" maxlength="100" id="newfaReferenceNumber" name="newfaReferenceNumber" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaAmount">Amount</label>
+                        </td>
+                        <td>
+                            <input class="col-md-8" type="number" id="newfaAmount" name="newfaAmount" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="col-md-4" for="newfaDescription">Description</label>
+                        </td>
+                        <td>
+                            <textarea class="col-md-8" id="newfaDescription" name="newfaDescription"></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <div class="document-error-msg">This is an Errors</div>
+                <button type="button" class="btn btn-primary" onclick="createFinancialActivity()">Create</button>
+                <button type="button" class="btn btn-secondary close-document-modal" data-dismiss="modal" onclick="resetCreateFinancialActivityFields()" id="newFinancialActivityDialogCloseButton">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function resetCreateFinancialActivityFields() {
+        $("#newfaActivityDate,#newfaActivityType,#newfaReferenceNumber,#newfaAmount,#newfaDescription").val("");
+    }
+function createFinancialActivity() {
+    var newfa = {
+        activityDate: $("#newfaActivityDate").val(),
+        activityType: $("#newfaActivityType").val(),
+        referenceNumber: $("#newfaReferenceNumber").val(),
+        amount: $("#newfaAmount").val(),
+        description: $("#newfaDescription").val(),
+    };
+    $.ajax({
+        type: "POST",
+        url: "/ulos/" + @Model.UloId + "/financialActivities/create",
+        data: JSON.stringify(newfa),
+        success: function (result) {
+            $("#newFinancialActivityCreatedRow").css("display", "");
+        },
+        error: standardAjaxErrorHandler
+    });
+    $("#newFinancialActivityDialogCloseButton").click();
+    resetCreateFinancialActivityFields();
+    return false;
+}
+</script>*@
