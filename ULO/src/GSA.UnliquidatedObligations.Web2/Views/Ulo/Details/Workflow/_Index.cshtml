@@ -17,13 +17,13 @@
             </div>
             <div class="col-sm-6" style="padding-right:0px">
                 @*@Html.Partial("Details/_FinancialActivities", Model.CurretUnliquidatedObligation)*@
-                <partial name="Details/Workflow/_Advance" model=Model.CurretUnliquidatedObligation />
+                <partial name="Details/_FinancialActivities" model=Model.CurretUnliquidatedObligation />
             </div>
         }
         else
         {
             @*@Html.Partial("Details/_FinancialActivities", Model.CurretUnliquidatedObligation)*@
-            <partial name="Details/Workflow/_Advance" model=Model.CurretUnliquidatedObligation />
+            <partial name="Details/_FinancialActivities" model=Model.CurretUnliquidatedObligation />
         }
     </div>
 </div>

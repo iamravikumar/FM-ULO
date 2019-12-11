@@ -16,56 +16,39 @@
 <div>
     <partial name="Details/Workflow/_WorkflowDescription" model=Model.WorkflowViewModel.WorkflowDescriptionViewModel />
 </div>
-@*@Html.Partial("Details/Workflow/_WorkflowDescription", Model.WorkflowViewModel.WorkflowDescriptionViewModel)*@
 
 @using (Html.BeginForm(UloController.ActionNames.Save, UloController.Name, new { uloId = @currentUloId, workflowId = @currentWorkflowId }, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     <div>
         <partial name="Details/_WorkflowStalenessHiddenFields" model=Model.WorkflowViewModel.WorkflowDescriptionViewModel />
-    </div>
-    @*@Html.Partial("Details/_WorkflowStalenessHiddenFields");*@
+    </div>   
     <div>
         <partial name="Details/_Ulo" model=Model />
-    </div>
-    @*@Html.Partial("Details/_Ulo", Model)*@
+    </div>   
     <div>
         <partial name="Details/Documents/_Index" model=Model.WorkflowViewModel.DocumentsViewModel />
-    </div>
-    @*@Html.Partial("Details/Documents/_Index", Model.WorkflowViewModel.DocumentsViewModel)*@
-    @*
-        @Html.Partial("Details/_Notes", Model.CurretUnliquidatedObligation.Notes)
-    *@
+    </div>   
     <div>
-        @*<partial name="Details/Workflow/_Index" model=Model />*@
-    </div>
-    @* @Html.Partial("Details/Workflow/_Index", Model)*@
+        <partial name="Details/Workflow/_Index" model=Model />
+    </div>   
     <div>
         @*<partial name="Details/Workflow/_Others" model=Model.Others />*@
-    </div>
-    @*@Html.Partial("Details/Workflow/_Others", Model.Others)*@
+    </div>    
 }
 
 <div>
     <partial name="Details/Documents/Attachments/_Upload" model=uploadViewModal />
 </div>
-@*@Html.Partial("Details/Documents/Attachments/_Upload", new UploadViewModel())*@
-
 <div>
     <partial name="Details/Workflow/RequestForReassignments/_Index" model=Model.WorkflowViewModel />
 </div>
-
-@*@Html.Partial("Details/Workflow/RequestForReassignments/_Index", Model.WorkflowViewModel)*@
-
 <div>
     <partial name="Details/Documents/_ViewModals" model=Model.WorkflowViewModel.DocumentsViewModel />
 </div>
 
-@*@Html.Partial("Details/Documents/_ViewModals", Model.WorkflowViewModel.DocumentsViewModel)*@
 
-@section Scripts {
-    @*@Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/jqueryform")*@
+@section Scripts {  
 
     <script type="text/javascript">
         var currentUloId = @currentUloId;

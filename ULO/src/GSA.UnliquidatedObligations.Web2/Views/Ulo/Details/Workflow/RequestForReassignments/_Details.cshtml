@@ -2,13 +2,17 @@
 @model GSA.UnliquidatedObligations.Web.Models.RequestForReassignmentViewModel
 
 @{
-    var currentworkflowId = Model.WorkflowId;
+    var currentworkflowId = ViewData["workflowId"];/*Model.WorkflowId;*/
     var modalId = currentworkflowId + "RequestForReassignModal";
     var modalBody = modalId + "Body";
     var modalLabel = modalId + "Label";
     var suggestedReviwerId = currentworkflowId + "SuggestedReviewerId";
     var commentsId = currentworkflowId + "RequestComments";
-    var isActiveReassignment = Model.RequestForReassignmentId != null;
+    var isActiveReassignment = false;
+    if(Model != null)
+    {
+        isActiveReassignment = Model.RequestForReassignmentId != null;
+    }    
     var reviewerLabelText = "Suggested Reviewer:";
     var buttonText = "Request Reassignment";
     var actionName = "RequestReassign";
@@ -33,7 +37,7 @@
                 <div id="@modalBody" class="modal-body">
                     <div class="row">
                         @Html.LabelFor(model => model.SuggestedReviewerId, @reviewerLabelText, htmlAttributes: new { @class = "col-md-4", @for = @suggestedReviwerId })
-                        @Html.DropDownListFor(model => model.SuggestedReviewerId, Model.Users, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "col-md-8", id = @suggestedReviwerId, required = "required" })
+                        @*@Html.DropDownListFor(model => model.SuggestedReviewerId, Model.Users, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "col-md-8", id = @suggestedReviwerId, required = "required" })*@
                     </div>
                     <div class="row">
                         @Html.LabelFor(model => model.Comments, "Comments:", htmlAttributes: new { @class = "col-md-4", @for = @commentsId })

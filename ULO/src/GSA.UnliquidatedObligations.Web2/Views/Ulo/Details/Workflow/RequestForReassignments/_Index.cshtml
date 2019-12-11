@@ -2,12 +2,24 @@
 @model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
 @{
     var rfr = Model.RequestForReassignment;
-    if (rfr==null)
+
+    ViewData["workflowId"] = Model.Workflow.WorkflowId;
+    ViewData["uloRegionId"] = Model.Workflow.TargetUlo.RegionId;
+    ViewData["wfDefintionOwnerName"] = Model.WorkflowDescriptionViewModel.CurrentActivity.OwnerUserName;
+
+    if (rfr == null)
     {
-        @*@Html.RenderPartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new {workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.TargetUlo.RegionId, wfDefintionOwnerName = Model.WorkflowDescriptionViewModel.CurrentActivity.OwnerUserName });*@
+        @*@Html.RenderPartialAsync(RequestForReassignmentsController.ActionNames.Details,
+            RequestForReassignmentsController.Name,
+            new {workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.TargetUlo.RegionId, wfDefintionOwnerName = Model.WorkflowDescriptionViewModel.CurrentActivity.OwnerUserName });
+        *@
+        <partial name="Details/Workflow/RequestForReassignments/_Details" model=rfr view-data="ViewData" />
     }
+
     else
     {
         @*@Html.RenderPartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { id = rfr.RequestForReassignmentID, workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.TargetUlo.RegionId });*@
+        ViewData["RequestForReassignmentID"] = rfr.RequestForReassignmentID;
+        <partial name="Details/Workflow/RequestForReassignments/_Details" model=rfr view-data="ViewData" />
     }
 }
