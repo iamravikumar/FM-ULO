@@ -1,0 +1,96 @@
+﻿.row.documents {
+    margin: 15px -15px;
+}
+
+    .row.documents table .row.documents table tr,
+    .row.documents table tr th,
+    .row.documents table tr td {
+        border: none;
+    }
+
+    .row.documents .table td,
+    .row.documents .table th {
+        padding: 0 8px;
+    }
+
+    .row.documents table.documents-list tr th,
+    .row.documents table.documents-list tr td {
+        padding: 8px;
+    }
+
+.document-modal .row {
+    margin-left: inherit;
+    margin-right: inherit;
+    padding: 2px 0;
+}
+
+.document-modal select.document-type-choices {
+    padding-left: 0;
+}
+
+    .document-modal select.document-type-choices:disabled {
+        color: rgb(0,0,0);
+    }
+
+.document-modal input[type="text"].document-name {
+    padding-left: 3px;
+    height: 26px;
+}
+
+
+.document-modal label {
+    text-align: right;
+}
+
+.document-modal .modal-footer .document-error-msg {
+    float: left;
+    color: #ff0000;
+    display: none;
+}
+
+.document-modal table.attachments {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+    .document-modal table.attachments tr {
+        border-top: 1px solid #dddddd;
+    }
+
+        .row.documents table.documents-list tr.documents-heading-row.show,
+        .document-modal table.attachments tr.attachments-heading-row.show {
+            display: table-row !important;
+        }
+
+        .row.documents table.documents-list tr.documents-heading-row.hide,
+        .document-modal table.attachments tr.attachments-heading-row.hide {
+            display: none !important;
+        }
+
+
+        .document-modal table.attachments tr th {
+            padding: 8px;
+        }
+
+
+        .document-modal table.attachments tr td {
+            border-top: 1px solid #dddddd;
+            padding: 8px;
+        }
+
+            .document-modal table.attachments tr td.actions a {
+                cursor: pointer;
+            }
+
+        .document-modal table.attachments tr:last-child {
+            border-bottom: 1px solid #dddddd;
+        }
+
+    .document-modal table.attachments td.file-name {
+        width: 70%;
+    }
+
+    .document-modal table.attachments td.actions {
+        width: 30%;
+        text-align: right;
+    }

@@ -158,18 +158,26 @@ else
         {
             var rfrId = kvp.Value;
             var wf = kvp.Key;
+
+            var rfr = new RequestForReassignmentViewModel();
+            //rfr = wf.WorkflowRequestForReassignments.FirstOrDefault(z=>z.RequestForReassignmentID==rfrId).Select
+            //    (b => new RequestForReassignmentViewModel
+            //     {
+            //         WorkflowId =  b.WorkflowId                    
+            //     }
+            //    );
+
+            ViewData["workflowId"] = wf.WorkflowId;
+            ViewData["uloRegionId"] = wf.TargetUlo.RegionId;
+            ViewData["id"] = rfrId;
+            ViewData["isAdmin"] = true;
+            ViewData["bulkToken"] = bulkToken;
+
             @*<div>
-                <partial name="_Details" model=kvp />
+                <partial name="Details/Workflow/RequestForReassignments/_Details" view-data="ViewData" />
             </div>*@
 
-            @*@await Html.PartialAsync(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name,
-                new ViewDataDictionary(ViewData) {
-                    { "workflowId" , wf.WorkflowId },
-                    { "uloRegionId" , wf.TargetUlo.RegionId },
-                    { "isAdmin" , true },
-                    { "id" , rfrId }
-                    ,{ "bulkToken", bulkToken }
-                });*@
+           // Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = wf.WorkflowId, uloRegionId = wf.UnliquidatedObligation.RegionId, isAdmin = true, id = rfrId, bulkToken = bulkToken });
         }
     }
     @*@await Html.PartialAsync("_PaginationPartial")*@

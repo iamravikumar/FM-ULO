@@ -1,0 +1,26 @@
+﻿.row.user-options {
+    margin: 15px -15px;
+}
+
+.row.user-options .form-control {
+    width: auto;
+    display: inline-block;
+}
+
+.edit-user-modal .modal-dialog .subject-category-claims .row {
+     margin: 7px 0;
+}
+
+.edit-user-modal .modal-dialog .subject-category-claims .col-md-3.delete-subject-category-action-container {
+    padding: 6px;
+}
+
+.edit-user-modal .modal-dialog .subject-category-claims .col-md-3.delete-subject-category-action-container .delete-action {
+    cursor: pointer;
+}
+
+.create-user-modal .create-error-msg {
+    float: left;
+    color: #ff0000;
+    display: none;
+}

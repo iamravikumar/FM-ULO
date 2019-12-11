@@ -10,6 +10,16 @@
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-multiselect.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-theme.css" />
+        <link href="~/css/ULO/reviews.css" rel="stylesheet" />
+        <link href="~/css/ULO/users.css" rel="stylesheet" />
+        <link href="~/css/ULO/Details/ulo.css" rel="stylesheet" />
+        <link href="~/css/ULO/Details/notes.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/advance.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/Documents.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/reassignment.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/workflowDescription.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/workflowQuestions.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/workflows.css" rel="stylesheet" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment exclude="Development">
@@ -20,6 +30,16 @@
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-multiselect.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-theme.css" />
+        <link href="~/css/ULO/reviews.css" rel="stylesheet" />
+        <link href="~/css/ULO/users.css" rel="stylesheet" />
+        <link href="~/css/ULO/Details/ulo.css" rel="stylesheet" />
+        <link href="~/css/ULO/Details/notes.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/advance.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/Documents.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/reassignment.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/workflowDescription.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/workflowQuestions.css" rel="stylesheet" />
+        <link href="~/css/ULO/Workflows/workflows.css" rel="stylesheet" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
 </head>
@@ -30,7 +50,7 @@
             <div class="navbar-header" style="height:71px">
                 <h1 class="navbar-brand" style="padding:0;margin-right:10px;margin-top:0px">
                     <img src="~/images/GSAlogo.png" width="71" height="71" alt="GSA Logo" style="display:inline" />
-                </h1>               
+                </h1>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -38,7 +58,7 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">MyTasks</a></li>
                     <li><a asp-area="" asp-controller="Ulo" asp-action="Search">Search</a></li>
                     <li><a asp-area="" asp-controller="Ulo" asp-action="Unassigned">Unassigned</a></li>
-                    <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>                    
+                    <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
                 </ul>
                 <partial name="_LoginPartial" />
             </div>
@@ -124,33 +144,44 @@
                 <!--
                 Sprint: @PortalHelpers.SprintConfigOptions.Value.SprintName
                     -->
-                }
-            </p>
-        </footer>
+            }
+        </p>
+    </footer>
 
 
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+            asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+    </script>
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+            asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+            crossorigin="anonymous"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+    </script>
+    <environment include="Development">
+        @*<script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
+        @*<script src="~/js/site.js" asp-append-version="true"></script>*@
+        <script src="~/js/ULO/site.js"></script>
+        <script src="~/js/bootstrap-multiselect.js"></script>
 
-        <environment include="Development">
-            <script src="~/lib/jquery/dist/jquery.js"></script>
-            <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-            <script src="~/js/site.js" asp-append-version="true"></script>
-        </environment>
-        <environment exclude="Development">
-            <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
-                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                    asp-fallback-test="window.jQuery"
-                    crossorigin="anonymous"
-                    integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
-            </script>
-            <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                    asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                    asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                    crossorigin="anonymous"
-                    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-            </script>
-            <script src="~/js/site.min.js" asp-append-version="true"></script>
-        </environment>
+        <script src="~/js/ULO/advance.js"></script>
+        <script src="~/js/ULO/attachments.js"></script>
+        <script src="~/js/ULO/cookies.js"></script>
+        <script src="~/js/ULO/documents.js"></script>
+        <script src="~/js/ULO/filter.js"></script>
+        <script src="~/js/ULO/polyfills.js"></script>
+        <script src="~/js/ULO/recordsListing.js"></script>
+        <script src="~/js/ULO/reviews.js"></script>
+        <script src="~/js/ULO/users.js"></script>
+    </environment>
+    <environment exclude="Development">       
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
 
-        @RenderSection("Scripts", required: false)
-    </body>
+    @RenderSection("Scripts", required: false)
+</body>
 </html>
