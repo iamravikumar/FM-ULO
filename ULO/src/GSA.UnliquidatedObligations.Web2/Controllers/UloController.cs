@@ -164,32 +164,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return false;
         }
 
-       
-
-
-#if false
-        private readonly ApplicationUserManager UserManager;
-
-        private void PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(IQueryable<Workflow> workflows)
-        {
-            var dbt = new RequestForReassignmentsController.DetailsBulkToken(CurrentUser, this.DB, workflows);
-            ViewBag.DetailsBulkToken = dbt;
-        }
-
-        private void PopulateViewInfoIntoViewBag(IEnumerable<Workflow> workflows)
-        {
-            var wfs = workflows.ToList();
-            var ids = wfs.Select(z => z.WorkflowId).ToList();
-            ViewBag.ViewDateByWorkflowId = (from v in DB.MostRecentWorkflowViews
-                                            where ids.Contains(v.WorkflowId) && v.UserId == CurrentUserId
-                                            select new { v.WorkflowId, v.ActionAtUtc, v.ViewAction }).
-                         ToList().
-                         Where(z => z.ViewAction == WorkflowView.CommonActions.Opened || z.ViewAction == WorkflowView.CommonActions.Seen).
-                         ToDictionaryOnConflictKeepLast(z => z.WorkflowId, z => z.ActionAtUtc);
-        }
-
-#endif
-
         [ActionName(ActionNames.Index)]
         public ActionResult Index()
             => RedirectToAction(ActionNames.MyTasks);
@@ -424,7 +398,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var prohibitedWorkflowIds = await DB.WorkflowProhibitedOwners.Where(z => z.ProhibitedOwnerUserId == CurrentUserId).Select(z => z.WorkflowId).ToListAsync();
 
-            var workflows = from wf in DB.Workflows.Where(z => z.OwnerUserId == "C446AFC7-66ED-4738-8733-A7FF11043AED").Include(z=>z.TargetUlo)
+            var workflows = from wf in DB.Workflows.Where(z => z.OwnerUserId == CurrentUserId).Include(z=>z.TargetUlo)
                             where !prohibitedWorkflowIds.Contains(wf.WorkflowId)
                             select wf;
 
@@ -459,35 +433,24 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
 
-#if false
-
-        private bool BelongsToMyUnassignmentGroup(string ownerUserId, int regionId)
+        [ActionName(ActionNames.RequestForReassignments)]
+        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
+        [Route("ulos/reassignments")]
+        public ActionResult RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            foreach (var g in GetUserGroups(CurrentUserId))
-            {
-                if (g.UserId == PortalHelpers.ReassignGroupUserId) continue;
-                var regionIds = User.GetUserGroupRegions(g.UserName).OrderBy(z => z.GetValueOrDefault()).ToList();
-                if (ownerUserId == g.UserId && regionIds.Contains(regionId)) return true;
-            }
-            return false;
-        }
-
-        [ActionName(ActionNames.Unassigned)]
-        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
-        [Route("ulos/unassigned")]
-        public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
-        {
-            SetNoDataMessage(ConfigOptions.Value.NoUnassigned);
-            ViewBag.AllAreUnassigned = true;
+            SetNoDataMessage(ConfigOptions.Value.NoReassignments);
+            ViewBag.ShowReassignButton = true;
+            var regionIds = new List<int?>();
+            var reassignGroupUserId = UserHelpers.ReassignGroupUserId;
 
             var predicate = PredicateBuilder.Create<Workflow>(wf => false);
 
             var m = new MultipleValueDictionary<string, Tuple<List<int?>, string>>();
             foreach (var g in GetUserGroups(CurrentUserId))
             {
-                if (g.UserId == PortalHelpers.ReassignGroupUserId) continue;
-                var regionIds = User.GetUserGroupRegions(g.UserName).OrderBy(z => z.GetValueOrDefault()).ToList();
-                predicate = predicate.Or(wf => wf.OwnerUserId == g.UserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId));
+                if (g.UserId == UserHelpers.ReassignGroupUserId) continue;
+                regionIds = UserHelpers.GetUserGroupRegions(g).OrderBy(z => z.GetValueOrDefault()).ToList();
+                predicate = predicate.Or(wf => wf.OwnerUserId == g.UserId && regionIds.Contains(wf.TargetUlo.RegionId));
                 m.Add(Cache.CreateKey(regionIds), Tuple.Create(regionIds, g.UserName));
             }
 
@@ -498,52 +461,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     var tuples = m[k];
                     var groupNames = tuples.Select(z => z.Item2).OrderBy();
                     ShowGroupRegionMembershipAlert(groupNames, tuples.First().Item1);
+                    goto Browse;
                 }
             }
-            else
-            {
-                AddPageAlert($"You're not a member of any related groups and will not have any unassigned items.", false, PageAlert.AlertTypes.Warning);
-            }
 
-            var prohibitedWorkflowIds = await DB.WorkflowProhibitedOwners.Where(z => z.ProhibitedOwnerUserId == CurrentUserId).Select(z => z.WorkflowId).ToListAsync();
-
-            var workflows = from wf in DB.Workflows.Where(predicate)
-                            where !prohibitedWorkflowIds.Contains(wf.WorkflowId)
-                            select wf;
-
-            workflows = ApplyBrowse(
-                workflows.WhereReviewExists().ApplyStandardIncludes(),
-                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
-
-            PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(workflows);
-            PopulateViewInfoIntoViewBag(workflows);
-
-            return View(workflows);
-        }
-
-        [ActionName(ActionNames.RequestForReassignments)]
-        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
-        [Route("ulos/reassignments")]
-        public ActionResult RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
-        {
-            SetNoDataMessage(ConfigOptions.Value.NoReassignments);
-            ViewBag.ShowReassignButton = true;
-            var regionIds = (IList<int?>)new List<int?>();
-            var reassignGroupUserId = PortalHelpers.ReassignGroupUserId;
-
-            foreach (var g in GetUserGroups(CurrentUserId))
-            {
-                if (g.UserId != reassignGroupUserId) continue;
-                regionIds = User.GetReassignmentGroupRegions();
-                ShowGroupRegionMembershipAlert(new[] { Properties.Settings.Default.ReassignGroupUserName }, regionIds);
-                goto Browse;
-            }
+          
             AddPageAlert($"You're not a member of the reassignments group and will not see any items.", false, PageAlert.AlertTypes.Warning);
 
-Browse:
+            Browse:
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.UnliquidatedObligation.RegionId)).WhereReviewExists()
-                .ApplyStandardIncludes(),
+                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.TargetUlo.RegionId)).WhereReviewExists(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
 
             PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(workflows);
@@ -552,108 +479,8 @@ Browse:
             return View(workflows);
         }
 
-        private bool ShowGroupRegionMembershipAlert(IEnumerable<string> groupNames, ICollection<int?> regionIds)
-        {
-            if (regionIds.Count > 0)
-            {
-                var myRegions = regionIds.ConvertAll(rid => PortalHelpers.GetRegionName(rid.GetValueOrDefault())).WhereNotNull().Format(", ");
-                AddPageAlert($"You're a member of the groups: {groupNames.Format(", ")}; with regions: {myRegions}", false, PageAlert.AlertTypes.Info);
-            }
-            else
-            {
-                AddPageAlert($"You're a member of the groups: {groupNames.Format(", ")}; but haven't been assigned any regions", false, PageAlert.AlertTypes.Warning);
-            }
-            return true;
-        }
 
-        [ActionName(ActionNames.Search)]
-        [Route("ulos/search")]
-        public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int[] region, int[] zone, string fund, string[] baCode, string pegasysTitleNumber, string pegasysVendorName, string[] docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string[] reasons, bool[] valid, string[] status, int[] reviewId, bool? reassignableByMe,
-            string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
-        {
-            SetNoDataMessage(ConfigOptions.Value.NoSearchResults);
-            var wfPredicate = PortalHelpers.GenerateWorkflowPredicate(this.User, uloId, pegasysDocumentNumber, organization, region, zone, fund,
-              baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId, reassignableByMe);
-            bool hasFilters = wfPredicate != null || Request["f"] != null;
-            if (!hasFilters)
-            {
-                wfPredicate = PredicateBuilder.Create<Workflow>(wf => false);
-            }
-            else if (wfPredicate == null)
-            {
-                wfPredicate = PredicateBuilder.Create<Workflow>(wf => true);
-            }
-
-            var workflows = ApplyBrowse(
-                DB.Workflows.AsNoTracking().Where(wfPredicate).
-                Include(wf => wf.UnliquidatedObligation).AsNoTracking().
-                Include(wf => wf.UnliquidatedObligation.Region).AsNoTracking().
-                Include(wf => wf.UnliquidatedObligation.Region.Zone).AsNoTracking().
-                Include(wf => wf.RequestForReassignments).AsNoTracking().
-                Include(wf => wf.AspNetUser).AsNoTracking().
-                WhereReviewExists(),
-                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToList();
-
-            var baCodes = Cacher.FindOrCreateValWithSimpleKey(
-                    Cache.CreateKey(nameof(Search), "baCodes"),
-                    () => DB.UnliquidatedObligations.Select(u => u.Prog).Distinct().OrderBy(p => p).ToList().AsReadOnly(),
-                    PortalHelpers.MediumCacheTimeout
-                    );
-
-            var activityNames = GetOrderedActivityNameByWorkflowName().AtomEnumerable.ConvertAll(z => z.Value).Distinct().OrderBy().ToList();
-
-            var statuses = Cacher.FindOrCreateValWithSimpleKey(
-                "AllWorkflowStatusNames",
-                () =>
-                {
-                    var names = new List<string>();
-                    foreach (var wd in DB.WorkflowDefinitions.Where(wfd => wfd.IsActive == true))
-                    {
-                        names.AddRange(wd.Description.WebActionWorkflowActivities.Select(z => z.ActivityName));
-                    }
-                    return names.Distinct().OrderBy();
-                },
-                PortalHelpers.MediumCacheTimeout);
-
-            PopulateViewInfoIntoViewBag(workflows);
-
-            return View(
-                "~/Views/Ulo/Search/Index.cshtml",
-                new FilterViewModel(
-                    workflows,
-                    PortalHelpers.CreateDocumentTypeSelectListItems().Select(docType),
-                    PortalHelpers.CreateZoneSelectListItems().Select(zone),
-                    PortalHelpers.CreateRegionSelectListItems().Select(region),
-                    baCodes,
-                    activityNames,
-                    statuses,
-                    Cacher.FindOrCreateValWithSimpleKey(
-                        "ReasonsIncludedInReview",
-                        () => DB.UnliquidatedObligations.Select(z => z.ReasonIncludedInReview).Distinct().WhereNotNull().OrderBy().AsReadOnly(),
-                        PortalHelpers.MediumCacheTimeout),
-                    hasFilters
-                ));
-        }
-
-        private MultipleValueDictionary<string, string> GetOrderedActivityNameByWorkflowName()
-            => Cacher.FindOrCreateValWithSimpleKey(
-                nameof(GetOrderedActivityNameByWorkflowName),
-                () =>
-                {
-                    var m = new MultipleValueDictionary<string, string>(null, () => new List<string>());
-                    foreach (var wd in DB.WorkflowDefinitions.Where(wfd => wfd.IsActive == true))
-                    {
-                        foreach (var activityName in wd.Description.WebActionWorkflowActivities.OrderBy(a => a.SequenceNumber).Select(a => a.ActivityName))
-                        {
-                            m.Add(wd.WorkflowDefinitionName, activityName);
-                        }
-                    }
-                    return m;
-                },
-                PortalHelpers.MediumCacheTimeout
-                );
-
-
+#if false
         [HttpGet]
         [Route("ulos/{uloId}/notes")]
         public async Task<JsonResult> GetNotesAsync(int uloId)
