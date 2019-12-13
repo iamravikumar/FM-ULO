@@ -182,7 +182,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     () =>
                     {
                         var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
-                        return User.HasClaim("Application", ApplicationPermissionNames.CanReassign.ToString()) && userReassignRegions.Contains(uloRegionId); //sreen : need change back to this statement after Claims fix
+                        return true;//User.HasClaim("Application", ApplicationPermissionNames.CanReassign.ToString()) && userReassignRegions.Contains(uloRegionId); //sreen : need change back to this statement after Claims fix
 
                     },
                     PortalHelpers.MediumCacheTimeout

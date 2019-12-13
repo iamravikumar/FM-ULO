@@ -92,7 +92,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var review = await DB.Reviews.FindAsync(reviewId);
             //var reviewStats = await DB.ReviewStats.FindAsync(reviewId); //ask Jason
-            // var reviewDetailsModel = new ReviewDetailsModel(review, reviewStats);
+           // var reviewDetailsModel = new ReviewDetailsModel(review, reviewStats);
             var reviewDetailsModel = new ReviewDetailsModel(review, null);
             return reviewDetailsModel;
         }

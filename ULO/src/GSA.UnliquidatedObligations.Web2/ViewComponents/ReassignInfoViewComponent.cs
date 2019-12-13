@@ -22,7 +22,7 @@ namespace GSA.UnliquidatedObligations.Web.ViewComponents
     {
         private readonly IWorkflowManager Manager;
 
-        private readonly UloDbContext UloDb;
+        private readonly UloDbContext UloDb;        
 
         public ReassignInfoViewComponent(IWorkflowManager manager,UloDbContext context)
         {
@@ -34,7 +34,7 @@ namespace GSA.UnliquidatedObligations.Web.ViewComponents
         {
            // bulkToken = (bulkToken != null && bulkToken.IsValid) ? bulkToken : new DetailsBulkToken(CurrentUser, DB, workflowId);
             var db = UloDb;
-            var CurrentUser = bulkToken.CurrentUser;           
+            var CurrentUser = GetCurrentUser(db);            
 
             RequestForReassignment requestForReassignment = null;
             if (id.HasValue)
@@ -80,6 +80,11 @@ namespace GSA.UnliquidatedObligations.Web.ViewComponents
             }                             
             
             return strUserID;
+        }
+
+        public AspNetUser GetCurrentUser(UloDbContext uloDbContext)
+        {
+            return uloDbContext.AspNetUsers.FirstOrDefault(u => u.UserName == User.Identity.Name);            
         }
 
         public IList<SelectListItem> CreateSelectList(IEnumerable<AspNetUser> aspNetUsers)
