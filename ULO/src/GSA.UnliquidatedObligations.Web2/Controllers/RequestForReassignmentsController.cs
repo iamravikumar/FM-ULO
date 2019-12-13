@@ -23,7 +23,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
 
     //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    [Authorize(Policy = "ApplicationUser")]
+    //[Authorize(Policy = "ApplicationUser")]
     public class RequestForReassignmentsController : BasePageController
     {
         public const string Name = "RequestForReassignments";

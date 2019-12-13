@@ -194,20 +194,18 @@ else
             </tr>
         }
     </table>
-    @*
-        if (showReassignmentButton && rfrIdByWorkflow.Count > 0)
+
+    if (showReassignmentButton && rfrIdByWorkflow.Count > 0)
+    {
+        var bulkToken = ViewBag.DetailsBulkToken as RequestForReassignmentsController.DetailsBulkToken;
+        foreach (var kvp in rfrIdByWorkflow)
         {
-            var bulkToken = ViewBag.DetailsBulkToken as RequestForReassignmentsController.DetailsBulkToken;
-            foreach (var kvp in rfrIdByWorkflow)
-            {
-                var rfrId = kvp.Value;
-                var wf = kvp.Key;
-                Html.RenderAction(RequestForReassignmentsController.ActionNames.Details, RequestForReassignmentsController.Name, new { workflowId = wf.WorkflowId, uloRegionId = wf.RegionId, isAdmin = true, id = rfrId, bulkToken = bulkToken });
-            }
+            var rfrId = kvp.Value;
+            var wf = kvp.Key;            
+            @await Component.InvokeAsync("ReassignInfo", new { workflowId = wf.WorkflowId, uloRegionId = wf.RegionId, isAdmin = true, id = rfrId, bulkToken = bulkToken });
         }
-    *@
-    @*@await Html.PartialAsync("_PaginationPartial")
-    @await Html.PartialAsync("_NotesPanel")*@
+    }
+
 
     <div>
         <partial name="_PaginationPartial" />

@@ -20,11 +20,20 @@ namespace GSA.UnliquidatedObligations.Web.ViewComponents
 {
     public class ReassignInfoViewComponent :   ViewComponent
     {
-        internal IWorkflowManager Manager { get; private set; }
+        private readonly IWorkflowManager Manager;
+
+        private readonly UloDbContext UloDb;
+
+        public ReassignInfoViewComponent(IWorkflowManager manager,UloDbContext context)
+        {
+            UloDb = context;
+            Manager = manager;
+        }
+
         public async Task<IViewComponentResult> InvokeAsync(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false, DetailsBulkToken bulkToken = null)
         {
-            // bulkToken = (bulkToken != null && bulkToken.IsValid) ? bulkToken : new DetailsBulkToken(CurrentUser, DB, workflowId);
-            var db = bulkToken.DB;
+           // bulkToken = (bulkToken != null && bulkToken.IsValid) ? bulkToken : new DetailsBulkToken(CurrentUser, DB, workflowId);
+            var db = UloDb;
             var CurrentUser = bulkToken.CurrentUser;           
 
             RequestForReassignment requestForReassignment = null;
@@ -35,7 +44,7 @@ namespace GSA.UnliquidatedObligations.Web.ViewComponents
 
             var workflow = await db.Workflows.FindAsync(workflowId);
             
-           // var wfDesc = Manager.GetWorkflowDescriptionAsync(workflow).Result;
+            var wfDesc = Manager.GetWorkflowDescriptionAsync(workflow).Result;
 
             IList<SelectListItem> userSelectItems = new List<SelectListItem>(); ;
            
