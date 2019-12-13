@@ -206,6 +206,13 @@ else
             }
         }
     *@
-    @await Html.PartialAsync("_PaginationPartial")
-    @await Html.PartialAsync("_NotesPanel")
+    @*@await Html.PartialAsync("_PaginationPartial")
+    @await Html.PartialAsync("_NotesPanel")*@
+
+    <div>
+        <partial name="_PaginationPartial" />
+    </div>
+    <div>
+        <partial name="_NotesPanel" />
+    </div>
 }
