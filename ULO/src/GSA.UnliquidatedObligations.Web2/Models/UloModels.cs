@@ -391,29 +391,30 @@ namespace GSA.UnliquidatedObligations.Web.Models
         }
     }
 
-    public class UploadFilesModel
-    {
-        public int ReviewId { get; set; }
+    //Question to Jason
+    //public class UploadFilesModel
+    //{
+    //    public int ReviewId { get; set; }
 
-        public IList<string> PegasysFilePathsList { get; set; } = new List<string>();
+    //    public IList<string> PegasysFilePathsList { get; set; } = new List<string>();
 
-        public IList<string> RetaFileList { get; set; } = new List<string>();
+    //    public IList<string> RetaFileList { get; set; } = new List<string>();
 
-        public IList<string> EasiFileList { get; set; } = new List<string>();
+    //    public IList<string> EasiFileList { get; set; } = new List<string>();
 
-        public IList<string> One92FileList { get; set; } = new List<string>();
+    //    public IList<string> One92FileList { get; set; } = new List<string>();
 
-        public IList<string> ActiveCardholderFiles { get; set; } = new List<string>();
+    //    public IList<string> ActiveCardholderFiles { get; set; } = new List<string>();
 
-        public IList<string> PegasysOpenItemsCreditCards { get; set; } = new List<string>();
+    //    public IList<string> PegasysOpenItemsCreditCards { get; set; } = new List<string>();
 
-        public IList<string> CreditCardAliasCrosswalkFiles { get; set; } = new List<string>();
+    //    public IList<string> CreditCardAliasCrosswalkFiles { get; set; } = new List<string>();
 
-        public UploadFilesModel(int reviewId)
-        {
-            ReviewId = reviewId;
-        }
-    }
+    //    public UploadFilesModel(int reviewId)
+    //    {
+    //        ReviewId = reviewId;
+    //    }
+    //}
 
 
 #endif

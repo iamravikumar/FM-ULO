@@ -14,6 +14,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Text;
 using System.Web;
 
+
 namespace GSA.UnliquidatedObligations.Web
 {
     public static class AspHelpers
@@ -290,6 +291,20 @@ namespace GSA.UnliquidatedObligations.Web
             return new HtmlString(sb.ToString());
         }
 
+        static AspHelpers()
+        {
+            var d = new Dictionary<ReviewScopeEnum, string>();
+            foreach (var row in CSV.ParseText("Region,Region Workflow WholeAgency, ULO Workflow"))
+            {
+                if (row.Length != 2) continue;
+                var scope = Parse.ParseEnum<ReviewScopeEnum>(row[0]);
+                d[scope] = StringHelpers.TrimOrNull(row[1]);
+            }
+            WorkflowDefinitionNameByReviewScope = d.AsReadOnly();
+        }
+
+        public static readonly IDictionary<ReviewScopeEnum, string> WorkflowDefinitionNameByReviewScope;
+      
 
         #region SelectListItems
 
