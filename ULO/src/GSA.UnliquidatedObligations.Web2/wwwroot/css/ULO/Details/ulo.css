@@ -1,0 +1,30 @@
+﻿.dl-horizontal {
+    margin:5px 0 5px 0
+}
+
+.ulo-details .row .dl-horizontal dt {
+    width: auto;
+    display: inline-block;
+}
+
+.ulo-details .row .dl-horizontal dd {
+    display: inline-block;
+    margin-left: 3px;
+}
+
+.ulo-details .row:nth-child(even) {
+    background-color: #f5f5f5;
+}
+
+.panel-body .row:first-of-type {
+    margin-top: -15px;
+}
+
+.document-type-list li {
+    list-style-type: none;
+
+}
+
+.document-type-list {
+    padding-left: 0
+}

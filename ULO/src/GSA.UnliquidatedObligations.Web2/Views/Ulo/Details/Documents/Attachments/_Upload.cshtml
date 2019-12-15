@@ -1,0 +1,11 @@
+﻿@model GSA.UnliquidatedObligations.Web.Models.UploadViewModel
+
+@using (Html.BeginForm("FileUpload", "Attachments", FormMethod.Post, new { @class = "attachmentUploadForm hidden", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.DocumentIdForUpload)
+    
+    @*<input type="file" name="file" class="hidden" id="attachment-file-upload" accept="@PortalHelpers.AttachmentFileUploadAccept" multiple>*@
+    <br />
+    <input type="submit" class="hidden" id="attachment-file-submit">
+}

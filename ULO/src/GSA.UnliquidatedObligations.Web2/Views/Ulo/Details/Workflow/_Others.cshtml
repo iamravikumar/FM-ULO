@@ -1,0 +1,68 @@
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
+@model IList<GSA.UnliquidatedObligations.BusinessLayer.Data.GetUloSummariesByPdn_Result0>
+
+<div class="row otherReviews">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Other Reviews (@Model.Count)</h3>
+        </div>
+        <div class="panel-body">
+            @if (Model.Count == 0)
+            {
+                <div class="noDataMessage">This item has not been included in any other reviews yet.</div>
+            }
+            else
+            {
+            <table class="table table-responsive table-striped documents-list" id="otherReviewsTable">
+                    <tr class="documents-heading-row">
+                        <th>Workflow ID</th>
+                        <th>Review</th>
+                        <th>Review Date</th>
+                        <th>Current Activity</th>
+                        <th>Reviewer</th>
+                        @*
+        <th>Justification</th>
+                        *@
+                        <th>Comment</th>
+                        <th>Disposition</th>
+                        <th># Documents</th>
+                    </tr>
+                    @foreach (var o in Model)
+                    {
+                    <tr>
+                        <td>
+                            @Html.ActionLink(o.WorkflowId.ToString(), UloController.ActionNames.Details, new { uloId = o.UloId, workflowId = o.WorkflowId })
+                        </td>
+                        <td>
+                            @o.ReviewName
+                        </td>
+                        <td>
+                            @o.ReviewCreatedAtUtc.ToLocalTime().ToShortDateString()
+                        </td>
+                        <td>
+                            @o.WorkflowActivityName
+                        </td>
+                        <td>
+                            @o.UserName
+                        </td>
+                        @*
+        <td>
+            @o.JustificationDescription
+        </td>
+                        *@
+                        <td title="@o.Comments">
+                            @RevolutionaryStuff.Core.StringHelpers.TruncateWithEllipsis(o.Comments, 200)
+                        </td>
+                        <td>
+                            @o.Answer
+                        </td>
+                        <td>
+                            @o.DocumentCount
+                        </td>
+                    </tr>
+                    }
+            </table>
+            }
+        </div>
+    </div>
+</div>

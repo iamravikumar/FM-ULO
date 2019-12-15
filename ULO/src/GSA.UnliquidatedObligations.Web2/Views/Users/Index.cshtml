@@ -1,0 +1,137 @@
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.Web.Controllers
+@using GSA.UnliquidatedObligations.Web.Models;
+@using GSA.UnliquidatedObligations.Web;
+@using RevolutionaryStuff.Core;
+@model IEnumerable<UserModel>
+@{
+    //AspHelpers.SetTitles(PageKeys.ManageUsers, "Manage Users");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var canMakeChanges = UserHelpers.HasPermission(ApplicationPermissionNames.ManageUsers);
+    var userRoles = PortalHelpers.CreateAllGroupNamesSelectListItems();
+    var userRegions = PortalHelpers.CreateRegionSelectListItems();
+
+}
+
+<button type="button" class="btn toggler" toggleSelector=".advanced-search-settings">
+    <span>
+        Hide Filters
+    </span>
+    <span style="display:none">
+        Show Filters
+    </span>
+</button>
+@if (canMakeChanges)
+{
+    <input type="button" value="Create" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action(UsersController.ActionNames.Create)'" />
+}
+
+@using (Html.BeginForm(UsersController.ActionNames.Index, UsersController.Name, FormMethod.Get))
+{
+    <div class="container advanced-search-settings">
+        <div class="row">
+            <div class="col-sm-2">
+                <label for="q">Username/Email:</label>
+            </div>
+            <div class="col-sm-2">
+                <input type="text" name="q" value="@Context.Request.Query["q"]" />
+            </div>
+            <div class="col-sm-2">
+                <label for="region">Region:</label>
+            </div>
+            <div class="col-sm-2">
+                @Html.ListBox("region", AspHelpers.Select(userRegions, Context.Request.Query["region"]))
+            </div>
+            <div class="col-sm-2">
+                <label for="role">Role:</label>
+            </div>
+            <div class="col-sm-2">
+                @Html.ListBox("role", AspHelpers.Select(userRoles, Context.Request.Query["role"]))
+            </div>
+        </div>
+        <div class="row">
+            <button id="applyFilters" class="btn btn-primary">
+                Apply Filters
+            </button>
+            <button id="clearFilters" class="btn" filterSelector=".advanced-search-settings">
+                Clear Filters
+            </button>
+        </div>
+    </div>
+}
+
+<br />
+
+<table class="table table-responsive users-data">
+    <tr>
+        <th>@Html.SortableHeaderFor(z => z.UserName, overrideDisplayName: "User Name")</th>
+        <th>@Html.SortableHeaderFor(z => z.Email, overrideDisplayName: "Email")</th>
+        <th>@Html.SortableHeaderFor(z => z.UserType, overrideDisplayName: "User Type")</th>
+        <th>Claims</th>
+        <th>Permissions</th>
+        <th>Groups</th>
+        <th></th>
+    </tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => user.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => user.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => user.UserType)
+            </td>
+            <td>
+                <ul>
+                    @{
+                        foreach (var claim in user.Claims)
+                        {
+                            var c = claim;
+                            if (!RegexHelpers.Common.Whitespace.IsMatch(c))
+                            {
+                                c = StringHelpers.ToTitleFriendlyString(c);
+                            }
+                            <li>@c</li>
+                        }
+                    }
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    @{
+                        foreach (var claim in user.Permissions)
+                        {
+                            var c = claim;
+                            if (!RegexHelpers.Common.Whitespace.IsMatch(c))
+                            {
+                                c = StringHelpers.ToTitleFriendlyString(c);
+                            }
+                            <li>@c</li>
+                        }
+                    }
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    @{
+                        foreach (var claim in user.Groups)
+                        {
+                            <li>@claim</li>
+                        }
+                    }
+                </ul>
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { userName = user.UserName })
+            </td>
+        </tr>
+    }
+</table>
+<div>
+    <partial name="_PaginationPartial" />
+</div>
+
+@*@Html.PartialAsync("_PaginationPartial")*@

@@ -1,6 +1,4 @@
-﻿
-using GSA.UnliquidatedObligations.BusinessLayer;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+﻿using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Models;
@@ -10,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using Hangfire;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
@@ -19,7 +16,6 @@ using RevolutionaryStuff.Core.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 
@@ -27,6 +23,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 {
 
     //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
+    //[Authorize(Policy = "ApplicationUser")]
     public class RequestForReassignmentsController : BasePageController
     {
         public const string Name = "RequestForReassignments";
@@ -141,7 +138,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 
         [ActionName(ActionNames.Details)]
-        public IActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false, DetailsBulkToken bulkToken = null)
+        public IActionResult Details(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false, DetailsBulkToken bulkToken = null) 
         {
             bulkToken = (bulkToken != null && bulkToken.IsValid) ? bulkToken : new DetailsBulkToken(CurrentUser, DB, workflowId);
             var db = bulkToken.DB;
@@ -185,7 +182,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     () =>
                     {
                         var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
-                        return User.HasClaim("Application", ApplicationPermissionNames.CanReassign.ToString()) && userReassignRegions.Contains(uloRegionId); //sreen : need change back to this statement after Claims fix
+                        return true;//User.HasClaim("Application", ApplicationPermissionNames.CanReassign.ToString()) && userReassignRegions.Contains(uloRegionId); //sreen : need change back to this statement after Claims fix
 
                     },
                     PortalHelpers.MediumCacheTimeout

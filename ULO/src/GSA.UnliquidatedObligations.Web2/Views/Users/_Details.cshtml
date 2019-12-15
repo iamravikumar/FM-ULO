@@ -1,0 +1,193 @@
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.Web.Controllers
+@model GSA.UnliquidatedObligations.Web.Models.UserModel
+@{
+    var createMode = Model.UserId == null;
+    var canMakeChanges = UserHelpers.HasPermission(ApplicationPermissionNames.ManageUsers);
+    var hiddenHtmlAttributes = new { @class = "hidden" };
+    var readonlyHtmlAttributes = new { @readonly = "readonly" };
+    var disabledHtmlAttributes = new { @disabled = "disabled" };
+    var textboxHtmlAttributes = canMakeChanges ? (object) new { } : (object) readonlyHtmlAttributes;
+    var checkboxHtmlAttributes = canMakeChanges ? (object)new { } : (object) disabledHtmlAttributes;
+    var groupNameSelectItems = ((IList<string>)ViewBag.GroupNames).ConvertToSelectList();
+    var applicationPermissionSelectItems = AspHelpers.ConvertNamesToSelectList<ApplicationPermissionNames>();
+}
+@using (Html.BeginForm(UsersController.ActionNames.Save, UsersController.Name, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(Model => Model.UserId)
+    <div>
+        <hr />
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.UserName)
+            </div>
+            <div class="col-sm-10">
+                @Html.TextBoxFor(model => model.UserName, textboxHtmlAttributes)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Email)
+            </div>
+            <div class="col-sm-10">
+                @Html.TextBoxFor(model => model.Email, textboxHtmlAttributes)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.UserType)
+            </div>
+            <div class="col-sm-10">
+                @if (createMode)
+                {
+                    @Html.DropDownListFor(z => z.UserType, AspHelpers.CreateUserTypesSelectListItems(), AspHelpers.PleaseSelectOne)
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.UserType, textboxHtmlAttributes)
+                }
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                Group Membership Regions
+            </div>
+            <div class="col-sm-10">
+                @Html.ListBoxFor(z => z.GroupMembershipRegionIds, PortalHelpers.CreateRegionSelectListItems(), canMakeChanges ? (object)new { size = 12 } : (object)new { size = 12, @disabled = "disabled" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Groups)
+            </div>
+            <div class="col-sm-10">
+                @Html.CheckBoxListFor(z => z.Groups, groupNameSelectItems, htmlAttributes: checkboxHtmlAttributes)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Permissions)
+            </div>
+            <div class="col-sm-10">
+                @Html.CheckBoxListFor(z => z.Permissions, applicationPermissionSelectItems, htmlAttributes: checkboxHtmlAttributes)
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Claims)
+            </div>
+            <div class="col-sm-10">
+                <table class="table table-responsive users-data advanced-search-settings" id="SCClaimsTable">
+                    <thead>
+                        <tr>
+                            <th>Doc Type</th>
+                            <th>BA Code</th>
+                            <th>Org Code</th>
+                            <th>Region</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    @{ 
+                        var m = new RevolutionaryStuff.Core.Collections.MultipleValueDictionary<string, GSA.UnliquidatedObligations.BusinessLayer.Data.AspnetUserSubjectCategoryClaim>();
+                        foreach (var claim in Model.SubjectCategoryClaims)
+                        {
+                            var key = RevolutionaryStuff.Core.Caching.Cache.CreateKey(claim.BACode, claim.OrgCode, claim.Region);
+                            m.Add(key, claim);
+                        }
+                    }
+                    @foreach (var key in m.Keys)
+                    {
+                        var claim = m[key].First();
+                        var items = PortalHelpers.CreateDocumentTypeSelectListItems().SelectedValues(m[key].Select(z => z.DocumentType));
+                        <tr>
+                            <td>
+                                @Html.ListBox("scc.docType", items, new { multiple = "multiple" })
+                                <input name="scc.docType" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+                            </td>
+                            <td>
+                                @claim.BACode
+                                @Html.TextBox("scc.bacode", claim.BACode, hiddenHtmlAttributes)
+                                <input name="scc.bacode" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+                            </td>
+                            <td>
+                                @claim.OrgCode
+                                @Html.TextBox("scc.orgcode", claim.OrgCode, hiddenHtmlAttributes)
+                                <input name="scc.orgcode" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+                            </td>
+                            <td>
+                                @(claim.Region==null?"*":claim.Region.ToString())
+                                @Html.TextBox("scc.region", claim.Region, hiddenHtmlAttributes)
+                                <input name="scc.region" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+                            </td>
+                            <td>
+@if (canMakeChanges)
+{
+                                <a href="#" onclick="DeleteMyRow(event, this)">Delete</a>
+}
+                            </td>
+                        </tr>
+                    }
+                </table>
+@if (canMakeChanges)
+{
+                <button type="button" class="btn" onclick="AddNewClaim(event)">Add New Claim</button>
+}
+            </div>
+        </div>
+    </div>
+
+    if (canMakeChanges)
+    {
+    <p>
+        <button type="submit" class="btn btn-primary">@ViewBag.SubmitButtonText</button>
+    </p>
+    }
+}
+
+<table class="hidden" id="SCClaimTemplateRowContainer">
+    <tr>
+        <td>
+            @Html.ListBox("scc.docType", PortalHelpers.CreateDocumentTypeSelectListItems(), new { multiple = "multiple" })
+            <input name="scc.docType" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+        </td>
+        <td>
+            <input type="text" name="scc.bacode" required="required" maxlength="4" />
+            <input name="scc.bacode" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+        </td>
+        <td>
+            <input type="text" name="scc.orgcode" required="required" maxlength="8" />
+            <input name="scc.orgcode" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+        </td>
+        <td>
+            @Html.DropDownList("scc.region", PortalHelpers.CreateRegionSelectListItems(false), new { multiple = "multiple" })
+            <input name="scc.region" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
+        </td>
+        <td><a href="#" onclick="DeleteMyRow(event, this)">Delete</a></td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+    function DeleteMyRow(event, el) {
+        //alert("DeleteMyRow " + event + " " + el.tagName + " " + el.parentElement.tagName);
+        while (el != null && el.tagName != "TR") {
+            el = el.parentElement;
+        }
+        if (el != null) {
+            //alert(el.parentElement.tagName + " removing " + el.tagName);
+            el.parentElement.removeChild(el);
+        }
+        event.stopPropagation();
+        return false;
+    }
+    function AddNewClaim(event) {
+        //alert("adding");
+        var template = $("#SCClaimTemplateRowContainer").children(0);
+        //alert(template.html());
+        var jel = template.clone().appendTo("#SCClaimsTable");
+        jel.each(function (n, el) { setupFancyMultiselect(el); });        
+        event.stopPropagation();
+        return false;
+    }
+</script>

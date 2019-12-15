@@ -11,6 +11,8 @@ using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -40,6 +42,8 @@ namespace GSA.UnliquidatedObligations.Web
         private TimeZoneInfo DisplayTimeZone_p;
 
         public const string Wildcard = "*";
+
+        public const string FormFieldsBreak = "`";
         public TimeSpan MediumCacheTimeout =>
             ConfigOptions.Value.MediumCacheTimeout;
 
@@ -57,6 +61,8 @@ namespace GSA.UnliquidatedObligations.Web
 
         public bool UseDevAuthentication =>
             AccountConfigOptions.Value.UseDevAuthentication;
+
+       
 
         public class Config
         {
@@ -88,12 +94,15 @@ namespace GSA.UnliquidatedObligations.Web
         private readonly ICacher Cacher;
         private readonly ILogger Logger;
 
-        public PortalHelpers(IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
+        private readonly IHostingEnvironment HostingEnvironment;
+
+        
+        public PortalHelpers(IHostingEnvironment hostingEnvironment,IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
         {
             Requires.NonNull(sprintConfigOptions, nameof(sprintConfigOptions));
             Requires.NonNull(configOptions, nameof(configOptions));
             Requires.NonNull(accountConfigOptions, nameof(accountConfigOptions));
-
+            HostingEnvironment = hostingEnvironment;
             SprintConfigOptions = sprintConfigOptions;
             ConfigOptions = configOptions;
             AccountConfigOptions = accountConfigOptions;
@@ -134,22 +143,22 @@ namespace GSA.UnliquidatedObligations.Web
                },
                MediumCacheTimeout
                ).Copy();
-       
+
 
         public IList<SelectListItem> CreateAllGroupNamesSelectListItems()
-        => Cacher.FindOrCreateValue(
-            nameof(CreateAllGroupNamesSelectListItems),
-            () =>
-            DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
-                                r => new SelectListItem
-                                {
-                                    Text = r.UserName,
-                                    Value = r.Id
-                                }).
-                                ToList().
-                                AsReadOnly(),
-            MediumCacheTimeout
-            ).Copy();
+      => Cacher.FindOrCreateValue(
+          nameof(CreateAllGroupNamesSelectListItems),
+          () =>
+          DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
+                              r => new SelectListItem
+                              {
+                                  Text = r.UserName,
+                                  Value = r.Id
+                              }).
+                              ToList().
+                              AsReadOnly(),
+          MediumCacheTimeout
+          ).Copy();
 
         public IList<SelectListItem> CreateReviewSelectListItems()
         => Cacher.FindOrCreateValue(Cache.CreateKey(nameof(CreateReviewSelectListItems)),
@@ -203,10 +212,9 @@ namespace GSA.UnliquidatedObligations.Web
         ///
         public IList<SelectListItem> CreateDocumentTypeSelectListItems()
           => ConfigOptions.Value.DocTypes.Where(r => r.Length == 2).ConvertAll(
-              r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) }).Copy();
+              r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) }).Copy();      
 
-        //public IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
-        //    => items.OrderBy(z => z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
+       
         public string GetUserId(string username)
         {
             if (username != null)
@@ -269,7 +277,44 @@ namespace GSA.UnliquidatedObligations.Web
             return predicate;
         }
 
-       
+        public string GetStorageFolderPath(string relativePath, bool createFolderInNotExists = true)
+        {
+            relativePath = relativePath ?? "";
+            var dir = "%temp%";
+            if (0 == string.Compare(dir, "%temp%", true))
+            {
+                dir = Path.GetTempPath();
+            }
+            else if (dir.StartsWith("~"))
+            {
+                dir = HostingEnvironment.ApplicationName;
+            }
+            var forwardSlash = dir.Contains("/");
+            dir = dir.Replace("\\", "/");
+            if (!dir.EndsWith("/"))
+            {
+                dir += "/";
+            }
+            relativePath = relativePath.Replace("\\", "/");
+            if (relativePath.StartsWith("/"))
+            {
+                relativePath = relativePath.Substring(1);
+            }
+            var path = dir + relativePath;
+            if (!forwardSlash)
+            {
+                path = path.Replace("/", "\\");
+            }
+            if (createFolderInNotExists)
+            {
+                dir = Path.GetDirectoryName(path);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+            }
+            return path;
+        }
 
         public Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(IPrincipal currentUser, int? uloId, string pegasysDocumentNumber, string organization,
          IList<int> regions, IList<int> zones, string fund, IList<string> baCode, string pegasysTitleNumber, string pegasysVendorName, IList<string> docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, IList<string> reasonIncludedInReview, IList<bool> valid, IList<string> status, IList<int> reviewId, bool? reassignableByMe)
@@ -624,11 +669,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             return hasFilters ? predicate : null;
         }
-
-        //SuggestedReviewerRequestForReassignments
-
-        //public RequestForReassignment GetReassignmentRequest(this Workflow wf)
-        //   => wf.WorkflowRequestForReassignments.OrderByDescending(z => z.RequestForReassignmentID).FirstOrDefault();
-
+       
+       
     }
 }

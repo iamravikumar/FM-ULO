@@ -65,7 +65,7 @@ namespace GSA.UnliquidatedObligations.Web
             ConfigureOptions<PortalHelpers.Config>(PortalHelpers.Config.ConfigSectionName);
             ConfigureOptions<UserHelpers.Config>(UserHelpers.Config.ConfigSectionName);
             ConfigureOptions<BackgroundTasks>(BackgroundTasks.Config.ConfigSectionName);
-            ConfigureOptions<UloController.Config>(UloController.Config.ConfigSectionName);
+            ConfigureOptions<UloController.Config>(UloController.Config.ConfigSectionName);            
             ConfigureOptions<AccountController.Config>(AccountController.Config.ConfigSectionName);
             ConfigureOptions<LegacyFormsAuthenticationService.Config>(LegacyFormsAuthenticationService.Config.ConfigSectionName);
             ConfigureOptions<WorkflowManager.Config>(WorkflowManager.Config.ConfigSectionName);

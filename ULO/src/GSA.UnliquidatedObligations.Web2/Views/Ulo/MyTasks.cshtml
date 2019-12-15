@@ -5,5 +5,7 @@
 //    this.SetTitles(PageKeys.MyTasks, "My Tasks");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-@await Html.PartialAsync("~/Views/Ulo/_ListableWorkflowsListing.cshtml", Model)
+    <div>
+        <partial name="_ListableWorkflowsListing" model=Model />
+    </div>
+@*@await Html.PartialAsync("~/Views/Ulo/_ListableWorkflowsListing.cshtml", Model)*@

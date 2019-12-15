@@ -17,10 +17,13 @@
         <div class="row vertical-align">
             <div class="col-sm-4">
                 <label for="reviewId">Review:</label>
-                @Html.ListBox("reviewId", Model.Reviews, new { multiple="multiple" })
+                @*@Html.ListBox("reviewId", Model.Reviews, new { multiple="multiple" })*@
+                <select asp-for="Reviews"
+                        asp-items="Model.Reviews">
+                </select>
             </div>
             <div class="col-sm-4">
-                <label for="organization">Zone:</label>
+                <label for="zone">Zone:</label>
                 @Html.ListBox("zone", Model.Zones, new { multiple = "multiple" })
             </div>
             <div class="col-sm-4">

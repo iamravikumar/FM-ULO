@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
@@ -46,7 +46,16 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             return Workflows.Where(predicate);
         }
 
-       
+        public ICollection<Document> GetUniqueMissingLineageDocuments(Workflow wf)
+             => GetUniqueMissingLineageDocuments(wf, GetUloSummariesByPdnAsync(wf.TargetUlo.PegasysDocumentNumber).ExecuteSynchronously().Select(z => z.WorkflowId));
+
+        public ICollection<Document> GetUniqueMissingLineageDocuments(Workflow wf, IEnumerable<int> otherWorkflowIds)
+        {
+            var others = new List<int>(otherWorkflowIds);
+            var otherDocsByName = Documents.Where(d => others.Contains(d.WorkflowId)).OrderByDescending(d => d.CreatedAtUtc).ToDictionaryOnConflictKeepLast(d => d.DocumentName, d => d);
+            wf.WorkflowDocuments.ForEach(d => otherDocsByName.Remove(d.DocumentName));
+            return otherDocsByName.Values;
+        }
 
 
     }

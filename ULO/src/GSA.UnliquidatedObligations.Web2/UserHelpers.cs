@@ -9,6 +9,8 @@ using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq.Expressions;
+using System;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -148,12 +150,13 @@ namespace GSA.UnliquidatedObligations.Web
                            .AsReadOnly()
                    ,
                PortalHelpers.MediumCacheTimeout
-               );       
+               );
+
+      
 
         public bool HasPermission(ApplicationPermissionNames permissionName, IPrincipal user = null)
         {
             return true;
-
             //user = user ?? Acc.HttpContext?.User;
             //if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
             //{
@@ -161,20 +164,24 @@ namespace GSA.UnliquidatedObligations.Web
             //        Cache.CreateKey(user.Identity.Name, permissionName),
             //        () =>
             //        {
-            //            var claims = DB.AspNetUsers.Include(u => u.UserAspNetUserClaims).AsNoTracking().FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims();
+            //            var claims = DB.AspNetUserClaims.FirstOrDefault(u => u.UserId == GetUserId(user.Identity.Name));
             //            if (claims != null)
             //            {
-            //                return claims.GetApplicationPerimissionRegions(permissionName).Count > 0;
+            //                return ClaimHelpercs.GetClaims(DB.AspNetUserClaims.Where(u => u.UserId == GetUserId(user.Identity.Name)).ToList()).GetApplicationPerimissionRegions(permissionName).Count > 0;
             //            }
             //            return false;
             //        }, PortalHelpers.ShortCacheTimeout
             //        );
             //}
-            //return false;
+           // return false;
 
         }
 
-        public  IList<SelectListItem> CreateSelectList(IEnumerable<AspNetUser> aspNetUsers)
+        public Expression<Func<AspNetUser, bool>> GrouplikeUserPredicate
+           => PredicateBuilder.Create<AspNetUser>(u => u.UserType == AspNetUser.UserTypes.Group || (u.UserName == "Closed" && u.UserType == AspNetUser.UserTypes.System));
+
+
+        public IList<SelectListItem> CreateSelectList(IEnumerable<AspNetUser> aspNetUsers)
           => aspNetUsers.Select(z => CreateUserSelectListItem(z.Id, z.UserName)).ToList();
 
         public  SelectListItem ToSelectListItem(AspNetUser u, bool disabled = false)
