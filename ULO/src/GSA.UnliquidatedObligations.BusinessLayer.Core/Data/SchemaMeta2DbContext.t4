@@ -191,6 +191,19 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Sprocs/Sproc[Properties/P
 {
 	var sprocType = GetPropertyValue(z, "SprocType") ?? "NonQuery";
 	if (sprocType=="void") sprocType = "NonQuery";
+    if (sprocType=="NonQuery")
+    {
+        var rsets = z.XPathSelectElements("ResultSets/ResultSet").ToList();
+        if (rsets.Count==1)
+        {
+            var rs0 = rsets[0];
+            var rs0name = GetClassName(rs0);
+            if (rs0name!=null && GetAttrVal(rs0, "isError")=="0")
+            {
+                sprocType = "Collection:"+rs0name;
+            }        
+        }
+    }
 	var isCollection = sprocType.StartsWith("Collection");
 	var isSpecificCollection = sprocType.StartsWith("Collection:");
 	var tenantIdParameterName = GetPropertyValue(z, "TenantIdParameterName");
@@ -268,9 +281,9 @@ if (isReader)
 #>
                 };
             var conn = Database.GetDbConnection();
-			if (conn.State!=ConnectionState.Open)
+			for (int x=0;conn.State == ConnectionState.Connecting && x < ConnectingWaitSegments; ++x)
 			{
-	            await conn.OpenAsync();
+                await Task.Delay((int) (ConnectingWaitTimeout.TotalMilliseconds / ConnectingWaitSegments));
 			}
 <#+
 			if (isNonQuery)
@@ -428,7 +441,7 @@ if (superclass==null) foreach (var ip in z.XPathSelectElements("Collections/Coll
 #>
 
 		//<#=mb#>
-		[InverseProperty("<#=GetPropertyNameFromColumnName(GetAttrVal(ip, "column"))#>")]
+		[InverseProperty(nameof(<#=inversePropertyTypeName#>.<#=GetPropertyNameFromColumnName(GetAttrVal(ip, "column"))#>))]
 		[JsonIgnore]
         [IgnoreDataMember]
         public List<<#=inversePropertyTypeName#>> <#=inversePropertyFieldName#> { get; set; } = new List<<#=inversePropertyTypeName#>>();
@@ -658,7 +671,7 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	}
 #>
 		[Column("<#=GetAttrVal(f, "name")#>")]
-		<#=accessModifier#> <#=inheritanceModifier==null?"":inheritanceModifier+" "#><#=dataType#> <#=propertyName#> { get; set; } <#=(defaultValue??"")#>	
+		<#=accessModifier#> <#=inheritanceModifier==null?"":inheritanceModifier+" "#><#=dataType#> <#=propertyName#> {<#=inheritanceModifier=="override"?" get => base."+propertyName+"; set => base."+propertyName+"=value; ":" get; set; "#>} <#=(defaultValue??"")#>	
 
 <#+
 	if (GetAttrVal(f, "refTable")!=null || GetPropertyValue(f, "LinksTo")!=null)
@@ -820,6 +833,10 @@ foreach (var v in validators)
 
     public partial class <#=databaseContextClassName#>
     {
+        public static TimeSpan ConnectingWaitTimeout = TimeSpan.FromMilliseconds(100);
+
+        public static int ConnectingWaitSegments = 10;
+
         partial void OnAddFluentKeys(ModelBuilder modelBuilder);
 
         private void AddFluentKeys(ModelBuilder modelBuilder)
