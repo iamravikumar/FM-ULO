@@ -65,6 +65,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             Manager = manager;
             //UserManager = userManager;
             //PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
+
+//            var n = db.Notes.Include(z => z.User).FirstOrDefault();
+//            var c = db.AspNetUserClaims.Include(z => z.User).FirstOrDefault();
+//            Stuff.Noop(n, c);
         }
 
         private void PopulateTabsIntoViewBag(IEnumerable<WorkflowListTab> tabs)
