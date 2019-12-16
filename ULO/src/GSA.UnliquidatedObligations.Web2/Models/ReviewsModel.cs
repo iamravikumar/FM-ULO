@@ -79,11 +79,11 @@ namespace GSA.UnliquidatedObligations.Web.Models
             ReviewScopes = Enum.GetValues(typeof(ReviewScopeEnum)).Cast<ReviewScopeEnum>().ToList().ConvertToSelectList();
         }
 
-        public ReviewModel(IList<int> permissableRegionIds)
+        public ReviewModel(IList<int> permissableRegionIds, PortalHelpers portalHelpers)
             : this()
         {
             var permissibleVals = permissableRegionIds.ConvertAll(r => r.ToString()).Distinct().ToDictionary(z => z, z=>true);
-            //RegionChoices = portalHelpers.CreateRegionSelectListItems().Where(s => permissibleVals.ContainsKey(s.Value)).ToList(); //question : Jason
+            RegionChoices = portalHelpers.CreateRegionSelectListItems().Where(s => permissibleVals.ContainsKey(s.Value)).ToList(); 
             ReviewDateInitiated = DateTime.Today;
         }
     }

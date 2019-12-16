@@ -52,6 +52,8 @@ namespace GSA.UnliquidatedObligations.Web
 
         public bool UseOldGetEligibleReviewersAlgorithm => ConfigOptions.Value.UseOldGetEligibleReviewersAlgorithm;
 
+        public bool SendBatchEmailsDuringAssignWorkflows => ConfigOptions.Value.SendBatchEmailsDuringAssignWorkflows;
+
         public string GetEligibleReviewersQualifiedUsernameFormat => ConfigOptions.Value.GetEligibleReviewersQualifiedUsernameFormat;
 
         public string GetEligibleReviewersNotQualifiedUsernameFormat => ConfigOptions.Value.GetEligibleReviewersNotQualifiedUsernameFormat;
@@ -75,6 +77,8 @@ namespace GSA.UnliquidatedObligations.Web
             public string[][] DocTypes { get; set; }
 
             public bool UseOldGetEligibleReviewersAlgorithm { get; }
+
+            public bool SendBatchEmailsDuringAssignWorkflows { get; }
 
             public string GetEligibleReviewersQualifiedUsernameFormat { get; set; }
 

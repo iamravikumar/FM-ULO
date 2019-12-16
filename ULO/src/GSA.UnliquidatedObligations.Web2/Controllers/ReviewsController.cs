@@ -90,10 +90,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private async Task<ReviewDetailsModel> CreateReviewDetailsModelAsync(int reviewId)
         {
-            var review = await DB.Reviews.FindAsync(reviewId);
-            //var reviewStats = await DB.ReviewStats.FindAsync(reviewId); //ask Jason
-           // var reviewDetailsModel = new ReviewDetailsModel(review, reviewStats);
-            var reviewDetailsModel = new ReviewDetailsModel(review, null);
+            var review = await DB.Reviews.FindAsync(reviewId);            
+            var reviewStats = DB.ReviewStats.FirstOrDefault(z=>z.ReviewId==reviewId); // ask Jason as changed from FindAsync to FirstOrDefault 
+            var reviewDetailsModel = new ReviewDetailsModel(review, reviewStats);            
             return reviewDetailsModel;
         }
 
@@ -158,7 +157,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private Task<ReviewModel> CreateReviewModelAsync()
         {
             var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanCreateReviews).ToList();
-            return Task.FromResult(new ReviewModel(claimRegionIds));
+            return Task.FromResult(new ReviewModel(claimRegionIds,PortalHelpers));
         }
 
         // GET: Review/Create
@@ -174,6 +173,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // POST: Review/Create
         [HttpPost]
         [Route("reviews/create")]
+        [Obsolete]
         public async Task<ActionResult> Create(
             [Bind(new[]{
                 nameof(ReviewModel.RegionId),
@@ -301,13 +301,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                 var uploadFilesJobId = BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.UploadFiles(uploadFiles));
 
-                //var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>(uploadFilesJobId,
-                //    bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, review.ReviewDateInitiated.Value));
+                var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>(uploadFilesJobId,
+                    bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, review.ReviewDateInitiated.Value));
 
-               // BackgroundJob.ContinueJobWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId, Properties.Settings.Default.SendBatchEmailsDuringAssignWorkflows));
+                BackgroundJob.ContinueJobWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId, PortalHelpers.SendBatchEmailsDuringAssignWorkflows));
                 return RedirectToIndex();
             }
-ErrorReturn:
+    ErrorReturn:
             var m = await CreateReviewModelAsync();
             reviewModel.RegionChoices = m.RegionChoices;
             reviewModel.ReviewTypes = m.ReviewTypes;
