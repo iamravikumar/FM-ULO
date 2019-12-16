@@ -14,6 +14,8 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Text;
 using System.Web;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -179,6 +181,12 @@ namespace GSA.UnliquidatedObligations.Web
             }
         }
 
+        public static T BodyAsJsonObject<T>(this HttpRequest req)
+        {
+            req.Body.Seek(0, SeekOrigin.Begin);
+            var json = new StreamReader(req.Body).ReadToEnd();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+        }
 
 #if false
 

@@ -13,14 +13,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
 using Serilog;
-using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
-using GSA.UnliquidatedObligations.Web.Services;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-using System;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -155,7 +152,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, otherDocs, belongs));
         }
 
-       
+
         private bool BelongsToMyUnassignmentGroup(string ownerUserId, int regionId)
         {
 
@@ -503,38 +500,38 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         /// <remarks>THIS IS FOR THE BOT!  DO NOT CHANGE THE SIGNATURE</remarks>
         [HttpPost]
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CreateFinancialActivity)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CreateFinancialActivity)]
         [Route("ulos/{uloId}/financialActivities/create")]
-        //public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
-        //    //=> CreateFromJsonBody<CreateFinancialActivityData>(async d =>
-        //    //{               
-        //    //    //var fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
-        //    //    if (fa == null)
-        //    //    {
-        //    //        //DB.FinancialActivities.Add(new FinancialActivity
-        //    //        //{
-        //    //        //    UloId = uloId,
-        //    //        //    ActivityDate = d.ActivityDate,
-        //    //        //    ActivityType = d.ActivityType,
-        //    //        //    ReferenceNumber = d.ReferenceNumber,
-        //    //        //    Amount = d.Amount,
-        //    //        //    Description = d.Description
-        //    //        //});
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        fa.ActivityDate = d.ActivityDate;
-        //    //        fa.ActivityType = d.ActivityType;
-        //    //        fa.Amount = d.Amount;
-        //    //        fa.Description = d.Description;
-        //    //    }
-        //    });
+        public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
+            => CreateFromJsonBody<CreateFinancialActivityData>(async d =>
+            {
+                var fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
+                if (fa == null)
+                {
+                    DB.FinancialActivities.Add(new FinancialActivity
+                    {
+                        UloId = uloId,
+                        ActivityDate = d.ActivityDate,
+                        ActivityType = d.ActivityType,
+                        ReferenceNumber = d.ReferenceNumber,
+                        Amount = d.Amount,
+                        Description = d.Description
+                    });
+                }
+                else
+                {
+                    fa.ActivityDate = d.ActivityDate;
+                    fa.ActivityType = d.ActivityType;
+                    fa.Amount = d.Amount;
+                    fa.Description = d.Description;
+                }
+            });
 
         private async Task<JsonResult> CreateFromJsonBody<TJsonBody>(Func<TJsonBody, Task> addAsync)
         {
             try
             {
-                var d = AspHelpers.BodyAsJsonObject<TJsonBody>(Request);
+                var d = Request.BodyAsJsonObject<TJsonBody>();
                 await addAsync(d);
                 await DB.SaveChangesAsync();
                 return Json(true);

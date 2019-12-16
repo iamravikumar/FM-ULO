@@ -39,5 +39,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 
         [Display(Name = "View Unassigned", Description = "Access to the \"Unassigned\" screen.")]
         CanViewUnassigned,
+
+        [Display(Name = "Create Financial Activity", Description = "BOT: Can create a financial activity.")]
+        CreateFinancialActivity,
     }
 }
