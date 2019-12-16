@@ -13,7 +13,8 @@ using RevolutionaryStuff.Core;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Text;
 using System.Web;
-
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -304,7 +305,15 @@ namespace GSA.UnliquidatedObligations.Web
         }
 
         public static readonly IDictionary<ReviewScopeEnum, string> WorkflowDefinitionNameByReviewScope;
-      
+
+        public static T BodyAsJsonObject<T>(HttpRequest req)
+        {
+            req.Body.Seek(0, SeekOrigin.Begin);
+            var json = new StreamReader(req.Body).ReadToEnd();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+        }
+
+
 
         #region SelectListItems
 

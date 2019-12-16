@@ -171,7 +171,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     () =>
                     {
                         var userReassignRegions = User.GetReassignmentGroupRegions();
-                        return User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId);
+                        return true;// User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId);
                     },
                     UloHelpers.MediumCacheTimeout
                     ))

@@ -22,41 +22,102 @@ namespace GSA.UnliquidatedObligations.Web.ViewComponents
     {
         private readonly IWorkflowManager Manager;
 
-        private readonly UloDbContext UloDb;        
+        private readonly UloDbContext UloDb;
 
-        public ReassignInfoViewComponent(IWorkflowManager manager,UloDbContext context)
+        private readonly PortalHelpers PortalHelpers;
+
+        private readonly UserHelpers UserHelpers;
+
+        private readonly ICacher Cacher;
+
+        public ReassignInfoViewComponent(IWorkflowManager manager,UloDbContext context, PortalHelpers portalHelpers, UserHelpers userHelpers, ICacher cacher)
         {
             UloDb = context;
             Manager = manager;
+            PortalHelpers = portalHelpers;
+            UserHelpers = userHelpers;
+            Cacher = cacher;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(int? id, int workflowId, int uloRegionId, string wfDefintionOwnerName = "", bool isAdmin = false, DetailsBulkToken bulkToken = null)
-        {
-           // bulkToken = (bulkToken != null && bulkToken.IsValid) ? bulkToken : new DetailsBulkToken(CurrentUser, DB, workflowId);
+        {           
             var db = UloDb;
-            var CurrentUser = GetCurrentUser(db);            
+            var CurrentUser = GetCurrentUser(db);
 
+            //Bulk Token
+            bulkToken = (bulkToken != null && bulkToken.IsValid) ? bulkToken : new DetailsBulkToken(CurrentUser, db, workflowId);
+
+            //RequestForReassignment
             RequestForReassignment requestForReassignment = null;
             if (id.HasValue)
             {
                 requestForReassignment = await db.RequestForReassignment.Include(z => z.UnliqudatedWorkflowQuestions).FirstOrDefaultAsync(r => r.RequestForReassignmentID == id.Value);
             }
 
-            var workflow = await db.Workflows.FindAsync(workflowId);
-            
+
+            //workflow
+            var workflow = await db.Workflows.FindAsync(workflowId);            
             var wfDesc = Manager.GetWorkflowDescriptionAsync(workflow).Result;
 
-            IList<SelectListItem> userSelectItems = new List<SelectListItem>(); ;
-           
+            string groupOwnerId;
+            if (wfDefintionOwnerName == "")
+            {
+                var currentActivity = wfDesc.WebActionWorkflowActivities
+                    .FirstOrDefault(a => a.WorkflowActivityKey == workflow.CurrentWorkflowActivityKey);
+                groupOwnerId = GetUserId(currentActivity.OwnerUserName, db);
+            }
+            else
+            {
+                groupOwnerId = GetUserId(wfDefintionOwnerName, db);
+            }
+
+            //User
+            IList<SelectListItem> userSelectItems = new List<SelectListItem>();
+            if (PortalHelpers.UseOldGetEligibleReviewersAlgorithm)
+            {
+                var prohibitedUserIds = bulkToken.ProhibitedOwnerIdsByWorkflowId[workflowId];
+
+                userSelectItems = Cacher.FindOrCreateValue(
+                    Cache.CreateKey(groupOwnerId, uloRegionId, "fdsfdsaf"),
+                    () => db.UserUsers
+                        .Where(uu => uu.ParentUserId == groupOwnerId && uu.RegionId == uloRegionId && uu.ChildUser.UserType == AspNetUser.UserTypes.Person)
+                        .Select(uu => new { UserName = uu.ChildUser.UserName, UserId = uu.ChildUserId }).ToList(),
+                        PortalHelpers.MediumCacheTimeout
+                        ).ConvertAll(z => CreateUserSelectListItem(z.UserId, z.UserName, prohibitedUserIds.Contains(z.UserId))).ToList();
+
+                if (Cacher.FindOrCreateValue(
+                    Cache.CreateKey(uloRegionId, User.Identity.Name),
+                    () =>
+                    {
+                        var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
+                        return true;//User.HasClaim("Application", ApplicationPermissionNames.CanReassign.ToString()) && userReassignRegions.Contains(uloRegionId); //sreen : need change back to this statement after Claims fix
+
+                    },
+                    PortalHelpers.MediumCacheTimeout
+                    ))
+                {
+                    userSelectItems.Add(ToSelectListItem(bulkToken.CurrentUser));
+                }
+            }
+            else
+            {
+                userSelectItems = new List<SelectListItem>();
+                foreach (var p in bulkToken.PotentialReviewersByWorkflowId[workflowId])
+                {
+                    string text = MungeReviewerName(p.UserName, p.IsQualified);
+                    userSelectItems.Add(CreateUserSelectListItem(p.UserId, text));
+                }
+            }
+
             if (workflow.OwnerUserId == GetUserId(CurrentUser.UserName,db))
             {
                 userSelectItems.Remove(userSelectItems.Where(z => z.Value == GetUserId(CurrentUser.UserName,db)).ToList());
             }
-
             userSelectItems = userSelectItems.OrderBy(z => z.Text).ToList();
-
             userSelectItems.Insert(0, CreateUserSelectListItem(GetUserId("Reassign Group",db), "Reassign Group"));
 
+
+            // parameters values
             var requestForReassignmentId = requestForReassignment?.RequestForReassignmentID;
             var suggestedReviewerId = requestForReassignment != null ? requestForReassignment.SuggestedReviewerId : "";
             var justificationKey =  requestForReassignment?.UnliqudatedWorkflowQuestions.JustificationKey;
@@ -70,6 +131,9 @@ namespace GSA.UnliquidatedObligations.Web.ViewComponents
                 new RequestForReassignmentViewModel(suggestedReviewerId, justificationKey, requestForReassignmentId, comments, workflowId, uloRegionId, userSelectItems, null));
         }
 
+        private string MungeReviewerName(string username, bool? isQualified)
+           => string.Format(
+               isQualified.GetValueOrDefault() ? PortalHelpers.GetEligibleReviewersQualifiedUsernameFormat : PortalHelpers.GetEligibleReviewersNotQualifiedUsernameFormat, username);
 
         public string GetUserId(string username, UloDbContext uloDbContext)
         {

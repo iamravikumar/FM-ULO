@@ -12,16 +12,16 @@
     if(Model != null)
     {
         isActiveReassignment = Model.RequestForReassignmentId != null;
-    }    
+    }
     var reviewerLabelText = "Suggested Reviewer:";
     var buttonText = "Request Reassignment";
     var actionName = "RequestReassign";
     var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
     //if ((User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(Model.RegionId)) || isActiveReassignment)
     //{
-    //    actionName = "Reassign";
-    //    buttonText = "Reassign to Selected User";
-    //    reviewerLabelText = "Assign to Reviewer";
+    actionName = "Reassign";
+    buttonText = "Reassign to Selected User";
+    reviewerLabelText = "Assign to Reviewer";
     //}
 }
 
