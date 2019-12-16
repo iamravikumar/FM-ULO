@@ -570,6 +570,23 @@
         <Column name="EmailHtmlBody" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
       </Columns>
     </Table>
+    <Table schema="dbo" name="FinancialActivities" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="FinancialActivityId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="CreatedAtUtc" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
+        <Column name="DeletedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" isComputed="0" />
+        <Column name="UloId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="UnliquidatedObligations" />
+        <Column name="ActivityDate" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
+        <Column name="ActivityType" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" isComputed="0" />
+        <Column name="ReferenceNumber" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="100" isComputed="0" />
+        <Column name="Amount" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="money" isComputed="0" />
+        <Column name="Description" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+      </Columns>
+    </Table>
     <Table schema="dbo" name="FiscalMonthMapping" tableType="BASE TABLE" isNodeTable="0" isEdgeTable="0">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -1062,6 +1079,7 @@
         <Column name="PegasysDocumentNumberInstance" position="68" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
       </Columns>
       <Collections>
+        <Collection schema="dbo" table="FinancialActivities" column="UloId" collectionType="actual" />
         <Collection schema="dbo" table="Workflows" column="TargetUloId" collectionType="actual" />
         <Collection schema="dbo" table="Notes" column="UloId" collectionType="actual" />
       </Collections>

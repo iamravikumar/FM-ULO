@@ -19,6 +19,11 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
             : base(options)
         {}
 
+        partial void OnAddFluentKeys(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AspNetUserClaim>(e => e.HasOne(r => r.User).WithMany(u => u.UserAspNetUserClaims).HasForeignKey(r => r.UserId).HasPrincipalKey(r => r.Id));
+        }
+
         /*
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
         {
