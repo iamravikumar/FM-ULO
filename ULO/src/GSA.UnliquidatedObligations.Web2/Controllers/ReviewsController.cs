@@ -1,24 +1,25 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
-using RevolutionaryStuff.Core;
-using RevolutionaryStuff.Core.Caching;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
+using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-    //[Authorize]
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewReviews)]
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewReviews)]
     public class ReviewsController : BasePageController
     {
         public const string Name = "Reviews";
@@ -162,7 +163,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: Review/Create
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
         [ActionName(ActionNames.Create)]
         [Route("reviews/create")]
         public async Task<ActionResult> Create()

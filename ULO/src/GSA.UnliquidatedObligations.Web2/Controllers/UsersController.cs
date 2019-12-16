@@ -1,23 +1,24 @@
-﻿//using Autofac;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Identity;
 using GSA.UnliquidatedObligations.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-    //[Authorize]
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers, ApplicationPermissionNames.ViewUsers)]
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ViewUsers)]
     public class UsersController : BasePageController
     {
         public const string Name = "Users";
@@ -95,7 +96,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [Route("users/create", Order = 1)]
         [ActionName(ActionNames.Create)]
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
         public async Task<ActionResult> Create()
         {
             await PopulateDetailsViewBag();
@@ -105,7 +106,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("users/save")]
         [HttpPost]
         [ActionName(ActionNames.Save)]
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.ManageUsers)]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(
             [Bind(new[]{

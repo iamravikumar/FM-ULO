@@ -1,27 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Models;
+using GSA.UnliquidatedObligations.Web.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
 using Serilog;
-using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
-using GSA.UnliquidatedObligations.Web.Services;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-using System;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-    //[Authorize]
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    //[Authorize(Policy = "ApplicationUser")]
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class UloController : BasePageController
     {
         public const string Name = "Ulo";
@@ -363,8 +363,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         //unassigned tab
         [ActionName(ActionNames.Unassigned)]
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
-        //[Authorize(Policy = "CanViewUnassigned")]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
         [Route("ulos/unassigned")]
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -434,7 +433,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 
         [ActionName(ActionNames.RequestForReassignments)]
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
         [Route("ulos/reassignments")]
         public ActionResult RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {

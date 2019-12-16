@@ -3,13 +3,11 @@ using System.Net.Mail;
 using GSA.Authentication.LegacyFormsAuthentication;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Identity;
-using GSA.UnliquidatedObligations.Web.Permission;
 using GSA.UnliquidatedObligations.Web.Services;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using Hangfire;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -88,15 +86,7 @@ namespace GSA.UnliquidatedObligations.Web
                 .AddSignInManager<UloSignInManager>();
 
             services.AddAuthentication();
-
-            services.AddAuthorization(options =>
-            {
-                foreach (ApplicationPermissionNames permissionName in Enum.GetValues(typeof(ApplicationPermissionNames)))
-                {
-                    options.AddPolicy(permissionName.ToString(), policy => policy.Requirements.Add(new PermissionRequirement(permissionName.ToString(),permissionName)));                    
-                }
-            });
-            services.AddTransient<IAuthorizationHandler, PermissionHandler>();
+            services.UseSitePermissions();
 
             services.AddScoped<IBackgroundTasks, BackgroundTasks>();
             services.AddScoped<SmtpClient>();
@@ -108,7 +98,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddDbContext<UloDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection"), z => z.EnableRetryOnFailure(1)));
+                    Configuration.GetConnectionString(PortalHelpers.DefaultConectionStringName), z => z.EnableRetryOnFailure(1)));
 
             services.AddSingleton<ICacher>(_=>Cache.DataCacher);
              

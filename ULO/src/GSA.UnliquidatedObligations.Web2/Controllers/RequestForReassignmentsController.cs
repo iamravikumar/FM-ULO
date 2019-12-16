@@ -1,29 +1,28 @@
-﻿using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using GSA.UnliquidatedObligations.Web.Authorization;
+using GSA.UnliquidatedObligations.Web.Identity;
 using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
-using GSA.UnliquidatedObligations.Web.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    //[Authorize(Policy = "ApplicationUser")]
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class RequestForReassignmentsController : BasePageController
     {
         public const string Name = "RequestForReassignments";
@@ -273,7 +272,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName(ActionNames.BulkReassign)]
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
         public async Task<ActionResult> BulkReassign()
         {
             var workflowIds = JsonConvert.DeserializeObject<int[]>(Request.Form["WorkflowIds"]);
