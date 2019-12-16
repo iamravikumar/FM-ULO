@@ -426,7 +426,7 @@ if (superclass==null) foreach (var ip in z.XPathSelectElements("Collections/Coll
     var xp = "/SchemaMeta/Tables/Table[@name='"+ipTable+"' and @schema='"+ipSchema+"']/Columns/Column[@name='"+ipColumn+"']";
     var it = doc.XPathSelectElements(xp).FirstOrDefault();
     var accessModifier = GetAccessModifier(it);
-    if (accessModifier=="missing") continue;
+    //if (accessModifier=="missing") continue;
 	copyConstructorFieldNames.Add(inversePropertyFieldName);
 
 	//https://github.com/aspnet/EntityFrameworkCore/issues/9180
