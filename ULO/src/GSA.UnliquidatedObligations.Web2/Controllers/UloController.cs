@@ -1,28 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Models;
+using GSA.UnliquidatedObligations.Web.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
 using Serilog;
-using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
-using GSA.UnliquidatedObligations.Web.Services;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-using System;
-using Newtonsoft.Json;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-    //[Authorize]
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    //[Authorize(Policy = "ApplicationUser")]
+    [Authorize]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class UloController : BasePageController
     {
         public const string Name = "Ulo";
@@ -364,8 +364,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         //unassigned tab
         [ActionName(ActionNames.Unassigned)]
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
-        //[Authorize(Policy = "CanViewUnassigned")]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewUnassigned)]
         [Route("ulos/unassigned")]
         public async Task<ActionResult> Unassigned(string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -435,7 +434,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
 
         [ActionName(ActionNames.RequestForReassignments)]
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanReassign)]
         [Route("ulos/reassignments")]
         public ActionResult RequestForReassignments(string sortCol, string sortDir, int? page, int? pageSize)
         {
@@ -501,38 +500,38 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         /// <remarks>THIS IS FOR THE BOT!  DO NOT CHANGE THE SIGNATURE</remarks>
         [HttpPost]
-        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CreateFinancialActivity)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CreateFinancialActivity)]
         [Route("ulos/{uloId}/financialActivities/create")]
-        //public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
-        //    //=> CreateFromJsonBody<CreateFinancialActivityData>(async d =>
-        //    //{               
-        //    //    //var fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
-        //    //    if (fa == null)
-        //    //    {
-        //    //        //DB.FinancialActivities.Add(new FinancialActivity
-        //    //        //{
-        //    //        //    UloId = uloId,
-        //    //        //    ActivityDate = d.ActivityDate,
-        //    //        //    ActivityType = d.ActivityType,
-        //    //        //    ReferenceNumber = d.ReferenceNumber,
-        //    //        //    Amount = d.Amount,
-        //    //        //    Description = d.Description
-        //    //        //});
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        fa.ActivityDate = d.ActivityDate;
-        //    //        fa.ActivityType = d.ActivityType;
-        //    //        fa.Amount = d.Amount;
-        //    //        fa.Description = d.Description;
-        //    //    }
-        //    });
+        public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
+            => CreateFromJsonBody<CreateFinancialActivityData>(async d =>
+            {
+                var fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
+                if (fa == null)
+                {
+                    DB.FinancialActivities.Add(new FinancialActivity
+                    {
+                        UloId = uloId,
+                        ActivityDate = d.ActivityDate,
+                        ActivityType = d.ActivityType,
+                        ReferenceNumber = d.ReferenceNumber,
+                        Amount = d.Amount,
+                        Description = d.Description
+                    });
+                }
+                else
+                {
+                    fa.ActivityDate = d.ActivityDate;
+                    fa.ActivityType = d.ActivityType;
+                    fa.Amount = d.Amount;
+                    fa.Description = d.Description;
+                }
+            });
 
         private async Task<JsonResult> CreateFromJsonBody<TJsonBody>(Func<TJsonBody, Task> addAsync)
         {
             try
             {
-                var d = AspHelpers.BodyAsJsonObject<TJsonBody>(Request);
+                var d = Request.BodyAsJsonObject<TJsonBody>();
                 await addAsync(d);
                 await DB.SaveChangesAsync();
                 return Json(true);

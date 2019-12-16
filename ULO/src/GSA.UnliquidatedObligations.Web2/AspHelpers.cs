@@ -13,8 +13,9 @@ using RevolutionaryStuff.Core;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using System.Text;
 using System.Web;
-using System.IO;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -127,7 +128,7 @@ namespace GSA.UnliquidatedObligations.Web
             return hh.DisplayNameFor(columnExpression).ToString();
         }
 
-        public static void SetTitles(this ViewContext page, PageKeys pageKey, string title, string subTitle = null, string browserTitle = null)
+        public static void SetTitles(this RazorPage page, PageKeys pageKey, string title, string subTitle = null, string browserTitle = null)
         {
             page.ViewBag.PageKey = pageKey;
             page.ViewBag.Title = browserTitle ?? title;
@@ -180,6 +181,12 @@ namespace GSA.UnliquidatedObligations.Web
             }
         }
 
+        public static T BodyAsJsonObject<T>(this HttpRequest req)
+        {
+            req.Body.Seek(0, SeekOrigin.Begin);
+            var json = new StreamReader(req.Body).ReadToEnd();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+        }
 
 #if false
 
@@ -306,14 +313,29 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static readonly IDictionary<ReviewScopeEnum, string> WorkflowDefinitionNameByReviewScope;
 
-        public static T BodyAsJsonObject<T>(HttpRequest req)
+        /// <remarks>https://rburnham.wordpress.com/2015/03/13/asp-net-mvc-defining-scripts-in-partial-views/</remarks>
+        public static HtmlString Script(this IHtmlHelper htmlHelper, Func<object, Microsoft.AspNetCore.Mvc.Razor.HelperResult> template)
         {
-            req.Body.Seek(0, SeekOrigin.Begin);
-            var json = new StreamReader(req.Body).ReadToEnd();
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+            htmlHelper.ViewContext.HttpContext.Items["_script_" + Guid.NewGuid()] = template;
+            return HtmlString.Empty;
         }
 
-
+        /// <remarks>https://rburnham.wordpress.com/2015/03/13/asp-net-mvc-defining-scripts-in-partial-views/</remarks>
+        public static HtmlString RenderPartialViewScripts(this IHtmlHelper htmlHelper)
+        {
+            foreach (object key in htmlHelper.ViewContext.HttpContext.Items.Keys)
+            {
+                if (key.ToString().StartsWith("_script_"))
+                {
+                    var template = htmlHelper.ViewContext.HttpContext.Items[key] as Func<object, Microsoft.AspNetCore.Mvc.Razor.HelperResult>;
+                    if (template != null)
+                    {
+                        htmlHelper.ViewContext.Writer.Write(template(null));
+                    }
+                }
+            }
+            return HtmlString.Empty;
+        }
 
         #region SelectListItems
 

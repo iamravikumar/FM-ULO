@@ -56,8 +56,9 @@
                 <ul class="nav navbar-nav">
                     <li><a asp-area="">ULO</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">MyTasks</a></li>
-                    <li><a asp-area="" asp-controller="Ulo" asp-action="Unassigned">Unassigned</a></li>
                     <li><a asp-area="" asp-controller="Ulo" asp-action="Search">Search</a></li>
+                    <li><a asp-area="" asp-controller="Reports" asp-action="Index">Reports</a></li>
+                    <li><a asp-area="" asp-controller="Ulo" asp-action="Unassigned">Unassigned</a></li>
                     <li><a asp-area="" asp-controller="Ulo" asp-action="RequestForReassignments">Reassignments</a></li>
                     <li><a asp-area="" asp-controller="Reviews" asp-action="Index">Reviews</a></li>
                     <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
@@ -165,10 +166,11 @@
     </script>
     <environment include="Development">
         @*<script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
+            <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
         @*<script src="~/js/site.js" asp-append-version="true"></script>*@
         <script src="~/js/ULO/site.js"></script>
         <script src="~/js/bootstrap-multiselect.js"></script>
+
         <script src="~/js/ULO/advance.js"></script>
         <script src="~/js/ULO/attachments.js"></script>
         <script src="~/js/ULO/cookies.js"></script>
@@ -179,10 +181,11 @@
         <script src="~/js/ULO/reviews.js"></script>
         <script src="~/js/ULO/users.js"></script>
     </environment>
-    <environment exclude="Development">       
+    <environment exclude="Development">
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
     @RenderSection("Scripts", required: false)
+    @Html.RenderPartialViewScripts()
 </body>
 </html>

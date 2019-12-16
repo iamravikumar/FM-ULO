@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Web;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
-using Microsoft.AspNetCore.Hosting;
-using System.IO;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -95,15 +95,19 @@ namespace GSA.UnliquidatedObligations.Web
         private readonly UloDbContext DB;
         private readonly ICacher Cacher;
         private readonly ILogger Logger;
-
+        private readonly IConfiguration Configuration;
         private readonly IHostingEnvironment HostingEnvironment;
 
-        
-        public PortalHelpers(IHostingEnvironment hostingEnvironment,IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
+        public const string DefaultConectionStringName = "DefaultConnection";
+
+        public string DefaultUloConnectionString => Configuration.GetConnectionString(DefaultConectionStringName);
+
+        public PortalHelpers(IConfiguration configuration, IHostingEnvironment hostingEnvironment,IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
         {
             Requires.NonNull(sprintConfigOptions, nameof(sprintConfigOptions));
             Requires.NonNull(configOptions, nameof(configOptions));
             Requires.NonNull(accountConfigOptions, nameof(accountConfigOptions));
+            Configuration = configuration;
             HostingEnvironment = hostingEnvironment;
             SprintConfigOptions = sprintConfigOptions;
             ConfigOptions = configOptions;
@@ -130,18 +134,15 @@ namespace GSA.UnliquidatedObligations.Web
                nameof(CreateRegionSelectListItems),
                () =>
                {
-                   using (var db = DB)
-                   {
-                       var items = db.Regions.OrderBy(r => r.RegionName).ConvertAll(
-                           r => new SelectListItem { Text = $"{r.RegionNumber.PadLeft(2, '0')} - {r.RegionName}", Value = r.RegionId.ToString() }).
-                           OrderBy(z => z.Text).
-                           ToList();
-                       if (includeAllRegions)
-                       {
-                           items.Insert(0, new SelectListItem { Text = "*", Value = allRegionsValue });
-                       }
-                       return items.AsReadOnly();
-                   }
+                    var items = DB.Regions.AsNoTracking().OrderBy(r => r.RegionName).ConvertAll(
+                        r => new SelectListItem { Text = $"{r.RegionNumber.PadLeft(2, '0')} - {r.RegionName}", Value = r.RegionId.ToString() }).
+                        OrderBy(z => z.Text).
+                        ToList();
+                    if (includeAllRegions)
+                    {
+                        items.Insert(0, new SelectListItem { Text = "*", Value = allRegionsValue });
+                    }
+                    return items.AsReadOnly();
                },
                MediumCacheTimeout
                ).Copy();
@@ -151,7 +152,7 @@ namespace GSA.UnliquidatedObligations.Web
       => Cacher.FindOrCreateValue(
           nameof(CreateAllGroupNamesSelectListItems),
           () =>
-          DB.AspNetUsers.Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
+          DB.AspNetUsers.AsNoTracking().Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
                               r => new SelectListItem
                               {
                                   Text = r.UserName,
@@ -165,7 +166,7 @@ namespace GSA.UnliquidatedObligations.Web
         public IList<SelectListItem> CreateReviewSelectListItems()
         => Cacher.FindOrCreateValue(Cache.CreateKey(nameof(CreateReviewSelectListItems)),
             () =>
-                DB.Reviews.OrderByDescending(r => r.ReviewId).ConvertAll(
+                DB.Reviews.AsNoTracking().OrderByDescending(r => r.ReviewId).ConvertAll(
                                 r => new SelectListItem
                                 {
                                     Text = $"{r.ReviewName} (#{r.ReviewId}) - {AspHelpers.GetDisplayName(r.ReviewScopeId)} - {AspHelpers.GetDisplayName(r.ReviewTypeId)}",
