@@ -85,40 +85,40 @@ Cleanup:
             return regionIds;
         }
 
-        //public static ICollection<Claim> GetClaims(this AspNetUser user)
-        //{
-        //    throw new NotImplementedException();
-
-        //    //var claims = new List<Claim>();
-        //    //foreach (var c in user.GetClaims)
-        //    //{
-        //    //    claims.Add(new Claim(c.ClaimType, c.ClaimValue, c.ClaimType));
-        //    //}
-        //    //return claims;
-
-        //}
-
-        public static ICollection<Claim> GetClaims(this List<AspNetUserClaim> userClaims)
+        public static ICollection<Claim> GetClaims(AspNetUser user)
         {
             //throw new NotImplementedException();
-            AspNetUserClaimsList = userClaims;
+
             var claims = new List<Claim>();
-            foreach (var c in AspNetUserClaimsList)
+            foreach (var c in user.UserAspNetUserClaims)
             {
                 claims.Add(new Claim(c.ClaimType, c.ClaimValue, c.ClaimType));
-            }           
+            }
             return claims;
 
         }
 
+        //public static ICollection<Claim> GetClaims(this List<AspNetUserClaim> userClaims)
+        //{
+        //    //throw new NotImplementedException();
+        //    AspNetUserClaimsList = userClaims;
+        //    var claims = new List<Claim>();
+        //    foreach (var c in AspNetUserClaimsList)
+        //    {
+        //        claims.Add(new Claim(c.ClaimType, c.ClaimValue, c.ClaimType));
+        //    }           
+        //    return claims;
+
+        //}
+
         public static HashSet<int> GetApplicationPerimissionRegions(this AspNetUser user, ApplicationPermissionNames? permission)
         {
-            return GetClaims(AspNetUserClaimsList).GetApplicationPerimissionRegions(permission);
+            return GetClaims(user).GetApplicationPerimissionRegions(permission);
         }
 
         public static HashSet<int> GetSubjectCategoryRegions(this AspNetUser user, string docType, string baCode, string orgCode)
         {
-            return GetClaims(AspNetUserClaimsList).GetSubjectCategoryRegions(docType, baCode, orgCode);
+            return GetClaims(user).GetSubjectCategoryRegions(docType, baCode, orgCode);
         }
     }
 }

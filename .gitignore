@@ -52,3 +52,4 @@ ULO/.vs/**
 /ULO/src/GSA.UnliquidatedObligations.Web2/uscore.txt
 /ULO/src/GSA.UnliquidatedObligations.Web2/wwwroot/css/ULO/GSAlogo.png
 /ULO/src/GSA.UnliquidatedObligations.Web2/wwwroot/css/ULO/favicon.png
+/ULO/src/GSA.UnliquidatedObligations.Web2/.config/dotnet-tools.json

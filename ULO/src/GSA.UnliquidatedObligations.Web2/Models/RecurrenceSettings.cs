@@ -464,6 +464,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             }
         }
 
+        [Obsolete]
         public string ConvertToCronString()
         {
             switch (PatternType)

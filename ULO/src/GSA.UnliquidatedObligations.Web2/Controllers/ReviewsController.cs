@@ -18,8 +18,8 @@ using RevolutionaryStuff.Core.Caching;
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
-    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewReviews)]
+    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
+    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewReviews)]
     public class ReviewsController : BasePageController
     {
         public const string Name = "Reviews";
@@ -62,9 +62,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var reviews = DB.Reviews.Include(z => z.Region);
             //if (sortCol == nameof(ReviewModel.ReviewTypeId))
             //{
-            //    reviews = ApplyBrowse(
-            //       reviews,
-            //       nameof(ReviewModel.ReviewTypeId), typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+            //    reviews = ApplyBrowse(reviews, nameof(ReviewModel.ReviewTypeId), typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             //}
             //else if (sortCol == nameof(ReviewModel.ReviewScopeId))
             //{
@@ -162,7 +160,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: Review/Create
-        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
+       // [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
         [ActionName(ActionNames.Create)]
         [Route("reviews/create")]
         public async Task<ActionResult> Create()
