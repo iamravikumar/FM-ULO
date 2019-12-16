@@ -139,6 +139,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return q;
         }
 
+        protected void LogStaleWorkflowError(Workflow wf, string workflowRowVersionString, DateTime? editingBeganAtUtc)
+        {
+            Log.Error(
+                "Workflow {workflowId} is stale. Trying to edit {staleWorkflowRowVersion} when {currentWorkflowRowVersion} is the most recent.  Record was in the wind for {inprogressTimespan}.",
+                wf.WorkflowId, workflowRowVersionString, wf.WorkflowRowVersionString, DateTime.UtcNow.Subtract(editingBeganAtUtc.GetValueOrDefault(DateTime.MinValue))
+                );
+        }
+
+        protected string GetStaleWorkflowErrorMessage(Workflow wf, string workflowRowVersionString, DateTime? editingBeganAtUtc)
+           => string.Format(PortalHelpers.StaleWorkflowErrorMessageTemplate, workflowRowVersionString, editingBeganAtUtc);
+
+        protected JsonResult CreateJsonError(Exception ex)
+          => Json(new ExceptionError(ex));
+
         protected void AddPageAlert(string toastMessage, bool autoDismiss = false, PageAlert.AlertTypes pageAlertType = PageAlert.AlertTypes.Info, bool nextRequest = false)
            => AddPageAlert(new PageAlert(toastMessage, autoDismiss, pageAlertType), nextRequest);
 

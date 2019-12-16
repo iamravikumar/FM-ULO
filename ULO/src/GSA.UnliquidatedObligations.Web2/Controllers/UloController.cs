@@ -17,6 +17,10 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
 using Serilog;
+using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
+using GSA.UnliquidatedObligations.Web.Services;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+using System;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -50,8 +54,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             public string NoSearchResults { get; set; }
 
-            public string[] MyTasksTabs { get; set; }          
-            
+            public string[] MyTasksTabs { get; set; }
+
             public string[] ReviewStatusOrdering { get; set; }
         }
 
@@ -96,12 +100,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private async Task<Workflow> FindWorkflowAsync(int workflowId)
             => await DB.Workflows
-                .Include(q => q.OwnerUser)                
+                .Include(q => q.OwnerUser)
                 .Include(q => q.WorkflowDocuments)
-                .Include(q => q.TargetUlo)                
-                .Include(q => q.WorkflowUnliqudatedObjectsWorkflowQuestions)     
-                .ThenInclude(z=>z.User)
-                .WhereReviewExists()                
+                .Include(q => q.TargetUlo)
+                .Include(q => q.WorkflowUnliqudatedObjectsWorkflowQuestions)
+                .ThenInclude(z => z.User)
+                .WhereReviewExists()
                 .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
 
         private void SetNoDataMessage(string message)
@@ -158,7 +162,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             foreach (var g in GetUserGroups(CurrentUserId))
             {
                 if (g.UserId == UserHelpers.ReassignGroupUserId) continue;
-                var regionIds = UserHelpers.GetUserGroupRegions(g.UserName,UserHelpers.ReassignGroupUserName).OrderBy(z => z.GetValueOrDefault()).ToList();
+                var regionIds = UserHelpers.GetUserGroupRegions(g.UserName, UserHelpers.ReassignGroupUserName).OrderBy(z => z.GetValueOrDefault()).ToList();
                 if (ownerUserId == g.UserId && regionIds.Contains(regionId)) return true;
             }
             return false;
@@ -181,8 +185,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var countByKey = new Dictionary<string, int>(workflows.GroupBy(w => w.CurrentWorkflowActivityKey).Select(g => new { CurrentWorkflowActivityKey = g.Key, Count = g.Count() }).ToDictionaryOnConflictKeepLast(z => z.CurrentWorkflowActivityKey, z => z.Count), Comparers.CaseInsensitiveStringComparer);
 
             var keyByName = Cacher.FindOrCreateValue(
-                "workflowKeyByActivityNameForAllActiveWorkflows", 
-                () => 
+                "workflowKeyByActivityNameForAllActiveWorkflows",
+                () =>
                 {
                     var d = new Dictionary<string, string>(Comparers.CaseInsensitiveStringComparer);
                     foreach (var wfd in DB.WorkflowDefinitions.Where(z => z.IsActive))
@@ -211,7 +215,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 tab.IsCurrent = tab.TabKey == t;
                 Logger.Information(
-                    "TABITERATION: {controller} {name} {tabIsCurrent} {tabTabKey} {t}", 
+                    "TABITERATION: {controller} {name} {tabIsCurrent} {tabTabKey} {t}",
                     this.GetType().Name, name, tab.IsCurrent, tab.TabKey, t);
                 tabs.Add(tab);
             }
@@ -283,7 +287,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     () => DB.UnliquidatedObligations.Select(u => u.ReasonIncludedInReview).Distinct().OrderBy(p => p).ToList().AsReadOnly(),
                     PortalHelpers.MediumCacheTimeout
                     );
-           
+
             var activityNames = GetOrderedActivityNameByWorkflowName().AtomEnumerable.ConvertAll(z => z.Value).Distinct().OrderBy().ToList();
 
 
@@ -397,7 +401,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var prohibitedWorkflowIds = await DB.WorkflowProhibitedOwners.Where(z => z.ProhibitedOwnerUserId == CurrentUserId).Select(z => z.WorkflowId).ToListAsync();
 
-            var workflows = from wf in DB.Workflows.Where(z => z.OwnerUserId == CurrentUserId).Include(z=>z.TargetUlo)
+            var workflows = from wf in DB.Workflows.Where(z => z.OwnerUserId == CurrentUserId).Include(z => z.TargetUlo)
                             where !prohibitedWorkflowIds.Contains(wf.WorkflowId)
                             select wf;
 
@@ -464,10 +468,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
             }
 
-          
+
             AddPageAlert($"You're not a member of the reassignments group and will not see any items.", false, PageAlert.AlertTypes.Warning);
 
-            Browse:
+        Browse:
             var workflows = ApplyBrowse(
                 DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.TargetUlo.RegionId)).WhereReviewExists(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
@@ -479,30 +483,59 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
 
-#if false
-        [HttpGet]
-        [Route("ulos/{uloId}/notes")]
-        public async Task<JsonResult> GetNotesAsync(int uloId)
+        private class CreateFinancialActivityData
         {
-            var notes = (await DB.Notes.Include(z=>z.AspNetUser).Where(z => z.UloId == uloId).ToListAsync()).OrderByDescending(z=>z.CreatedAtUtc).Select(z=>new { z.NoteId, CreatedBy = z.AspNetUser.UserName, z.Body, CreatedAt = z.CreatedAtUtc.ToLocalizedDisplayDateString(true) }).ToList();
-            return Json(notes, JsonRequestBehavior.AllowGet);
+            [JsonProperty("activityDate")]
+            public System.DateTime ActivityDate { get; set; }
+
+            [JsonProperty("activityType")]
+            public string ActivityType { get; set; }
+
+            [JsonProperty("referenceNumber")]
+            public string ReferenceNumber { get; set; }
+
+            [JsonProperty("amount")]
+            public decimal Amount { get; set; }
+
+            [JsonProperty("description")]
+            public string Description { get; set; }
         }
 
-        private class CreateNoteData
-        {
-            [JsonProperty("body")]
-            public string Body { get; set; }
-        }
-
-
+        /// <remarks>THIS IS FOR THE BOT!  DO NOT CHANGE THE SIGNATURE</remarks>
         [HttpPost]
-        [Route("ulos/{uloId}/notes/create")]
-        public async Task<JsonResult> CreateNoteAsync(int uloId)
+        //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CreateFinancialActivity)]
+        [Route("ulos/{uloId}/financialActivities/create")]
+        //public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
+        //    //=> CreateFromJsonBody<CreateFinancialActivityData>(async d =>
+        //    //{               
+        //    //    //var fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
+        //    //    if (fa == null)
+        //    //    {
+        //    //        //DB.FinancialActivities.Add(new FinancialActivity
+        //    //        //{
+        //    //        //    UloId = uloId,
+        //    //        //    ActivityDate = d.ActivityDate,
+        //    //        //    ActivityType = d.ActivityType,
+        //    //        //    ReferenceNumber = d.ReferenceNumber,
+        //    //        //    Amount = d.Amount,
+        //    //        //    Description = d.Description
+        //    //        //});
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        fa.ActivityDate = d.ActivityDate;
+        //    //        fa.ActivityType = d.ActivityType;
+        //    //        fa.Amount = d.Amount;
+        //    //        fa.Description = d.Description;
+        //    //    }
+        //    });
+
+        private async Task<JsonResult> CreateFromJsonBody<TJsonBody>(Func<TJsonBody, Task> addAsync)
         {
             try
             {
-                var d = this.Request.BodyAsJsonObject<CreateNoteData>();
-                DB.Notes.Add(new Note { UloId = uloId, Body = d.Body, UserId = CurrentUserId, CreatedAtUtc = DateTime.UtcNow });
+                var d = AspHelpers.BodyAsJsonObject<TJsonBody>(Request);
+                await addAsync(d);
                 await DB.SaveChangesAsync();
                 return Json(true);
             }
@@ -511,6 +544,30 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 return base.CreateJsonError(ex);
             }
         }
+
+        [HttpGet]
+        [Route("ulos/{uloId}/notes")]
+        public async Task<JsonResult> GetNotesAsync(int uloId)
+        {
+            var notes = (await DB.Notes.Include(z => z.User).Where(z => z.UloId == uloId).ToListAsync()).OrderByDescending(z => z.CreatedAtUtc).Select(z => new { z.NoteId, CreatedBy = z.User.UserName, z.Body, CreatedAt = z.CreatedAtUtc.ToLocalizedDisplayDateString(true) }).ToList();
+            return Json(notes);
+        }
+
+        private class CreateNoteData
+        {
+            [JsonProperty("body")]
+            public string Body { get; set; }
+        }      
+
+
+        [HttpPost]
+        [Route("ulos/{uloId}/notes/create")]
+        public Task<JsonResult> CreateNoteAsync(int uloId)
+            => CreateFromJsonBody<CreateNoteData>(d =>
+            {
+                DB.Notes.Add(new Note { UloId = uloId, Body = d.Body, UserId = CurrentUserId, CreatedAtUtc = DateTime.UtcNow });
+                return Task.CompletedTask;
+            });
 
         private class MarkData
         {
@@ -526,7 +583,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("ulo/mark")]
         public async Task<JsonResult> Mark()
         {
-            var md = this.Request.BodyAsJsonObject<MarkData>();
+            var md = AspHelpers.BodyAsJsonObject<MarkData>(Request);
             var ret = new List<int>();
             if (md != null && md.WorkflowIds != null && md.WorkflowIds.Length > 0)
             {
@@ -538,7 +595,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 await DB.SaveChangesAsync();
             }
-            return Json(ret, JsonRequestBehavior.DenyGet);
+            return Json(ret);
         }
 
         //Referred to by WebActionWorkflowActivity
@@ -547,7 +604,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("Advance/{workflowId}")]
         public async Task<ActionResult> Advance(int workflowId)
         {
-            var wf = await DB.FindWorkflowAsync(workflowId);
+            var wf = await FindWorkflowAsync(workflowId);
             if (wf == null) return NotFound();
             return View(new FormAModel(wf));
         }
@@ -555,24 +612,25 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [HttpPost]
         [ActionName(ActionNames.Save)]
         [Route("ulos/{uloId}/{workflowId}/Save")]
-        public async Task<ActionResult> Save(
+        public async Task<IActionResult> Save(
             int uloId,
             int workflowId,
-            [Bind(Include = 
-                nameof(AdvanceViewModel.JustificationKey)+","+
-                nameof(AdvanceViewModel.Answer)+","+
-                nameof(AdvanceViewModel.ExpectedDateForCompletion)+","+
-                nameof(AdvanceViewModel.Comments)+","+
-                nameof(AdvanceViewModel.WorkflowRowVersionString)+","+
-                nameof(AdvanceViewModel.EditingBeganAtUtc)+","+
-                nameof(AdvanceViewModel.UnliqudatedWorkflowQuestionsId))]
+            [Bind(new[]{
+                nameof(AdvanceViewModel.JustificationKey),
+                nameof(AdvanceViewModel.Answer),
+                nameof(AdvanceViewModel.ExpectedDateForCompletion),
+                nameof(AdvanceViewModel.Comments),
+                nameof(AdvanceViewModel.WorkflowRowVersionString),
+                nameof(AdvanceViewModel.EditingBeganAtUtc),
+                nameof(AdvanceViewModel.UnliqudatedWorkflowQuestionsId)})]
             AdvanceViewModel advanceModel=null)
         {
-            var wf = await DB.FindWorkflowAsync(workflowId);
+            
+            var wf = await FindWorkflowAsync(workflowId);
             if (wf == null) return NotFound();
             if (ModelState.IsValid)
             {
-                Log.Information("Altering ULO {UloId} with Workflow {WorkflowId} via command {AlterCommand}", uloId, workflowId, Request["WhatNext"]);
+                Log.Information("Altering ULO {UloId} with Workflow {WorkflowId} via command {AlterCommand}", uloId, workflowId, Request.Query["WhatNext"]);
 
                 if (wf.WorkflowRowVersionString != advanceModel.WorkflowRowVersionString)
                 {
@@ -582,7 +640,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     return RedirectToAction(ActionNames.Details, new { uloId = wf.TargetUloId, workflowId = wf.WorkflowId });
                 }
 
-                var submit = Request["WhatNext"] == "Submit";
+                var submit = Request.Query["WhatNext"] == "Submit";
                 var question = await DB.UnliqudatedObjectsWorkflowQuestions.Where(z => z.WorkflowId == workflowId).OrderByDescending(z => z.UnliqudatedWorkflowQuestionsId).FirstOrDefaultAsync();
                 if (question == null || !question.Pending)
                 {
@@ -604,25 +662,25 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 question.UnliqudatedWorkflowQuestionsId = advanceModel.UnliqudatedWorkflowQuestionsId;
                 question.WorkflowRowVersion = wf.WorkflowRowVersion;
                 question.CreatedAtUtc = DateTime.UtcNow;
-                wf.UnliquidatedObligation.ExpectedDateForCompletion = advanceModel.ExpectedDateForCompletion;
+                wf.TargetUlo.ExpectedDateForCompletion = advanceModel.ExpectedDateForCompletion;
                 await DB.SaveChangesAsync();
                 if (submit)
                 {
                     var ulo = await DB.UnliquidatedObligations.FindAsync(uloId);
-                    var groupNames = ulo != null && ulo.RegionId != null ? User.GetUserGroupNames(ulo.RegionId.Value) : Empty.StringArray.ToList();
-                    var ret = await Manager.AdvanceAsync(wf, question, groupNames, Properties.Settings.Default.ForceAdvanceFromUloSubmit);
+                    var groupNames = ulo != null && ulo.RegionId != null ? UserHelpers.GetUserGroupNames(User,ulo.RegionId.Value) : Empty.StringArray.ToList();
+                    var ret = await Manager.AdvanceAsync(wf, question, groupNames, false);
                     await DB.SaveChangesAsync();
-                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.UnliquidatedObligation.PegasysDocumentNumber} was submitted.", false, PageAlert.AlertTypes.Success, true);
+                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.TargetUlo.PegasysDocumentNumber} was submitted.", false, PageAlert.AlertTypes.Success, true);
                     return ret;
                 }
                 else
                 {
-                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.UnliquidatedObligation.PegasysDocumentNumber} was saved.", false, PageAlert.AlertTypes.Success, true);
+                    //AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.TargetUlo.PegasysDocumentNumber} was saved.", false, PageAlert.AlertTypes.Success, true);
                     return RedirectToIndex();
                 }
             }
             return await Details(uloId, workflowId);
         }
-#endif
+
     }
 }

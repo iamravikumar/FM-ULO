@@ -44,14 +44,11 @@ namespace GSA.UnliquidatedObligations.Web
         public const string Wildcard = "*";
 
         public const string FormFieldsBreak = "`";
-        public TimeSpan MediumCacheTimeout =>
-            ConfigOptions.Value.MediumCacheTimeout;
+        public TimeSpan MediumCacheTimeout => ConfigOptions.Value.MediumCacheTimeout;
 
-        public TimeSpan ShortCacheTimeout =>
-            ConfigOptions.Value.ShortCacheTimeout;
+        public TimeSpan ShortCacheTimeout => ConfigOptions.Value.ShortCacheTimeout;
 
-        public string AdministratorEmail =>
-            ConfigOptions.Value.AdministratorEmail;
+        public string AdministratorEmail => ConfigOptions.Value.AdministratorEmail;
 
         public bool UseOldGetEligibleReviewersAlgorithm => ConfigOptions.Value.UseOldGetEligibleReviewersAlgorithm;
 
@@ -59,10 +56,9 @@ namespace GSA.UnliquidatedObligations.Web
 
         public string GetEligibleReviewersNotQualifiedUsernameFormat => ConfigOptions.Value.GetEligibleReviewersNotQualifiedUsernameFormat;
 
-        public bool UseDevAuthentication =>
-            AccountConfigOptions.Value.UseDevAuthentication;
+        public bool UseDevAuthentication => AccountConfigOptions.Value.UseDevAuthentication;
 
-       
+        public string StaleWorkflowErrorMessageTemplate => ConfigOptions.Value.StaleWorkflowErrorMessageTemplate;
 
         public class Config
         {
@@ -83,6 +79,8 @@ namespace GSA.UnliquidatedObligations.Web
             public string GetEligibleReviewersQualifiedUsernameFormat { get; set; }
 
             public string GetEligibleReviewersNotQualifiedUsernameFormat { get; set; }
+
+            public string StaleWorkflowErrorMessageTemplate { get; set; }
         }
 
         public readonly IOptions<SprintConfig> SprintConfigOptions;
