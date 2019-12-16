@@ -1,0 +1,38 @@
+﻿@using RevolutionaryStuff.Core
+@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.BusinessLayer.Data
+@using GSA.UnliquidatedObligations.Web.Controllers
+@model GSA.UnliquidatedObligations.Web.Models.PdnDetailsModel
+
+
+@{
+    ViewBag.Title = $"Exlcuded PDNs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Excluded PDNs for Region @Model.Region.RegionNumber</h2>
+@*@using (Html.BeginForm(PdnController.ActionNames.Save, PdnController.Name, new { regionKey = Model.RegionKey }, FormMethod.Post, new { style = "display:inline" }))*@
+<form asp-action="@PdnController.ActionNames.Save" asp-route-name="@PdnController.Name" method="post" class="inline-form" role="form">
+   
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(Model => Model.RegionKey)
+
+    <div>
+        <h4>PDN Attributes</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                Excluded PDNs:
+            </dt>
+            <dd>
+                <textarea name="pdns" cols="200" rows="20" style="max-width:600px">@Model.ExcludedPDNs.Select(z=>z.PegasysDocumentNumber).Format(", ")</textarea>
+            </dd>
+        </dl>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    @*if (User.HasPermission(ApplicationPermissionNames.CanCreateReviews))
+        {
+            <button type="submit" class="btn btn-primary">Save</button>
+        }*@  
+
+</form>

@@ -1,0 +1,39 @@
+﻿@using GSA.UnliquidatedObligations.BusinessLayer.Authorization
+@using GSA.UnliquidatedObligations.BusinessLayer.Data
+@using GSA.UnliquidatedObligations.Web.Controllers
+@model IEnumerable<GSA.UnliquidatedObligations.Web.Models.PdnAttributeListItem>
+
+@{
+    this.SetTitles(PageKeys.PdnAttributes, "Manage Excluded PDNs");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<table class="table table-bordered table-hover table-striped" style="width:auto">
+    <thead>
+        <tr>
+            <th width="150px">
+                Region
+            </th>
+            <th width="150px">
+                # of Excluded PDNs
+            </th>
+            <th width="150px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @(item.Region == null ? "All Regions" : item.Region.RegionNumber)
+                </td>
+                <td>
+                    @item.ExcludedCount
+                </td>
+                <td>
+                    @Html.ActionLink("Details", PdnController.ActionNames.Details, new { regionKey = item.RegionKey })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
