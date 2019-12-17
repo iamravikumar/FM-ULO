@@ -18,8 +18,8 @@ using RevolutionaryStuff.Core.Caching;
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
-    //[ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewReviews)]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
+    [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewReviews)]
     public class ReviewsController : BasePageController
     {
         public const string Name = "Reviews";
@@ -99,7 +99,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("reviews/save")]
         [HttpPost]
         [ActionName(ActionNames.Save)]
-        // [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(
             [Bind(new[]{
@@ -137,7 +137,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("reviews/delete")]
         [HttpPost]
         [ActionName(ActionNames.Delete)]
-        // [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(
             [Bind(new[]{
@@ -160,7 +160,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         // GET: Review/Create
-       // [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
+        [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
         [ActionName(ActionNames.Create)]
         [Route("reviews/create")]
         public async Task<ActionResult> Create()
