@@ -62,7 +62,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var reviews = DB.Reviews.Include(z => z.Region);
             //if (sortCol == nameof(ReviewModel.ReviewTypeId))
             //{
-            //    reviews = ApplyBrowse(reviews, nameof(ReviewModel.ReviewTypeId), typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+            //    reviews = ApplyBrowse(
+            //        reviews, 
+            //        nameof(ReviewModel.ReviewTypeId), typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             //}
             //else if (sortCol == nameof(ReviewModel.ReviewScopeId))
             //{
@@ -239,9 +241,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     RegionId = reviewModel.RegionId,
                     ReviewName = reviewModel.ReviewName,
                     Status = Review.StatusNames.Creating,
-                    //ReviewTypeId = reviewModel.ReviewTypeId.Value,  //ReviewScopeEnum
+                    ReviewTypeId = (ReviewTypeEnum)reviewModel.ReviewTypeId.Value,  
                     Comments = reviewModel.Comments,
-                   // ReviewScopeId = reviewModel.ReviewScopeId.Value,
+                    ReviewScopeId = (ReviewScopeEnum)reviewModel.ReviewScopeId.Value,
                     WorkflowDefinitionId = wd.WorkflowDefinitionId,
                     CreatedAtUtc = DateTime.UtcNow,
                     ReviewDateInitiated = reviewModel.ReviewDateInitiated
