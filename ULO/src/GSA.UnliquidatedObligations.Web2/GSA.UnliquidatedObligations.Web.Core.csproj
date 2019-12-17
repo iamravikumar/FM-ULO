@@ -74,4 +74,8 @@
     <ProjectReference Include="..\GSA.UnliquidatedObligations.UploadTable.Core\GSA.UnliquidatedObligations.UploadTable.Core.csproj" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Folder Include="Content\" />
+  </ItemGroup>
+  
 </Project>

@@ -1,4 +1,4 @@
-﻿@*@using GSA.UnliquidatedObligations.Web
+﻿@using GSA.UnliquidatedObligations.Web
 @using GSA.UnliquidatedObligations.Web.Controllers
 @using RevolutionaryStuff.Core
 @using System.Linq
@@ -42,10 +42,10 @@
                             @document.DocumentName
                         </td>
                         <td>
-                            @if (document.DocumentDocumentTypes != null && document.DocumentDocumentTypes.Count > 0)
+                            @if (document.DocumentDocumentDocumentTypes != null && document.DocumentDocumentDocumentTypes.Count > 0)
                             {
                                 <ul class="document-type-list">
-                                    @foreach (var ddt in document.DocumentDocumentTypes)
+                                    @foreach (var ddt in document.DocumentDocumentDocumentTypes)
                                     {
                                         <li>@documentTypeNameByDocumentTypeId.FindOrDefault(ddt.DocumentTypeId)</li>
                                     }
@@ -53,10 +53,10 @@
                             }
                         </td>
                         <td>
-                            @((document.Attachments?.Count).GetValueOrDefault())
+                            @((document.DocumentAttachments?.Count).GetValueOrDefault())
                         </td>
                         <td>
-                            @document.AspNetUser.UserName
+                            @document.Workflow.OwnerUser.UserName
                         </td>
                         <td>
                             @document.CreatedAtUtc.ToLocalizedDisplayDateString()
@@ -89,7 +89,7 @@
 <script type="text/javascript">
     function copyUniqueMissingLineageDocuments() {
         $("#copyUniqueMissingLineageDocumentButton").attr("disabled", "disabled");
-        $.ajax({
+        @*$.ajax({
             type: "POST",
             url: "@Html.ActionLinkUrl(DocumentsController.ActionNames.CopyUniqueMissingLineageDocuments, DocumentsController.Name, new { workflowId = Model.WorkflowId })",
             success: function (result) {
@@ -113,9 +113,9 @@
             console.log(err);
         },
             data: appendStalenessData({})
-        });
+        });*@
         event.preventDefault();
         event.stopImmediatePropagation();
         return false;
     }
-</script>*@
+</script>

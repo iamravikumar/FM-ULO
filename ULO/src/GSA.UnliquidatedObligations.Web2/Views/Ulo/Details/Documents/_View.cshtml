@@ -1,4 +1,4 @@
-﻿@*@using GSA.UnliquidatedObligations.Web.Controllers
+﻿@using GSA.UnliquidatedObligations.Web.Controllers
 @model GSA.UnliquidatedObligations.Web.Models.DocumentModalViewModel
 @{
     var id = Model.DocumentId + "Modal";
@@ -14,8 +14,8 @@
     object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4 } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4, @disabled = "disabled" };
     var isDisabled = !Model.AllowDocumentEdit ? "disabled" : "";
     var isReadOnly = !Model.AllowDocumentEdit ? "readonly" : "";
-}*@
-@*<div class="modal fade document-modal" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
+}
+<div class="modal fade document-modal" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
     
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -88,10 +88,10 @@
             </div>
         </div>
     </div>
-</div>*@
+</div>
 
 
-@*<div class="modal fade delete-document-modal" id="@deleteConfId" tabindex="-1" role="dialog" aria-labelledby="@deleteConfLabel" aria-hidden="true">
+<div class="modal fade delete-document-modal" id="@deleteConfId" tabindex="-1" role="dialog" aria-labelledby="@deleteConfLabel" aria-hidden="true">
        <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div id="@deleteConfBody" class="modal-body">
@@ -105,4 +105,4 @@
             </div>
         </div>
     </div>
-</div>*@
+</div>
