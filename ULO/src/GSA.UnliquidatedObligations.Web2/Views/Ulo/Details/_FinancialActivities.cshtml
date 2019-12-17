@@ -1,11 +1,11 @@
-﻿@*@model GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation
+﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.UnliquidatedObligation
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">Financial Activity Since Review Date</h3>
     </div>
     <div class="panel-body">
-        @if (Model.FinancialActivities.Count == 0)
+        @if (Model.UloFinancialActivitys.Count == 0)
         {
             <div class="noDataMessage">No financial activity has been recorded yet.</div>
         }
@@ -29,23 +29,25 @@
                         Description
                     </th>
                 </tr>
-                @foreach (var z in Model.FinancialActivities)
+                @foreach (var z in Model.UloFinancialActivitys)
                 {
-                    <tr>
-                        <td>@GSA.UnliquidatedObligations.Web.PortalHelpers.ToLocalizedDateTime(z.ActivityDate)</td>
-                        <td>@z.ActivityType</td>
-                        <td>@z.ReferenceNumber</td>
-                        <td>@Html.Currency(z.Amount)</td>
-                        <td>@z.Description</td>
-                    </tr>
+            <tr>
+                @*<td>@GSA.UnliquidatedObligations.Web.PortalHelpers.ToLocalizedDateTime(z.ActivityDate)</td>*@
+                <td>@z.ActivityDate</td>
+                <td>@z.ActivityType</td>
+                <td>@z.ReferenceNumber</td>
+                <td>@Html.Currency(z.Amount)</td>
+                <td>@z.Description</td>
+            </tr>
                 }
                 <tr style="display:none" id="newFinancialActivityCreatedRow"><th colspan="5">New financial activities have been created. Refresh to see them.</th></tr>
             </table>
         }
-        @if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CreateFinancialActivity))
+        <button type="button" class="btn btn-primary finac-add-btn" data-toggle="modal" data-target="#newFinancialActivityDialog" title="Add a new document." onclick="resetCreateFinancialActivityFields()">Add...</button>
+        @*@if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CreateFinancialActivity))
         {
             <button type="button" class="btn btn-primary finac-add-btn" data-toggle="modal" data-target="#newFinancialActivityDialog" title="Add a new document." onclick="resetCreateFinancialActivityFields()">Add...</button>
-        }
+        }*@
     </div>
 </div>
 
@@ -137,4 +139,4 @@ function createFinancialActivity() {
     resetCreateFinancialActivityFields();
     return false;
 }
-</script>*@
+</script>

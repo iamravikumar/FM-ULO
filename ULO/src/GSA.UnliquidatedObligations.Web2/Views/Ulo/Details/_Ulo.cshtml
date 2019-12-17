@@ -88,6 +88,14 @@
                                 {
                                     reassignButtonText = "Reassign";
                                 }
+                                else
+                                {
+                                    var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
+                                    if (userReassignRegions.Contains(ulo.RegionId))
+                                    {
+                                        reassignButtonText = "Reassign";
+                                    }
+                                }
                                 //else if (UserHelper.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanReassign))
                                 //{
                                 //    var userReassignRegions = User.GetReassignmentGroupRegions();
