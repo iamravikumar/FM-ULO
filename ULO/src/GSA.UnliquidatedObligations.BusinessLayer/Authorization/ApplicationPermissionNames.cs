@@ -28,6 +28,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
         [Display(Name = "Execute Reports", Description ="Run reports from the \"Reports\" screen.")]
         CanExecuteReports,
 
+        [Display(Name = "Schedule Reports", Description = "Schedule reports for recurring email distribution from the \"Reports\" screen.")]
+        CanScheduleReports,
+
         [Display(Name = "Manage Jobs", Description = "System administrative functions.")]
         BackgroundJobDashboard,
 

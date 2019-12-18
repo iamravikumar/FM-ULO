@@ -67,6 +67,7 @@ namespace GSA.UnliquidatedObligations.Web
             ConfigureOptions<AccountController.Config>(AccountController.Config.ConfigSectionName);
             ConfigureOptions<LegacyFormsAuthenticationService.Config>(LegacyFormsAuthenticationService.Config.ConfigSectionName);
             ConfigureOptions<WorkflowManager.Config>(WorkflowManager.Config.ConfigSectionName);
+            ConfigureOptions<ReportsController.Config>(ReportsController.Config.ConfigSectionName);
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -88,6 +89,8 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddAuthentication();
             services.UseSitePermissions();
 
+            services.AddSingleton<IRecurringJobManager, RecurringJobManager>();
+            services.AddScoped<IReportRunner, ReportRunner>();
             services.AddScoped<IBackgroundTasks, BackgroundTasks>();
             services.AddScoped<SmtpClient>();
             services.AddScoped<IEmailServer, EmailServer>();

@@ -83,7 +83,7 @@ $(document).ready(function () {
         });
     });
 
-    $(".advanced-search-settings").each(function (n, el) {
+    $(".advanced-search-settings,.form-group").each(function (n, el) {
         setupFancyMultiselect(el);
     });
 

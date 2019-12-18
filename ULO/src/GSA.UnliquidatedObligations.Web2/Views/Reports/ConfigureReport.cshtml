@@ -10,57 +10,69 @@
     this.SetTitles(PageKeys.Reports, rd.Title, rd.Description);
 }
 
-    <form asp-action="@ReportsController.ActionNames.ExecuteReport" asp-route-name="@rd.Name" method="post" class="inline-form" role="form">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @foreach (var p in rd.Parameters.Where(z => !z.IsHardcoded))
+<form asp-action="@ReportsController.ActionNames.ExecuteReport" asp-route-name="@rd.Name" method="post" class="inline-form" role="form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @foreach (var p in rd.Parameters.Where(z => !z.IsHardcoded))
+    {
+        string htmlInputType;
+        if (p.ClrType.IsNumber())
         {
-            string htmlInputType;
-            if (p.ClrType.IsNumber())
-            {
-                htmlInputType = "number";
-            }
-            if (p.ClrType == typeof(DateTime))
-            {
-                htmlInputType = "date";
-            }
-            else
-            {
-                htmlInputType = "text";
-            }
-            <div class="form-group">
-                <label for="@p.SqlParameterName">@p.Title</label>
-                @{
-                    IEnumerable<SelectListItem> items = null;
-                    switch (p.ReportParameterRenderHint)
-                    {
-                        case ReportParameterRenderHints.Region:
-                            items = Model.RegionItems;
-                            break;
-                        case ReportParameterRenderHints.Review:
-                            items = Model.ReviewItems;
-                            break;
-                        case ReportParameterRenderHints.TextArea:
-                            <textarea class="form-control" name="@p.SqlParameterName"></textarea>
-                            break;
-                        case ReportParameterRenderHints.Standard:
-                        default:
-                            <input class="form-control" name="@p.SqlParameterName" type="@htmlInputType" required="required" />
-                            break;
-                    }
-                    if (items != null)
-                    {
-                        @Html.DropDownList(p.SqlParameterName, items, AspHelpers.PleaseSelectOne, new { required = "required" });
-                    }
+            htmlInputType = "number";
+        }
+        if (p.ClrType == typeof(DateTime))
+        {
+            htmlInputType = "date";
+        }
+        else
+        {
+            htmlInputType = "text";
+        }
+        <div class="form-group">
+            <label for="@ReportsController.ReportParameterNamePrefix@p.SqlParameterName">@p.Title</label>
+            @{
+                IEnumerable<SelectListItem> items = null;
+                switch (p.ReportParameterRenderHint)
+                {
+                    case ReportParameterRenderHints.Region:
+                        items = Model.RegionItems;
+                        break;
+                    case ReportParameterRenderHints.Review:
+                        items = Model.ReviewItems;
+                        break;
+                    case ReportParameterRenderHints.TextArea:
+                        <textarea class="form-control" name="@ReportsController.ReportParameterNamePrefix@p.SqlParameterName"></textarea>
+                        break;
+                    case ReportParameterRenderHints.Standard:
+                    default:
+                        <input class="form-control" name="@ReportsController.ReportParameterNamePrefix@p.SqlParameterName" type="@htmlInputType" required="required" />
+                        break;
                 }
-            </div>
-        }
-        @if (UserHelpers.HasPermission(ApplicationPermissionNames.CanScheduleReports))
+                if (items != null)
+                {
+                    <br />
+                    @Html.DropDownList(ReportsController.ReportParameterNamePrefix + p.SqlParameterName, items, AspHelpers.PleaseSelectOne, new { required = "required", @class = "form-control" });
+                }
+            }
+        </div>
+    }
+    <div class="form-group">
+        <label for="frequency" style="display:block">Frequency</label>
+        <label style="display:block"><input type="radio" name="frequency" value="@ReportsController.ReportFrequencies.EmailMeOnce" checked="checked" onchange="$('.recurring').hide()" /> Once, and email me the results</label>
+        <label style="display:block"><input type="radio" name="frequency" value="@ReportsController.ReportFrequencies.Synchronous" onchange="$('.recurring').hide()" /> Once, and wait for the results so I can download them from this page</label>
+        @if (UserHelpers.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanScheduleReports))
         {
-            <div class="form-group">
-                <label for="Recipients">Recipients</label>
-                <textarea id="Recipients"></textarea>
-            </div>
-            <partial name="~/Views/Shared/_BasicRecurrenceSettingsPartial.cshtml" model="@Model.RecurrenceSettings" />
+            <label style="display:block"><input type="radio" name="frequency" value="@ReportsController.ReportFrequencies.Recurring" onchange="$('.recurring').show()" /> Recurring, and email the results</label>
         }
-        <input type="submit" value="Execute" class="btn btn-default btn-primary btn-large" />
-    </form>
+    </div>
+    <div style="padding-left:25px">
+        <div class="form-group recurring" style="display:none">
+            <label for="recipients">Recipients (separate with ';' and include only the username part of <span style="text-decoration:underline">username</span>@@gsa.gov part of the address.)</label>
+            <textarea class="form-control" name="recipients">@User.Identity.Name</textarea>
+        </div>
+        <div class="form-group recurring" style="display:none">
+            <label for="time">Time of day</label>
+            <input name="time" class="form-control" type="time" />
+        </div>
+    </div>
+    <input type="submit" value="Execute" class="btn btn-default btn-primary btn-large" />
+</form>

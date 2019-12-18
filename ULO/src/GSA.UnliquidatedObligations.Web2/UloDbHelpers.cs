@@ -56,6 +56,7 @@ ReadTable:
                                 }
                                 lastInfoMessage = null;
                             }
+                            logger.Information("Exporting from table [{tableName}]...", dt.TableName);
                             dt = new DataTable(tableName);
                             ds.Tables.Add(dt);
 

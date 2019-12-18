@@ -89,7 +89,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             {
                 var emailTemplate = Cacher.FindOrCreateValue(
                     $"{nameof(NotifyNewAssigneeAsync)}.{nameof(emailTemplateId)}={emailTemplateId}",
-                    () => DB.EmailTemplates.Select(z => new { EmailBody = z.EmailBody, EmailSubject = z.EmailSubject, EmailTemplateId = z.EmailTemplateId, EmailHtmlBody = z.EmailHtmlBody }).FirstOrDefault(z => z.EmailTemplateId == emailTemplateId),
+                    () => PortalHelpers.GetEmailTemplate(emailTemplateId),
                     PortalHelpers.MediumCacheTimeout);
                 if (emailTemplate == null)
                 {

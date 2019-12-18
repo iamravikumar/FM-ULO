@@ -67,6 +67,7 @@ namespace GSA.UnliquidatedObligations.Web
             builder.Register(_ => Cache.DataCacher);
             builder.RegisterType<BackgroundTasks>().As<IBackgroundTasks>().InstancePerBackgroundJob();
             builder.RegisterType<BackgroundJobClient>().As<IBackgroundJobClient>().InstancePerLifetimeScope();
+            builder.RegisterType<RecurringJobManager>().As<IRecurringJobManager>().InstancePerLifetimeScope();           
 
             builder.RegisterType<SmtpClient>();
             builder.RegisterType<EmailServer>().As<IEmailServer>();
@@ -96,6 +97,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             //Authentication
             builder.RegisterType<ApplicationDbContext>().AsSelf().InstancePerRequest();
+            builder.RegisterType<ReportRunner>().As<IReportRunner>().InstancePerDependency();
             builder.Register(c => new UserStore<ApplicationUser>(c.Resolve<ApplicationDbContext>())).AsImplementedInterfaces().InstancePerRequest();
             builder.Register(c => HttpContext.Current.GetOwinContext().Authentication).As<IAuthenticationManager>();
             builder.Register(c => new IdentityFactoryOptions<ApplicationUserManager>()

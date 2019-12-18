@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -668,7 +669,17 @@ namespace GSA.UnliquidatedObligations.Web
 
             return hasFilters ? predicate : null;
         }
-       
-       
+
+        public EmailTemplate GetEmailTemplate(int emailTemplateId)
+            => Cacher.FindOrCreateValue(
+                   Cache.CreateKey(emailTemplateId, nameof(GetEmailTemplate)),
+                   () => DB.EmailTemplates.AsNoTracking().FirstOrDefault(z => z.EmailTemplateId == emailTemplateId),
+                    MediumCacheTimeout);
+
+        public Task<IQueryable<BusinessLayer.Data.Reporting.ReportDescription>> GetReportsAsync(string name = null)
+            => Task.FromResult(Cacher.FindOrCreateValue(
+                Cache.CreateKey(nameof(GetReportsAsync), name),
+                () => DB.ReportDefinitions.Where(rd => rd.IsActive == true).ConvertAll(rd => rd.Description).WhereNotNull().ToList().AsReadOnly()
+                ).AsQueryable().Where(z => name == null || z.Name == name));
     }
 }

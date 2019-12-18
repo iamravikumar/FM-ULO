@@ -444,7 +444,9 @@
     <Compile Include="Services\EmailServer.cs" />
     <Compile Include="Services\IBackgroundTasks.cs" />
     <Compile Include="Services\IEmailServer.cs" />
+    <Compile Include="Services\IReportRunner.cs" />
     <Compile Include="Services\IWorkflowManager.cs" />
+    <Compile Include="Services\ReportRunner.cs" />
     <Compile Include="Services\RequestEnricher.cs" />
     <Compile Include="Services\WorkflowManager.cs" />
     <Compile Include="Startup.cs" />

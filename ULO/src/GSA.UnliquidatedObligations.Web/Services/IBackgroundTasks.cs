@@ -1,6 +1,7 @@
 ﻿using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web.Services
@@ -12,6 +13,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         [AutomaticRetry(Attempts = 1)]
         Task Email(string recipient, string subjectTemplate, string bodyTemplate, string htmlBodyTemplate, object model);
+
+        [AutomaticRetry(Attempts = 1)]
+        Task EmailReport(string[] recipients, string subjectTemplate, string bodyTemplate, string htmlBodyTemplate, object model, string reportName, IDictionary<string, string> paramValueByParamName);
 
         [AutomaticRetry(Attempts = 0)]
         void UploadFiles(UploadFilesModel files);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using RevolutionaryStuff.Core;
@@ -312,6 +313,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string SiteUrl { get; private set; }
 
+        public string JobId { get; set; }
+
         protected BaseEmailViewModel()
         {
             throw new NotImplementedException("old code in need for porting!");
@@ -343,11 +346,28 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public int WorkflowId { get; set; }
 
+        public EmailViewModel()
+            : base()
+        { }
+
         public EmailViewModel(AspNetUser u)
             : base(u)
         { }
 
         public EmailViewModel(string userName)
+            : base(userName)
+        { }
+    }
+
+    public class ReportEmailViewModel : EmailViewModel
+    {
+        public ReportDescription Report { get; set; }
+
+        public ReportEmailViewModel()
+            : base()
+        { }
+
+        public ReportEmailViewModel(string userName)
             : base(userName)
         { }
     }

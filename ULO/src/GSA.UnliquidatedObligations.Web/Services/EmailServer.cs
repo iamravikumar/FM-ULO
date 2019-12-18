@@ -1,5 +1,6 @@
 ﻿using RevolutionaryStuff.Core;
 using Serilog;
+using System.Collections.Generic;
 using System.Net.Mail;
 
 namespace GSA.UnliquidatedObligations.Web.Services
@@ -15,20 +16,31 @@ namespace GSA.UnliquidatedObligations.Web.Services
             Log = log.ForContext<EmailServer>();
         }
 
-        public void SendEmail(string subject, string body, string bodyHtml, string recipient)
+        public void SendEmail(string subject, string body, string bodyHtml, IEnumerable<string> recipients, IEnumerable<Attachment> attachments)
         {
-            Requires.EmailAddress(recipient, nameof(recipient));
+            Requires.NonNull(recipients, nameof(recipients));
 
             bodyHtml = StringHelpers.TrimOrNull(bodyHtml);
 
             var mail = new MailMessage();
-            mail.To.Add(new MailAddress(recipient));
+            foreach (var recipient in recipients)
+            {
+                Requires.EmailAddress(recipient, nameof(recipient));
+                mail.To.Add(new MailAddress(recipient));
+            }
             mail.Subject = subject;
             mail.Body = bodyHtml ?? body;
             mail.IsBodyHtml = bodyHtml != null;
+            if (attachments != null)
+            {
+                foreach (var a in attachments)
+                {
+                    mail.Attachments.Add(a);
+                }
+            }
             if (EmailClient.Host == null)
             {
-                Log.Error("Email Server not properly configured.  Wont send {Subject} to {Recipient}", subject, recipient);
+                Log.Error("Email Server not properly configured.  Won't send {Subject} to {Recipients} with {AttachmentCount}", subject, recipients, mail.Attachments.Count);
             }
             else
             {

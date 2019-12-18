@@ -29,10 +29,11 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IEmailServer EmailServer;
         private readonly UloDbContext DB;
         private readonly IWorkflowManager WorkflowManager;
+        private readonly IReportRunner ReportRunner;
         private readonly IOptions<Config> ConfigOptions;
         private readonly IConfiguration Configuration;
         private readonly UserHelpers UserHelpers;
-        private readonly IBackgroundJobClient BackgroundJobClient;
+        private readonly PortalHelpers PortalHelpers;
         protected readonly ILogger Log;
         IBackgroundTasks BT => (IBackgroundTasks)this;
 
@@ -56,16 +57,23 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        public BackgroundTasks(IOptions<Config> configOptions, IConfiguration configuration, UserHelpers userHelpers, IBackgroundJobClient backgroundJobClient, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger log)
+        public BackgroundTasks(IReportRunner reportRunner, IOptions<Config> configOptions, IConfiguration configuration, UserHelpers userHelpers, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger log, PortalHelpers portalHelpers)
         {
+            ReportRunner = reportRunner;
             ConfigOptions = configOptions;
             Configuration = configuration;
             UserHelpers = userHelpers;
-            BackgroundJobClient = backgroundJobClient;
             EmailServer = emailServer;
             DB = db;
             WorkflowManager = workflowManager;
+            PortalHelpers = portalHelpers;
             Log = log.ForContext(GetType());
+        }
+
+        async Task IBackgroundTasks.EmailReport(string[] recipients, string subjectTemplate, string bodyTemplate, string htmlBodyTemplate, object model, string reportName, IDictionary<string, string> paramValueByParamName)
+        {
+            var res = await ReportRunner.ExecuteAsync(reportName, paramValueByParamName);
+            await EmailAsync(recipients, subjectTemplate, bodyTemplate, htmlBodyTemplate, model, new[] { res });
         }
 
         private System.Data.SqlClient.SqlConnection CreateSqlConnection()
@@ -126,11 +134,14 @@ namespace GSA.UnliquidatedObligations.Web.Services
         }
 
         Task IBackgroundTasks.Email(string recipient, string subjectTemplate, string bodyTemplate, string bodyHtmlTemplate, object model)
+            => EmailAsync(new[] { recipient }, subjectTemplate, bodyTemplate, bodyHtmlTemplate, model);
+
+        Task EmailAsync(string[] recipients, string subjectTemplate, string bodyTemplate, string bodyHtmlTemplate, object model, IEnumerable<System.Net.Mail.Attachment> attachments = null)
         {
             var subject = ProcessRazorTemplate(subjectTemplate, model);
             var body = ProcessRazorTemplate(bodyTemplate, model);
             var bodyHtml = ProcessRazorTemplate(bodyHtmlTemplate, model);
-            EmailServer.SendEmail(subject, body, bodyHtml, recipient);
+            EmailServer.SendEmail(subject, body, bodyHtml, recipients, attachments);
             return Task.CompletedTask;
         }
 
@@ -224,7 +235,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             var config = ConfigOptions.Value;
 
             var u = await DB.AspNetUsers.FindAsync(userId);
-            var et = await DB.EmailTemplates.FindAsync(config.BatchAssignmentNotificationEmailTemplateId);
+            var et = PortalHelpers.GetEmailTemplate(config.BatchAssignmentNotificationEmailTemplateId);
             var wfs = await (workflows.Include(z => z.TargetUlo.Review).Include(wf => wf.TargetUlo).ToListAsync());
             var m = new WorkflowsEmailViewModel(u, wfs);
             await BT.Email(u.Email, et.EmailSubject, et.EmailBody, et.EmailHtmlBody, m);

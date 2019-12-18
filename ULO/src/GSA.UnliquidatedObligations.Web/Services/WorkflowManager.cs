@@ -153,10 +153,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             else if (u.UserType==AspNetUser.UserTypes.Person && RegexHelpers.Common.EmailAddress.IsMatch(u.Email))
             {
-                var emailTemplate = Cacher.FindOrCreateValWithSimpleKey(
-                    emailTemplateId,
-                    () => DB.EmailTemplates.Select(z=>new { EmailBody = z.EmailBody, EmailSubject = z.EmailSubject, EmailTemplateId = z.EmailTemplateId, EmailHtmlBody = z.EmailHtmlBody }).FirstOrDefault(z => z.EmailTemplateId == emailTemplateId),
-                    UloHelpers.MediumCacheTimeout);
+                var emailTemplate = PortalHelpers.GetEmailTemplate(emailTemplateId);
                 if (emailTemplate == null)
                 {
                     Log.Error($"Cannot find emailTemplateId={emailTemplateId}");

@@ -6,6 +6,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using RevolutionaryStuff.Core;
+using GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
@@ -304,6 +305,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string SiteUrl { get; private set; }
 
+        public string JobId { get; set; }
+
+        public string RecurringJobId { get; set; }
+
         protected BaseEmailViewModel()
         {
             SiteUrl = Properties.Settings.Default.SiteUrl;
@@ -332,11 +337,28 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public int WorkflowId { get; set; }
 
+        public EmailViewModel()
+            : base()
+        { }
+
         public EmailViewModel(AspNetUser u)
             : base(u)
         { }
 
         public EmailViewModel(string userName)
+            : base(userName)
+        { }
+    }
+
+    public class ReportEmailViewModel : EmailViewModel
+    { 
+        public ReportDescription Report { get; set; }
+
+        public ReportEmailViewModel()
+            : base()
+        { }
+
+        public ReportEmailViewModel(string userName)
             : base(userName)
         { }
     }
