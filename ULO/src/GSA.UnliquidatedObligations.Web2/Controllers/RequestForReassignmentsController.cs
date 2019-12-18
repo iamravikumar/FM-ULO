@@ -228,11 +228,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (wf == null) return StatusCode(404);
 
             var canHandleReassignment = true;
-            //User.HasPermission(ApplicationPermissionNames.CanReassign);
-            //if (!canHandleReassignment && m.SuggestedReviewerId == CurrentUserId)
-            //{
-            //    canHandleReassignment = UserHelpers.GetUserGroupRegions(wf.OwnerUser.GetClaims, wf.OwnerUserId).Contains(wf.TargetUlo.RegionId);
-            //}
+            UserHelpers.HasPermission(User,ApplicationPermissionNames.CanReassign);
+            if (!canHandleReassignment && m.SuggestedReviewerId == CurrentUserId)
+            {
+                canHandleReassignment = UserHelpers.GetUserGroupRegions(User, wf.OwnerUserId).Contains(wf.TargetUlo.RegionId);
+            }
             var rfr = new RequestForReassignment
             {
                 UnliqudatedWorkflowQuestions = new UnliqudatedObjectsWorkflowQuestion

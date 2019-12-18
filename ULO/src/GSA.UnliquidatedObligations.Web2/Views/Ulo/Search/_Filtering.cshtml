@@ -104,7 +104,7 @@
                 <input type="text" name="uloId" id="uloId" value="@Context.Request.Query["uloId"]" />
             </div>
         </div>
-        @if (UserHelpers.HasPermission(ApplicationPermissionNames.CanReassign))
+        @if (UserHelpers.HasPermission(User, ApplicationPermissionNames.CanReassign))
         {
             <div class="row vertical-align">
                 <div class="col-sm-4">

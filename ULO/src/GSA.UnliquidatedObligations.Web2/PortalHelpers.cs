@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -714,7 +715,18 @@ namespace GSA.UnliquidatedObligations.Web
 
             return hasFilters ? predicate : null;
         }
-       
-       
+
+        //public bool HasPermission(IPrincipal user, ApplicationPermissionNames permissionName)
+        //{
+        //    var userClaims = Cache.DataCacher.FindOrCreateValue(
+        //        user.Identity?.Name,                
+        //        () => DB.AspNetUsers.Include(u=> u.UserAspNetUserClaims).FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims(),
+        //        ShortCacheTimeout
+        //        );
+
+        //    return userClaims != null && userClaims.GetApplicationPerimissionRegions(permissionName).Count > 0;
+        //}
+
+
     }
 }

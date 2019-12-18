@@ -8,7 +8,6 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {
     public static class ClaimHelpercs
     {
-        private static List<AspNetUserClaim> AspNetUserClaimsList;
         public static HashSet<int> GetApplicationPerimissionRegions(string claimType, string claimValue, ApplicationPermissionNames? applicationPermission)
         {
             HashSet<int> regions = null;
@@ -85,7 +84,7 @@ Cleanup:
             return regionIds;
         }
 
-        public static ICollection<Claim> GetClaims(AspNetUser user)
+        public static ICollection<Claim> GetClaims(this AspNetUser user)
         {
             //throw new NotImplementedException();
 
@@ -98,27 +97,14 @@ Cleanup:
 
         }
 
-        //public static ICollection<Claim> GetClaims(this List<AspNetUserClaim> userClaims)
-        //{
-        //    //throw new NotImplementedException();
-        //    AspNetUserClaimsList = userClaims;
-        //    var claims = new List<Claim>();
-        //    foreach (var c in AspNetUserClaimsList)
-        //    {
-        //        claims.Add(new Claim(c.ClaimType, c.ClaimValue, c.ClaimType));
-        //    }           
-        //    return claims;
-
-        //}
-
         public static HashSet<int> GetApplicationPerimissionRegions(this AspNetUser user, ApplicationPermissionNames? permission)
         {
-            return GetClaims(user).GetApplicationPerimissionRegions(permission);
+            return user.GetClaims().GetApplicationPerimissionRegions(permission);
         }
 
         public static HashSet<int> GetSubjectCategoryRegions(this AspNetUser user, string docType, string baCode, string orgCode)
         {
-            return GetClaims(user).GetSubjectCategoryRegions(docType, baCode, orgCode);
+            return user.GetClaims().GetSubjectCategoryRegions(docType, baCode, orgCode);
         }
     }
 }

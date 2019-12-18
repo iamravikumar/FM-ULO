@@ -15,6 +15,8 @@
         <h4>Document</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @*Since this is list of Document types.. need to add loop condition. But, needs to confirm with Jason*@
         <div class="form-group">
             @Html.LabelFor(model => model.DocumentDocumentDocumentTypes[0].DocumentType, "DocumentType", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">

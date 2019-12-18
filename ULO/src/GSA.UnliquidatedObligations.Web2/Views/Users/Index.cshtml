@@ -7,7 +7,7 @@
 @{
     //AspHelpers.SetTitles(PageKeys.ManageUsers, "Manage Users");
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var canMakeChanges = UserHelpers.HasPermission(ApplicationPermissionNames.ManageUsers);
+    var canMakeChanges = UserHelpers.HasPermission(User, ApplicationPermissionNames.ManageUsers);
     var userRoles = PortalHelpers.CreateAllGroupNamesSelectListItems();
     var userRegions = PortalHelpers.CreateRegionSelectListItems();
 

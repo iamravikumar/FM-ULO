@@ -71,16 +71,16 @@
                         </dt>
                         <dd>
                             @if (wf.OwnerUser == null || wf.OwnerUser.IsGroup)
-                    {
-                        <text>Unassigned</text>
-            }
-            else
-            {
-                <text>@wf.OwnerUser.UserName</text>
-    }
+                                {
+                                <text>Unassigned</text>
+                             }
+                            else
+                            {
+                                <text>@wf.OwnerUser.UserName</text>
+                            }
                             @{
                                 string reassignButtonText = null;
-                                if (wf.OwnerUserId == PortalHelpers.GetUserId(User?.Identity?.Name))
+                                if (wf.OwnerUserId == UserHelpers.GetUserId(User?.Identity?.Name))
                                 {
                                     reassignButtonText = "Reassign";
                                 }
@@ -88,7 +88,7 @@
                                 {
                                     reassignButtonText = "Reassign";
                                 }
-                                else
+                                else if (UserHelpers.HasPermission(User,GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanReassign))
                                 {
                                     var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
                                     if (userReassignRegions.Contains(ulo.RegionId))
@@ -96,19 +96,11 @@
                                         reassignButtonText = "Reassign";
                                     }
                                 }
-                                //else if (UserHelper.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanReassign))
-                                //{
-                                //    var userReassignRegions = User.GetReassignmentGroupRegions();
-                                //    if (userReassignRegions.Contains(ulo.RegionId))
-                                //    {
-                                //        reassignButtonText = "Reassign";
-                                //    }
-                                //}
                                 if (reassignButtonText != null)
                                 {
                                     var modalId = "#" + wf.WorkflowId + "RequestForReassignModal";
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">@reassignButtonText</button>
-                }
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="@modalId">@reassignButtonText</button>
+                                }
                             }
                         </dd>
                     </dl>

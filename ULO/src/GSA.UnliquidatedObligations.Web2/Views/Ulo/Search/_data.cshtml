@@ -5,7 +5,7 @@
 @{
     var todaysDate = DateTime.Today;
     var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
-    var canReassign = UserHelpers.HasPermission(ApplicationPermissionNames.CanReassign);
+    var canReassign = UserHelpers.HasPermission(User, ApplicationPermissionNames.CanReassign);
     var showSelectors = canReassign;
 
     var hasData = false;

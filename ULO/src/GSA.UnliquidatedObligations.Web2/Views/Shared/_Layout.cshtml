@@ -45,30 +45,30 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header" style="height:71px">
-                <h1 class="navbar-brand" style="padding:0;margin-right:10px;margin-top:0px">
-                    <img src="~/images/GSAlogo.png" width="71" height="71" alt="GSA Logo" style="display:inline" />
-                </h1>
+    @*<nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header" style="height:71px">
+                    <h1 class="navbar-brand" style="padding:0;margin-right:10px;margin-top:0px">
+                        <img src="~/images/GSAlogo.png" width="71" height="71" alt="GSA Logo" style="display:inline" />
+                    </h1>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a asp-area="">ULO</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index">MyTasks</a></li>
+                        <li><a asp-area="" asp-controller="Ulo" asp-action="Search">Search</a></li>
+                        <li><a asp-area="" asp-controller="Reports" asp-action="Index">Reports</a></li>
+                        <li><a asp-area="" asp-controller="Ulo" asp-action="Unassigned">Unassigned</a></li>
+                        <li><a asp-area="" asp-controller="Ulo" asp-action="RequestForReassignments">Reassignments</a></li>
+                        <li><a asp-area="" asp-controller="Reviews" asp-action="Index">Reviews</a></li>
+                        <li><a asp-area="" asp-controller="Pdn" asp-action="Index">Excluded</a></li>
+                        <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="">ULO</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">MyTasks</a></li>
-                    <li><a asp-area="" asp-controller="Ulo" asp-action="Search">Search</a></li>
-                    <li><a asp-area="" asp-controller="Reports" asp-action="Index">Reports</a></li>
-                    <li><a asp-area="" asp-controller="Ulo" asp-action="Unassigned">Unassigned</a></li>
-                    <li><a asp-area="" asp-controller="Ulo" asp-action="RequestForReassignments">Reassignments</a></li>
-                    <li><a asp-area="" asp-controller="Reviews" asp-action="Index">Reviews</a></li>
-                    <li><a asp-area="" asp-controller="Pdn" asp-action="Index">Excluded</a></li>
-                    <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
-                </ul>
-                <partial name="_LoginPartial" />
-            </div>
-        </div>
-    </nav>
-
+        </nav>*@
+    <partial name="_Navigation" />
     <partial name="_CookieConsentPartial" />
 
     <div class="container-fluid body-content" style="margin-top: 30px; margin-bottom: 1.5cm">

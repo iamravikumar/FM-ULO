@@ -79,10 +79,12 @@ namespace GSA.UnliquidatedObligations.Web
             if (username != null)
             {
                 return Cacher.FindOrCreateValue(
-                    username,
-                    () => DB.AspNetUsers.Where(z => z.UserName == username).Select(z => z.Id).FirstOrDefault(),
-                    PortalHelpers.MediumCacheTimeout
-                    );
+                    Cache.CreateKey(nameof(username), username),
+                    () =>
+                    {
+                        var z = DB.AspNetUsers.AsNoTracking().FirstOrDefault(u => u.UserName == username);
+                        return z?.Id;
+                    });
             }
             return null;
         }
@@ -152,29 +154,22 @@ namespace GSA.UnliquidatedObligations.Web
                PortalHelpers.MediumCacheTimeout
                );
 
-      
 
-        public bool HasPermission(ApplicationPermissionNames permissionName, IPrincipal user = null)
+
+        public bool HasPermission(IPrincipal user, ApplicationPermissionNames permissionName)
         {
-            return true;
-            //user = user ?? Acc.HttpContext?.User;
-            //if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
-            //{
-            //    return Cacher.FindOrCreateValue(
-            //        Cache.CreateKey(user.Identity.Name, permissionName),
-            //        () =>
-            //        {
-            //            var claims = DB.AspNetUserClaims.FirstOrDefault(u => u.UserId == GetUserId(user.Identity.Name));
-            //            if (claims != null)
-            //            {
-            //                return ClaimHelpercs.GetClaims(DB.AspNetUserClaims.Where(u => u.UserId == GetUserId(user.Identity.Name)).ToList()).GetApplicationPerimissionRegions(permissionName).Count > 0;
-            //            }
-            //            return false;
-            //        }, PortalHelpers.ShortCacheTimeout
-            //        );
-            //}
-           // return false;
+            if (user.Identity.IsAuthenticated)
+            {
+                var userClaims = Cacher.FindOrCreateValue(
+                    user.Identity.Name,
+                    () => DB.AspNetUsers.Include(u => u.UserAspNetUserClaims).FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims(),
+                    PortalHelpers.ShortCacheTimeout
+                    );
 
+                return userClaims != null && userClaims.GetApplicationPerimissionRegions(permissionName).Count > 0;
+            }
+
+            return false;
         }
 
         public Expression<Func<AspNetUser, bool>> GrouplikeUserPredicate

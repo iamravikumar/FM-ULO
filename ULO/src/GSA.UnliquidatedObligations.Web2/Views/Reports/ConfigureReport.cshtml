@@ -54,7 +54,7 @@
                 }
             </div>
         }
-        @if (UserHelpers.HasPermission(ApplicationPermissionNames.CanScheduleReports))
+        @if (UserHelpers.HasPermission(User,ApplicationPermissionNames.CanScheduleReports))
         {
             <div class="form-group">
                 <label for="Recipients">Recipients</label>
