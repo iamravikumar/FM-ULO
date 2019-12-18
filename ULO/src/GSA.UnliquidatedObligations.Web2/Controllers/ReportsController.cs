@@ -48,7 +48,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             public const string ConfigSectionName = "ReportsControllerConfig";
             public int ReportEmailTemplateId { get; set; }
-            public string ReportRecipientFormat { get; set; }
+            public string ReportRecipientEmailDomains { get; set; }
         }
 
         public ReportsController(IReportRunner reportRunner, IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger, IRecurringJobManager rjm, IBackgroundJobClient backgroundJobClient)
@@ -77,7 +77,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var report = (await PortalHelpers.GetReportsAsync(name)).FirstOrDefault();
             if (report == null) return NotFound();
-            return View(new ConfigureReportModel(PortalHelpers, report));
+            return View(new ConfigureReportModel(PortalHelpers, report) { CurrentUserEmail = CurrentUser.Email });
         }
 
         [ActionName(ActionNames.ExecuteReport)]
@@ -112,7 +112,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     }
                 case ReportFrequencies.EmailMeOnce:
                     {
-                        var recipients = new[] { string.Format(config.ReportRecipientFormat, User.Identity.Name) };
+                        var recipients = new[] { string.Format(config.ReportRecipientEmailDomains, User.Identity.Name) };
                         var o = new ReportEmailViewModel(User.Identity.Name)
                         {
                             Report = report
@@ -123,7 +123,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     }
                 case ReportFrequencies.Recurring:
                     {
-                        var recipients = Request.Form["recipients"].FirstOrDefault().Split(';', ',', '\t', ' ', '\r', '\n').Select(z => z.TrimOrNull()).WhereNotNull().Select(z => string.Format(config.ReportRecipientFormat, z)).ToArray();
+                        var domains = CSV.ParseLine(config.ReportRecipientEmailDomains).ToCaseInsensitiveSet();
+                        var recipients = Request.Form["recipients"].FirstOrDefault().Split(';', ',', '\t', ' ', '\r', '\n').Select(z => z.TrimOrNull()).WhereNotNull().Where(z => domains.Contains(z.RightOf("@"))).ToArray();
                         var now = DateTime.UtcNow;
                         var time = DateTime.Parse(Request.Form["time"]);
                         var recurringJobId = $"{User.Identity.Name}.Report.{report.Name}.{now.ToYYYYMMDD()}.{now.ToHHMMSS()}";

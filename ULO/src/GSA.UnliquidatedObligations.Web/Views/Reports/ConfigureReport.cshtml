@@ -67,8 +67,8 @@
     </div>
     <div style="padding-left:25px">
         <div class="form-group recurring" style="display:none">
-            <label for="recipients">Recipients (separate with ';' and include only the username part of <span style="text-decoration:underline">username</span>@@gsa.gov part of the address.)</label>
-            <textarea class="form-control" name="recipients">@User.Identity.Name</textarea>
+            <label for="recipients">Recipients (separate with ';')</label>
+            <textarea class="form-control" name="recipients">@Model.CurrentUserEmail</textarea>
         </div>
         <div class="form-group recurring" style="display:none">
             <label for="time">Time of day</label>

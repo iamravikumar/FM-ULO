@@ -64,7 +64,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var report = (await PortalHelpers.GetReportsAsync()).FirstOrDefault(r => r.Name == name);
             if (report == null) return HttpNotFound();
-            return View(new ConfigureReportModel(DB, report));
+            return View(new ConfigureReportModel(DB, report) { CurrentUserEmail = CurrentUser.Email });
         }
 
         [ActionName(ActionNames.ExecuteReport)]
@@ -98,7 +98,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     }
                 case ReportFrequencies.EmailMeOnce:
                     {
-                        var recipients = new[] { string.Format(Properties.Settings.Default.ReportRecipientFormat, User.Identity.Name) };
+                        var recipients = new[] { CurrentUser.Email };
                         var o = new ReportEmailViewModel(User.Identity.Name)
                         {
                             Report = report
@@ -109,7 +109,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     }
                 case ReportFrequencies.Recurring:
                     {
-                        var recipients = Request.Form["recipients"].Split(';', ',', '\t', ' ', '\r', '\n').Select(z => z.TrimOrNull()).WhereNotNull().Select(z => string.Format(Properties.Settings.Default.ReportRecipientFormat, z)).ToArray();
+                        var domains = CSV.ParseLine(Properties.Settings.Default.ReportRecipientEmailDomains).ToCaseInsensitiveSet();
+                        var recipients = Request.Form["recipients"].Split(';', ',', '\t', ' ', '\r', '\n').Select(z => z.TrimOrNull()).WhereNotNull().Where(z => domains.Contains(z.RightOf("@"))).ToArray();
                         var now = DateTime.UtcNow;
                         var time = DateTime.Parse(Request.Form["time"]);
                         var recurringJobId = $"{User.Identity.Name}.Report.{report.Name}.{now.ToYYYYMMDD()}.{now.ToHHMMSS()}";

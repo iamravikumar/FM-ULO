@@ -459,10 +459,10 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("{0}@gsa.gov")]
-        public string ReportRecipientFormat {
+        [global::System.Configuration.DefaultSettingValueAttribute("gsa.gov,guidehouse.com")]
+        public string ReportRecipientEmailDomains {
             get {
-                return ((string)(this["ReportRecipientFormat"]));
+                return ((string)(this["ReportRecipientEmailDomains"]));
             }
         }
         

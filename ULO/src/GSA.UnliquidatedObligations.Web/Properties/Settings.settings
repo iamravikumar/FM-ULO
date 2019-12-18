@@ -167,8 +167,8 @@
     <Setting Name="DatabaseSprocCommandTimeout" Type="System.TimeSpan" Scope="Application">
       <Value Profile="(Default)">01:00:00</Value>
     </Setting>
-    <Setting Name="ReportRecipientFormat" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">{0}@gsa.gov</Value>
+    <Setting Name="ReportRecipientEmailDomains" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">gsa.gov,guidehouse.com</Value>
     </Setting>
     <Setting Name="ReportEmailTemplateId" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">4</Value>
