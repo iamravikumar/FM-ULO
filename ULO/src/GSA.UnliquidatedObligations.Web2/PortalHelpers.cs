@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Hosting;
@@ -53,6 +55,10 @@ namespace GSA.UnliquidatedObligations.Web
 
         public bool UseOldGetEligibleReviewersAlgorithm => ConfigOptions.Value.UseOldGetEligibleReviewersAlgorithm;
 
+        public bool SendBatchEmailsDuringAssignWorkflows => ConfigOptions.Value.SendBatchEmailsDuringAssignWorkflows;
+
+        public bool AllowFileShareInfo => ConfigOptions.Value.AllowFileShareInfo;
+
         public string GetEligibleReviewersQualifiedUsernameFormat => ConfigOptions.Value.GetEligibleReviewersQualifiedUsernameFormat;
 
         public string GetEligibleReviewersNotQualifiedUsernameFormat => ConfigOptions.Value.GetEligibleReviewersNotQualifiedUsernameFormat;
@@ -60,6 +66,12 @@ namespace GSA.UnliquidatedObligations.Web
         public bool UseDevAuthentication => AccountConfigOptions.Value.UseDevAuthentication;
 
         public string StaleWorkflowErrorMessageTemplate => ConfigOptions.Value.StaleWorkflowErrorMessageTemplate;
+
+        public string DocPath => ConfigOptions.Value.DocPath;
+
+        public string AttachmentFileUploadAccept => ConfigOptions.Value.AttachmentFileUploadAccept;
+
+        public string AttachmentFileUploadAcceptMessage => ConfigOptions.Value.AttachmentFileUploadAcceptMessage;
 
         public class Config
         {
@@ -77,11 +89,21 @@ namespace GSA.UnliquidatedObligations.Web
 
             public bool UseOldGetEligibleReviewersAlgorithm { get; }
 
+            public bool SendBatchEmailsDuringAssignWorkflows { get; }
+
+            public bool AllowFileShareInfo { get; }
+
             public string GetEligibleReviewersQualifiedUsernameFormat { get; set; }
 
             public string GetEligibleReviewersNotQualifiedUsernameFormat { get; set; }
 
             public string StaleWorkflowErrorMessageTemplate { get; set; }
+
+            public string DocPath { get; }
+
+            public string AttachmentFileUploadAccept { get; }
+
+            public string AttachmentFileUploadAcceptMessage { get; set; }
         }
 
         public readonly IOptions<SprintConfig> SprintConfigOptions;
@@ -114,6 +136,31 @@ namespace GSA.UnliquidatedObligations.Web
             Logger = logger;
         }
 
+        public bool VerifyFileAccept(string accepts, string filename, string contentType)
+        {
+            accepts = accepts ?? "";
+            var ext = Path.GetExtension(filename);
+            foreach (var accept in accepts.Split('|'))
+            {
+                try
+                {
+                    if (accept.Length < 2) continue;
+                    if (accept[0] == '.')
+                    {
+                        if (0 == string.Compare(ext, accept, true)) return true;
+                    }
+                    else if (accept.Contains("/"))
+                    {
+                        if (MimeType.IsA(contentType, accept)) return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                   Trace.WriteLine(ex);
+                }
+            }
+            return false;
+        }
         public IList<SelectListItem> CreateZoneSelectListItems()
             => Cacher.FindOrCreateValue(
                 nameof(CreateZoneSelectListItems),

@@ -16,6 +16,7 @@ using System.Web;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -197,6 +198,17 @@ namespace GSA.UnliquidatedObligations.Web
             return new HtmlString(html);
         }
 
+       
+#endif
+
+        //public static string ActionLinkUrl(this IHtmlHelper hh, string actionName, string controllerName, object routeValues)
+        //{
+        //    var a = hh.ActionLink("jbt", actionName, controllerName, routeValues, new { });
+        //    var doc = new HtmlAgilityPack.HtmlDocument();
+        //    doc.LoadHtml(a.ToHtmlString());
+        //    var href = doc.DocumentNode.FirstChild.Attributes["href"];
+        //    return href.Value;
+        //}
         private static readonly Regex BeginningOfTheEnd = new Regex(
             @"(.+)(\<\/\w+>\s*)", 
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
@@ -204,7 +216,7 @@ namespace GSA.UnliquidatedObligations.Web
         public static HtmlString AppendChildHtml(this HtmlString hs, string newChildHtml)
         {
             if (newChildHtml == null || newChildHtml == "") return hs;
-            var html = hs.ToHtmlString();
+            var html = hs.Value;
             var m = BeginningOfTheEnd.Match(html);
             if (m.Success)
             {
@@ -212,21 +224,12 @@ namespace GSA.UnliquidatedObligations.Web
                 hs = new HtmlString(html);
             }
             return hs;
-        }
-
-        public static string ActionLinkUrl(this HtmlHelper hh, string actionName, string controllerName, object routeValues)
-        {
-            var a = hh.ActionLink("jbt", actionName, controllerName, routeValues, new { });
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(a.ToHtmlString());
-            var href = doc.DocumentNode.FirstChild.Attributes["href"];
-            return href.Value;
-        }
+        }       
 
         private const string BREAK_TOKEN = "^^ BrEaKer bReaKER 123 vv";
         private const int FORCE_BREAK_LEN = 16;
 
-        public static IHtmlString ToBreakableString(this HtmlHelper hh, string s)
+        public static HtmlString ToBreakableString(this IHtmlHelper hh, string s)
         {
             s = StringHelpers.TrimOrNull(s) ?? "";
             if (s.Length > FORCE_BREAK_LEN)
@@ -263,7 +266,7 @@ namespace GSA.UnliquidatedObligations.Web
             }
             return new HtmlString(HttpUtility.HtmlEncode(s));
         }
-#endif
+
         public static HtmlString CheckBoxListFor<TModelItem>(
             this IHtmlHelper<TModelItem> hh,
             Expression<Func<TModelItem, IEnumerable<string>>> columnExpression,

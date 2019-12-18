@@ -1,0 +1,42 @@
+﻿@model GSA.UnliquidatedObligations.BusinessLayer.Data.Document
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Document</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UploadedByUser.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UploadedByUser.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DocumentName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DocumentName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Workflow.WorkflowKey)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Workflow.WorkflowKey)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DocumentId })
+</p>

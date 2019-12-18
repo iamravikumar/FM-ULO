@@ -45,7 +45,7 @@
         </section>
     </div>
     <div class="col-md-8">
-        @if (!UserHelpers.HasPermission(ApplicationPermissionNames.ApplicationUser))
+        @if (!UserHelpers.HasPermission(User, ApplicationPermissionNames.ApplicationUser))
         {
             <partial name="~/Views/Shared/_AuthenticatedNotAuthorized.cshtml" />
             <hr />
