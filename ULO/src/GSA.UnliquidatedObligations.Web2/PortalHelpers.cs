@@ -79,6 +79,8 @@ namespace GSA.UnliquidatedObligations.Web
 
             public string TimezoneId { get; set; } = "Eastern Standard Time";
 
+            public Uri ExternalSiteUrl { get; set; }
+
             public TimeSpan MediumCacheTimeout { get; set; } = TimeSpan.Parse("00:05:00");
 
             public TimeSpan ShortCacheTimeout { get; set; } = TimeSpan.Parse("00:01:00");

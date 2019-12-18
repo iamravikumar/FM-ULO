@@ -56,9 +56,9 @@ ReadTable:
                                 }
                                 lastInfoMessage = null;
                             }
-                            logger.Information("Exporting from table [{tableName}]...", dt.TableName);
                             dt = new DataTable(tableName);
                             ds.Tables.Add(dt);
+                            logger.Information("Exporting from table [{tableName}]...", dt.TableName);
 
                             var colsSeen = new HashSet<string>(Comparers.CaseInsensitiveStringComparer);
                             for (int z = 0; z < reader.FieldCount; ++z)

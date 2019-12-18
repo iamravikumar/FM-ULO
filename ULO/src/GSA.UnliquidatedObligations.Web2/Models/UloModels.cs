@@ -317,10 +317,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         protected BaseEmailViewModel()
         {
-            throw new NotImplementedException("old code in need for porting!");
-            /*
-            SiteUrl = Properties.Settings.Default.SiteUrl;
-            */
+            SiteUrl = Startup.Instance.Configuration[$"{PortalHelpers.Config.ConfigSectionName}:{nameof(PortalHelpers.Config.ExternalSiteUrl)}"];
         }
 
         protected BaseEmailViewModel(string userName)

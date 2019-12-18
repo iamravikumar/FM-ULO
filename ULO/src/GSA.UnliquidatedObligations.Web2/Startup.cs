@@ -23,9 +23,12 @@ namespace GSA.UnliquidatedObligations.Web
 {
     public class Startup
     {
+        public static Startup Instance { get; private set; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            Instance = this;
         }
 
         public IConfiguration Configuration { get; }
@@ -112,10 +115,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddScoped<UserHelpers>();
 
-
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString(Configuration["Hangfire:ConnectionStringName"])));
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
