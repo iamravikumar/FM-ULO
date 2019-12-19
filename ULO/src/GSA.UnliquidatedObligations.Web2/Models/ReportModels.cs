@@ -9,7 +9,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public ReportDescription Description { get; set; }
         public List<SelectListItem> RegionItems { get; } = new List<SelectListItem>();
         public List<SelectListItem> ReviewItems { get; } = new List<SelectListItem>();
-        public RecurrenceSettings RecurrenceSettings { get; set; } = new RecurrenceSettings();
+        public string CurrentUserEmail { get; set; }
 
         public ConfigureReportModel()
         { }

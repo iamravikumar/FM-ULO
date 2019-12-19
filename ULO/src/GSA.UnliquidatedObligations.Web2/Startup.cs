@@ -23,9 +23,12 @@ namespace GSA.UnliquidatedObligations.Web
 {
     public class Startup
     {
+        public static Startup Instance { get; private set; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            Instance = this;
         }
 
         public IConfiguration Configuration { get; }
@@ -67,6 +70,7 @@ namespace GSA.UnliquidatedObligations.Web
             ConfigureOptions<AccountController.Config>(AccountController.Config.ConfigSectionName);
             ConfigureOptions<LegacyFormsAuthenticationService.Config>(LegacyFormsAuthenticationService.Config.ConfigSectionName);
             ConfigureOptions<WorkflowManager.Config>(WorkflowManager.Config.ConfigSectionName);
+            ConfigureOptions<ReportsController.Config>(ReportsController.Config.ConfigSectionName);
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -88,6 +92,8 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddAuthentication();
             services.UseSitePermissions();
 
+            services.AddSingleton<IRecurringJobManager, RecurringJobManager>();
+            services.AddScoped<IReportRunner, ReportRunner>();
             services.AddScoped<IBackgroundTasks, BackgroundTasks>();
             services.AddScoped<SmtpClient>();
             services.AddScoped<IEmailServer, EmailServer>();
@@ -109,10 +115,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddScoped<UserHelpers>();
 
-
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString(Configuration["Hangfire:ConnectionStringName"])));
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

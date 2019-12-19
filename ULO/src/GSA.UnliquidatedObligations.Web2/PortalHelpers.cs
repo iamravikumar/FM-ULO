@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -77,6 +78,8 @@ namespace GSA.UnliquidatedObligations.Web
             public const string ConfigSectionName = "PortalHelpersConfig";
 
             public string TimezoneId { get; set; } = "Eastern Standard Time";
+
+            public Uri ExternalSiteUrl { get; set; }
 
             public TimeSpan MediumCacheTimeout { get; set; } = TimeSpan.Parse("00:05:00");
 
@@ -716,17 +719,16 @@ namespace GSA.UnliquidatedObligations.Web
             return hasFilters ? predicate : null;
         }
 
-        //public bool HasPermission(IPrincipal user, ApplicationPermissionNames permissionName)
-        //{
-        //    var userClaims = Cache.DataCacher.FindOrCreateValue(
-        //        user.Identity?.Name,                
-        //        () => DB.AspNetUsers.Include(u=> u.UserAspNetUserClaims).FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims(),
-        //        ShortCacheTimeout
-        //        );
+        public EmailTemplate GetEmailTemplate(int emailTemplateId)
+            => Cacher.FindOrCreateValue(
+                   Cache.CreateKey(emailTemplateId, nameof(GetEmailTemplate)),
+                   () => DB.EmailTemplates.AsNoTracking().FirstOrDefault(z => z.EmailTemplateId == emailTemplateId),
+                    MediumCacheTimeout);
 
-        //    return userClaims != null && userClaims.GetApplicationPerimissionRegions(permissionName).Count > 0;
-        //}
-
-
+        public Task<IQueryable<BusinessLayer.Data.Reporting.ReportDescription>> GetReportsAsync(string name = null)
+            => Task.FromResult(Cacher.FindOrCreateValue(
+                Cache.CreateKey(nameof(GetReportsAsync), name),
+                () => DB.ReportDefinitions.Where(rd => rd.IsActive == true).ConvertAll(rd => rd.Description).WhereNotNull().ToList().AsReadOnly()
+                ).AsQueryable().Where(z => name == null || z.Name == name));
     }
 }

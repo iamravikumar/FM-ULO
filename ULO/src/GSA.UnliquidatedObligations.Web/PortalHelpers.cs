@@ -16,6 +16,7 @@ using Autofac;
 using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
@@ -324,13 +325,13 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (regions!=null && regions.Count>0)
+            if (regions != null && regions.Count > 0)
             {
                 hasFilters = true;
-                predicate = predicate.And(wf => wf.UnliquidatedObligation.RegionId!=null && regions.Contains((int)wf.UnliquidatedObligation.RegionId));
+                predicate = predicate.And(wf => wf.UnliquidatedObligation.RegionId != null && regions.Contains((int)wf.UnliquidatedObligation.RegionId));
             }
 
-            if (zones!=null && zones.Count>0)
+            if (zones != null && zones.Count > 0)
             {
                 hasFilters = true;
                 predicate = predicate.And(wf => zones.Contains(wf.UnliquidatedObligation.Region.ZoneId));
@@ -364,7 +365,7 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (baCode!=null && baCode.Count > 0)
+            if (baCode != null && baCode.Count > 0)
             {
                 hasFilters = true;
                 predicate = predicate.And(wf => baCode.Contains(wf.UnliquidatedObligation.Prog.Trim()));
@@ -432,7 +433,7 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (docType!=null && docType.Count>0)
+            if (docType != null && docType.Count > 0)
             {
                 hasFilters = true;
                 predicate = predicate.And(wf => docType.Contains(wf.UnliquidatedObligation.DocType));
@@ -558,26 +559,26 @@ namespace GSA.UnliquidatedObligations.Web
 
             }
 
-            if (reasonIncludedInReview !=null && reasonIncludedInReview.Count > 0)
+            if (reasonIncludedInReview != null && reasonIncludedInReview.Count > 0)
             {
                 hasFilters = true;
                 predicate = predicate.And(wf => reasonIncludedInReview.Contains(wf.UnliquidatedObligation.ReasonIncludedInReview.Trim()));
             }
 
-            if (valid!=null && valid.Count==1)
+            if (valid != null && valid.Count == 1)
             {
                 hasFilters = true;
                 var v = valid[0];
                 predicate = predicate.And(wf => wf.UnliquidatedObligation.Valid == v);
             }
 
-            if (status!=null && status.Count>0)
+            if (status != null && status.Count > 0)
             {
                 hasFilters = true;
                 predicate = predicate.And(wf => status.Contains(wf.UnliquidatedObligation.Status.Trim()));
             }
 
-            if (reviewId!=null && reviewId.Count>0)
+            if (reviewId != null && reviewId.Count > 0)
             {
                 hasFilters = true;
                 predicate = predicate.And(wf => reviewId.Contains(wf.UnliquidatedObligation.ReviewId));
@@ -837,7 +838,7 @@ namespace GSA.UnliquidatedObligations.Web
         {
             foreach (var item in items)
             {
-                item.Selected = values!=null && values.Contains(item.Value);
+                item.Selected = values != null && values.Contains(item.Value);
             }
             return items;
         }
@@ -1090,8 +1091,21 @@ namespace GSA.UnliquidatedObligations.Web
             return missingValue;
         }
 
-        public static int? IndexOfOccurrence<T>(this IList<T> items, T match, int nthOccurrence, int? zeroThValue = null, int ? missingValue = null)
-            => items.IndexOfOccurrence(i => {
+        public static EmailTemplate GetEmailTemplate(int emailTemplateId)
+            => Cacher.FindOrCreateValWithSimpleKey(
+                   Cache.CreateKey(emailTemplateId, nameof(GetEmailTemplate)),
+                   () =>
+                   {
+                       using (var db = UloDbCreator())
+                       {
+                           return db.EmailTemplates.AsNoTracking().FirstOrDefault(z => z.EmailTemplateId == emailTemplateId);
+                       }
+                   },
+                UloHelpers.MediumCacheTimeout);
+
+        public static int? IndexOfOccurrence<T>(this IList<T> items, T match, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
+            => items.IndexOfOccurrence(i =>
+            {
                 if (i == null)
                 {
                     return match == null;
@@ -1101,5 +1115,18 @@ namespace GSA.UnliquidatedObligations.Web
                     return i.Equals(match);
                 }
             }, nthOccurrence, zeroThValue, missingValue);
+
+        public static Task<IQueryable<ReportDescription>> GetReportsAsync(string name = null)
+            => Task.FromResult(Cacher.FindOrCreateValWithSimpleKey(
+                Cache.CreateKey(nameof(GetReportsAsync), name),
+                () =>
+                {
+                    using (var db = UloDbCreator())
+                    {
+                        return db.ReportDefinitions.Where(rd => rd.IsActive == true).ConvertAll(rd => rd.Description).WhereNotNull().ToList().AsReadOnly();
+                    }
+                },
+                UloHelpers.MediumCacheTimeout).AsQueryable().Where(z => name == null || z.Name == name)
+                );
     }
 }

@@ -28,40 +28,52 @@
         {
             htmlInputType = "text";
         }
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="form-row">
-                    <label for="@p.SqlParameterName">@p.Title</label>
-                    @{ 
-                        IEnumerable<SelectListItem> items = null;
-                        switch (p.ReportParameterRenderHint)
-                        {
-                            case ReportParameterRenderHints.Region:
-                                items = Model.RegionItems;
-                                break;
-                            case ReportParameterRenderHints.Review:
-                                items = Model.ReviewItems;
-                                break;
-                            case ReportParameterRenderHints.TextArea:
-                                <textarea class="form-control" name="@p.SqlParameterName"></textarea>
-                                break;
-                            case ReportParameterRenderHints.Standard:
-                            default:
-                                <input class="form-control" name="@p.SqlParameterName" type="@htmlInputType" required="required" />
-                                break;
-                        }
-                        if (items != null)
-                        {
-                            @Html.DropDownList(p.SqlParameterName, items, AspHelpers.PleaseSelectOne, new { required= "required" });
-                        }
-                    }
-                </div>
-            </div>
+        <div class="form-group">
+            <label for="@ReportsController.ReportParameterNamePrefix@p.SqlParameterName">@p.Title</label>
+            @{
+                IEnumerable<SelectListItem> items = null;
+                switch (p.ReportParameterRenderHint)
+                {
+                    case ReportParameterRenderHints.Region:
+                        items = Model.RegionItems;
+                        break;
+                    case ReportParameterRenderHints.Review:
+                        items = Model.ReviewItems;
+                        break;
+                    case ReportParameterRenderHints.TextArea:
+                        <textarea class="form-control" name="@ReportsController.ReportParameterNamePrefix@p.SqlParameterName"></textarea>
+                        break;
+                    case ReportParameterRenderHints.Standard:
+                    default:
+                        <input class="form-control" name="@ReportsController.ReportParameterNamePrefix@p.SqlParameterName" type="@htmlInputType" required="required" />
+                        break;
+                }
+                if (items != null)
+                {
+                    <br />
+                    @Html.DropDownList(ReportsController.ReportParameterNamePrefix + p.SqlParameterName, items, AspHelpers.PleaseSelectOne, new { required = "required", @class = "form-control" });
+                }
+            }
         </div>
     }
-    <div class="row">
-        <div class="col-xs-12 text-right">
-            <input type="submit" value="Execute" class="btn btn-default btn-primary btn-large" />
+    <div class="form-group">
+        <label for="frequency" style="display:block">Frequency</label>
+        <label style="display:block"><input type="radio" name="frequency" value="@ReportsController.ReportFrequencies.EmailMeOnce" checked="checked" onchange="$('.recurring').hide()" /> Once, and email me the results</label>
+        <label style="display:block"><input type="radio" name="frequency" value="@ReportsController.ReportFrequencies.Synchronous" onchange="$('.recurring').hide()" /> Once, and wait for the results so I can download them from this page</label>
+        @if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanScheduleReports))
+        {
+            <label style="display:block"><input type="radio" name="frequency" value="@ReportsController.ReportFrequencies.Recurring" onchange="$('.recurring').show()" /> Recurring, and email the results</label>
+        }
+    </div>
+    <div style="padding-left:25px">
+        <div class="form-group recurring" style="display:none">
+            <label for="recipients">Recipients (separate with ';')</label>
+            <textarea class="form-control" name="recipients">@Model.CurrentUserEmail</textarea>
+        </div>
+        <div class="form-group recurring" style="display:none">
+            <label for="time">Time of day</label>
+            <input name="time" class="form-control" type="time" />
         </div>
     </div>
+    <input type="submit" value="Execute" class="btn btn-default btn-primary btn-large" />
 }
