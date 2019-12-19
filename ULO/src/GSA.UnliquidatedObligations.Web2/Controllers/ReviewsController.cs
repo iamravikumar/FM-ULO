@@ -59,11 +59,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("reviews")]
         public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var reviews = DB.Reviews.Include(z => z.Region);
+            var reviews = DB.Reviews;  
+
+            // Jason will fix it.
             //if (sortCol == nameof(ReviewModel.ReviewTypeId))
             //{
             //    reviews = ApplyBrowse(
-            //        reviews, 
+            //        reviews,
             //        nameof(ReviewModel.ReviewTypeId), typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             //}
             //else if (sortCol == nameof(ReviewModel.ReviewScopeId))
@@ -78,6 +80,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             //        reviews,
             //        sortCol ?? nameof(Review.CreatedAt), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             //}
+
             return View(reviews);
         }
 
@@ -92,7 +95,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private async Task<ReviewDetailsModel> CreateReviewDetailsModelAsync(int reviewId)
         {
             var review = await DB.Reviews.FindAsync(reviewId);            
-            var reviewStats = DB.ReviewStats.FirstOrDefault(z=>z.ReviewId==reviewId); // ask Jason as changed from FindAsync to FirstOrDefault 
+            var reviewStats = DB.ReviewStats.FirstOrDefault(z=>z.ReviewId==reviewId); 
             var reviewDetailsModel = new ReviewDetailsModel(review, reviewStats);            
             return reviewDetailsModel;
         }
@@ -104,12 +107,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(
-            [Bind(new[]{
-                nameof(ReviewDetailsModel.Review),
-                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewId),
-                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.IsClosed),
-                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewName),
-            })]
+            [Bind(nameof(ReviewDetailsModel.Review),nameof(Review.ReviewId),nameof(Review.IsClosed),nameof(Review.ReviewName))]
+            //[Bind(new[]{
+            //    nameof(ReviewDetailsModel.Review),
+            //    nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewId),
+            //    nameof(ReviewDetailsModel.Review)+"."+nameof(Review.IsClosed),
+            //    nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewName),
+            //})]
             ReviewDetailsModel m)
         {
             var reviewId = m.Review.ReviewId;
@@ -129,10 +133,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 return RedirectToIndex();
             }
 
-            var mulligan = await CreateReviewDetailsModelAsync(reviewId);
-            mulligan.Review.ReviewName = m.Review.ReviewName;
-            mulligan.Review.IsClosed = m.Review.IsClosed;
-            return RedirectToAction(ActionNames.Details, mulligan);
+            //var mulligan = await CreateReviewDetailsModelAsync(reviewId);
+            //mulligan.Review.ReviewName = m.Review.ReviewName;
+            //mulligan.Review.IsClosed = m.Review.IsClosed;
+            return RedirectToAction(ActionNames.Details, new { id = reviewId });
         }
 
 

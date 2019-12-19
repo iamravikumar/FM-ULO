@@ -7,7 +7,6 @@ using GSA.UnliquidatedObligations.Web.Identity;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
@@ -36,8 +35,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         private readonly UloUserManager UserManager;
+        
         private readonly IHostingEnvironment HostingEnvironment;
 
+       
         public DocumentsController(UloUserManager userManager, IHostingEnvironment hostingEnvironment, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {

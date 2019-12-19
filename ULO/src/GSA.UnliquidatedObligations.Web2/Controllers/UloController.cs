@@ -121,6 +121,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 Include(u => u.UloNotes).
                 Include(u => u.Region).
                 Include(u => u.Region.Zone).
+                Include(u => u.Review).AsNoTracking().
                 WhereReviewExists().
                 FirstOrDefaultAsync(u => u.UloId == uloId);
 
