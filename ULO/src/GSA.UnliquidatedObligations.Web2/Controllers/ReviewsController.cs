@@ -107,13 +107,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanCreateReviews)]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(
-            [Bind(nameof(ReviewDetailsModel.Review),nameof(Review.ReviewId),nameof(Review.IsClosed),nameof(Review.ReviewName))]
-            //[Bind(new[]{
-            //    nameof(ReviewDetailsModel.Review),
-            //    nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewId),
-            //    nameof(ReviewDetailsModel.Review)+"."+nameof(Review.IsClosed),
-            //    nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewName),
-            //})]
+            [Bind(new[]{
+                nameof(ReviewDetailsModel.Review),
+                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewId),
+                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.IsClosed),
+                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.ReviewName),
+                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.Comments),
+                nameof(ReviewDetailsModel.Review)+"."+nameof(Review.Status),
+            })]
             ReviewDetailsModel m)
         {
             var reviewId = m.Review.ReviewId;
@@ -128,6 +129,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var r = await DB.Reviews.FindAsync(reviewId);
                 if (r == null) return StatusCode(404);
                 r.ReviewName = m.Review.ReviewName;
+                r.Comments = m.Review.Comments;
                 r.SetStatusDependingOnClosedBit(m.Review.IsClosed);
                 await DB.SaveChangesAsync();
                 return RedirectToIndex();
