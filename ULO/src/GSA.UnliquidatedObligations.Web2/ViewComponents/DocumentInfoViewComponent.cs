@@ -34,18 +34,14 @@ namespace GSA.UnliquidatedObligations.Web.ViewComponents
             Cacher = cacher;
         }
 
-        public IViewComponentResult InvokeAsync(int? documentId, string docType, bool allowDocumentEdit = false)
+        public async Task<IViewComponentResult> InvokeAsync(int? documentId, string docType, bool allowDocumentEdit = false)
         {
             if (docType == null && documentId.HasValue)
             {
-                docType =
-                    (
-                        from z in UloDb.Documents
-                        where z.DocumentId == documentId.Value
-                        select z.Workflow.TargetUlo.DocType
-                    ).FirstOrDefault();
+                docType = await(UloDb.Documents.Where(z => z.DocumentId == documentId.Value).Select(d=>d.Workflow.TargetUlo.DocType)).FirstOrDefaultAsync();
             }
             Requires.NonNull(docType, nameof(docType));
+
             Document document;
             if (documentId.GetValueOrDefault() == 0)
             {
