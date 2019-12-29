@@ -53,15 +53,11 @@ namespace GSA.UnliquidatedObligations.Web
                 }
             }
 
-            if (hostingContext.HostingEnvironment.IsDevelopment())
+            if (hostingContext.HostingEnvironment.EnvironmentName=="Development")
             {
                 EnvironmentInfo["IsDevelopment"] = true;
-                builder.AddUserSecrets<Program>();
             }
-            else
-            {
-                builder.AddUserSecrets<Program>();
-            }
+            builder.AddUserSecrets<Program>();
         }
 
         public static void Main(string[] args)

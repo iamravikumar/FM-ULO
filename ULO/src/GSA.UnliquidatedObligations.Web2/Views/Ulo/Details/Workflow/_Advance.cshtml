@@ -42,7 +42,7 @@
             <div class="row row-space-top" id="expectedDateForCompletionContainer" style="display:none">
                 @Html.LabelFor(model => model.ExpectedDateForCompletion, "Expected Date for Completion/Resolution: ", htmlAttributes: new { @class = "control-label" })
                 @{
-                    var expectedDateOfCompletionHtmlAttrs = Model.ExpectedDateForCompletionEditable ? (object)new { @onchange = "clearDateValidationErrors()" } : (object)new { @readonly = "readonly" };
+                    var expectedDateOfCompletionHtmlAttrs = Model.ExpectedDateForCompletionEditable ? (object)new { onchange = "clearDateValidationErrors()" } : (object)new { @@readonly = "readonly" };
                 }
                 @Html.EditorFor(model => model.ExpectedDateForCompletion, new { @class = "form-control", type = "date", htmlAttributes = expectedDateOfCompletionHtmlAttrs })
                 <div>

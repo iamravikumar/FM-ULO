@@ -1,4 +1,10 @@
 ﻿
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
@@ -6,18 +12,11 @@ using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Identity;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -36,10 +35,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private readonly UloUserManager UserManager;
         
-        private readonly IHostingEnvironment HostingEnvironment;
-
+        private readonly IHostEnvironment HostingEnvironment;
        
-        public DocumentsController(UloUserManager userManager, IHostingEnvironment hostingEnvironment, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
+        public DocumentsController(UloUserManager userManager, IHostEnvironment hostingEnvironment, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             UserManager = userManager;

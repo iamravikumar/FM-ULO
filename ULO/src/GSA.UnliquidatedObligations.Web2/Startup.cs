@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Diagnostics;
 using System.Net.Mail;
 using GSA.Authentication.LegacyFormsAuthentication;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
@@ -8,6 +8,7 @@ using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Identity;
 using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using RevolutionaryStuff.AspNetCore.Filters;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 
@@ -62,6 +65,7 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddOptions();
 
+            ConfigureOptions<HttpHeadersFilter.Config>(HttpHeadersFilter.Config.ConfigSectionName);
             ConfigureOptions<SprintConfig>(SprintConfig.ConfigSectionName);
             ConfigureOptions<PortalHelpers.Config>(PortalHelpers.Config.ConfigSectionName);
             ConfigureOptions<UserHelpers.Config>(UserHelpers.Config.ConfigSectionName);
@@ -107,8 +111,13 @@ namespace GSA.UnliquidatedObligations.Web
                     Configuration.GetConnectionString(PortalHelpers.DefaultConectionStringName), z => z.EnableRetryOnFailure(1)));
 
             services.AddSingleton<ICacher>(_=>Cache.DataCacher);
-             
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddApplicationInsightsTelemetry();
+
+            services.AddMvc(config =>
+            {
+                config.Filters.Add(typeof(HttpHeadersFilter));
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddSingleton(provider => Serilog.Log.ForContext<Startup>());
             services.AddScoped<PortalHelpers>();
@@ -116,10 +125,22 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddScoped<UserHelpers>();
 
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString(Configuration["Hangfire:ConnectionStringName"])));
+            if (Configuration.GetValue<bool>("Hangfire:UseServer"))
+            {
+                services.AddHangfireServer();
+            }
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        /*
+         * This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+         * 
+         * There is some MAJOR voodoo going on with this signature!
+         * Is this some creepy DI action?
+         * How do we know what other magic parameters to add?
+         * Because... TelemetryConfiguration is one of them
+         * https://docs.microsoft.com/en-us/azure/azure-monitor/app/asp-net-core#disable-telemetry-dynamically
+        */
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, TelemetryConfiguration telemetryConfiguration)
         {
             var appPathBase = Configuration[Program.GsaAppSettingsVariablePaths.AppPathBase];
             if (!string.IsNullOrEmpty(appPathBase))
@@ -130,33 +151,39 @@ namespace GSA.UnliquidatedObligations.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
+
+            app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
 
-            app.UseHangfireServer();
-            app.UseHangfireDashboard("/Hangfire", new DashboardOptions
-            {
-//                Authorization = new[] { new HangfireDashboardAuthorizer() }
-            });           
-        }       
 
+            var dashboardPath = Configuration["Hangfire:DashboardPath"];
+            Trace.WriteLine($"Hangfire client dashboard path = [{dashboardPath}]");
+            if (!string.IsNullOrEmpty(dashboardPath))
+            {
+                app.UseHangfireDashboard(dashboardPath, new DashboardOptions
+                {
+                    Authorization = new[] { new HangfireDashboardAuthorizer() }
+                });
+            }
+        }       
     }
 }

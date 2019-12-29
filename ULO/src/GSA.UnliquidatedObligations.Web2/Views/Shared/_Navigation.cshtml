@@ -25,7 +25,7 @@
                             }
                             catch (Exception)
                             { }
-                            var apka = (object)new { @class = "current" };
+                            var apka = (object)new { @@class = "current" };
                             var ipka = (object)new { };
                         }
                         <li>@Html.ActionLink("My Tasks", UloController.ActionNames.MyTasks, UloController.Name, null, pageKey == PageKeys.MyTasks ? apka : ipka)</li>

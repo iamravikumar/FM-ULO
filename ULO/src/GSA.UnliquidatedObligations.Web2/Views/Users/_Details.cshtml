@@ -4,9 +4,9 @@
 @{
     var createMode = Model.UserId == null;
     var canMakeChanges = UserHelpers.HasPermission(User, ApplicationPermissionNames.ManageUsers);
-    var hiddenHtmlAttributes = new { @class = "hidden" };
-    var readonlyHtmlAttributes = new { @readonly = "readonly" };
-    var disabledHtmlAttributes = new { @disabled = "disabled" };
+    var hiddenHtmlAttributes = AspHelpers.CssClass("hidden");
+    var readonlyHtmlAttributes = new { @@readonly = "readonly" };
+    var disabledHtmlAttributes = new { disabled = "disabled" };
     var textboxHtmlAttributes = canMakeChanges ? (object) new { } : (object) readonlyHtmlAttributes;
     var checkboxHtmlAttributes = canMakeChanges ? (object)new { } : (object) disabledHtmlAttributes;
     var groupNameSelectItems = ((IList<string>)ViewBag.GroupNames).ConvertToSelectList();
@@ -18,7 +18,7 @@
     @Html.HiddenFor(Model => Model.UserId)
     <div>
         <hr />
-        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+        @Html.ValidationSummary(false, "", AspHelpers.CssClass("text-danger") )
         <div class="form-row">
             <div class="col-sm-2">
                 @Html.DisplayNameFor(model => model.UserName)

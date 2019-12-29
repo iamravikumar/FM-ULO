@@ -5,13 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
-using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
@@ -117,13 +116,13 @@ namespace GSA.UnliquidatedObligations.Web
         private readonly ICacher Cacher;
         private readonly ILogger Logger;
         private readonly IConfiguration Configuration;
-        private readonly IHostingEnvironment HostingEnvironment;
+        private readonly IHostEnvironment HostingEnvironment;
 
         public const string DefaultConectionStringName = "DefaultConnection";
 
         public string DefaultUloConnectionString => Configuration.GetConnectionString(DefaultConectionStringName);
 
-        public PortalHelpers(IConfiguration configuration, IHostingEnvironment hostingEnvironment,IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
+        public PortalHelpers(IConfiguration configuration, IHostEnvironment hostingEnvironment,IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
         {
             Requires.NonNull(sprintConfigOptions, nameof(sprintConfigOptions));
             Requires.NonNull(configOptions, nameof(configOptions));

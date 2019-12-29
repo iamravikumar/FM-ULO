@@ -1,9 +1,9 @@
-﻿using RevolutionaryStuff.Core;
-using RevolutionaryStuff.Core.Database;
-using System;
+﻿using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics;
+using Microsoft.Data.SqlClient;
+using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Database;
 
 namespace GSA.UnliquidatedObligations.Utility
 {

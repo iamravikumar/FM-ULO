@@ -22,6 +22,9 @@ namespace GSA.UnliquidatedObligations.Web
 {
     public static class AspHelpers
     {
+        public static object CssClass(string className)
+            => new { @class = className};
+
         public const string PleaseSelectOne = "-- Please Select --";
 
         public const string NoResultsMessage = "There are not currently any results to show";

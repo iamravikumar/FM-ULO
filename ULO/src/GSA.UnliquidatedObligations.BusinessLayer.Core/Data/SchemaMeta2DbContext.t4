@@ -71,6 +71,7 @@ XML File: <#=schemaMetaFullPath#>
 Generation Time: <#=DateTime.Now#>
 */
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
@@ -82,7 +83,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
@@ -150,7 +150,7 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/P
 foreach (var z in doc.XPathSelectElements("/SchemaMeta/Sprocs/Sproc[Properties/Property/@name='GeneratePoco'=\"1\"]/ResultSets/ResultSet[@isError='0' and @colCount > 0]"))
 {
 #>		
-		public DbQuery<<#=GetClassName(z)#>> <#=z.Parent.Parent.Attribute("name").Value#> { get; set; } // table value function
+		public DbSet<<#=GetClassName(z)#>> <#=z.Parent.Parent.Attribute("name").Value#> { get; set; } // table value function
 <#+
 }
 
@@ -159,7 +159,7 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/P
 {
 		if (GetPropertyValue(z, "AddToDbContext")!="1") continue;
         var keyCount = z.XPathSelectElements(".//Column[@isPrimaryKey='1']").Count() + z.XPathSelectElements(".//Column/Properties/Property[@name='CustomAttribute' and @value='Key']").Count();
-		var containerType = keyCount==0?"DbQuery":"DbSet";
+		var containerType = keyCount==0?"DbSet":"DbSet";
 
 		var schemaTable = GetAttrVal(z, "schema") + "." + GetAttrVal(z, "name");
 		tablesInDbContext.Add(schemaTable);
@@ -307,6 +307,7 @@ if (isReader)
 
 	}
 <#+
+var keylessEntities = new List<string>();
 var classElements = new List<System.Xml.Linq.XElement>();
 classElements.AddRange(doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/Property/@name='GeneratePoco' and Properties/Property/@value='1']"));
 classElements.AddRange(doc.XPathSelectElements("/SchemaMeta/Sprocs/Sproc[Properties/Property/@name='GeneratePoco' and Properties/Property/@value='1']/ResultSets/ResultSet[@isError='0' and @colCount > 0]"));
@@ -365,6 +366,10 @@ foreach (var z in classElements)
 	{
 		primaryKeyTypeName  = null;
 	}
+    else if (keyParts==0)
+    {
+        keylessEntities.Add(className);
+    }
 	var keyPropertyNames = new List<string>();
 	var baseClass = GetPropertyValue(z, "BaseClass");
 	var implements = GetPropertyValue(z, "Implements");
@@ -876,6 +881,11 @@ foreach (var kvp in fluentKeysByEntity)
             modelBuilder.Entity<<#=kvp.Key#>>().HasKey(z => new {<#+ for (int q=0;q<kvp.Value.Count;++q){ #><#=(q==0?"":", ")#>z.<#=kvp.Value[q]#><#+ } #> });
 <#+}
 }
+foreach (var z in keylessEntities)
+{
+#>
+            modelBuilder.Entity<<#=z#>>(e => e.HasNoKey());
+<#+}
 #>
         }
 
@@ -944,8 +954,8 @@ if(queryFilters.Any() || queryFiltersNoTenantFinder.Any())
 foreach (var z in doc.XPathSelectElements("/SchemaMeta/Sprocs/Sproc[Properties/Property/@name='GeneratePoco'=\"1\"]/ResultSets/ResultSet[@isError='0' and @colCount > 0]"))
 {
 #>		
-        public static IQueryable<<#=GetClassName(z)#>> Execute(this DbQuery<<#=GetClassName(z)#>> q<#+foreach (var a in z.Parent.Parent.XPathSelectElements("Args/Arg")){#>, <#=SqlTypeToClrType(a.Attribute("sqlType").Value)#> <#=RightOf(a.Attribute("name").Value,"@")#><#+}#>)
-            => q.FromSql($"select * from <#=z.Parent.Parent.Attribute("schema").Value#>.<#=z.Parent.Parent.Attribute("name").Value#>(<#+int argNum=0; foreach (var a in z.Parent.Parent.XPathSelectElements("Args/Arg")){#><#=((argNum++==0)?"":", ")#>{<#=RightOf(a.Attribute("name").Value,"@")#>}<#+}#>)");
+        public static IQueryable<<#=GetClassName(z)#>> Execute(this DbSet<<#=GetClassName(z)#>> q<#+foreach (var a in z.Parent.Parent.XPathSelectElements("Args/Arg")){#>, <#=SqlTypeToClrType(a.Attribute("sqlType").Value)#> <#=RightOf(a.Attribute("name").Value,"@")#><#+}#>)
+            => q.FromSqlInterpolated($"select * from <#=z.Parent.Parent.Attribute("schema").Value#>.<#=z.Parent.Parent.Attribute("name").Value#>(<#+int argNum=0; foreach (var a in z.Parent.Parent.XPathSelectElements("Args/Arg")){#><#=((argNum++==0)?"":", ")#>{<#=RightOf(a.Attribute("name").Value,"@")#>}<#+}#>)");
 
 <#+
 }

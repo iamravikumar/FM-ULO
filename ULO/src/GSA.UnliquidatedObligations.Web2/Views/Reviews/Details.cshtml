@@ -4,8 +4,8 @@
 @model GSA.UnliquidatedObligations.Web.Models.ReviewDetailsModel
 @{
     var canMakeChanges = UserHelpers.HasPermission(User, ApplicationPermissionNames.CanCreateReviews);
-    var readonlyHtmlAttributes = new { @readonly = "readonly" };
-    var disabledHtmlAttributes = new { @disabled = "disabled" };
+    var readonlyHtmlAttributes = new { @@readonly = "readonly" };
+    var disabledHtmlAttributes = new { @@disabled = "disabled" };
     var textboxHtmlAttributes = canMakeChanges ? (object)new { maxlength = "100" } : (object)readonlyHtmlAttributes;
     var textareaHtmlAttributes = canMakeChanges ? (object)new { maxlength = "500" } : (object)readonlyHtmlAttributes;
     var checkboxHtmlAttributes = canMakeChanges ? (object)new { } : (object)disabledHtmlAttributes;

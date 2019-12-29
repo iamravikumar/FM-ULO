@@ -16,7 +16,7 @@ namespace GSA.UnliquidatedObligations.Web.Identity
             IOptions<IdentityOptions> optionsAccessor, 
             ILogger<SignInManager<AspNetUser>> logger, 
             IAuthenticationSchemeProvider schemes)
-            : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes)
+            : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes, null)
         { }
     }
 }

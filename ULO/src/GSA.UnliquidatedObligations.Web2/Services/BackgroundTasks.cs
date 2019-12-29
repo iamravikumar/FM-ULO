@@ -76,8 +76,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
             await EmailAsync(recipients, subjectTemplate, bodyTemplate, htmlBodyTemplate, model, new[] { res });
         }
 
-        private System.Data.SqlClient.SqlConnection CreateSqlConnection()
-            => new System.Data.SqlClient.SqlConnection(Configuration.GetConnectionString(ConfigOptions.Value.ConnectionStringName));
+        private Microsoft.Data.SqlClient.SqlConnection CreateSqlConnection()
+            => new Microsoft.Data.SqlClient.SqlConnection(Configuration.GetConnectionString(ConfigOptions.Value.ConnectionStringName));
 
         private static DataTable MergeIntoSingleTable(DataSet ds, Func<DataTable> creator = null)
         {
