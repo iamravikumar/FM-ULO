@@ -35,8 +35,7 @@ void TransformSchemaMetaXml2Pocos(ITextTemplatingEngineHost host, string dbConte
         var filterQueryPrefix= $"modelBuilder.Entity<{className}>().HasQueryFilter(x =>";
         var filterQueryPostfix= ");";
         var rowStatusQuery= $"x.{propertyName} == TraffkHelpers.RowStatusValid";
-        //var tenantQuery= "x.TenantId == ((ITraffkTenantFinder)memberInfo.GetValue(this)).GetTenantIdOrGlobal()";
-        var tenantQuery = "x.TenantId == ((ITraffkTenantFinder)this).GetTenantIdAsync().Result";
+        var tenantQuery = "x.TenantId == MyTenantId";
 
 	    if(hasRowStatus)
         {
@@ -281,10 +280,7 @@ if (isReader)
 #>
                 };
             var conn = Database.GetDbConnection();
-			for (int x=0;conn.State == ConnectionState.Connecting && x < ConnectingWaitSegments; ++x)
-			{
-                await Task.Delay((int) (ConnectingWaitTimeout.TotalMilliseconds / ConnectingWaitSegments));
-			}
+            await EnsureConnectedAsync(conn);
 <#+
 			if (isNonQuery)
 			{
@@ -838,6 +834,27 @@ foreach (var v in validators)
 
         public static int ConnectingWaitSegments = 10;
 
+        private async Task EnsureConnectedAsync(System.Data.Common.DbConnection conn)
+        {
+			for (int x=0;conn.State == ConnectionState.Connecting && x < ConnectingWaitSegments; ++x)
+			{
+                await Task.Delay((int) (ConnectingWaitTimeout.TotalMilliseconds / ConnectingWaitSegments));
+			}        
+        }
+
+        private int MyTenantId
+        {
+            get
+            {
+                var t =  <#=iMyTenantFinder==null?"Task.FromResult(-1)":"(("+iMyTenantFinder+")this).GetTenantIdAsync()"#>;
+                if (!t.IsCompleted)
+                {
+                    t.ExecuteSynchronously();
+                }
+                return t.Result;
+            }
+        }
+
         partial void OnAddPrecision(ModelBuilder modelBuilder);
 
         private void AddPrecision(ModelBuilder modelBuilder)
@@ -893,7 +910,7 @@ queryFiltersAny.Sort();
 if(queryFilters.Any() || queryFiltersNoTenantFinder.Any())
 {
 #>		   
-			if (this is ITraffkTenantFinder)
+			if (this is <#=iMyTenantFinder#>)
 			{
 	<#+
 	queryFilters.Sort();

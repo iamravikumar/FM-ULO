@@ -112,15 +112,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         var domains = CSV.ParseLine(Properties.Settings.Default.ReportRecipientEmailDomains).ToCaseInsensitiveSet();
                         var recipients = Request.Form["recipients"].Split(';', ',', '\t', ' ', '\r', '\n').Select(z => z.TrimOrNull()).WhereNotNull().Where(z => domains.Contains(z.RightOf("@"))).ToArray();
                         var now = DateTime.UtcNow;
-                        var time = DateTime.Parse(Request.Form["time"]);
                         var recurringJobId = $"{User.Identity.Name}.Report.{report.Name}.{now.ToYYYYMMDD()}.{now.ToHHMMSS()}";
                         var o = new ReportEmailViewModel(User.Identity.Name)
                         {
                             RecurringJobId = recurringJobId,
-                            Report = report
+                            Report = report,
+                            UserNote = Request.Form["userNote"]
                         };
                         var job = Hangfire.Common.Job.FromExpression<IBackgroundTasks>(b => b.EmailReport(recipients, template.EmailSubject, template.EmailBody, template.EmailHtmlBody, o, name, paramValueByParamName));
-                        var cron = Hangfire.Cron.Daily(time.Hour, time.Minute);
+                        var cron = Request.Form["cron"].TrimOrNull();
+                        if (cron == null)
+                        {
+                            var time = DateTime.Parse(Request.Form["time"]);
+                            cron = Hangfire.Cron.Daily(time.Hour, time.Minute);
+                        } 
                         RJM.AddOrUpdate(recurringJobId, job, cron);
                         this.AddPageAlert(new PageAlert($"Scheduled recurring report \"{report.Title}\" for email to {recipients.Length} recipients with recurringJobId={recurringJobId}", false), true);
                         return RedirectToAction(ActionNames.ListReports);

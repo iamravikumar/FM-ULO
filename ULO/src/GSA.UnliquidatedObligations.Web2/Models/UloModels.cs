@@ -315,6 +315,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public string JobId { get; set; }
 
+        public string UserNote { get; set; }
+
         protected BaseEmailViewModel()
         {
             SiteUrl = Startup.Instance.Configuration[$"{PortalHelpers.Config.ConfigSectionName}:{nameof(PortalHelpers.Config.ExternalSiteUrl)}"];

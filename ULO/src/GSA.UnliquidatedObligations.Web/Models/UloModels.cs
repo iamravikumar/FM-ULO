@@ -337,6 +337,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public int WorkflowId { get; set; }
 
+        public string UserNote { get; set; }
+
         public EmailViewModel()
             : base()
         { }
