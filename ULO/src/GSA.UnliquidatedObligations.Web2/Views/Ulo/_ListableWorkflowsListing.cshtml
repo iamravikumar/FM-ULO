@@ -205,12 +205,9 @@ else
             @await Component.InvokeAsync("ReassignInfo", new { workflowId = wf.WorkflowId, uloRegionId = wf.RegionId, isAdmin = true, id = rfrId, bulkToken = bulkToken });
         }
     }
-
-
-    <div>
-        <partial name="_PaginationPartial" />
-    </div>
-    <div>
-        <partial name="_NotesPanel" />
-    </div>
+    
+    <partial name="_PaginationPartial" />
+   
+    <partial name="_NotesPanel" />
+    
 }

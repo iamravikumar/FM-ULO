@@ -15,6 +15,10 @@
   <ItemGroup>
     <Compile Remove="Models\GetMyGroupsModel.cs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="appsettings.Production.json" />
+  </ItemGroup>
 <!--
   <ItemGroup>
     <Compile Remove="Views\Ulo\Details\**" />

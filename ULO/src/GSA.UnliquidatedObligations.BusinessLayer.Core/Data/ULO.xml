@@ -892,7 +892,7 @@
         <Column name="RegionId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="gsa" refTable="Regions" />
         <Column name="RegionId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="gsa" refTable="Regions" />
         <Column name="ReviewName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" isComputed="0" />
-        <Column name="Status" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="100" isComputed="0" />
+        <Column name="Status" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" isComputed="0" />
         <Column name="Comments" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="500" isComputed="0" />
         <Column name="ReviewId" position="5" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
         <Column name="CreatedAtUtc" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />

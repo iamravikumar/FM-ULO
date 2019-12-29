@@ -136,8 +136,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public string Value { get; set; }
         public IList<string> JustificationKeys { get; set; } = new List<string>();
         public bool ExpectedDateAlwaysShow { get; set; }
-        //        public string MostRecentNonReassignmentAnswer { get; set; }
-        //        public string MostRecentRealAnswer { get; set; }
+        public string MostRecentNonReassignmentAnswer { get; set; }
+        public string MostRecentRealAnswer { get; set; }
 
         public QuestionChoicesViewModel()
         {
@@ -149,8 +149,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Text = questionChoice.Text;
             Value = questionChoice.Value;
             ExpectedDateAlwaysShow = questionChoice.ExpectedDateAlwaysShow;
-            //          MostRecentNonReassignmentAnswer = questionChoice.MostRecentNonReassignmentAnswer;
-            //        MostRecentRealAnswer = questionChoice.MostRecentRealAnswer;
+            MostRecentNonReassignmentAnswer = questionChoice.MostRecentNonReassignmentAnswerCsv;
+            MostRecentRealAnswer = questionChoice.MostRecentRealAnswerCsv;
             if (questionChoice.JustificationKeys != null)
             {
                 foreach (var justificationKey in questionChoice.JustificationKeys)
@@ -408,32 +408,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
 
         }
-    }
-
-    //Question to Jason
-    //public class UploadFilesModel
-    //{
-    //    public int ReviewId { get; set; }
-
-    //    public IList<string> PegasysFilePathsList { get; set; } = new List<string>();
-
-    //    public IList<string> RetaFileList { get; set; } = new List<string>();
-
-    //    public IList<string> EasiFileList { get; set; } = new List<string>();
-
-    //    public IList<string> One92FileList { get; set; } = new List<string>();
-
-    //    public IList<string> ActiveCardholderFiles { get; set; } = new List<string>();
-
-    //    public IList<string> PegasysOpenItemsCreditCards { get; set; } = new List<string>();
-
-    //    public IList<string> CreditCardAliasCrosswalkFiles { get; set; } = new List<string>();
-
-    //    public UploadFilesModel(int reviewId)
-    //    {
-    //        ReviewId = reviewId;
-    //    }
-    //}
+    }  
 
 
 #endif

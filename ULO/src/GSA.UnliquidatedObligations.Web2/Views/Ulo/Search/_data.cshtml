@@ -161,18 +161,12 @@ else
                 </td>
             </tr>
         }
-    </table>
-    <div>
-        <partial name="_PaginationPartial" />
-    </div>
-    @*@await Html.PartialAsync("_PaginationPartial")*@
+    </table>    
+    <partial name="_PaginationPartial" />  
 
 }
 
 @if (canReassign)
-{
-    <div>
-        <partial name="BulkReassignments" />
-    </div>
-    @*@await Html.PartialAsync("~/Views/Ulo/BulkReassignments.cshtml")*@
+{  
+ <partial name="BulkReassignments" />    
 }

@@ -37,18 +37,18 @@
                 Review Name:
             </dt>
             <dd>
-                @Html.TextBoxFor(model => model.Review.ReviewName), textboxHtmlAttributes)
+                @Html.TextBoxFor(model => model.Review.ReviewName, textboxHtmlAttributes)
             </dd>
             <dt>
                 Is Closed:
             </dt>
             <dd>
-                @Html.CheckBoxFor(model => model.Review.IsClosed), checkboxHtmlAttributes)
+                @Html.CheckBoxFor(model => model.Review.IsClosed, checkboxHtmlAttributes)
             </dd>
             <dt>
                 Status:
             </dt>
-            <dd>
+            <dd>                
                 @Html.DisplayFor(model => model.Review.Status)
             </dd>
             <dt>
@@ -88,7 +88,7 @@
                 Comments:
             </dt>
             <dd>
-                @Html.TextAreaFor(model => model.Review.Comments), 10, 30), textareaHtmlAttributes)
+                @Html.TextAreaFor(model => model.Review.Comments, 10, 30, textareaHtmlAttributes)
             </dd>
             <dt>
                 Region:
@@ -167,11 +167,11 @@
             </dd>
         </dl>
     </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    @*if (canMakeChanges)
+   
+    @if (canMakeChanges)
         {
                 <button type="submit" class="btn btn-primary">Save</button>
-        }*@
+        }
 }
 @using (Html.BeginForm(ReviewsController.ActionNames.Delete, ReviewsController.Name, FormMethod.Post, new { style = "display:inline" }))
 {
