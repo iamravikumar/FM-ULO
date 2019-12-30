@@ -1,9 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using RevolutionaryStuff.Core.ApplicationParts;
-
-namespace GSA.UnliquidatedObligations.BusinessLayer.Data
+﻿namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
 
 
