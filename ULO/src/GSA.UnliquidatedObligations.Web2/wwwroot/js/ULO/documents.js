@@ -1,4 +1,5 @@
-﻿var preventDismiss = false;
+﻿/*! documents.js */
+var preventDismiss = false;
 $(document).ready(function () {
     addDocumentDeleteClick();
     addDocumentSaveClick();

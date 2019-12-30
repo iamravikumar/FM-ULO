@@ -1,6 +1,6 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Controllers
 
-<script type="text/javascript">
+<script type="text/javascript" later>
     function showBulkReassignmentsLoading() {
         $("#bulkReassignmentDialogTitle").text("Bulk Reassignments Loading...");
         $(".bulkReassignmentsLoading").css("display", "");
@@ -18,16 +18,15 @@
         }
         for (x in reassigners) {
             var item = reassigners[x];
-//            alert(JSON.stringify(item));
+            //            alert(JSON.stringify(item));
             var html = "<option value='" + item.UserId + "'>" + item.UserName + "</option>";
-  //          alert(html);
+            //          alert(html);
             jsel.append($(html));
         }
     }
 </script>
 
-@using (Html.BeginForm(RequestForReassignmentsController.ActionNames.BulkReassign, RequestForReassignmentsController.Name, FormMethod.Post))
-{
+<form asp-action="@RequestForReassignmentsController.ActionNames.BulkReassign" asp-controller="@RequestForReassignmentsController.Name" method="post">
     @Html.AntiForgeryToken()
     <div class="modal fade requestForReassignModal" id="bulkReassignmentDialog" tabindex="-1" role="dialog" aria-labelledby="bulkReassignmentDialogTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -62,5 +61,4 @@
             </div>
         </div>
     </div>
-}
-
+</form>

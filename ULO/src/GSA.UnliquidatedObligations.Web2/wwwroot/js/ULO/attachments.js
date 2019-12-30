@@ -1,4 +1,5 @@
-﻿var parentDocumentId;
+﻿/*! attachments.js */
+var parentDocumentId;
 $(document).ready(function () {
 
     addDeleteAttachmentClick();

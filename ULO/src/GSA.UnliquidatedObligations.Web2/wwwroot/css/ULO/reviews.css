@@ -1,4 +1,5 @@
-﻿.dl-horizontal.review-details dt {
+﻿/*! reviews.css */
+.dl-horizontal.review-details dt {
     min-width: 185px;
 }
 .dl-horizontal.review-details dd {

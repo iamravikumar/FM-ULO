@@ -10,7 +10,7 @@
     var textboxHtmlAttributes = canMakeChanges ? (object) new { } : (object) readonlyHtmlAttributes;
     var checkboxHtmlAttributes = canMakeChanges ? (object)new { } : (object) disabledHtmlAttributes;
     var groupNameSelectItems = ((IList<string>)ViewBag.GroupNames).ConvertToSelectList();
-    var applicationPermissionSelectItems = AspHelpers.ConvertNamesToSelectList<ApplicationPermissionNames>();
+    var applicationPermissionSelectItems = AspHelpers.CreateSelectList<ApplicationPermissionNames>(sortByText: true);
 }
 @using (Html.BeginForm(UsersController.ActionNames.Save, UsersController.Name, FormMethod.Post))
 {
@@ -168,7 +168,7 @@
     </tr>
 </table>
 
-<script type="text/javascript">
+<script type="text/javascript" later>
     function DeleteMyRow(event, el) {
         //alert("DeleteMyRow " + event + " " + el.tagName + " " + el.parentElement.tagName);
         while (el != null && el.tagName != "TR") {

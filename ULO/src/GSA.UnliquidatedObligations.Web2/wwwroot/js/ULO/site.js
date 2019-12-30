@@ -1,4 +1,5 @@
-﻿function debugAlert(msg) {
+﻿/*! site.js */
+function debugAlert(msg) {
     //    alert("debugAlert: "+msg);
 }
 

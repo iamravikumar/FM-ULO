@@ -1,4 +1,5 @@
-﻿$(document).ready(function () { 
+﻿/*! filter.js */
+$(document).ready(function () {
     setValid();
     setReason();
     showHideFiltersInit();

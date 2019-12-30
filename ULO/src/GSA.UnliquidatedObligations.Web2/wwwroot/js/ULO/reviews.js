@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿/*! reviews.js */
+$(document).ready(function () {
     showHideRegion();
     $("#ReviewScopeId").change(function () {
         showHideRegion();

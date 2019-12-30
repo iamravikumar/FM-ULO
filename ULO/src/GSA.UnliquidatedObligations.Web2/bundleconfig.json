@@ -1,0 +1,47 @@
+[
+  {
+    "outputFileName": "wwwroot/css/all.min.css",
+    "inputFiles": [
+      "wwwroot/lib/bootstrap/dist/css/bootstrap.css",
+      "wwwroot/lib/bootstrap/dist/css/bootstrap-multiselect.css",
+      "wwwroot/lib/bootstrap/dist/css/bootstrap-theme.css",
+      "wwwroot/css/site.css",
+      "wwwroot/css/ULO/reviews.css",
+      "wwwroot/css/ULO/users.css",
+      "wwwroot/css/ULO/Details/ulo.css",
+      "wwwroot/css/ULO/Details/notes.css",
+      "wwwroot/css/ULO/Workflows/advance.css",
+      "wwwroot/css/ULO/Workflows/Documents.css",
+      "wwwroot/css/ULO/Workflows/reassignment.css",
+      "wwwroot/css/ULO/Workflows/workflowDescription.css",
+      "wwwroot/css/ULO/Workflows/workflowQuestions.css",
+      "wwwroot/css/ULO/Workflows/workflows.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/all.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery/dist/jquery.js",
+      "wwwroot/lib/jquery-validation/dist/jquery.validate.js",
+      "wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
+      "wwwroot/js/jquery.form.min.js",
+      "wwwroot/js/bootstrap-multiselect.js",
+      "wwwroot/js/ulo/site.js",
+      "wwwroot/js/ulo/advance",
+      "wwwroot/js/ulo/attachments",
+      "wwwroot/js/ulo/cookies",
+      "wwwroot/js/ulo/filter",
+      "wwwroot/js/ulo/polyfills",
+      "wwwroot/js/ulo/recordslisting",
+      "wwwroot/js/ulo/reviews",
+      "wwwroot/js/ulo/users"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  }
+]

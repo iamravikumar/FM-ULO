@@ -5,8 +5,11 @@
 @using GSA.UnliquidatedObligations.Web.Models
 @using Microsoft.Extensions.Options
 @using RevolutionaryStuff.Core
+@using RASP=RevolutionaryStuff.AspNetCore
 @using GSA.UnliquidatedObligations.BusinessLayer.Authorization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, RevolutionaryStuff.AspNetCore.TagHelpers
+@addTagHelper *, GSA.UnliquidatedObligations.Web.Core
 @inject GSA.UnliquidatedObligations.Web.PortalHelpers PortalHelpers
 @inject GSA.UnliquidatedObligations.Web.UserHelpers UserHelpers
 @inject Serilog.ILogger Logger

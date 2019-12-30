@@ -5,69 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ULO</title>
     <link rel="icon" href="~/images/favicon.png" type="image/png">
-
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-multiselect.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-theme.css" />
-        <link href="~/css/ULO/reviews.css" rel="stylesheet" />
-        <link href="~/css/ULO/users.css" rel="stylesheet" />
-        <link href="~/css/ULO/Details/ulo.css" rel="stylesheet" />
-        <link href="~/css/ULO/Details/notes.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/advance.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/Documents.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/reassignment.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/workflowDescription.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/workflowQuestions.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/workflows.css" rel="stylesheet" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/ULO/reviews.css" />
+        <link rel="stylesheet" href="~/css/ULO/users.css" />
+        <link rel="stylesheet" href="~/css/ULO/Details/ulo.css" />
+        <link rel="stylesheet" href="~/css/ULO/Details/notes.css" />
+        <link rel="stylesheet" href="~/css/ULO/Workflows/advance.css" />
+        <link rel="stylesheet" href="~/css/ULO/Workflows/Documents.css" />
+        <link rel="stylesheet" href="~/css/ULO/Workflows/reassignment.css" />
+        <link rel="stylesheet" href="~/css/ULO/Workflows/workflowDescription.css" />
+        <link rel="stylesheet" href="~/css/ULO/Workflows/workflowQuestions.css" />
+        <link rel="stylesheet" href="~/css/ULO/Workflows/workflows.css" />
     </environment>
     <environment exclude="Development">
-        @*<link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />*@
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-multiselect.css" />
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-theme.css" />
-        <link href="~/css/ULO/reviews.css" rel="stylesheet" />
-        <link href="~/css/ULO/users.css" rel="stylesheet" />
-        <link href="~/css/ULO/Details/ulo.css" rel="stylesheet" />
-        <link href="~/css/ULO/Details/notes.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/advance.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/Documents.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/reassignment.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/workflowDescription.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/workflowQuestions.css" rel="stylesheet" />
-        <link href="~/css/ULO/Workflows/workflows.css" rel="stylesheet" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/all.min.css" asp-append-version="true" />
     </environment>
 </head>
 <body>
-
-    @*<nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header" style="height:71px">
-                    <h1 class="navbar-brand" style="padding:0;margin-right:10px;margin-top:0px">
-                        <img src="~/images/GSAlogo.png" width="71" height="71" alt="GSA Logo" style="display:inline" />
-                    </h1>
-                </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a asp-area="">ULO</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Index">MyTasks</a></li>
-                        <li><a asp-area="" asp-controller="Ulo" asp-action="Search">Search</a></li>
-                        <li><a asp-area="" asp-controller="Reports" asp-action="Index">Reports</a></li>
-                        <li><a asp-area="" asp-controller="Ulo" asp-action="Unassigned">Unassigned</a></li>
-                        <li><a asp-area="" asp-controller="Ulo" asp-action="RequestForReassignments">Reassignments</a></li>
-                        <li><a asp-area="" asp-controller="Reviews" asp-action="Index">Reviews</a></li>
-                        <li><a asp-area="" asp-controller="Pdn" asp-action="Index">Excluded</a></li>
-                        <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>*@
     <partial name="_Navigation" />
     <partial name="_CookieConsentPartial" />
 
@@ -78,44 +36,44 @@
         }
         @if (pageAlerts.Count > 0)
         {
-            <div style="margin-top:30px">
-                @foreach (var pa in pageAlerts)
+        <div style="margin-top:30px">
+            @foreach (var pa in pageAlerts)
+            {
+                string alertClass;
+                switch (pa.AlertType)
                 {
-                    string alertClass;
-                    switch (pa.AlertType)
-                    {
-                        case PageAlert.AlertTypes.Danger:
-                            alertClass = "danger";
-                            break;
-                        case PageAlert.AlertTypes.Success:
-                            alertClass = "success";
-                            break;
-                        case PageAlert.AlertTypes.Warning:
-                            alertClass = "warning";
-                            break;
-                        case PageAlert.AlertTypes.Info:
-                        default:
-                            alertClass = "info";
-                            break;
-                    }
-                    <div class="alert alert-@alertClass alert-dismissable" id="universal-alert-@pa.AlertId">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <i class="fa fa-check" aria-hidden="true"></i> <span id="universal-alert-item-text"> @pa.Message </span>
-                    </div>
-                    if (pa.AutoDismiss)
-                    {
-                        <script type="text/javascript">
-                            $("#universal-alert-@pa.AlertId").fadeIn(500).delay(4000).hide(500);
-                        </script>
-                    }
-                    else
-                    {
-                        <script type="text/javascript">
-                            $("#universal-alert-@pa.AlertId").fadeIn(500).delay(4000);
-                        </script>
-                    }
+                    case PageAlert.AlertTypes.Danger:
+                        alertClass = "danger";
+                        break;
+                    case PageAlert.AlertTypes.Success:
+                        alertClass = "success";
+                        break;
+                    case PageAlert.AlertTypes.Warning:
+                        alertClass = "warning";
+                        break;
+                    case PageAlert.AlertTypes.Info:
+                    default:
+                        alertClass = "info";
+                        break;
                 }
-            </div>
+                <div class="alert alert-@alertClass alert-dismissable" id="universal-alert-@pa.AlertId">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <i class="fa fa-check" aria-hidden="true"></i> <span id="universal-alert-item-text"> @pa.Message </span>
+                </div>
+                if (pa.AutoDismiss)
+                {
+                    <script type="text/javascript" later>
+                            $("#universal-alert-@pa.AlertId").fadeIn(500).delay(4000).hide(500);
+                    </script>
+                }
+                else
+                {
+                    <script type="text/javascript" later>
+                            $("#universal-alert-@pa.AlertId").fadeIn(500).delay(4000);
+                    </script>
+                }
+            }
+        </div>
         }
 
         @if (ViewBag.PageTitle != null)
@@ -152,40 +110,29 @@
         </p>
     </footer>
 
-
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
-            asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-            asp-fallback-test="window.jQuery"
-            crossorigin="anonymous"
-            integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
-    </script>
-    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-            asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-            crossorigin="anonymous"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-    </script>
     <environment include="Development">
-        @*<script src="~/lib/jquery/dist/jquery.js"></script>
-            <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@       
-        <script src="~/js/ULO/site.js"></script>
-        <script src="~/js/bootstrap-multiselect.js"></script>
-
-        <script src="~/js/ULO/advance.js"></script>
-        <script src="~/js/ULO/attachments.js"></script>
-        <script src="~/js/ULO/cookies.js"></script>
-        <script src="~/js/ULO/documents.js"></script>
-        <script src="~/js/ULO/filter.js"></script>
-        <script src="~/js/ULO/polyfills.js"></script>
-        <script src="~/js/ULO/recordsListing.js"></script>
-        <script src="~/js/ULO/reviews.js"></script>
-        <script src="~/js/ULO/users.js"></script>
+        <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script type="text/javascript" src="~/js/jquery.form.min.js"></script>
+        <script type="text/javascript" src="~/js/bootstrap-multiselect.js"></script>
+        <script type="text/javascript" src="~/js/ULO/site.js"></script>
+        <script type="text/javascript" src="~/js/ULO/advance.js"></script>
+        <script type="text/javascript" src="~/js/ULO/attachments.js"></script>
+        <script type="text/javascript" src="~/js/ULO/cookies.js"></script>
+        <script type="text/javascript" src="~/js/ULO/documents.js"></script>
+        <script type="text/javascript" src="~/js/ULO/filter.js"></script>
+        <script type="text/javascript" src="~/js/ULO/polyfills.js"></script>
+        <script type="text/javascript" src="~/js/ULO/recordsListing.js"></script>
+        <script type="text/javascript" src="~/js/ULO/reviews.js"></script>
+        <script type="text/javascript" src="~/js/ULO/users.js"></script>
     </environment>
     <environment exclude="Development">
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script type="text/javascript" src="~/js/all.min.js" asp-append-version="true"></script>
     </environment>
 
     @RenderSection("Scripts", required: false)
-    @Html.RenderPartialViewScripts()
+    @RevolutionaryStuff.AspNetCore.AspHelpers.RenderLaterContent(Html)
 </body>
 </html>

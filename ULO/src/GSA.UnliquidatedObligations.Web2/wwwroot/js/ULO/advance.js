@@ -1,4 +1,5 @@
-﻿var select, submitActor;
+﻿/*! advance.js */
+var select, submitActor;
 
 function clearValidationErrors() {
     $("#validateAnswerMessage,#validateJustificationMessage,#validateExpectedDateMessage,#validateCommentMessage,#validateCommentMessageMax").hide();

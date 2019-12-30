@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Text.RegularExpressions;
+using RASP = RevolutionaryStuff.AspNetCore;
+using System.Threading;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -286,7 +288,7 @@ namespace GSA.UnliquidatedObligations.Web
             int z = 0;
             foreach (var item in items)
             {                
-                var desc = ExtendedSelectListItem.GetDescription(item);
+                var desc = RASP.ExtendedSelectListItem.GetDescription(item);
                 var id = name + "_" + (z++).ToString();
                 sb.AppendLine("<div>");
                 sb.Append($"<input name=\"{name}\" id=\"{id}\" type=\"checkbox\" value=\"{item.Value}\"{(vals.Contains(item.Value)? " checked=\"checked\"":"")}");
@@ -319,30 +321,6 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static readonly IDictionary<ReviewScopeEnum, string> WorkflowDefinitionNameByReviewScope;
 
-        /// <remarks>https://rburnham.wordpress.com/2015/03/13/asp-net-mvc-defining-scripts-in-partial-views/</remarks>
-        public static HtmlString Script(this IHtmlHelper htmlHelper, Func<object, Microsoft.AspNetCore.Mvc.Razor.HelperResult> template)
-        {
-            htmlHelper.ViewContext.HttpContext.Items["_script_" + Guid.NewGuid()] = template;
-            return HtmlString.Empty;
-        }
-
-        /// <remarks>https://rburnham.wordpress.com/2015/03/13/asp-net-mvc-defining-scripts-in-partial-views/</remarks>
-        public static HtmlString RenderPartialViewScripts(this IHtmlHelper htmlHelper)
-        {
-            foreach (object key in htmlHelper.ViewContext.HttpContext.Items.Keys)
-            {
-                if (key.ToString().StartsWith("_script_"))
-                {
-                    var template = htmlHelper.ViewContext.HttpContext.Items[key] as Func<object, Microsoft.AspNetCore.Mvc.Razor.HelperResult>;
-                    if (template != null)
-                    {
-                        htmlHelper.ViewContext.Writer.Write(template(null));
-                    }
-                }
-            }
-            return HtmlString.Empty;
-        }
-
         #region SelectListItems
 
         public static SelectListItem CreateSelectListItem(Justification j)
@@ -351,69 +329,28 @@ namespace GSA.UnliquidatedObligations.Web
         public static IList<SelectListItem> CreateSelectList(IEnumerable<Justification> justifications)
             => justifications.ConvertAll(j => CreateSelectListItem(j)).ToList();
 
-        public static IList<SelectListItem> CreateSelectList(this IEnumerable<string> stringsToConvert)
+        public static IList<SelectListItem> ZCreateSelectList(this System.Collections.IEnumerable itemsToConvert)
         {
             var stringsSelect = new List<SelectListItem>();
 
-            foreach (var stringToConvert in stringsToConvert)
+            foreach (var o in itemsToConvert)
             {
-                stringsSelect.Add(new SelectListItem { Text = stringToConvert, Value = stringToConvert });
+                if (o == null) continue;
+                var val = o.ToString();
+                stringsSelect.Add(new SelectListItem { Text = val, Value = val });
             }
             return stringsSelect;
         }
 
-        public static IList<SelectListItem> CreateSelectList(this IEnumerable<SelectListItem> selectListItems)
-        {
-            var selectList = new List<SelectListItem>();
+        public static IList<SelectListItem> CreateSelectList(this IEnumerable<string> items)
+            => RASP.AspHelpers.CreateSelectList(items);
 
-            foreach (var selectListItem in selectListItems)
-            {
-                selectList.Add(selectListItem);
-            }
-            return selectList;
-        }
+        public static IList<SelectListItem> CreateSelectList(this IEnumerable<SelectListItem> items)
+            => RASP.AspHelpers.CreateSelectList(items);
 
-        public static IList<SelectListItem> CreateSelectList(this IEnumerable<int> nums)
-        {
-            var numsSelect = new List<SelectListItem>();
+        public static IList<SelectListItem> CreateSelectList(this IEnumerable<int> items)
+            => RASP.AspHelpers.CreateSelectList(items);
 
-            foreach (var num in nums)
-            {
-                numsSelect.Add(new SelectListItem { Text = num.ToString(), Value = num.ToString() });
-            }
-            return numsSelect;
-        }
-
-        public static int? IndexOfOccurrence<T>(this IList<T> items, Func<T, bool> test, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
-        {
-            Requires.NonNegative(nthOccurrence, nameof(nthOccurrence));
-
-            if (nthOccurrence == 0) return zeroThValue;
-
-            int cnt = 0;
-            for (int z = 0; z < items.Count; ++z)
-            {
-                var i = items[z];
-                bool hit = test(i);
-                if (hit && ++cnt == nthOccurrence)
-                {
-                    return z;
-                }
-            }
-            return missingValue;
-        }
-
-        public static int? IndexOfOccurrence<T>(this IList<T> items, T match, int nthOccurrence, int? zeroThValue = null, int? missingValue = null)
-           => items.IndexOfOccurrence(i => {
-               if (i == null)
-               {
-                   return match == null;
-               }
-               else
-               {
-                   return i.Equals(match);
-               }
-           }, nthOccurrence, zeroThValue, missingValue);
 
         public static IList<SelectListItem> ConvertToSelectList(this IEnumerable<string> stringsToConvert)
         {
@@ -427,54 +364,13 @@ namespace GSA.UnliquidatedObligations.Web
         }
 
         public static string GetDisplayName(this Enum value)
-            => value.GetDisplayAttribute()?.GetName() ?? value.ToString();
+            => RASP.AspHelpers.GetDisplayName(value);
 
-        public static string GetDescription(this Enum value)
-            => value.GetDisplayAttribute()?.GetDescription();
+        public static IList<SelectListItem> CreateSelectList<TEnum>(bool valAsName = true, bool sortByText = false) where TEnum : Enum
+            => RASP.AspHelpers.CreateSelectList<TEnum>(valAsName, sortByText);
 
-        private static DisplayAttribute GetDisplayAttribute(this Enum value)
-        {
-            var type = value.GetType();
-            if (!type.IsEnum) throw new ArgumentException(String.Format("Type '{0}' is not Enum", type));
-
-            var members = type.GetMember(value.ToString());
-            if (members.Length == 0) throw new ArgumentException(String.Format("Member '{0}' not found in type '{1}'", value, type.Name));
-
-            var member = members[0];
-            var attributes = member.GetCustomAttributes(typeof(DisplayAttribute), false);
-            return (DisplayAttribute)attributes.FirstOrDefault();
-        }
-
-        public static IList<SelectListItem> ConvertNamesToSelectList<T>() where T : struct
-           => ((IEnumerable<T>)Enum.GetValues(typeof(T))).ConvertToSelectList(true);
-
-        public static IList<SelectListItem> ConvertToSelectList<T>(this IEnumerable<T> enums, bool names = false) where T : struct
-        {
-            if (!typeof(T).IsEnum)
-            {
-                throw new ArgumentException("T must be an enumerated type");
-            }
-
-            var eNumsSelect = new List<SelectListItem>();
-
-            foreach (var enu in Enum.GetValues(typeof(T)))
-            {
-                var e = (Enum)Enum.Parse(typeof(T), enu.ToString());
-                var displayName = e.GetDisplayName();
-                var desc = e.GetDescription();
-                string value;
-                if (names)
-                {
-                    value = enu.ToString();
-                }
-                else
-                {
-                    value = ((int)Enum.Parse(typeof(T), enu.ToString())).ToString();
-                }
-                eNumsSelect.Add(new ExtendedSelectListItem { Text = displayName, Value = value, Description = desc });
-            }
-            return eNumsSelect;
-        }
+        public static IList<SelectListItem> CreateSelectList<TEnum>(this IEnumerable<TEnum> enums, bool valAsName = true, bool sortByText = false) where TEnum : Enum
+            => RASP.AspHelpers.CreateSelectList<TEnum>(enums, valAsName, sortByText);
 
         public static IList<SelectListItem> CreateUserTypesSelectListItems(bool creatableOnly = true)
           => new[] {
@@ -495,16 +391,6 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
             => items.OrderBy(z => z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
-
-        public static IList<SelectListItem> Select(this IList<SelectListItem> items, object selectedValue)
-        {
-            var v = Stuff.ObjectToString(selectedValue);
-            foreach (var i in items)
-            {
-                i.Selected = i.Value == v;
-            }
-            return items;
-        }
 
         #endregion
     }

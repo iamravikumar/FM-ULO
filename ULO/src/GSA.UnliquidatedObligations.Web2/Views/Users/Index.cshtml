@@ -40,13 +40,13 @@
                 <label for="region">Region:</label>
             </div>
             <div class="col-sm-2">
-                @Html.ListBox("region", AspHelpers.Select(userRegions, Context.Request.Query["region"]))
+                @Html.ListBox("region", RASP.AspHelpers.Select(userRegions, Context.Request.Query["region"]))
             </div>
             <div class="col-sm-2">
                 <label for="role">Role:</label>
             </div>
             <div class="col-sm-2">
-                @Html.ListBox("role", AspHelpers.Select(userRoles, Context.Request.Query["role"]))
+                @Html.ListBox("role", RASP.AspHelpers.Select(userRoles, Context.Request.Query["role"]))
             </div>
         </div>
         <div class="row">
@@ -70,13 +70,12 @@
         <th>Claims</th>
         <th>Permissions</th>
         <th>Groups</th>
-        <th></th>
     </tr>
     @foreach (var user in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => user.UserName)
+                <a href="/Users/@user.UserName">@Html.DisplayFor(modelItem => user.UserName)</a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => user.Email)
@@ -123,9 +122,6 @@
                         }
                     }
                 </ul>
-            </td>
-            <td>
-                @Html.ActionLink("Details", "Details", new { userName = user.UserName })
             </td>
         </tr>
     }

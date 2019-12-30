@@ -1,4 +1,5 @@
-﻿if (!Array.prototype.find) {
+﻿/*! polyfills.js */
+if (!Array.prototype.find) {
     Object.defineProperty(Array.prototype, 'find', {
         value: function (predicate) {
             // 1. Let O be ? ToObject(this value).

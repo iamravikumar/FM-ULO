@@ -26,6 +26,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public static class ActionNames
         {
             public const string Create = "Create";
+            public const string Details = "Details";
             public const string Index = "Index";
             public const string Save = "Save";
         }
@@ -83,6 +84,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         [Route("users/{username}", Order = 2)]
+        [ActionName(ActionNames.Details)]
         public async Task<ActionResult> Details(string username)
         {
             var users = await DB.AspNetUsers.Where(u => u.UserName == username).ToListAsync();

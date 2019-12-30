@@ -75,8 +75,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public ReviewModel()
         {
-            ReviewTypes = Enum.GetValues(typeof(ReviewTypeEnum)).Cast<ReviewTypeEnum>().ToList().ConvertToSelectList();
-            ReviewScopes = Enum.GetValues(typeof(ReviewScopeEnum)).Cast<ReviewScopeEnum>().ToList().ConvertToSelectList();
+            ReviewTypes = Enum.GetValues(typeof(ReviewTypeEnum)).Cast<ReviewTypeEnum>().ToList().CreateSelectList();
+            ReviewScopes = Enum.GetValues(typeof(ReviewScopeEnum)).Cast<ReviewScopeEnum>().ToList().CreateSelectList();
         }
 
         public ReviewModel(IList<int> permissableRegionIds, PortalHelpers portalHelpers)
