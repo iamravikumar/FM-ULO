@@ -35,7 +35,7 @@
             }
             $("#panel-notes-spinner").css("display", "none");
             $("#panel-notes-body").css("display", "");
-            $(currentNoteCountSelector).text(data.length);            
+            $(currentNoteCountSelector).text(data.length);
         });
     }
     function createNote() {
@@ -43,6 +43,7 @@
         $("#panel-notes-body-create-body").val("");
         $.ajax({
             type: "POST",
+            contentType: "application/json",
             url: "/ulos/" + currentNoteUloId + "/notes/create",
             data: JSON.stringify({ body: body }),
             success: function (result) {
@@ -56,21 +57,21 @@
 
 <div id="panel-notel" style="height:100%; width: 100%; position:fixed; top: 0px; left: 0px; z-index:10000; background-color: rgba(0,0,0,0.4); display:none" onclick="closeNotesPanel()">
     <div class="panel panel-default" style="height:100%; position:fixed; top: 0px; right: 0px; width: 400px;" onclick="ignoreEvent(event)">
-        <div class="panel-heading" style="background-color:pink">
+        <div class="panel-heading" style="zbackground-color:pink">
             <h3 class="panel-title">
                 Notes <span id="note-context"></span> <span style="float:right; position:relative; cursor: pointer;" title="Close" onclick="closeNotesPanel()">&times;</span>
             </h3>
         </div>
-        <div class="panel-body" style="overflow-y:scroll; position: fixed; top: 41px; bottom: 0px; background-color:yellow; width: 400px">
+        <div class="panel-body" style="overflow-y:scroll; position: fixed; top: 41px; bottom: 0px; zbackground-color:yellow; width: 400px">
             <div style="text-align:center; width:100%; zoom: 500%" id="panel-notes-spinner">
                 <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
             </div>
             <div id="panel-notes-body" style="display:none">
-                <div id="panel-notes-body-create" style="background-color:green">
+                <div id="panel-notes-body-create" style="zbackground-color:green">
                     <textarea style="width:100%; display:block;max-width:1000px;margin-bottom:10px" rows="3" id="panel-notes-body-create-body"></textarea>
                     <button class="btn btn-default btn-primary" onclick="createNote()">Create</button>
                 </div>
-                <div id="panel-notes-body-listing" style="background-color:purple">
+                <div id="panel-notes-body-listing" style="zbackground-color:purple">
                 </div>
             </div>
         </div>

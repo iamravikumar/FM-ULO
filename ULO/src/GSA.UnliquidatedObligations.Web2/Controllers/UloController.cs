@@ -64,8 +64,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             ConfigOptions = configOptions;
             Manager = manager;
-            //UserManager = userManager;
-            //PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
+            PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
 
         private void PopulateTabsIntoViewBag(IEnumerable<WorkflowListTab> tabs)
@@ -95,21 +94,22 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return workflowDescription;
         }
 
+        private IQueryable<Workflow> Workflows
+            => DB.Workflows
+                .Include(wf => wf.OwnerUser)
+                .Include(wf => wf.WorkflowDocuments)
+                .Include(wf => wf.TargetUlo).ThenInclude(u => u.Review)
+                .Include(wf => wf.TargetUlo).ThenInclude(u=>u.Region).ThenInclude(r=>r.Zone)
+                .Include(wf => wf.WorkflowUnliqudatedObjectsWorkflowQuestions).ThenInclude(q => q.User)
+                .WhereReviewExists();
+
         private async Task<Workflow> FindWorkflowAsync(int workflowId)
-            => await DB.Workflows
-                .Include(q => q.OwnerUser)
-                .Include(q => q.WorkflowDocuments)
-                .Include(q => q.TargetUlo)
-                .Include(q => q.WorkflowUnliqudatedObjectsWorkflowQuestions)
-                .ThenInclude(z => z.User)
-                .WhereReviewExists()
-                .FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
+            => await Workflows.FirstOrDefaultAsync(q => q.WorkflowId == workflowId);
 
         private void SetNoDataMessage(string message)
         {
             ViewBag.NoDataMessage = message;
         }
-
 
         [Route("ulos/{uloId}/{workflowId}", Order = 1)]
         [Route("ulos/{uloId}", Order = 2)]
@@ -121,6 +121,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 Include(u => u.UloNotes).
                 Include(u => u.Region).
                 Include(u => u.Region.Zone).
+                Include(u => u.UloFinancialActivitys).
                 Include(u => u.Review).AsNoTracking().
                 WhereReviewExists().
                 FirstOrDefaultAsync(u => u.UloId == uloId);
@@ -178,7 +179,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             SetNoDataMessage(ConfigOptions.Value.NoTasks);
 
-            var workflows = DB.Workflows.Where(wf => wf.OwnerUserId == CurrentUserId && wf.TargetUlo.Review.DeletedAtUtc == null).WhereReviewExists();
+            var workflows = Workflows.Where(wf => wf.OwnerUserId == CurrentUserId);
 
             var countByKey = new Dictionary<string, int>(workflows.GroupBy(w => w.CurrentWorkflowActivityKey).Select(g => new { CurrentWorkflowActivityKey = g.Key, Count = g.Count() }).ToDictionaryOnConflictKeepLast(z => z.CurrentWorkflowActivityKey, z => z.Count), Comparers.CaseInsensitiveStringComparer);
 
@@ -265,13 +266,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
 
             var workflows = ApplyBrowse(
-                DB.Workflows.AsNoTracking().Where(wfPredicate).
-                Include(wf => wf.TargetUlo).AsNoTracking().
-                Include(wf => wf.TargetUlo.Region).AsNoTracking().
-                Include(wf => wf.TargetUlo.Region.Zone).AsNoTracking().
-                Include(wf => wf.TargetUlo).AsNoTracking().
-                Include(wf => wf.OwnerUser).AsNoTracking().
-                WhereReviewExists(),
+                Workflows.Where(wfPredicate).AsNoTracking(),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize).ToList();
 
             var baCodes = Cacher.FindOrCreateValue(
@@ -399,13 +394,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             var prohibitedWorkflowIds = await DB.WorkflowProhibitedOwners.Where(z => z.ProhibitedOwnerUserId == CurrentUserId).Select(z => z.WorkflowId).ToListAsync();
 
-            var workflows = from wf in DB.Workflows.Where(z => z.OwnerUserId == CurrentUserId).Include(z => z.TargetUlo)
+            var workflows = from wf in Workflows.Where(z => z.OwnerUserId == CurrentUserId)
                             where !prohibitedWorkflowIds.Contains(wf.WorkflowId)
                             select wf;
 
-            workflows = ApplyBrowse(
-                workflows.WhereReviewExists(),
-                sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            workflows = ApplyBrowse(workflows,sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
 
             PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(workflows);
             PopulateViewInfoIntoViewBag(workflows);
@@ -471,7 +464,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         Browse:
             var workflows = ApplyBrowse(
-                DB.Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.TargetUlo.RegionId)).WhereReviewExists(),
+                Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.TargetUlo.RegionId)),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
 
             PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(workflows);
@@ -480,6 +473,21 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return View(workflows);
         }
 
+        private async Task<JsonResult> CreateFromJsonBody<TJsonBody>(Func<TJsonBody, Task> addAsync)
+        {
+            try
+            {
+                var d = await Request.BodyAsJsonObjectAsync<TJsonBody>();
+                await addAsync(d);
+                await DB.SaveChangesAsync();
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Issue in {nameof(CreateFromJsonBody)}");
+                return base.CreateJsonError(ex);
+            }
+        }
 
         private class CreateFinancialActivityData
         {
@@ -528,21 +536,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
             });
 
-        private async Task<JsonResult> CreateFromJsonBody<TJsonBody>(Func<TJsonBody, Task> addAsync)
-        {
-            try
-            {
-                var d = Request.BodyAsJsonObject<TJsonBody>();
-                await addAsync(d);
-                await DB.SaveChangesAsync();
-                return Json(true);
-            }
-            catch (Exception ex)
-            {
-                return base.CreateJsonError(ex);
-            }
-        }
-
         [HttpGet]
         [Route("ulos/{uloId}/notes")]
         public async Task<JsonResult> GetNotesAsync(int uloId)
@@ -581,7 +574,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("ulo/mark")]
         public async Task<JsonResult> Mark()
         {
-            var md = AspHelpers.BodyAsJsonObject<MarkData>(Request);
+            var md = await AspHelpers.BodyAsJsonObjectAsync<MarkData>(Request);
             var ret = new List<int>();
             if (md != null && md.WorkflowIds != null && md.WorkflowIds.Length > 0)
             {

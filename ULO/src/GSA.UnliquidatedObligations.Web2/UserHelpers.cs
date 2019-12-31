@@ -158,18 +158,13 @@ namespace GSA.UnliquidatedObligations.Web
 
         public bool HasPermission(IPrincipal user, ApplicationPermissionNames permissionName)
         {
-            if (user.Identity.IsAuthenticated)
-            {
-                var userClaims = Cacher.FindOrCreateValue(
-                    user.Identity.Name,
-                    () => DB.AspNetUsers.Include(u => u.UserAspNetUserClaims).FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims(),
-                    PortalHelpers.ShortCacheTimeout
-                    );
-
-                return userClaims != null && userClaims.GetApplicationPerimissionRegions(permissionName).Count > 0;
-            }
-
-            return false;
+            if (!user.Identity.IsAuthenticated) return false;
+            var userClaims = Cacher.FindOrCreateValue(
+                Cache.CreateKey(nameof(HasPermission), user.Identity.Name),
+                () => DB.AspNetUsers.Include(u => u.UserAspNetUserClaims).FirstOrDefault(u => u.UserName == user.Identity.Name)?.GetClaims(),
+                PortalHelpers.ShortCacheTimeout
+                );
+            return userClaims != null && userClaims.GetApplicationPerimissionRegions(permissionName).Count > 0;
         }
 
         public Expression<Func<AspNetUser, bool>> GrouplikeUserPredicate

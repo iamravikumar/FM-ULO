@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Text.RegularExpressions;
 using RASP = RevolutionaryStuff.AspNetCore;
+using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -185,10 +186,22 @@ namespace GSA.UnliquidatedObligations.Web
             }
         }
 
-        public static T BodyAsJsonObject<T>(this HttpRequest req)
+        public static async Task<string> ReadToEndAsync(this Stream st, Encoding enc = null)
         {
-            req.Body.Seek(0, SeekOrigin.Begin);
-            var json = new StreamReader(req.Body).ReadToEnd();
+            using (var sr = new StreamReader(st, enc ?? Encoding.UTF8))
+            {
+                return await sr.ReadToEndAsync();
+            }
+        }
+
+
+        public static async Task<T> BodyAsJsonObjectAsync<T>(this HttpRequest req)
+        {
+            if (req.Body.CanSeek)
+            {
+                req.Body.Seek(0, SeekOrigin.Begin);
+            }
+            var json = await req.Body.ReadToEndAsync();
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
         }
 

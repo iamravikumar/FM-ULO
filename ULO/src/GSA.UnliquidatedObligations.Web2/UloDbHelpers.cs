@@ -15,7 +15,7 @@ namespace GSA.UnliquidatedObligations.Web
             => wf.Where(z => z.Review != null);
 
         public static IQueryable<Workflow> WhereReviewExists(this IQueryable<Workflow> wf)
-            => wf.Where(z => z.TargetUlo.Review != null);
+            => wf.Where(z => z.TargetUlo.Review != null && z.TargetUlo.Review.DeletedAtUtc == null);
 
         public static string OnDuplicateAppendSeqeuntialNumber(DataTable dt, string inboundColumnName)
         {

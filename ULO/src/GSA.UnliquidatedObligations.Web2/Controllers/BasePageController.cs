@@ -81,6 +81,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return cnt;
         }
 
+        protected IDictionary<int, string> PopulateDocumentTypeNameByDocumentTypeIdInViewBag()
+        {
+            var documentTypeNameByDocumentTypeId = Cacher.FindOrCreateValue(
+                Cache.CreateKey(nameof(PopulateDocumentTypeNameByDocumentTypeIdInViewBag)),
+                () => DB.DocumentTypes.ToDictionary(z => z.DocumentTypeId, z => z.Name).AsReadOnly(),
+                PortalHelpers.MediumCacheTimeout);
+            ViewBag.DocumentTypeNameByDocumentTypeId = documentTypeNameByDocumentTypeId;
+            return documentTypeNameByDocumentTypeId;
+        }
+
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
             var cnt = SetTotalItemCount(q);

@@ -8,6 +8,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 {
     public static class ClaimHelpercs
     {
+        public const string UloClaimTypePrefix = UloHelpers.UloUrn + "claims/";
+
         public static HashSet<int> GetApplicationPerimissionRegions(string claimType, string claimValue, ApplicationPermissionNames? applicationPermission)
         {
             HashSet<int> regions = null;
@@ -74,7 +76,7 @@ Cleanup:
             return regionIds;
         }
 
-        public static HashSet<int> GetSubjectCategoryRegions(this IEnumerable<Claim> claims, string docType, string baCode, string orgCode)
+        private static HashSet<int> GetSubjectCategoryRegions(this IEnumerable<Claim> claims, string docType, string baCode, string orgCode)
         {
             var regionIds = new HashSet<int>();
             foreach (var c in claims)
@@ -86,8 +88,6 @@ Cleanup:
 
         public static ICollection<Claim> GetClaims(this AspNetUser user)
         {
-            //throw new NotImplementedException();
-
             var claims = new List<Claim>();
             foreach (var c in user.UserAspNetUserClaims)
             {
@@ -98,13 +98,9 @@ Cleanup:
         }
 
         public static HashSet<int> GetApplicationPerimissionRegions(this AspNetUser user, ApplicationPermissionNames? permission)
-        {
-            return user.GetClaims().GetApplicationPerimissionRegions(permission);
-        }
+            => user.GetClaims().GetApplicationPerimissionRegions(permission);
 
         public static HashSet<int> GetSubjectCategoryRegions(this AspNetUser user, string docType, string baCode, string orgCode)
-        {
-            return user.GetClaims().GetSubjectCategoryRegions(docType, baCode, orgCode);
-        }
+            => user.GetClaims().GetSubjectCategoryRegions(docType, baCode, orgCode);
     }
 }

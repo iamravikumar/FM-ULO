@@ -17,8 +17,8 @@ namespace GSA.UnliquidatedObligations.Web.Authorization
             throw new Exception($"Type {typeof(TEnum)} is not supported as a permission type.");
         }
 
-        public static string CreateClaimType(ApplicationPermissionNames permissionName)
-            => "ApplicationPermissionClaim";
+        private static string CreateClaimType(ApplicationPermissionNames permissionName)
+            => ClaimHelpercs.UloClaimTypePrefix+"ApplicationPermissionClaim";
 
         public static string CreatePolicyName<TEnum>(TEnum permissionName) where TEnum : System.Enum
         {
@@ -35,7 +35,7 @@ namespace GSA.UnliquidatedObligations.Web.Authorization
             {
                 foreach (ApplicationPermissionNames p in Enum.GetValues(typeof(ApplicationPermissionNames)))
                 {
-                    o.AddPolicy(CreatePolicyName(p), policy => policy.AddRequirements(new PermissionRequirement<ApplicationPermissionNames>(p)));
+                    o.AddPolicy(CreatePolicyName(p), policy => policy.AddRequirements(new ApplicationPermissionRequirement(p)));
                 }
             });
             services.AddTransient<IAuthorizationHandler, PermissionHandler>();

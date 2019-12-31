@@ -3,14 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GSA.UnliquidatedObligations.Web.Authorization
 {
-    public class PermissionRequirement<TEnum> : PermissionRequirement
-        where TEnum : System.Enum
-    {
-        public PermissionRequirement(TEnum permission)
-            : base(PermissionHelpers.CreateClaimType(permission), permission.ToString())
-        { }
-    }
-
     public abstract class PermissionRequirement : IAuthorizationRequirement
     {
         protected PermissionRequirement(string claimType, string permissionName)

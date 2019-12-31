@@ -7,7 +7,8 @@
     <div class="panel-body">
         @if (Model.UloFinancialActivitys.Count == 0)
         {
-            <div class="noDataMessage">No financial activity has been recorded yet.</div>
+            <div class="noDataMessage" id="financialActivityNoData">No financial activity has been recorded yet.</div>
+            <div class="noDataMessage" id="financialActivityPleaseRefresh" style="display:none">Please reload this page to see the recently added financial activity.</div>
         }
         else
         {
@@ -31,20 +32,18 @@
                 </tr>
                 @foreach (var z in Model.UloFinancialActivitys)
                 {
-            <tr>
-                @*<td>@GSA.UnliquidatedObligations.Web.PortalHelpers.ToLocalizedDateTime(z.ActivityDate)</td>*@
-                <td>@z.ActivityDate</td>
-                <td>@z.ActivityType</td>
-                <td>@z.ReferenceNumber</td>
-                <td>@Html.Currency(z.Amount)</td>
-                <td>@z.Description</td>
-            </tr>
+                    <tr>
+                        <td>@PortalHelpers.ToLocalizedDateTime(z.ActivityDate)</td>
+                        <td>@z.ActivityType</td>
+                        <td>@z.ReferenceNumber</td>
+                        <td>@Html.Currency(z.Amount)</td>
+                        <td>@z.Description</td>
+                    </tr>
                 }
                 <tr style="display:none" id="newFinancialActivityCreatedRow"><th colspan="5">New financial activities have been created. Refresh to see them.</th></tr>
             </table>
         }
-        <button type="button" class="btn btn-primary finac-add-btn" data-toggle="modal" data-target="#newFinancialActivityDialog" title="Add a new document." onclick="resetCreateFinancialActivityFields()">Add...</button>
-        @if (UserHelpers.HasPermission(User,GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CreateFinancialActivity))
+        @if (UserHelpers.HasPermission(User, GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CreateFinancialActivity))
         {
             <button type="button" class="btn btn-primary finac-add-btn" data-toggle="modal" data-target="#newFinancialActivityDialog" title="Add a new document." onclick="resetCreateFinancialActivityFields()">Add...</button>
         }
@@ -58,52 +57,33 @@
                 <h5 class="modal-title" id="new-fa-label">New Financial Activity</h5>
             </div>
             <div class="modal-body">
-                <table>
-                    <tr>
-                        <td>
-                            <label class="col-md-4" for="newfaActivityDate">Activity Date</label>
-                        </td>
-                        <td>
-                            <input class="col-md-8" type="date" id="newfaActivityDate" name="newfaActivityDate" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label class="col-md-4" for="newfaActivityType">Activity Type</label>
-                        </td>
-                        <td>
-                            <select id="newfaActivityType" class="col-md-8" style="margin:0;padding:0" name="newfaActivityType">
-                                <option>Payment</option>
-                                <option>Receipt</option>
-                                <option>Modification</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label class="col-md-4" for="newfaReferenceNumber">Reference Number</label>
-                        </td>
-                        <td>
-                            <input class="col-md-8" type="text" maxlength="100" id="newfaReferenceNumber" name="newfaReferenceNumber" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label class="col-md-4" for="newfaAmount">Amount</label>
-                        </td>
-                        <td>
-                            <input class="col-md-8" type="number" id="newfaAmount" name="newfaAmount" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label class="col-md-4" for="newfaDescription">Description</label>
-                        </td>
-                        <td>
-                            <textarea class="col-md-8" id="newfaDescription" name="newfaDescription"></textarea>
-                        </td>
-                    </tr>
-                </table>
+                <form>
+                    <div class="form-group">
+                        <label for="newfaActivityDate">Activity Date</label>
+                        <input type="date" id="newfaActivityDate" name="newfaActivityDate" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="newfaActivityType">Activity Type</label>
+                        <br />
+                        <select id="newfaActivityType" style="margin:0;padding:0" name="newfaActivityType" class="form-control">
+                            <option>Payment</option>
+                            <option>Receipt</option>
+                            <option>Modification</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newfaReferenceNumber">Reference Number</label>
+                        <input type="text" maxlength="100" id="newfaReferenceNumber" name="newfaReferenceNumber" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="newfaAmount">Amount</label>
+                        <input type="number" id="newfaAmount" name="newfaAmount" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="newfaDescription">Description</label>
+                        <textarea id="newfaDescription" name="newfaDescription" class="form-control"></textarea>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <div class="document-error-msg">This is an Errors</div>
@@ -130,8 +110,10 @@ function createFinancialActivity() {
         type: "POST",
         url: "/ulos/" + @Model.UloId + "/financialActivities/create",
         data: JSON.stringify(newfa),
+        contentType: "application/json",
         success: function (result) {
-            $("#newFinancialActivityCreatedRow").css("display", "");
+            $("#newFinancialActivityCreatedRow,#financialActivityPleaseRefresh").css("display", "");
+            $("#financialActivityNoData").css("display", "none");
         },
         error: standardAjaxErrorHandler
     });

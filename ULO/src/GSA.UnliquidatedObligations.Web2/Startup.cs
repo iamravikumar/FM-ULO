@@ -107,8 +107,8 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddScoped<IUserClaimsPrincipalFactory<AspNetUser>, NoUloClaimsUserClaimsPrincipalFactory>();
 
             services.AddDbContext<UloDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString(PortalHelpers.DefaultConectionStringName), z => z.EnableRetryOnFailure(1)));
+                options.UseSqlServer(Configuration.GetConnectionString(PortalHelpers.DefaultConectionStringName), z => z.EnableRetryOnFailure(1))
+                );
 
             services.AddSingleton<ICacher>(_=>Cache.DataCacher);
 
