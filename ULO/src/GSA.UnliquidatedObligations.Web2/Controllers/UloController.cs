@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
@@ -99,7 +100,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 .Include(wf => wf.OwnerUser)
                 .Include(wf => wf.WorkflowDocuments)
                 .Include(wf => wf.TargetUlo).ThenInclude(u => u.Review)
-                .Include(wf => wf.TargetUlo).ThenInclude(u=>u.Region).ThenInclude(r=>r.Zone)
+                .Include(wf => wf.TargetUlo).ThenInclude(u => u.Region).ThenInclude(r => r.Zone)
                 .Include(wf => wf.WorkflowUnliqudatedObjectsWorkflowQuestions).ThenInclude(q => q.User)
                 .WhereReviewExists();
 
@@ -398,7 +399,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             where !prohibitedWorkflowIds.Contains(wf.WorkflowId)
                             select wf;
 
-            workflows = ApplyBrowse(workflows,sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
+            workflows = ApplyBrowse(workflows, sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);
 
             PopulateRequestForReassignmentsControllerDetailsBulkTokenIntoViewBag(workflows);
             PopulateViewInfoIntoViewBag(workflows);
@@ -462,7 +463,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             AddPageAlert($"You're not a member of the reassignments group and will not see any items.", false, PageAlert.AlertTypes.Warning);
 
-        Browse:
+Browse:
             var workflows = ApplyBrowse(
                 Workflows.Where(wf => wf.OwnerUserId == reassignGroupUserId && regionIds.Contains(wf.TargetUlo.RegionId)),
                 sortCol ?? nameof(Workflow.DueAtUtc), sortDir, page, pageSize);

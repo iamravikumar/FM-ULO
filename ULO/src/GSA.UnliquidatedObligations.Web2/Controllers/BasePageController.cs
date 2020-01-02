@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Mvc;
 using RevolutionaryStuff.Core;
@@ -207,7 +208,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected virtual ActionResult RedirectToIndex()
             => RedirectToAction("Index");
 
-    }
+        public override JsonResult Json(object data)
+            => base.Json(data, JSO);
 
-    
+        public override JsonResult Json(object data, object serializerSettings)
+            => base.Json(data, serializerSettings ?? JSO);
+
+        private static JsonSerializerOptions JSO = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = null,
+        };
+    }
 }

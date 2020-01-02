@@ -31,14 +31,14 @@
       "wwwroot/js/jquery.form.min.js",
       "wwwroot/js/bootstrap-multiselect.js",
       "wwwroot/js/ulo/site.js",
-      "wwwroot/js/ulo/advance",
-      "wwwroot/js/ulo/attachments",
-      "wwwroot/js/ulo/cookies",
-      "wwwroot/js/ulo/filter",
-      "wwwroot/js/ulo/polyfills",
-      "wwwroot/js/ulo/recordslisting",
-      "wwwroot/js/ulo/reviews",
-      "wwwroot/js/ulo/users"
+      "wwwroot/js/ulo/advance.js",
+      "wwwroot/js/ulo/attachments.js",
+      "wwwroot/js/ulo/cookies.js",
+      "wwwroot/js/ulo/filter.js",
+      "wwwroot/js/ulo/polyfills.js",
+      "wwwroot/js/ulo/recordslisting.js",
+      "wwwroot/js/ulo/reviews.js",
+      "wwwroot/js/ulo/users.js"
     ],
     "minify": {
       "enabled": true
