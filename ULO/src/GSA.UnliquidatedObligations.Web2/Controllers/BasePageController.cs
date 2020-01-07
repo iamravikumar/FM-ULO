@@ -136,23 +136,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             pageAlerts.Add(pa);
         }
 
-        protected IQueryable<T> ApplyPagination<T>(IQueryable<T> q, int? page = null, int? pageSize = null)
-        {
-            var rowsPerPageString = Request.Cookies["rowsPerPage"];
-            int rowsPerPage;
-            if (!int.TryParse(rowsPerPageString, out rowsPerPage))
-            {
-                rowsPerPage = 10;
-            }
-            var s = rowsPerPage;
-            var p = page.GetValueOrDefault();
-            if (p < 1) p = 1;
-            ViewBag.PaginationSupported = true;
-            ViewBag.PageNum = p;
-            ViewBag.PageSize = s;
-            return q.Skip((p - 1) * s).Take(s).ToList().AsQueryable();
-        }
-
         public IEnumerable<GetMyGroups_Result0> GetUserGroups(string userId = null)
             => Cacher.FindOrCreateValue(
                 Cache.CreateKey(nameof(GetUserGroups), userId ?? CurrentUserId),

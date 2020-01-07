@@ -76,6 +76,7 @@ namespace GSA.UnliquidatedObligations.Web
                     .Enrich.With<Serilog.Enrichers.MachineNameEnricher>()
                     .Enrich.With<Serilog.Enrichers.ProcessIdEnricher>()
                     .Enrich.With<Serilog.Enrichers.ThreadIdEnricher>()
+                    .Enrich.With<Serilog.Enrichers.CorrelationIdEnricher>()
                     .Enrich.WithProperty("ApplicationName", c["ApplicationName"])
                     .Enrich.WithProperty("SprintName", c["SprintConfig:SprintName"])
                     .Enrich.FromLogContext()
