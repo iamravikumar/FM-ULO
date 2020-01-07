@@ -541,7 +541,7 @@ Browse:
         [Route("ulos/{uloId}/notes")]
         public async Task<JsonResult> GetNotesAsync(int uloId)
         {
-            var notes = (await DB.Notes.Include(z => z.User).Where(z => z.UloId == uloId).ToListAsync()).OrderByDescending(z => z.CreatedAtUtc).Select(z => new { z.NoteId, CreatedBy = z.User.UserName, z.Body, CreatedAt = z.CreatedAtUtc.ToLocalizedDisplayDateString(true) }).ToList();
+            var notes = (await DB.Notes.Include(z => z.User).Where(z => z.UloId == uloId).ToListAsync()).OrderByDescending(z => z.CreatedAtUtc).Select(z => new { z.NoteId, CreatedBy = z.User.UserName, z.Body, CreatedAt = PortalHelpers.ToLocalizedDisplayDateString(z.CreatedAtUtc, true) }).ToList();
             return Json(notes);
         }
 

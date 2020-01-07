@@ -32,8 +32,16 @@ namespace GSA.UnliquidatedObligations.Web
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex, "Problem loading timezone with id = {timezoneId}", ConfigOptions.Value.TimezoneId);
+                        Logger.Error(ex, "Problem loading timezone with id = [{timezoneId}]", ConfigOptions.Value.TimezoneId);
                         DisplayTimeZone_p = TimeZoneInfo.Local;
+                        try
+                        {
+                            Logger.Information(
+                                "Valid timeZoneIds include {validIds}",
+                                TimeZoneInfo.GetSystemTimeZones().ConvertAll(t => t.Id).Format(", ", "[{0}]")
+                                );
+                        }
+                        catch (Exception) { }
                     }
                 }
                 return DisplayTimeZone_p;

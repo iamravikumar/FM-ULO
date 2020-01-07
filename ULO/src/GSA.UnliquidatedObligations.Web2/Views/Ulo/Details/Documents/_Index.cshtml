@@ -59,7 +59,7 @@
                             @document.Workflow.OwnerUser.UserName
                         </td>
                         <td>
-                            @document.CreatedAtUtc.ToLocalizedDisplayDateString()
+                            @PortalHelpers.ToLocalizedDisplayDateString(document.CreatedAtUtc)
                         </td>
                         <td>
                             <a data-toggle="modal" data-target="@modalId" href="@modalId">View</a>

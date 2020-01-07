@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
@@ -79,7 +80,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var documentTypeNameByDocumentTypeId = Cacher.FindOrCreateValue(
                 Cache.CreateKey(nameof(PopulateDocumentTypeNameByDocumentTypeIdInViewBag)),
-                () => DB.DocumentTypes.ToDictionary(z => z.DocumentTypeId, z => z.Name).AsReadOnly(),
+                () => DB.DocumentTypes.AsNoTracking().ToDictionary(z => z.DocumentTypeId, z => z.Name).AsReadOnly(),
                 PortalHelpers.MediumCacheTimeout);
             ViewBag.DocumentTypeNameByDocumentTypeId = documentTypeNameByDocumentTypeId;
             return documentTypeNameByDocumentTypeId;

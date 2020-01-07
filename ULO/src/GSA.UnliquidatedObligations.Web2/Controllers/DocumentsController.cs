@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -118,7 +117,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
         }
 
-
         protected async Task CheckStalenessFromFormAsync(Workflow wf = null)
         {
             int workflowId = Parse.ParseInt32(Request.Form[WorkflowStalenessMagicFieldNames.WorkflowId]);
@@ -215,7 +213,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     Name = document.DocumentName,
                     DocumentTypeNames = documentTypeNames.WhereNotNull().OrderBy().ToList(),
                     AttachmentCount = document.DocumentAttachments.Count,
-                    UploadedDate = document.CreatedAtUtc.ToLocalizedDisplayDateString()
+                    UploadedDate = PortalHelpers.ToLocalizedDisplayDateString(document.CreatedAtUtc)
                 });
             }
             catch (Exception ex)
@@ -348,7 +346,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     documents = copiedDocs.Select(z => new
                     {
                         UserName = CurrentUser.UserName,
-                        UploadedDate = z.CreatedAtUtc.ToLocalizedDisplayDateString(),
+                        UploadedDate = PortalHelpers.ToLocalizedDisplayDateString(z.CreatedAtUtc),
                         AttachmentCount = z.DocumentAttachments.Count,
                         Name = z.DocumentName,
                         Id = z.DocumentId,
