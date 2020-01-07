@@ -13,7 +13,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "APPSETTINGS_DIRECTORY": "",
-        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_ENVIRONMENT": "Production",
         "LOGFILE_DIRECTORY": "C:\\Users\\jason\\AppData\\Local\\Temp\\ulog\\"
       }
     },

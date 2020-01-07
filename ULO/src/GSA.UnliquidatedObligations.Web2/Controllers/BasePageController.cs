@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Mvc;
 using RevolutionaryStuff.Core;
@@ -9,10 +8,11 @@ using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
+using RASP = RevolutionaryStuff.AspNetCore;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
-    public abstract class BasePageController : Controller
+    public abstract class BasePageController : RASP.Controllers.BasePageController
     {
         public static class WorkflowStalenessMagicFieldNames
         {
@@ -75,13 +75,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             } 
         }
 
-        private int SetTotalItemCount<T>(IQueryable<T> q)
-        {
-            var cnt = q.Count();
-            ViewBag.TotalItemCount = cnt;
-            return cnt;
-        }
-
         protected IDictionary<int, string> PopulateDocumentTypeNameByDocumentTypeIdInViewBag()
         {
             var documentTypeNameByDocumentTypeId = Cacher.FindOrCreateValue(
@@ -90,21 +83,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 PortalHelpers.MediumCacheTimeout);
             ViewBag.DocumentTypeNameByDocumentTypeId = documentTypeNameByDocumentTypeId;
             return documentTypeNameByDocumentTypeId;
-        }
-
-        protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
-        {
-            var cnt = SetTotalItemCount(q);
-            if (cnt == 0)
-            {
-                q = (new T[0]).AsQueryable();
-            }
-            else
-            {
-                q = ApplySort(q, sortCol, sortDir, colMapper);
-                q = ApplyPagination(q, page, pageSize);
-            }
-            return q;
         }
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, Type enumType, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
@@ -126,27 +104,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ViewBag.SortDir = sortDir;
             q = q.OrderByField(sortCol, orderedValues, isAscending);
             q = ApplyPagination(q, page, pageSize);
-            return q;
-        }
-
-        private static readonly IDictionary<string, string> NoMappings = new Dictionary<string, string>().AsReadOnly();
-
-        protected IQueryable<T> ApplySort<T>(IQueryable<T> q, string sortCol, string sortDir, IDictionary<string, string> colMapper = null)
-        {
-            var m = new Dictionary<string, string>(colMapper ?? NoMappings);
-            if (!m.ContainsKey("CreatedAt"))
-            {
-                m["CreatedAt"] = "CreatedAtUtc";
-            }
-            sortCol = StringHelpers.TrimOrNull(sortCol);
-            bool isAscending = AspHelpers.IsSortDirAscending(sortDir);
-            ViewBag.SortCol = sortCol;
-            ViewBag.SortDir = sortDir;
-            if (sortCol != null)
-            {
-                sortCol = m.FindOrMissing(sortCol, sortCol);
-                q = q.OrderByField(sortCol, isAscending);
-            }
             return q;
         }
 
@@ -202,22 +159,5 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 () => DB.GetMyGroupsAsync(userId ?? CurrentUserId).ExecuteSynchronously().ToList().AsReadOnly(),
                 PortalHelpers.ShortCacheTimeout
                 );
-        protected ActionResult RedirectToHome()
-           => RedirectToAction(UloController.ActionNames.Home, UloController.Name);
-
-        protected virtual ActionResult RedirectToIndex()
-            => RedirectToAction("Index");
-
-        public override JsonResult Json(object data)
-            => base.Json(data, JSO);
-
-        public override JsonResult Json(object data, object serializerSettings)
-            => base.Json(data, serializerSettings ?? JSO);
-
-        private static JsonSerializerOptions JSO = new JsonSerializerOptions()
-        {
-            WriteIndented = true,
-            PropertyNamingPolicy = null,
-        };
     }
 }

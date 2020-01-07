@@ -4,20 +4,19 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using RevolutionaryStuff.Core;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using System.Text;
-using System.Web;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using System.Text.RegularExpressions;
 using RASP = RevolutionaryStuff.AspNetCore;
-using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -37,11 +36,6 @@ namespace GSA.UnliquidatedObligations.Web
                 Selected = selected,
                 Text = PleaseSelectOne,                    
             };
-
-        public const string SortDirAscending = "asc";
-        public const string SortDirDescending = "desc";
-        private const string SortDirKeyName = "sortDir";
-        private const string SortColKeyName = "sortCol";
 
         public static readonly TimeZoneInfo DisplayTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
 
@@ -72,9 +66,7 @@ namespace GSA.UnliquidatedObligations.Web
             => TimeZoneInfo.ConvertTime(dt, zoneInfo);
 
         public static bool IsSortDirAscending(string sortDir)
-            => !(0 == string.Compare(SortDirDescending, sortDir, true));
-
-       
+            => RASP.AspHelpers.IsSortDirAscending(sortDir);       
        
         public static string Currency(this IHtmlHelper helper, decimal data, string locale = "en-US", bool woCurrency = false)
         {
@@ -160,10 +152,10 @@ namespace GSA.UnliquidatedObligations.Web
                     routeValues[key] = val;
                 }
             }
-            routeValues["sortCol"] = colName;
+            routeValues[RASP.AspHelpers.SortColKeyName] = colName;
             if (colName == currentSortColName)
             {
-                routeValues["sortDir"] = IsSortDirAscending(currentSortDir) ? SortDirDescending : SortDirAscending;
+                routeValues[RASP.AspHelpers.SortDirKeyName] = IsSortDirAscending(currentSortDir) ? RASP.AspHelpers.SortDirDescending : RASP.AspHelpers.SortDirAscending;
                 var h = hh.ActionLink(
                     displayName,
                     actionName,
@@ -173,7 +165,7 @@ namespace GSA.UnliquidatedObligations.Web
                 var builder = new HtmlContentBuilder(htmlList);
                 if (currentSortDir != null)
                 {
-                    var html = builder.AppendHtml(currentSortDir == SortDirAscending ? " <span class='caret-up'>&#9650;</span>" : " <span class='caret-down'>&#9660;</span>");
+                    var html = builder.AppendHtml(currentSortDir == RASP.AspHelpers.SortDirAscending ? " <span class='caret-up'>&#9650;</span>" : " <span class='caret-down'>&#9660;</span>");
                     return html;
                 }
 
@@ -181,29 +173,13 @@ namespace GSA.UnliquidatedObligations.Web
             }
             else
             {
-                routeValues["sortDir"] = SortDirAscending;
+                routeValues[RASP.AspHelpers.SortDirKeyName] = RASP.AspHelpers.SortDirAscending;
                 return hh.ActionLink(displayName, actionName, routeValues);
             }
         }
 
-        public static async Task<string> ReadToEndAsync(this Stream st, Encoding enc = null)
-        {
-            using (var sr = new StreamReader(st, enc ?? Encoding.UTF8))
-            {
-                return await sr.ReadToEndAsync();
-            }
-        }
-
-
-        public static async Task<T> BodyAsJsonObjectAsync<T>(this HttpRequest req)
-        {
-            if (req.Body.CanSeek)
-            {
-                req.Body.Seek(0, SeekOrigin.Begin);
-            }
-            var json = await req.Body.ReadToEndAsync();
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
-        }
+        public static Task<T> BodyAsJsonObjectAsync<T>(this HttpRequest req)
+            => RASP.AspHelpers.BodyAsJsonObjectAsync<T>(req, false);
 
 #if false
 
@@ -339,19 +315,6 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static IList<SelectListItem> CreateSelectList(IEnumerable<Justification> justifications)
             => justifications.ConvertAll(j => CreateSelectListItem(j)).ToList();
-
-        public static IList<SelectListItem> ZCreateSelectList(this System.Collections.IEnumerable itemsToConvert)
-        {
-            var stringsSelect = new List<SelectListItem>();
-
-            foreach (var o in itemsToConvert)
-            {
-                if (o == null) continue;
-                var val = o.ToString();
-                stringsSelect.Add(new SelectListItem { Text = val, Value = val });
-            }
-            return stringsSelect;
-        }
 
         public static IList<SelectListItem> CreateSelectList(this IEnumerable<string> items)
             => RASP.AspHelpers.CreateSelectList(items);
