@@ -1,6 +1,26 @@
 ﻿/*! site.js */
 function debugAlert(msg) {
+    console.debug(msg);
     //    alert("debugAlert: "+msg);
+}
+
+function debugLambda(name, f) {
+    var header = "";
+    for (var i = 0; i < arguments.length; i++) {
+        var a = arguments[i];
+        var json = JSON.stringify(a);
+        header += "\n\t" + i+": ["+json+"]";
+    } 
+    header = name + (header === "" ? " " : "\n") + "vvvvvvvvvvvvvvvvvvvvvvv";
+    debugAlert(header);
+    try {
+        f();
+        debugAlert(name + " ^^^^^^^^^^^^^^^^^^^^^^^");
+    }
+    catch (e) {
+        debugAlert(name + "^^^^^^^^^^^^^^^^^^^^^^^\nERROR\n" + e);
+        throw e;
+    }
 }
 
 function popupConfirmHide() {

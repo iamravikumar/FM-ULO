@@ -96,11 +96,11 @@ namespace GSA.UnliquidatedObligations.Web
 
             public string[][] DocTypes { get; set; }
 
-            public bool UseOldGetEligibleReviewersAlgorithm { get; }
+            public bool UseOldGetEligibleReviewersAlgorithm { get; set; }
 
-            public bool SendBatchEmailsDuringAssignWorkflows { get; }
+            public bool SendBatchEmailsDuringAssignWorkflows { get; set; }
 
-            public bool AllowFileShareInfo { get; }
+            public bool AllowFileShareInfo { get; set; }
 
             public string GetEligibleReviewersQualifiedUsernameFormat { get; set; }
 
@@ -108,9 +108,9 @@ namespace GSA.UnliquidatedObligations.Web
 
             public string StaleWorkflowErrorMessageTemplate { get; set; }
 
-            public string DocPath { get; }
+            public string DocPath { get; set; }
 
-            public string AttachmentFileUploadAccept { get; }
+            public string AttachmentFileUploadAccept { get; set; }
 
             public string AttachmentFileUploadAcceptMessage { get; set; }
         }
@@ -145,9 +145,9 @@ namespace GSA.UnliquidatedObligations.Web
             Logger = logger;
         }
 
-        public bool VerifyFileAccept(string accepts, string filename, string contentType)
+        public bool VerifyFileAccept(string filename, string contentType, string accepts=null)
         {
-            accepts = accepts ?? "";
+            accepts = accepts ?? AttachmentFileUploadAccept;
             var ext = Path.GetExtension(filename);
             foreach (var accept in accepts.Split('|'))
             {

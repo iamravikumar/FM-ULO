@@ -24,7 +24,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     public class DocumentsController : BasePageController
     {
         public const string Name = "Documents";
-        public const string Attachments = "attachments";
 
         public static class ActionNames
         {
@@ -180,10 +179,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 await DB.SaveChangesAsync();
                 //DB.Refresh(document);
-                if (TempData[Attachments] != null)
+                var attachmentsTempData = TempData.FileUploadAttachmentResults();
+                if (attachmentsTempData.Count>0)
                 {
                     var rids = CSV.ParseIntegerRow(newRemovedAttachmentIds);
-                    var attachmentsTempData = (IList<Attachment>)TempData[Attachments];
                     foreach (var tempAttachment in attachmentsTempData)
                     {
                         if (!rids.Contains(tempAttachment.AttachmentsId))
@@ -204,7 +203,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         Stuff.FileTryDelete(tempAttachment.FileName);
                     }
                     await DB.SaveChangesAsync();
-                    TempData[Attachments] = null;
+                    Clear();
                 }
                 return Json(new
                 {
@@ -224,17 +223,17 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public void Clear()
         {
-            if (TempData[Attachments] != null)
+            var attachmentsTempData = TempData.FileUploadAttachmentResults();
+            if (attachmentsTempData.Count>0)
             {
                 //var path = HostingEnvironment.MapPath("~/Content/DocStorage/Temp");
                 var path = PortalHelpers.GetStorageFolderPath("~/Content/DocStorage/Temp");
                 var di = new DirectoryInfo(path);
-
                 foreach (FileInfo file in di.GetFiles())
                 {
                     file.Delete();
                 }
-                TempData[Attachments] = null;
+                attachmentsTempData.Clear();
             }
         }
 

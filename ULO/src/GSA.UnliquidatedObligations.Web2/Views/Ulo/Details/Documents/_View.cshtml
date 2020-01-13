@@ -10,10 +10,11 @@
     var deleteConfId = id + "Delete";
     var deleteConfLabel = deleteConfId + "Label";
     var deleteConfBody = deleteConfId + "Body";
-    object docNameAttributes = Model.AllowDocumentEdit ? new { id = @documentName, @class = "col-md-8 document-name", maxlength = "255" } : (object)new { id = @documentName, @class = "col-md-8 document-name", @readonly = "readonly" };
-    object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4 } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4, @disabled = "disabled" };
+    object docNameAttributes = Model.AllowDocumentEdit ? new { id = @documentName, @class = "form-control document-name", maxlength = "255" } : (object)new { id = @documentName, @class = "col-md-8 document-name", @readonly = "readonly" };
+    object docTypeAttributes = Model.AllowDocumentEdit ? new { id = @documentType, @class = "form-control document-type-choices", size = 4 } : (object)new { id = @documentType, @class = "col-md-8 document-type-choices", size = 4, @disabled = "disabled" };
     var isDisabled = !Model.AllowDocumentEdit ? "disabled" : "";
     var isReadOnly = !Model.AllowDocumentEdit ? "readonly" : "";
+    var noDataMessage = ViewBag.NoDataMessage as string ?? AspHelpers.NoResultsMessage;
 }
 <div class="modal fade document-modal" id="@id" tabindex="-1" role="dialog" aria-labelledby="@label" aria-hidden="true">
     
@@ -23,23 +24,26 @@
                 <h5 class="modal-title" id="@label">Document</h5>
             </div>
             <div id="@body" class="modal-body">
-                <div class="row">
-                    @Html.LabelFor(model => model.DocumentName, "Document Name:", htmlAttributes: new { @class = "col-md-4" })
-                    @Html.TextBoxFor(model => model.DocumentName, htmlAttributes: docNameAttributes)
-                </div>
-                <div class="row">
-                    @Html.LabelFor(model => model.DocumentTypeIds, "Document Type:", htmlAttributes: new { @class = "col-md-4" })
-                    @Html.ListBoxFor(model => model.DocumentTypeIds, Model.DocumentTypes, htmlAttributes: docTypeAttributes)
-                </div>
-                <div class="row">
-                    <label class="col-md-4">Attachments:</label>
-                    @{ 
-                        var avm = Model.AttachmentsViewModel;
-                    }
-                    <div class="col-md-8" style="padding:0">
-                        <table class="table table-responsive table-striped attachments">
+                <form>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentName, "Document Name")
+                        @Html.TextBoxFor(model => model.DocumentName, htmlAttributes: docNameAttributes)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DocumentTypeIds, "Document Type")
+                        <br />
+                        @Html.ListBoxFor(model => model.DocumentTypeIds, Model.DocumentTypes, htmlAttributes: docTypeAttributes)
+                    </div>
+                    <div class="form-group">
+                        <label>Attachments</label>
+                        @{
+                            var avm = Model.AttachmentsViewModel;
+                        }
+                    <div zclass="form-control">
+                        <div class="noDataMessage @(@avm.Attachments.Count > 0 ? "hide" : "show")">@noDataMessage</div>
+                        <table class="table table-responsive table-striped attachments @(@avm.Attachments.Count > 0 ? "show" : "hide")">
                             <thead>
-                                <tr class="attachments-heading-row @(@avm.Attachments.Count > 0 ? "show" : "hide")">
+                                <tr class="attachments-heading-row">
                                     <th>
                                         File
                                     </th>
@@ -55,9 +59,9 @@
                                         </td>
                                         <td class="actions">
                                             @Html.ActionLink("Download", AttachmentsController.ActionNames.Download, AttachmentsController.Name, new { attachmentId = attachment.AttachmentsId }, null)
-                                           
+
                                             @if (Model.AllowDocumentEdit)
-                {
+                                            {
                                                 <text>
                                                     |
                                                     <a class='attachments-delete' data-target='@attachment.AttachmentsId'>Delete</a>
@@ -68,15 +72,14 @@
                                 }
                             </tbody>
                         </table>
-
-                        @Html.Hidden("documentId" + Model.DocumentId + "Hidden", Model.DocumentId, htmlAttributes: new { @class = "document-id-hidden" })
-
-                        @if (Model.AllowDocumentEdit)
-                        {
-                            <button type="button" class="btn btn-primary attachments-add-btn" title="@PortalHelpers.AttachmentFileUploadAcceptMessage">Add</button>
-                        }
+                        <input type="hidden" value="@Model.DocumentId" id="document-id-hidden" name="DocumentIdForUpload" />
                     </div>
-                </div>
+                    </div>
+                    @if (Model.AllowDocumentEdit)
+                    {
+                        <button type="button" class="btn btn-primary attachments-add-btn" title="@PortalHelpers.AttachmentFileUploadAcceptMessage">Add</button>
+                    }
+                </form>
             </div>
             <div class="modal-footer">
                 <div class="document-error-msg">This is an Errors</div>

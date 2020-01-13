@@ -1,16 +1,17 @@
-﻿using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
-using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using GSA.UnliquidatedObligations.Web.Authorization;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using RevolutionaryStuff.Core;
-using RevolutionaryStuff.Core.Caching;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Web.Authorization;
+using GSA.UnliquidatedObligations.Web.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -19,12 +20,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     public class AttachmentsController : BasePageController
     {
         public const string Name = "Attachments";
-        public const string Attachments = "attachments";
 
         public static class ActionNames
         {
             public const string Download = "Download";
             public const string View = "View";
+            public const string FileUpload = "FileUpload";
         }
 
         public AttachmentsController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
@@ -67,24 +68,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
         }
 
-        public class FileUploadAttachmentResult : Attachment
-        {
-            public bool Added { get; set; }
-            public bool Whitelisted { get; set; }
-            public bool SaveError { get; set; }
-            public IList<string> ErrorMessages { get; set; } = new List<string>();
-        }
-
+        [ActionName(ActionNames.FileUpload)]
         [HttpPost]
-        public async Task<JsonResult> FileUpload(int documentId)
+        public async Task<IActionResult> FileUpload(int documentId)
         {
             var results = new List<FileUploadAttachmentResult>();
-            List<Attachment> attachmentsTempData = null;
-            if (TempData[Attachments] != null)
-            {
-                attachmentsTempData = (List<Attachment>)TempData[Attachments];
-            }
-            attachmentsTempData = attachmentsTempData ?? new List<Attachment>();
+            var attachmentsTempData = TempData.FileUploadAttachmentResults();
             foreach (var file in Request.Form.Files)
             {
                 if(file.Length > 0)                
@@ -100,10 +89,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         FileSize = file.Length,
                         ContentType = file.ContentType ?? System.Net.Mime.MediaTypeNames.Application.Octet
                     };
-                    attachment.Whitelisted = PortalHelpers.VerifyFileAccept(
-                        PortalHelpers.AttachmentFileUploadAccept,
-                        attachment.FileName,
-                        attachment.ContentType);
+                    attachment.Whitelisted = PortalHelpers.VerifyFileAccept(attachment.FileName, attachment.ContentType);
                     if (attachment.Whitelisted)
                     {
                         try
@@ -113,6 +99,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                                 await file.CopyToAsync(fileStream);
                             }
                             attachment.Added = true;
+                            attachmentsTempData.Add(attachment);
                         }
                         catch (Exception ex)
                         {
@@ -127,8 +114,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     results.Add(attachment);
                 }
             }
-            attachmentsTempData.AddRange(results.Where(z => z.Added));
-            TempData[Attachments] = attachmentsTempData;
             return Json(results);
         }
 
