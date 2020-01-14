@@ -114,6 +114,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     results.Add(attachment);
                 }
             }
+            TempData.FileUploadAttachmentResults(attachmentsTempData);
             return Json(results);
         }
 

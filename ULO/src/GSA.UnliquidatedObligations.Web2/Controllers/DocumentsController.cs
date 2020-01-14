@@ -27,8 +27,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         public static class ActionNames
         {
-            public const string View = "View";
             public const string CopyUniqueMissingLineageDocuments = "CopyUniqueMissingLineageDocuments";
+            public const string Save = "Save";
+            public const string View = "View";
         }
 
         private readonly UloUserManager UserManager;
@@ -42,18 +43,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             HostingEnvironment = hostingEnvironment;
             PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
         }
-
-        protected IDictionary<int, string> PopulateDocumentTypeNameByDocumentTypeIdInViewBag()
-        {
-            var documentTypeNameByDocumentTypeId = Cacher.FindOrCreateValue(
-                Cache.CreateKey(typeof(DocumentsController), "documentTypeNameByDocumentTypeId"),
-                () => DB.DocumentTypes.ToDictionary(z => z.DocumentTypeId, z => z.Name).AsReadOnly(),
-                PortalHelpers.MediumCacheTimeout);
-            ViewBag.DocumentTypeNameByDocumentTypeId = documentTypeNameByDocumentTypeId;
-            return documentTypeNameByDocumentTypeId;
-        }
-
-
 
         // GET: Documents
         public async Task<ActionResult> Index()
@@ -137,6 +126,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [ActionName(ActionNames.Save)]
         //[ValidateAntiForgeryToken]
         public async Task<JsonResult> Save(int? documentId, string documentName, int workflowId, string newRemovedAttachmentIds)
         {
@@ -224,17 +214,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public void Clear()
         {
             var attachmentsTempData = TempData.FileUploadAttachmentResults();
-            if (attachmentsTempData.Count>0)
+            if (attachmentsTempData.Count == 0) return;
+            //var path = HostingEnvironment.MapPath("~/Content/DocStorage/Temp");
+            var path = PortalHelpers.GetStorageFolderPath("~/Content/DocStorage/Temp");
+            var di = new DirectoryInfo(path);
+            foreach (var file in di.GetFiles())
             {
-                //var path = HostingEnvironment.MapPath("~/Content/DocStorage/Temp");
-                var path = PortalHelpers.GetStorageFolderPath("~/Content/DocStorage/Temp");
-                var di = new DirectoryInfo(path);
-                foreach (FileInfo file in di.GetFiles())
-                {
-                    file.Delete();
-                }
-                attachmentsTempData.Clear();
+                Stuff.FileTryDelete(file.FullName);
             }
+            attachmentsTempData.Clear();
+            TempData.FileUploadAttachmentResults(attachmentsTempData);
         }
 
         // GET: Documents/Delete/5

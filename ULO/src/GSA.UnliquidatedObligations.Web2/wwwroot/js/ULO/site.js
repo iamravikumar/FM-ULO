@@ -14,8 +14,9 @@ function debugLambda(name, f) {
     header = name + (header === "" ? " " : "\n") + "vvvvvvvvvvvvvvvvvvvvvvv";
     debugAlert(header);
     try {
-        f();
+        var ret = f();
         debugAlert(name + " ^^^^^^^^^^^^^^^^^^^^^^^");
+        return ret;
     }
     catch (e) {
         debugAlert(name + "^^^^^^^^^^^^^^^^^^^^^^^\nERROR\n" + e);
