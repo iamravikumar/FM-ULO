@@ -55,10 +55,10 @@ void TransformSchemaMetaXml2Pocos(ITextTemplatingEngineHost host, string dbConte
             queryFilters.Add($"{filterQueryPrefix} {tenantQuery}{filterQueryPostfix}");
         }
 
-        string test;
-        if (HasSimpleQueryFilter(z, out propertyName, out test))
+        var filterByPropertyName = GetSimpleQueryFilters(z);
+        foreach (var kvp in filterByPropertyName)
         {
-		    queryFiltersAny.Add($"{filterQueryPrefix} x.{propertyName} {test});");        
+		    queryFiltersAny.Add($"{filterQueryPrefix} x.{kvp.Key} {kvp.Value});");        
         }
     }
 
@@ -1341,15 +1341,16 @@ public static string ToTitleFriendlyString(string s)
     return sb.ToString();
 }
 
-public bool HasSimpleQueryFilter(XElement z, out string propertyName, out string test) 
+public IDictionary<string, string> GetSimpleQueryFilters(XElement z) 
 {
-	propertyName = null;
-    test = null;
-	var rowStatus = z.XPathSelectElements("Columns/Column[Properties/Property/@name='SimpleQueryFilter']").FirstOrDefault() as XElement;
-	if (rowStatus == null) return false;
-    test = GetPropertyValue(rowStatus, "SimpleQueryFilter");		
-	propertyName = rowStatus.Attribute("name").Value;
-	return true;
+    var d = new Dictionary<string, string>();
+    foreach (XElement rowStatus in z.XPathSelectElements("Columns/Column[Properties/Property/@name='SimpleQueryFilter']"))
+    {
+	    var propertyName = rowStatus.Attribute("name").Value;    
+        var test = GetPropertyValue(rowStatus, "SimpleQueryFilter");		
+        d[propertyName] = test;
+    }
+	return d;
 }
 
 public bool HasRowStatus(XElement z, out string propertyName) 

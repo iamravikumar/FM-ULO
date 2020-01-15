@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
@@ -10,6 +11,7 @@ using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 
@@ -142,6 +144,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return File(System.IO.File.OpenRead(path), attachment.ContentType, attachment.FileName);
         }
 
+
+        private static JsonSerializerOptions JSO_Depth2 = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = null,
+            MaxDepth = 2
+        };
+
+
         // POST: Attachments/Delete/5
         [HttpPost]
         public async Task<JsonResult> Delete(int attachmentId)
@@ -149,7 +160,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             try
             {
                 await CheckStalenessFromFormAsync();
-                var attachment = await DB.Attachments.FindAsync(attachmentId);
+                var attachment = await DB.Attachments.Include(a => a.Document).FirstOrDefaultAsync(a => a.AttachmentsId == attachmentId);
                 if (attachment == null) throw new FileNotFoundException();
                 try
                 {
@@ -168,7 +179,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(Response);
                 }
-                return Json(attachment);
+                return Json(attachment, JSO_Depth2);
             }
             catch (Exception ex)
             {

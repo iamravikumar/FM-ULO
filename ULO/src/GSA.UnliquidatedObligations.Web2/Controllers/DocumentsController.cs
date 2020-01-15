@@ -187,7 +187,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                                 CreatedByUserId = tempAttachment.CreatedByUserId
                             };
                             var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
-                            System.IO.File.Copy(tempAttachment.FilePath, path);
+                            System.IO.File.Move(tempAttachment.FilePath, path);
                             DB.Attachments.Add(attachment);
                         }
                         Stuff.FileTryDelete(tempAttachment.FileName);
@@ -211,17 +211,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
         }
 
-        public void Clear()
+        private void Clear()
         {
             var attachmentsTempData = TempData.FileUploadAttachmentResults();
             if (attachmentsTempData.Count == 0) return;
-            //var path = HostingEnvironment.MapPath("~/Content/DocStorage/Temp");
-            var path = PortalHelpers.GetStorageFolderPath("~/Content/DocStorage/Temp");
-            var di = new DirectoryInfo(path);
-            foreach (var file in di.GetFiles())
-            {
-                Stuff.FileTryDelete(file.FullName);
-            }
             attachmentsTempData.Clear();
             TempData.FileUploadAttachmentResults(attachmentsTempData);
         }

@@ -48,8 +48,9 @@ function deleteAttachmentRow(attachId) {
 function addDeleteAttachmentClick() {
     $(".attachments-delete").unbind("click");
     $(".attachments-delete").click(function () {
+        var me = this;
         debugLambda("addDeleteAttachmentClick", function () {
-            var attachId = $(this).data("target");
+            var attachId = $(me).data("target");
             if (attachId === 0) {
                 showAttachmentErrMsg("You must save before you can delete attachments");
             } else {

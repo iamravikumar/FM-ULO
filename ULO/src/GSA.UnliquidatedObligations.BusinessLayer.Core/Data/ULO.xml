@@ -439,7 +439,11 @@
             <Property name="SimpleQueryFilter" value="==null" />
           </Properties>
         </Column>
-        <Column name="DeletedByUserId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" default="(NULL)" isComputed="0" refSchema="dbo" refTable="AspNetUsers" domainSchema="dbo" domainName="AspNetId" />
+        <Column name="DeletedByUserId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" default="(NULL)" isComputed="0" refSchema="dbo" refTable="AspNetUsers" domainSchema="dbo" domainName="AspNetId" >
+          <Properties>
+            <Property name="SimpleQueryFilter" value="==null" />
+          </Properties>
+        </Column>
       </Columns>
     </Table>
     <Table schema="dbo" name="CardholderDocumentMap" tableType="VIEW" isNodeTable="0" isEdgeTable="0">
@@ -501,7 +505,11 @@
             <Property name="SimpleQueryFilter" value="==null" />
           </Properties>
         </Column>
-        <Column name="DeletedByUserId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" default="(NULL)" isComputed="0" refSchema="dbo" refTable="AspNetUsers" domainSchema="dbo" domainName="AspNetId" />
+        <Column name="DeletedByUserId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" default="(NULL)" isComputed="0" refSchema="dbo" refTable="AspNetUsers" domainSchema="dbo" domainName="AspNetId" >
+          <Properties>
+            <Property name="SimpleQueryFilter" value="==null" />
+          </Properties>          
+        </Column>
       </Columns>
       <Collections>
         <Collection schema="dbo" table="Attachments" column="DocumentId" collectionType="actual" />
@@ -578,7 +586,11 @@
       <Columns>
         <Column name="FinancialActivityId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
         <Column name="CreatedAtUtc" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
-        <Column name="DeletedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" isComputed="0" />
+        <Column name="DeletedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" isComputed="0" >
+          <Properties>
+            <Property name="SimpleQueryFilter" value="==null" />
+          </Properties>
+        </Column>
         <Column name="UloId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="UnliquidatedObligations" />
         <Column name="ActivityDate" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
         <Column name="ActivityType" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" isComputed="0" />
@@ -642,7 +654,11 @@
             <Property name="SimpleQueryFilter" value="==null" />
           </Properties>
         </Column>
-        <Column name="DeletedByUserId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers" />
+        <Column name="DeletedByUserId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers">
+          <Properties>
+            <Property name="SimpleQueryFilter" value="==null" />
+          </Properties>
+        </Column>
       </Columns>
       <Collections>
         <Collection schema="dbo" table="Notes" column="ParentNoteId" collectionType="actual" />
@@ -658,7 +674,11 @@
         <Column name="PegasysDocumentNumber" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" isComputed="0" />
         <Column name="RegionId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="gsa" refTable="Regions" />
         <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
-        <Column name="DeletedAtUtc" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" isComputed="0" />
+        <Column name="DeletedAtUtc" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" isComputed="0" >
+          <Properties>
+            <Property name="SimpleQueryFilter" value="==null" />
+          </Properties>
+        </Column>
         <Column name="IsExcluded" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" isComputed="0" />
       </Columns>
     </Table>
@@ -915,7 +935,11 @@
             <Property name="SimpleQueryFilter" value="==null" />
           </Properties>
         </Column>
-        <Column name="DeletedByUserId" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers" domainSchema="dbo" domainName="AspNetId" />
+        <Column name="DeletedByUserId" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers" domainSchema="dbo" domainName="AspNetId" >
+          <Properties>
+            <Property name="SimpleQueryFilter" value="==null" />
+          </Properties>
+        </Column>
       </Columns>
       <Collections>
         <Collection schema="dbo" table="ActiveCardholders" column="ReviewId" collectionType="actual" />

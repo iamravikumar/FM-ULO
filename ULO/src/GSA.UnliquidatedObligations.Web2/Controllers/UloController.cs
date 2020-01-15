@@ -98,7 +98,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private IQueryable<Workflow> Workflows
             => DB.Workflows
                 .Include(wf => wf.OwnerUser)
-                .Include(wf => wf.WorkflowDocuments)
+                .Include(wf => wf.WorkflowDocuments).ThenInclude(d => d.DocumentAttachments)
                 .Include(wf => wf.TargetUlo).ThenInclude(u => u.Review)
                 .Include(wf => wf.TargetUlo).ThenInclude(u => u.Region).ThenInclude(r => r.Zone)
                 .Include(wf => wf.WorkflowUnliqudatedObjectsWorkflowQuestions).ThenInclude(q => q.User)
@@ -123,6 +123,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 Include(u => u.Region).
                 Include(u => u.Region.Zone).
                 Include(u => u.UloFinancialActivitys).
+                Include(u => u.UloFinancialActivitys).
                 Include(u => u.Review).AsNoTracking().
                 WhereReviewExists().
                 FirstOrDefaultAsync(u => u.UloId == uloId);
@@ -130,7 +131,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (ulo == null) return NotFound();
             if (workflowId == 0)
             {
-                workflowId = (await DB.Workflows.OrderByDescending(z => z.WorkflowId).FirstOrDefaultAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
+                workflowId = (await Workflows.OrderByDescending(z => z.WorkflowId).FirstOrDefaultAsync(z => z.TargetUloId == ulo.UloId)).WorkflowId;
                 return RedirectToAction(ActionNames.Details, new { uloId, workflowId });
             }
 
