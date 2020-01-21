@@ -633,7 +633,7 @@ Browse:
                     return RedirectToAction(ActionNames.Details, new { uloId = wf.TargetUloId, workflowId = wf.WorkflowId });
                 }
 
-                var submit = Request.Query["WhatNext"] == "Submit";
+                var submit = Request.Form["WhatNext"] == "Submit";
                 var question = await DB.UnliqudatedObjectsWorkflowQuestions.Where(z => z.WorkflowId == workflowId).OrderByDescending(z => z.UnliqudatedWorkflowQuestionsId).FirstOrDefaultAsync();
                 if (question == null || !question.Pending)
                 {

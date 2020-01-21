@@ -1,4 +1,9 @@
-﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using GSA.UnliquidatedObligations.Web.Controllers;
 using GSA.UnliquidatedObligations.Web.Models;
@@ -8,10 +13,6 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
@@ -28,11 +29,24 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly ICacher Cacher;
         private readonly Serilog.ILogger Log;
 
+
         public class Config
         {
             public const string ConfigSectionName = "WorkflowManagerConfig";
             public string ReassignGroupUserName { get; set; }
             public int ManualReassignmentEmailTemplateId { get; set; }
+        }
+
+        private static readonly IList<Type> ActivityChooserTypes;
+
+        static WorkflowManager()
+        {
+            var types = new List<Type>();
+            foreach (var a in new[] { Assembly.GetExecutingAssembly(), typeof(GSA.UnliquidatedObligations.BusinessLayer.UloHelpers).Assembly })
+            {
+                types.AddRange(a.GetTypes().Where(t => typeof(IActivityChooser).IsAssignableFrom(t)));
+            }
+            ActivityChooserTypes = types.AsReadOnly();
         }
 
         public WorkflowManager(IOptions<Config> configOptions, PortalHelpers portalHelpers, UserHelpers userHelpers, IServiceProvider serviceProvider, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, UloDbContext db, Serilog.ILogger log, ICacher cacher)
@@ -47,6 +61,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             Log = log.ForContext<WorkflowManager>();
             Cacher = cacher;
         }
+
         private class RedirectingController : Controller
         {
             public ActionResult RedirectToAction(string actionName, string controllerName, RouteValueDictionary routeValues)
@@ -129,7 +144,11 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 BusinessLayer.Workflow.WorkflowActivity nextActivity;
                 if (question != null)
                 {
-                    var t = Type.GetType(currentActivity.NextActivityChooserTypeName);
+                    var t = ActivityChooserTypes.FirstOrDefault(z => z.Name == currentActivity.NextActivityChooserTypeName);
+                    if (t == null)
+                    {
+                        Log.Error("Cannot find type for NextActivityChooser of name {NextActivityChooserTypeName}", currentActivity.NextActivityChooserTypeName);
+                    }
                     var chooser = (IActivityChooser) ServiceProvider.GetService(t);
                     nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig, submitterGroupNames) ?? wf.CurrentWorkflowActivityKey;
                     nextActivity = desc.Activities.First(z => z.WorkflowActivityKey == nextActivityKey) ?? currentActivity;

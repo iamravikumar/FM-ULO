@@ -1,10 +1,10 @@
-﻿using RevolutionaryStuff.Core;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using RevolutionaryStuff.Core;
 using Serilog;
-using System;
-using System.Collections.Generic;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -92,6 +92,7 @@ namespace GSA.UnliquidatedObligations.Web
                 {
                     try
                     {
+                        logDirectory = Environment.ExpandEnvironmentVariables(logDirectory);
                         System.IO.Directory.CreateDirectory(logDirectory);
                         var logRotatingFileName = $"{logDirectory}{appName}.log";
                         EnvironmentInfo[nameof(logRotatingFileName)] = logRotatingFileName;

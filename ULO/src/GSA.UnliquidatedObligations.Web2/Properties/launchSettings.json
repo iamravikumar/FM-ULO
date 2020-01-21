@@ -14,7 +14,7 @@
       "environmentVariables": {
         "APPSETTINGS_DIRECTORY": "",
         "ASPNETCORE_ENVIRONMENT": "Production",
-        "LOGFILE_DIRECTORY": "C:\\Users\\jason\\AppData\\Local\\Temp\\ulog\\"
+        "LOGFILE_DIRECTORY": "%temp%\\ulog\\"
       }
     },
     "GSA.UnliquidatedObligations.Web2": {

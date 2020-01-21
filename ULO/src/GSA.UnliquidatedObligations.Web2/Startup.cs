@@ -106,6 +106,10 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddScoped<ILegacyFormsAuthenticationService, LegacyFormsAuthenticationService>();
             services.AddScoped<IUserClaimsPrincipalFactory<AspNetUser>, NoUloClaimsUserClaimsPrincipalFactory>();
 
+
+            services.AddScoped<IActivityChooser, FieldComparisonActivityChooser>();
+            services.AddScoped<FieldComparisonActivityChooser>();
+
             services.AddDbContext<UloDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString(PortalHelpers.DefaultConectionStringName), z => z.EnableRetryOnFailure(1))
                 );
