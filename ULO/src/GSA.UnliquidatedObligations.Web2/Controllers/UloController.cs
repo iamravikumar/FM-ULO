@@ -113,13 +113,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ViewBag.NoDataMessage = message;
         }
 
-        [Route("ulos/a/{num}")]
-        public IActionResult A(int num)
-        {
-            AddPageAlert($"yo-{num}", nextRequest: true);
-            return RedirectToIndex();
-        }
-
         [Route("ulos/{uloId}/{workflowId}", Order = 1)]
         [Route("ulos/{uloId}", Order = 2)]
         [ActionName(ActionNames.Details)]
@@ -637,7 +630,7 @@ Browse:
                 {
                     LogStaleWorkflowError(wf, advanceModel.WorkflowRowVersionString, advanceModel.EditingBeganAtUtc);
                     var staleMessage = GetStaleWorkflowErrorMessage(wf, advanceModel.WorkflowRowVersionString, advanceModel.EditingBeganAtUtc);
-                    AddPageAlert(staleMessage, false, PageAlert.AlertTypes.Danger, true);
+                    AddPageAlert(staleMessage, false, PageAlert.AlertTypes.Danger);
                     return RedirectToAction(ActionNames.Details, new { uloId = wf.TargetUloId, workflowId = wf.WorkflowId });
                 }
 
@@ -671,12 +664,12 @@ Browse:
                     var groupNames = ulo != null && ulo.RegionId != null ? UserHelpers.GetUserGroupNames(User,ulo.RegionId.Value) : Empty.StringArray.ToList();
                     var ret = await Manager.AdvanceAsync(wf, question, groupNames, false);
                     await DB.SaveChangesAsync();
-                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.TargetUlo.PegasysDocumentNumber} was submitted.", false, PageAlert.AlertTypes.Success, true);
+                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.TargetUlo.PegasysDocumentNumber} was submitted.", false, PageAlert.AlertTypes.Success);
                     return ret;
                 }
                 else
                 {
-                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.TargetUlo.PegasysDocumentNumber} was saved.", false, PageAlert.AlertTypes.Success, true);
+                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.TargetUlo.PegasysDocumentNumber} was saved.", false, PageAlert.AlertTypes.Success);
                     return RedirectToIndex();
                 }
             }

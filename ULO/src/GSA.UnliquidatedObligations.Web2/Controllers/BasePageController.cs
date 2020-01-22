@@ -126,28 +126,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected JsonResult CreateJsonError(Exception ex)
           => Json(new ExceptionError(ex));
 
-        protected void AddPageAlert(string toastMessage, bool autoDismiss = false, PageAlert.AlertTypes pageAlertType = PageAlert.AlertTypes.Info, bool nextRequest = false)
-           => AddPageAlert(new PageAlert(toastMessage, autoDismiss, pageAlertType), nextRequest);
+        protected void AddPageAlert(string toastMessage, bool autoDismiss = false, PageAlert.AlertTypes pageAlertType = PageAlert.AlertTypes.Info)
+           => AddPageAlert(new PageAlert(toastMessage, autoDismiss, pageAlertType));
 
-        protected void AddPageAlert(PageAlert pa, bool nextRequest = false)
-        {
-            if (pa == null || string.IsNullOrEmpty(pa.Message)) return;
-            IList<PageAlert> pageAlerts;
-            if (nextRequest)
-            {
-                pageAlerts = PageAlert.GetPageAlerts(TempData);
-            }
-            else
-            {
-                pageAlerts = (IList<PageAlert>)ViewData[PageAlert.PageAlertsKey];
-            }
-            pageAlerts = pageAlerts ?? new List<PageAlert>();
-            pageAlerts.Add(pa);
-            if (nextRequest)
-            {
-                PageAlert.SetPageAlerts(TempData, pageAlerts);
-            }
-        }
+        protected void AddPageAlert(PageAlert pa)
+            => TempData.AddPageAlert(pa);
 
         public IEnumerable<GetMyGroups_Result0> GetUserGroups(string userId = null)
             => Cacher.FindOrCreateValue(

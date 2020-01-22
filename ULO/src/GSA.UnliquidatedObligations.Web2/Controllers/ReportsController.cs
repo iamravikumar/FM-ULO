@@ -118,7 +118,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             Report = report
                         };
                         var jobId = BackgroundJobClient.Enqueue<IBackgroundTasks>(b => b.EmailReport(recipients, template.EmailSubject, template.EmailBody, template.EmailHtmlBody, o, name, paramValueByParamName));
-                        AddPageAlert(new PageAlert($"Scheduled immediate execution of report \"{report.Title}\" for email to {recipients.FirstOrDefault()} with jobId={jobId}", false), true);
+                        AddPageAlert(new PageAlert($"Scheduled immediate execution of report \"{report.Title}\" for email to {recipients.FirstOrDefault()} with jobId={jobId}", false));
                         return RedirectToAction(ActionNames.ListReports);
                     }
                 case ReportFrequencies.Recurring:
@@ -141,7 +141,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             cron = Hangfire.Cron.Daily(time.Hour, time.Minute);
                         }
                         RJM.AddOrUpdate(recurringJobId, job, cron);
-                        AddPageAlert(new PageAlert($"Scheduled recurring report \"{report.Title}\" for email to {recipients.Length} recipients with recurringJobId={recurringJobId}", false), true);
+                        AddPageAlert(new PageAlert($"Scheduled recurring report \"{report.Title}\" for email to {recipients.Length} recipients with recurringJobId={recurringJobId}", false));
                         return RedirectToAction(ActionNames.ListReports);
                     }
                 default:

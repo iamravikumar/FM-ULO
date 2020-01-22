@@ -285,7 +285,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             workflows.ForEach(wf => wf.OwnerUserId = reviewerId);
             await DB.SaveChangesAsync();
             BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.SendAssignWorkFlowsBatchNotifications(workflowIds, reviewerId));
-            AddPageAlert($"Reassigned {workflows.Count}/{workflowIds.Length} items", true, PageAlert.AlertTypes.Info, true);
+            AddPageAlert($"Reassigned {workflows.Count}/{workflowIds.Length} items", true, PageAlert.AlertTypes.Info);
             return Redirect(Request.Headers["Referer"].ToString());
         }
 

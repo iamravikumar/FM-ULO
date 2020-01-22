@@ -5,45 +5,45 @@ using Newtonsoft.Json;
 
 namespace GSA.UnliquidatedObligations.Web
 {
-    public class PageAlert
+    public static class PageAlertHelpers
     {
-        internal const string PageAlertsKey = "PAK";
+        private const string PageAlertsKey = "PageAlerts";
 
-        internal static IList<PageAlert> GetPageAlerts(ITempDataDictionary tdd)
+        public static void AddPageAlert(this ITempDataDictionary tdd, PageAlert pa)
+        {
+            if (pa == null || string.IsNullOrEmpty(pa.Message)) return;
+            var pageAlerts = tdd.GetPageAlerts(false);
+            pageAlerts = pageAlerts ?? new List<PageAlert>();
+            pageAlerts.Add(pa);
+            tdd.SetPageAlerts(pageAlerts);
+        }
+
+        public static IList<PageAlert> GetPageAlerts(this ITempDataDictionary tdd, bool clear)
         {
             var json = tdd.Peek(PageAlertsKey) as string;
             var alerts = new List<PageAlert>();
             if (json != null && json != "")
-            { 
+            {
                 var z = JsonConvert.DeserializeObject<IList<PageAlert>>(json);
                 alerts.AddRange(z);
             }
-            return alerts;
-        }
-
-        internal static void SetPageAlerts(ITempDataDictionary tdd, IList<PageAlert> alerts)
-        {
-            var json = JsonConvert.SerializeObject(alerts);
-            tdd[PageAlertsKey] = json;
-        }
-
-        public static IList<PageAlert> GetThenClearAllMyPageAlerts(ITempDataDictionary tdd, ViewDataDictionary vdd)
-        {
-            var alerts = new List<PageAlert>();
-            var z = vdd[PageAlertsKey] as IList<PageAlert>;
-            if (z!=null)
+            if (clear)
             {
-                alerts.AddRange(z);
-            }
-            var s = tdd[PageAlertsKey] as string;
-            if (s != null)
-            {
-                z = JsonConvert.DeserializeObject<IList<PageAlert>>(s);
-                alerts.AddRange(z);
                 tdd.Remove(PageAlertsKey);
             }
             return alerts;
         }
+
+        public static void SetPageAlerts(this ITempDataDictionary tdd, IList<PageAlert> alerts)
+        {
+            var json = JsonConvert.SerializeObject(alerts??PageAlert.None);
+            tdd[PageAlertsKey] = json;
+        }
+    }
+
+    public class PageAlert
+    {
+        public static readonly PageAlert[] None = new PageAlert[0];
 
         public enum AlertTypes
         {
