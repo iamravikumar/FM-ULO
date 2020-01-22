@@ -114,7 +114,7 @@ namespace GSA.UnliquidatedObligations.Web
                 options.UseSqlServer(Configuration.GetConnectionString(PortalHelpers.DefaultConectionStringName), z => z.EnableRetryOnFailure(1))
                 );
 
-            services.AddSingleton<ICacher>(_=>Cache.DataCacher);
+            services.AddSingleton(_=>Cache.DataCacher);
 
             services.AddApplicationInsightsTelemetry();
 

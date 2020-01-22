@@ -190,7 +190,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected async Task CheckStalenessFromFormAsync(Workflow wf = null)
         {
             int workflowId = Parse.ParseInt32(Request.Form[WorkflowStalenessMagicFieldNames.WorkflowId]);
-            DateTime editingBeganAtUtc = DateTime.Parse(Request.Form[WorkflowStalenessMagicFieldNames.EditingBeganAtUtc]);
+            var editingBeganAtUtc = DateTime.Parse(Request.Form[WorkflowStalenessMagicFieldNames.EditingBeganAtUtc]);
             string workflowRowVersionString = Request.Form[WorkflowStalenessMagicFieldNames.WorkflowRowVersionString];
             if (wf == null || wf.WorkflowId != workflowId)
             {

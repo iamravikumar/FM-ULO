@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using RevolutionaryStuff.AspNetCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
@@ -128,13 +132,21 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected void AddPageAlert(PageAlert pa, bool nextRequest = false)
         {
             if (pa == null || string.IsNullOrEmpty(pa.Message)) return;
-            var d = nextRequest ? (IDictionary<string, object>)TempData : (IDictionary<string, object>)ViewData;
-            var pageAlerts = d["PageAlerts"] as IList<PageAlert>;
-            if (pageAlerts == null)
+            IList<PageAlert> pageAlerts;
+            if (nextRequest)
             {
-                d["PageAlerts"] = pageAlerts = new List<PageAlert>();
+                pageAlerts = PageAlert.GetPageAlerts(TempData);
             }
+            else
+            {
+                pageAlerts = (IList<PageAlert>)ViewData[PageAlert.PageAlertsKey];
+            }
+            pageAlerts = pageAlerts ?? new List<PageAlert>();
             pageAlerts.Add(pa);
+            if (nextRequest)
+            {
+                PageAlert.SetPageAlerts(TempData, pageAlerts);
+            }
         }
 
         public IEnumerable<GetMyGroups_Result0> GetUserGroups(string userId = null)

@@ -16,7 +16,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             Log = log.ForContext<EmailServer>();
         }
 
-        public void SendEmail(string subject, string body, string bodyHtml, IEnumerable<string> recipients, IEnumerable<System.Net.Mail.Attachment> attachments)
+        public void SendEmail(string subject, string body, string bodyHtml, IEnumerable<string> recipients, IEnumerable<Attachment> attachments)
         {
             Requires.NonNull(recipients, nameof(recipients));
 

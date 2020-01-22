@@ -35,7 +35,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
        
 
-        public UsersController(UloDbContext db,UloUserManager userManager, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
+        public UsersController(UloDbContext db,UloUserManager userManager, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             UserManager = userManager;

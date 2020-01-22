@@ -42,7 +42,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         static WorkflowManager()
         {
             var types = new List<Type>();
-            foreach (var a in new[] { Assembly.GetExecutingAssembly(), typeof(GSA.UnliquidatedObligations.BusinessLayer.UloHelpers).Assembly })
+            foreach (var a in new[] { Assembly.GetExecutingAssembly(), typeof(BusinessLayer.UloHelpers).Assembly })
             {
                 types.AddRange(a.GetTypes().Where(t => typeof(IActivityChooser).IsAssignableFrom(t)));
             }

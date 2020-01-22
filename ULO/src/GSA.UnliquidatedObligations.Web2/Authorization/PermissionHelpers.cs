@@ -7,7 +7,7 @@ namespace GSA.UnliquidatedObligations.Web.Authorization
 {
     public static class PermissionHelpers
     {
-        public static string CreateClaimType<TEnum>(TEnum permissionName) where TEnum : System.Enum
+        public static string CreateClaimType<TEnum>(TEnum permissionName) where TEnum : Enum
         {
             if (permissionName is ApplicationPermissionNames)
             {
@@ -20,7 +20,7 @@ namespace GSA.UnliquidatedObligations.Web.Authorization
         private static string CreateClaimType(ApplicationPermissionNames permissionName)
             => ClaimHelpercs.UloClaimTypePrefix+"ApplicationPermissionClaim";
 
-        public static string CreatePolicyName<TEnum>(TEnum permissionName) where TEnum : System.Enum
+        public static string CreatePolicyName<TEnum>(TEnum permissionName) where TEnum : Enum
         {
             if (permissionName is ApplicationPermissionNames)
             {

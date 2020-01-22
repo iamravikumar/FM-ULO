@@ -322,7 +322,7 @@ namespace GSA.UnliquidatedObligations.Web
             => RASP.AspHelpers.CreateSelectList<TEnum>(valAsName, sortByText);
 
         public static IList<SelectListItem> CreateSelectList<TEnum>(this IEnumerable<TEnum> enums, bool valAsName = true, bool sortByText = false) where TEnum : Enum
-            => RASP.AspHelpers.CreateSelectList<TEnum>(enums, valAsName, sortByText);
+            => RASP.AspHelpers.CreateSelectList(enums, valAsName, sortByText);
 
         public static IList<SelectListItem> CreateUserTypesSelectListItems(bool creatableOnly = true)
           => new[] {

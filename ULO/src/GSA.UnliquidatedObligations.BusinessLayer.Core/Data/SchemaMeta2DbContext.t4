@@ -274,7 +274,12 @@ if (isReader)
 		default:
 			throw new Exception("unrecognized direction "+direction);
 	}
-#>                    new SqlParameter("<#=GetAttrVal(a, "name")#>", <#=memberName#>==null ? DBNull.Value:(object) <#=memberName#><#=convertToString?".ToString()":""#>){Direction=<#=direction#>},
+    var maxLen = GetAttrVal(a, "maxLen");
+    if (maxLen!=null && !int.TryParse(maxLen, out int junk))
+    {
+        maxLen = null;
+    }
+#>                    new SqlParameter("<#=GetAttrVal(a, "name")#>", <#=memberName#>==null ? DBNull.Value:(object) <#=memberName#><#=convertToString?".ToString()":""#>){Direction=<#=direction#><#=(maxLen==null?"":", Size="+maxLen+"")#>},
 <#+
 }
 #>

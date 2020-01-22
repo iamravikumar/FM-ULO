@@ -11,6 +11,7 @@ using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -110,6 +111,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private void SetNoDataMessage(string message)
         {
             ViewBag.NoDataMessage = message;
+        }
+
+        [Route("ulos/a/{num}")]
+        public IActionResult A(int num)
+        {
+            AddPageAlert($"yo-{num}", nextRequest: true);
+            return RedirectToIndex();
         }
 
         [Route("ulos/{uloId}/{workflowId}", Order = 1)]
@@ -494,7 +502,7 @@ Browse:
         private class CreateFinancialActivityData
         {
             [JsonProperty("activityDate")]
-            public System.DateTime ActivityDate { get; set; }
+            public DateTime ActivityDate { get; set; }
 
             [JsonProperty("activityType")]
             public string ActivityType { get; set; }
@@ -668,7 +676,7 @@ Browse:
                 }
                 else
                 {
-                    //AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.TargetUlo.PegasysDocumentNumber} was saved.", false, PageAlert.AlertTypes.Success, true);
+                    AddPageAlert($"WorkflowId={workflowId} for UloId={uloId} on PDN={wf.TargetUlo.PegasysDocumentNumber} was saved.", false, PageAlert.AlertTypes.Success, true);
                     return RedirectToIndex();
                 }
             }
