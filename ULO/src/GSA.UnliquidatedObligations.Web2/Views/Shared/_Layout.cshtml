@@ -53,7 +53,7 @@
 
     <div class="container-fluid body-content" style="margin-top: 30px; margin-bottom: 1.5cm">
         @{
-            var pageAlerts = TempData.GetPageAlerts(true);
+            var pageAlerts = RASP.PageAlertHelpers.GetPageAlerts(TempData, true);
         }
         @if (pageAlerts.Count > 0)
         {
@@ -63,16 +63,16 @@
                 string alertClass;
                 switch (pa.AlertType)
                 {
-                    case PageAlert.AlertTypes.Danger:
+                    case RASP.PageAlert.AlertTypes.Danger:
                         alertClass = "danger";
                         break;
-                    case PageAlert.AlertTypes.Success:
+                    case RASP.PageAlert.AlertTypes.Success:
                         alertClass = "success";
                         break;
-                    case PageAlert.AlertTypes.Warning:
+                    case RASP.PageAlert.AlertTypes.Warning:
                         alertClass = "warning";
                         break;
-                    case PageAlert.AlertTypes.Info:
+                    case RASP.PageAlert.AlertTypes.Info:
                     default:
                         alertClass = "info";
                         break;

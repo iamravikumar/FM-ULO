@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using RevolutionaryStuff.AspNetCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
@@ -125,12 +121,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         protected JsonResult CreateJsonError(Exception ex)
           => Json(new ExceptionError(ex));
-
-        protected void AddPageAlert(string toastMessage, bool autoDismiss = false, PageAlert.AlertTypes pageAlertType = PageAlert.AlertTypes.Info)
-           => AddPageAlert(new PageAlert(toastMessage, autoDismiss, pageAlertType));
-
-        protected void AddPageAlert(PageAlert pa)
-            => TempData.AddPageAlert(pa);
 
         public IEnumerable<GetMyGroups_Result0> GetUserGroups(string userId = null)
             => Cacher.FindOrCreateValue(
