@@ -47,8 +47,8 @@ namespace GSA.UnliquidatedObligations.Web
                 return DisplayTimeZone_p;
             }
         }
-        
-        
+
+
         private TimeZoneInfo DisplayTimeZone_p;
 
         public const string Wildcard = "*";
@@ -113,6 +113,8 @@ namespace GSA.UnliquidatedObligations.Web
             public string AttachmentFileUploadAccept { get; set; }
 
             public string AttachmentFileUploadAcceptMessage { get; set; }
+
+            public IList<string> FinancialActivityTypes { get; set; }
         }
 
         public readonly IOptions<SprintConfig> SprintConfigOptions;
@@ -130,7 +132,7 @@ namespace GSA.UnliquidatedObligations.Web
 
         public string DefaultUloConnectionString => Configuration.GetConnectionString(DefaultConectionStringName);
 
-        public PortalHelpers(IConfiguration configuration, IHostEnvironment hostingEnvironment,IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
+        public PortalHelpers(IConfiguration configuration, IHostEnvironment hostingEnvironment, IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
         {
             Requires.NonNull(sprintConfigOptions, nameof(sprintConfigOptions));
             Requires.NonNull(configOptions, nameof(configOptions));
@@ -145,7 +147,7 @@ namespace GSA.UnliquidatedObligations.Web
             Logger = logger;
         }
 
-        public bool VerifyFileAccept(string filename, string contentType, string accepts=null)
+        public bool VerifyFileAccept(string filename, string contentType, string accepts = null)
         {
             accepts = accepts ?? AttachmentFileUploadAccept;
             var ext = Path.GetExtension(filename);
@@ -165,7 +167,7 @@ namespace GSA.UnliquidatedObligations.Web
                 }
                 catch (Exception ex)
                 {
-                   Trace.WriteLine(ex);
+                    Trace.WriteLine(ex);
                 }
             }
             return false;
@@ -187,22 +189,29 @@ namespace GSA.UnliquidatedObligations.Web
                nameof(CreateRegionSelectListItems),
                () =>
                {
-                    var items = DB.Regions.AsNoTracking().OrderBy(r => r.RegionName).ConvertAll(
-                        r => new SelectListItem { Text = $"{r.RegionNumber.PadLeft(2, '0')} - {r.RegionName}", Value = r.RegionId.ToString() }).
-                        OrderBy(z => z.Text).
-                        ToList();
-                    if (includeAllRegions)
-                    {
-                        items.Insert(0, new SelectListItem { Text = "*", Value = allRegionsValue });
-                    }
-                    return items.AsReadOnly();
+                   var items = DB.Regions.AsNoTracking().OrderBy(r => r.RegionName).ConvertAll(
+                       r => new SelectListItem { Text = $"{r.RegionNumber.PadLeft(2, '0')} - {r.RegionName}", Value = r.RegionId.ToString() }).
+                       OrderBy(z => z.Text).
+                       ToList();
+                   if (includeAllRegions)
+                   {
+                       items.Insert(0, new SelectListItem { Text = "*", Value = allRegionsValue });
+                   }
+                   return items.AsReadOnly();
                },
                MediumCacheTimeout
                ).Copy();
 
 
+        public IList<SelectListItem> FinancialActivityTypeSelectListItems()
+            => Cacher.FindOrCreateValue(
+          nameof(FinancialActivityTypeSelectListItems),
+          () => AspHelpers.ConvertToSelectList(ConfigOptions.Value.FinancialActivityTypes),
+          MediumCacheTimeout
+                ).Copy();
+
         public IList<SelectListItem> CreateAllGroupNamesSelectListItems()
-      => Cacher.FindOrCreateValue(
+        => Cacher.FindOrCreateValue(
           nameof(CreateAllGroupNamesSelectListItems),
           () =>
           DB.AspNetUsers.AsNoTracking().Where(u => u.UserType == AspNetUser.UserTypes.Group).ConvertAll(
@@ -268,9 +277,9 @@ namespace GSA.UnliquidatedObligations.Web
         ///
         public IList<SelectListItem> CreateDocumentTypeSelectListItems()
           => ConfigOptions.Value.DocTypes.Where(r => r.Length == 2).ConvertAll(
-              r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) }).Copy();      
+              r => new SelectListItem { Value = StringHelpers.TrimOrNull(r[0]), Text = StringHelpers.TrimOrNull(r[1]) }).Copy();
 
-       
+
         public string GetUserId(string username)
         {
             if (username != null)

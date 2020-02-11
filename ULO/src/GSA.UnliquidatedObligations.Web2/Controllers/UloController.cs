@@ -517,6 +517,7 @@ Browse:
         public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
             => CreateFromJsonBody<CreateFinancialActivityData>(async d =>
             {
+                d.ActivityType = StringHelpers.Coalesce(d.ActivityType, PortalHelpers.FinancialActivityTypeSelectListItems().First().Value);
                 var fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
                 if (fa == null)
                 {

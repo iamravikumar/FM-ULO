@@ -38,11 +38,6 @@
     height: 26px;
 }
 
-
-.document-modal label {
-    text-align: right;
-}
-
 .document-modal .modal-footer .document-error-msg {
     float: left;
     color: #ff0000;

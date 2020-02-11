@@ -32,7 +32,10 @@ namespace GSA.UnliquidatedObligations.Web
         public static string AdministratorEmail => Properties.Settings.Default.AdminstratorEmail;
         public static string AttachmentFileUploadAccept => Properties.Settings.Default.AttachmentFileUploadAccept;
         public static string AttachmentFileUploadAcceptMessage => Properties.Settings.Default.AttachmentFileUploadAcceptMessage;
+
         public const string FormFieldsBreak = "`";
+
+        public static readonly IList<string> FinancialActivityTypes = CSV.ParseLine(Properties.Settings.Default.FinancialActivityTypes).ToList().AsReadOnly();
 
         public static DateTime ToLocalizedDateTime(this DateTime utc)
         {

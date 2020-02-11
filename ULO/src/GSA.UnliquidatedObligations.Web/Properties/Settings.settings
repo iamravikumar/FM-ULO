@@ -173,5 +173,11 @@
     <Setting Name="ReportEmailTemplateId" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">4</Value>
     </Setting>
+    <Setting Name="FinancialActivityTypes" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Payment,Receipt,Modification,X,Y,Z</Value>
+    </Setting>
+    <Setting Name="Setting" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

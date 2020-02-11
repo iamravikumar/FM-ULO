@@ -2,7 +2,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title">Financial Activity Since Review Date</h3>
+        <h3 class="panel-title">Financial/Receipt/Contractual Activity Since Review Date</h3>
     </div>
     <div class="panel-body">
         @if (Model.FinancialActivities.Count == 0)
@@ -12,9 +12,10 @@
         else
         {
             <table class="table table-responsive table-striped documents-list" id="historyTable">
+                <caption>The following information was pulled from Pegasys and EASi.</caption>
                 <tr class="documents-heading-row">
                     <th>
-                        Date
+                        Post Date
                     </th>
                     <th>
                         Type
@@ -32,7 +33,7 @@
                 @foreach (var z in Model.FinancialActivities)
                 {
                     <tr>
-                        <td>@GSA.UnliquidatedObligations.Web.PortalHelpers.ToLocalizedDateTime(z.ActivityDate)</td>
+                        <td>@GSA.UnliquidatedObligations.Web.PortalHelpers.ToLocalizedDisplayDateString(z.ActivityDate)</td>
                         <td>@z.ActivityType</td>
                         <td>@z.ReferenceNumber</td>
                         <td>@Html.Currency(z.Amount)</td>
@@ -71,9 +72,10 @@
                         </td>
                         <td>
                             <select id="newfaActivityType" class="col-md-8" style="margin:0;padding:0" name="newfaActivityType">
-                                <option>Payment</option>
-                                <option>Receipt</option>
-                                <option>Modification</option>
+                                @foreach (var fat in PortalHelpers.FinancialActivityTypes)
+                                {
+                                    <option>@fat</option>
+                                }
                             </select>
                         </td>
                     </tr>

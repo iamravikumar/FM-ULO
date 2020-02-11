@@ -2,7 +2,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title">Financial Activity Since Review Date</h3>
+        <h3 class="panel-title">Financial/Receipt/Contractual Activity Since Review Date</h3>
     </div>
     <div class="panel-body">
         @if (Model.UloFinancialActivitys.Count == 0)
@@ -13,9 +13,10 @@
         else
         {
             <table class="table table-responsive table-striped documents-list" id="historyTable">
+                <caption>The following information was pulled from Pegasys and EASi.</caption>
                 <tr class="documents-heading-row">
                     <th>
-                        Date
+                        Post Date
                     </th>
                     <th>
                         Type
@@ -33,7 +34,7 @@
                 @foreach (var z in Model.UloFinancialActivitys)
                 {
                     <tr>
-                        <td>@PortalHelpers.ToLocalizedDateTime(z.ActivityDate)</td>
+                        <td>@PortalHelpers.ToLocalizedDisplayDateString(z.ActivityDate)</td>
                         <td>@z.ActivityType</td>
                         <td>@z.ReferenceNumber</td>
                         <td>@Html.Currency(z.Amount)</td>
@@ -66,9 +67,10 @@
                         <label for="newfaActivityType">Activity Type</label>
                         <br />
                         <select id="newfaActivityType" style="margin:0;padding:0" name="newfaActivityType" class="form-control">
-                            <option>Payment</option>
-                            <option>Receipt</option>
-                            <option>Modification</option>
+                            @foreach (var item in PortalHelpers.FinancialActivityTypeSelectListItems())
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
                         </select>
                     </div>
                     <div class="form-group">
