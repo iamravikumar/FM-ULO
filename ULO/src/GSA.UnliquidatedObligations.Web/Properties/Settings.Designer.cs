@@ -405,15 +405,6 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Dalmation")]
-        public string SprintName {
-            get {
-                return ((string)(this["SprintName"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public string ShowSprintNameOnFooter {
             get {
@@ -490,6 +481,24 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         public string Setting {
             get {
                 return ((string)(this["Setting"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Dalmation v20200211.1")]
+        public string SprintName {
+            get {
+                return ((string)(this["SprintName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OverwriteFinancialActivityWithSameUloAndReferenceNumber {
+            get {
+                return ((bool)(this["OverwriteFinancialActivityWithSameUloAndReferenceNumber"]));
             }
         }
     }

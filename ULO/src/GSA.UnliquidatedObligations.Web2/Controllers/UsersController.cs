@@ -182,7 +182,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     DB.UserUsers.Remove(uu);
                 }
                 m.GroupMembershipRegionIds.ForEach(rid=>myGroups.ForEach(g => DB.UserUsers.Add(new UserUser { ParentUser = g, ChildUser = u, RegionId = rid })));
-                foreach (var c in DB.AspNetUserClaims.Where(z => z.ClaimType == ApplicationPermissionClaimValue.ClaimType || z.ClaimType == SubjectCatagoryClaimValue.ClaimType).ToList())
+                foreach (var c in u.UserAspNetUserClaims.Where(z => z.ClaimType == ApplicationPermissionClaimValue.ClaimType || z.ClaimType == SubjectCatagoryClaimValue.ClaimType).ToList())
                 {
                     DB.AspNetUserClaims.Remove(c);
                 }

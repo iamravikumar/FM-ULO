@@ -100,7 +100,7 @@
                     @foreach (var key in m.Keys)
                     {
                         var claim = m[key].First();
-                        var items = PortalHelpers.CreateDocumentTypeSelectListItems().SelectedValues(m[key].Select(z => z.DocumentType));
+                        var items = RASP.AspHelpers.SelectItems(PortalHelpers.CreateDocumentTypeSelectListItems(), m[key].Select(z => z.DocumentType));
                         <tr>
                             <td>
                                 @Html.ListBox("scc.docType", items, new { multiple = "multiple" })

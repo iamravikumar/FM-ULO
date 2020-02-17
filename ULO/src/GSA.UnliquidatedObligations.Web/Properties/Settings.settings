@@ -149,9 +149,6 @@
     <Setting Name="SiteUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://2ulo.azurewebsites.net/</Value>
     </Setting>
-    <Setting Name="SprintName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Dalmation</Value>
-    </Setting>
     <Setting Name="ShowSprintNameOnFooter" Type="System.String" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -178,6 +175,12 @@
     </Setting>
     <Setting Name="Setting" Type="System.String" Scope="Application">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SprintName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Dalmation v20200211.1</Value>
+    </Setting>
+    <Setting Name="OverwriteFinancialActivityWithSameUloAndReferenceNumber" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

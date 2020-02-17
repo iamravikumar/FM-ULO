@@ -331,16 +331,6 @@ namespace GSA.UnliquidatedObligations.Web
                 creatableOnly ? null : AspNetUser.UserTypes.System,
           }.WhereNotNull().OrderBy().ConvertToSelectList();
 
-        
-        public static IList<SelectListItem> SelectedValues(this IList<SelectListItem> items, IEnumerable<string> values)
-        {
-            foreach (var item in items)
-            {
-                item.Selected = values != null && values.Contains(item.Value);
-            }
-            return items;
-        }
-
         public static IList<SelectListItem> CreateSelectListItems(this IEnumerable<Models.QuestionChoicesViewModel> items)
             => items.OrderBy(z => z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
 

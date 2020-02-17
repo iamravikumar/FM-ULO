@@ -395,7 +395,11 @@ Browse:
         public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
             => CreateFromJsonBody<CreateFinancialActivityData>(async d => 
             {
-                var fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
+                FinancialActivity fa = null;
+                if (Properties.Settings.Default.OverwriteFinancialActivityWithSameUloAndReferenceNumber)
+                {
+                    fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
+                }
                 if (fa == null)
                 {
                     DB.FinancialActivities.Add(new FinancialActivity

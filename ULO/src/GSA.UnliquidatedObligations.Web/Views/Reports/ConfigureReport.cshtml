@@ -73,8 +73,9 @@
         <div class="form-group recurring" style="display:none">
             <label for="time">Time of day</label>
             <input name="time" class="form-control" type="time" value="06:00" />
+            <small>Time is interpreted as being in @PortalHelpers.DisplayTimeZone</small>
         </div>
-        <div class="form-group recurring" style="display:none">
+        <div class="form-group recurringZ" style="display:none">
             <label for="cron" title="Will be used instead of Time of Day if not empty">CRON recurrence string</label>
             <input name="cron" class="form-control" type="text" />
         </div>

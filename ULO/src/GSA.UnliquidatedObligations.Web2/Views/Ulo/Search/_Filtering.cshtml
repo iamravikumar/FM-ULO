@@ -18,9 +18,7 @@
             <div class="col-sm-4">
                 <label for="reviewId">Review:</label>
                 @*@Html.ListBox("reviewId", Model.Reviews, new { multiple="multiple" })*@
-                <select asp-for="Reviews"
-                        asp-items="Model.Reviews">
-                </select>
+                <select asp-for="Reviews" asp-items="Model.Reviews"></select>
             </div>
             <div class="col-sm-4">
                 <label for="zone">Zone:</label>
@@ -90,10 +88,7 @@
         <div class="row vertical-align">
             <div class="col-sm-4">
                 <label for="valid">Valid:</label>
-                <select id="valid" name="valid" multiple="multiple">
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
+                <select asp-for="Validity" asp-items="Model.Validity"></select>
             </div>
             <div class="col-sm-4">
                 <label for="status">Status:</label>

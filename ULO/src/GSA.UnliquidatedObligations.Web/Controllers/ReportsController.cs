@@ -124,6 +124,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         if (cron == null)
                         {
                             var time = DateTime.Parse(Request.Form["time"]);
+                            time = TimeZoneInfo.ConvertTimeToUtc(time, PortalHelpers.DisplayTimeZone);
                             cron = Hangfire.Cron.Daily(time.Hour, time.Minute);
                         } 
                         RJM.AddOrUpdate(recurringJobId, job, cron);

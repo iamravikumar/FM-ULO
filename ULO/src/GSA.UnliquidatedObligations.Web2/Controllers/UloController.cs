@@ -56,6 +56,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public string[] MyTasksTabs { get; set; }
 
             public string[] ReviewStatusOrdering { get; set; }
+
+            public bool OverwriteFinancialActivityWithSameUloAndReferenceNumber { get; set; }
         }
 
         private readonly IOptions<Config> ConfigOptions;
@@ -252,12 +254,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         ///
         [ActionName(ActionNames.Search)]
         [Route("ulos/search")]
-        public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int[] region, int[] zone, string fund, string[] baCode, string pegasysTitleNumber, string pegasysVendorName, string[] docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string[] reasons, bool[] valid, string[] status, int[] reviewId, bool? reassignableByMe,
+        public ActionResult Search(int? uloId, string pegasysDocumentNumber, string organization, int[] region, int[] zone, string fund, string[] baCode, string pegasysTitleNumber, string pegasysVendorName, string[] docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, string[] reasons, bool[] validity, string[] status, int[] reviews, bool? reassignableByMe,
             string sortCol = null, string sortDir = null, int? page = null, int? pageSize = null)
         {
             SetNoDataMessage(ConfigOptions.Value.NoSearchResults);
             var wfPredicate = PortalHelpers.GenerateWorkflowPredicate(this.User, uloId, pegasysDocumentNumber, organization, region, zone, fund,
-              baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, valid, status, reviewId, reassignableByMe);
+              baCode, pegasysTitleNumber, pegasysVendorName, docType, contractingOfficersName, currentlyAssignedTo, hasBeenAssignedTo, awardNumber, reasons, validity, status, reviews, reassignableByMe);
             bool hasFilters = wfPredicate != null || !string.IsNullOrEmpty(Request.Query["f"]);
             if (!hasFilters)
             {
@@ -319,15 +321,16 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 "~/Views/Ulo/Search/Index.cshtml",
                 new FilterViewModel(
                     workflows,
-                    PortalHelpers.CreateDocumentTypeSelectListItems(),
-                    PortalHelpers.CreateZoneSelectListItems(),
-                    PortalHelpers.CreateRegionSelectListItems(),
+                    PortalHelpers.CreateDocumentTypeSelectListItems().SelectItems(docType),
+                    PortalHelpers.CreateZoneSelectListItems().SelectItems(zone),
+                    PortalHelpers.CreateRegionSelectListItems().SelectItems(region),
                     baCodes,
                     activityNames,
                     statuses,
                     ReasonIncludedInReviewList,
                     reviewListItems,
-                    hasFilters
+                    hasFilters,
+                    new[] { new SelectListItem("Yes", "true"), new SelectListItem("No", "false") }.SelectItems(validity)
                 ));
         }
 
@@ -518,7 +521,11 @@ Browse:
             => CreateFromJsonBody<CreateFinancialActivityData>(async d =>
             {
                 d.ActivityType = StringHelpers.Coalesce(d.ActivityType, PortalHelpers.FinancialActivityTypeSelectListItems().First().Value);
-                var fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
+                FinancialActivity fa = null;
+                if (ConfigOptions.Value.OverwriteFinancialActivityWithSameUloAndReferenceNumber)
+                {
+                    fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
+                }
                 if (fa == null)
                 {
                     DB.FinancialActivities.Add(new FinancialActivity

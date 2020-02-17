@@ -40,13 +40,13 @@
                 <label for="region">Region:</label>
             </div>
             <div class="col-sm-2">
-                @Html.ListBox("region", RASP.AspHelpers.Select(userRegions, Context.Request.Query["region"]))
+                @Html.ListBox("region", RASP.AspHelpers.SelectItems(userRegions, Context.Request.Query["region"]))
             </div>
             <div class="col-sm-2">
                 <label for="role">Role:</label>
             </div>
             <div class="col-sm-2">
-                @Html.ListBox("role", RASP.AspHelpers.Select(userRoles, Context.Request.Query["role"]))
+                @Html.ListBox("role", RASP.AspHelpers.SelectItems(userRoles, Context.Request.Query["role"]))
             </div>
         </div>
         <div class="row">
