@@ -468,7 +468,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Payment,Receipt,Modification,X,Y,Z")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Cancellation,Correction,Modification,Payment,Receipt")]
         public string FinancialActivityTypes {
             get {
                 return ((string)(this["FinancialActivityTypes"]));
@@ -486,7 +486,7 @@ namespace GSA.UnliquidatedObligations.Web.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Dalmation v20200211.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Dalmation v20200217.1")]
         public string SprintName {
             get {
                 return ((string)(this["SprintName"]));

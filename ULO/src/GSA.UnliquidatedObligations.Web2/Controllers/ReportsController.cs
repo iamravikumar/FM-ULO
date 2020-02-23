@@ -113,7 +113,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     }
                 case ReportFrequencies.EmailMeOnce:
                     {
-                        var recipients = new[] { string.Format(config.ReportRecipientEmailDomains, User.Identity.Name) };
+                        var recipients = new[] { CurrentUser.Email };
                         var o = new ReportEmailViewModel(User.Identity.Name)
                         {
                             Report = report

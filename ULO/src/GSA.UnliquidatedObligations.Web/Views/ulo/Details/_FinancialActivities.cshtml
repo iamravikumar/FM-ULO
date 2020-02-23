@@ -18,7 +18,7 @@
                         Post Date
                     </th>
                     <th>
-                        Type
+                        Activity Type
                     </th>
                     <th>
                         Reference Number
@@ -33,7 +33,7 @@
                 @foreach (var z in Model.FinancialActivities)
                 {
                     <tr>
-                        <td>@GSA.UnliquidatedObligations.Web.PortalHelpers.ToLocalizedDisplayDateString(z.ActivityDate)</td>
+                        <td>@z.ActivityDate.ToString("MM/dd/yyyy")</td>
                         <td>@z.ActivityType</td>
                         <td>@z.ReferenceNumber</td>
                         <td>@Html.Currency(z.Amount)</td>
@@ -60,7 +60,7 @@
                 <table>
                     <tr>
                         <td>
-                            <label class="col-md-4" for="newfaActivityDate">Activity Date</label>
+                            <label class="col-md-4" for="newfaActivityDate">Post Date</label>
                         </td>
                         <td>
                             <input class="col-md-8" type="date" id="newfaActivityDate" name="newfaActivityDate" />

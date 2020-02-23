@@ -233,17 +233,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             sortCol = sortCol ?? nameof(ListableWorkflows_Result0.Status);
             if (sortCol == nameof(ListableWorkflows_Result0.Status))
             {
-                items = ApplyBrowse(
-                    items,
-                    sortCol,
-                    ConfigOptions.Value.ReviewStatusOrdering,
-                    sortDir, page, pageSize);
+                items = ApplyBrowse(items, sortCol, sortDir, page, pageSize, orderedValues: ConfigOptions.Value.ReviewStatusOrdering);
             }
             else
             {
-                items = ApplyBrowse(
-                    items,
-                    sortCol, sortDir, page, pageSize);
+                items = ApplyBrowse(items, sortCol, sortDir, page, pageSize);
             }
 
             PopulateTabsIntoViewBag(tabs);
@@ -520,6 +514,7 @@ Browse:
         public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
             => CreateFromJsonBody<CreateFinancialActivityData>(async d =>
             {
+                d.ActivityDate = TimeZoneInfo.ConvertTimeToUtc(d.ActivityDate, TimeZoneInfo.Utc);
                 d.ActivityType = StringHelpers.Coalesce(d.ActivityType, PortalHelpers.FinancialActivityTypeSelectListItems().First().Value);
                 FinancialActivity fa = null;
                 if (ConfigOptions.Value.OverwriteFinancialActivityWithSameUloAndReferenceNumber)

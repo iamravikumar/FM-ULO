@@ -59,27 +59,29 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("reviews")]
         public ActionResult Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var reviews = DB.Reviews;  
+            var reviews = DB.Reviews.AsQueryable();
 
-            // Jason will fix it.
-            //if (sortCol == nameof(ReviewModel.ReviewTypeId))
-            //{
-            //    reviews = ApplyBrowse(
-            //        reviews,
-            //        nameof(ReviewModel.ReviewTypeId), typeof(ReviewTypeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
-            //}
-            //else if (sortCol == nameof(ReviewModel.ReviewScopeId))
-            //{
-            //    reviews = ApplyBrowse(
-            //       reviews,
-            //       nameof(ReviewModel.ReviewScopeId), typeof(ReviewScopeEnum), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
-            //}
-            //else
-            //{
-            //    reviews = ApplyBrowse(
-            //        reviews,
-            //        sortCol ?? nameof(Review.CreatedAt), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
-            //}
+            if (sortCol == nameof(ReviewModel.ReviewTypeId))
+            {
+                reviews = ApplyBrowse(
+                    reviews,
+                    typeof(ReviewTypeEnum), nameof(ReviewModel.ReviewTypeId), sortDir, page, pageSize);
+            }
+            else if (sortCol == nameof(ReviewModel.ReviewScopeId))
+            {
+                reviews = ApplyBrowse(
+                   reviews,
+                   typeof(ReviewScopeEnum), nameof(ReviewModel.ReviewScopeId), sortDir, page, pageSize);
+            }
+            else
+            {
+                if (StringHelpers.TrimOrNull(sortCol)==null)
+                {
+                    sortCol = nameof(Review.ReviewId);
+                    sortDir = RevolutionaryStuff.AspNetCore.AspHelpers.SortDirDescending;
+                }
+                reviews = ApplyBrowse(reviews, sortCol, sortDir, page, pageSize);
+            }
 
             return View(reviews);
         }

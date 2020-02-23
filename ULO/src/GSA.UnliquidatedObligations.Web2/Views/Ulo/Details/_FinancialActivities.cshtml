@@ -19,7 +19,7 @@
                         Post Date
                     </th>
                     <th>
-                        Type
+                        Activity Type
                     </th>
                     <th>
                         Reference Number
@@ -34,7 +34,7 @@
                 @foreach (var z in Model.UloFinancialActivitys)
                 {
                     <tr>
-                        <td>@PortalHelpers.ToLocalizedDisplayDateString(z.ActivityDate)</td>
+                        <td>@z.ActivityDate.ToString("MM/dd/yyyy")</td>
                         <td>@z.ActivityType</td>
                         <td>@z.ReferenceNumber</td>
                         <td>@Html.Currency(z.Amount)</td>
@@ -60,7 +60,7 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="newfaActivityDate">Activity Date</label>
+                        <label for="newfaActivityDate">Post Date</label>
                         <input type="date" id="newfaActivityDate" name="newfaActivityDate" class="form-control" />
                     </div>
                     <div class="form-group">

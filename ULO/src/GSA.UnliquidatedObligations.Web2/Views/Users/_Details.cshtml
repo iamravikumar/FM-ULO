@@ -5,20 +5,21 @@
     var createMode = Model.UserId == null;
     var canMakeChanges = UserHelpers.HasPermission(User, ApplicationPermissionNames.ManageUsers);
     var hiddenHtmlAttributes = AspHelpers.CssClass("hidden");
-    var readonlyHtmlAttributes = new { @@readonly = "readonly" };
-    var disabledHtmlAttributes = new { disabled = "disabled" };
-    var textboxHtmlAttributes = canMakeChanges ? (object) new { } : (object) readonlyHtmlAttributes;
-    var checkboxHtmlAttributes = canMakeChanges ? (object)new { } : (object) disabledHtmlAttributes;
-    var groupNameSelectItems = ((IList<string>)ViewBag.GroupNames).ConvertToSelectList();
-    var applicationPermissionSelectItems = AspHelpers.CreateSelectList<ApplicationPermissionNames>(sortByText: true);
+    var readonlyHtmlAttributes = new
+    {@@readonly = "readonly"
+};
+var disabledHtmlAttributes = new { disabled = "disabled" };
+var textboxHtmlAttributes = canMakeChanges ? (object)new { } : (object)readonlyHtmlAttributes;
+var checkboxHtmlAttributes = canMakeChanges ? (object)new { } : (object)disabledHtmlAttributes;
+var groupNameSelectItems = ((IList<string>)ViewBag.GroupNames).ConvertToSelectList();
+var applicationPermissionSelectItems = AspHelpers.CreateSelectList<ApplicationPermissionNames>(sortByText: true);
 }
-@using (Html.BeginForm(UsersController.ActionNames.Save, UsersController.Name, FormMethod.Post))
-{
+<form asp-action="@UsersController.ActionNames.Save" asp-controller="@UsersController.Name" method="post">
     @Html.AntiForgeryToken()
     @Html.HiddenFor(Model => Model.UserId)
     <div>
         <hr />
-        @Html.ValidationSummary(false, "", AspHelpers.CssClass("text-danger") )
+        @Html.ValidationSummary(false, "", AspHelpers.CssClass("text-danger"))
         <div class="form-row">
             <div class="col-sm-2">
                 @Html.DisplayNameFor(model => model.UserName)
@@ -89,7 +90,7 @@
                             <th></th>
                         </tr>
                     </thead>
-                    @{ 
+                    @{
                         var m = new RevolutionaryStuff.Core.Collections.MultipleValueDictionary<string, GSA.UnliquidatedObligations.BusinessLayer.Data.AspnetUserSubjectCategoryClaim>();
                         foreach (var claim in Model.SubjectCategoryClaims)
                         {
@@ -117,23 +118,23 @@
                                 <input name="scc.orgcode" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
                             </td>
                             <td>
-                                @(claim.Region==null?"*":claim.Region.ToString())
+                                @(claim.Region == null ? "*" : claim.Region.ToString())
                                 @Html.TextBox("scc.region", claim.Region, hiddenHtmlAttributes)
                                 <input name="scc.region" value="@PortalHelpers.FormFieldsBreak" class="hidden" />
                             </td>
                             <td>
-@if (canMakeChanges)
-{
-                                <a href="#" onclick="DeleteMyRow(event, this)">Delete</a>
-}
+                                @if (canMakeChanges)
+                                {
+                                    <a href="#" onclick="DeleteMyRow(event, this)">Delete</a>
+                                }
                             </td>
                         </tr>
                     }
                 </table>
-@if (canMakeChanges)
-{
-                <button type="button" class="btn" onclick="AddNewClaim(event)">Add New Claim</button>
-}
+                @if (canMakeChanges)
+                {
+                    <button type="button" class="btn" onclick="AddNewClaim(event)">Add New Claim</button>
+                }
             </div>
         </div>
     </div>
@@ -144,7 +145,7 @@
         <button type="submit" class="btn btn-primary">@ViewBag.SubmitButtonText</button>
     </p>
     }
-}
+</form>
 
 <table class="hidden" id="SCClaimTemplateRowContainer">
     <tr>
@@ -186,7 +187,7 @@
         var template = $("#SCClaimTemplateRowContainer").children(0);
         //alert(template.html());
         var jel = template.clone().appendTo("#SCClaimsTable");
-        jel.each(function (n, el) { setupFancyMultiselect(el); });        
+        jel.each(function (n, el) { setupFancyMultiselect(el); });
         event.stopPropagation();
         return false;
     }

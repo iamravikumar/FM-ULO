@@ -395,6 +395,7 @@ Browse:
         public Task<JsonResult> CreateFinancialActivityAsync(int uloId)
             => CreateFromJsonBody<CreateFinancialActivityData>(async d => 
             {
+                d.ActivityDate = TimeZoneInfo.ConvertTimeToUtc(d.ActivityDate, TimeZoneInfo.Utc);
                 FinancialActivity fa = null;
                 if (Properties.Settings.Default.OverwriteFinancialActivityWithSameUloAndReferenceNumber)
                 {

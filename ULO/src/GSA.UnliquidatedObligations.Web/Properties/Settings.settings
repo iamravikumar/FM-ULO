@@ -171,13 +171,13 @@
       <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="FinancialActivityTypes" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Payment,Receipt,Modification,X,Y,Z</Value>
+      <Value Profile="(Default)">Cancellation,Correction,Modification,Payment,Receipt</Value>
     </Setting>
     <Setting Name="Setting" Type="System.String" Scope="Application">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SprintName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Dalmation v20200211.1</Value>
+      <Value Profile="(Default)">Dalmation v20200217.1</Value>
     </Setting>
     <Setting Name="OverwriteFinancialActivityWithSameUloAndReferenceNumber" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>

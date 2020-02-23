@@ -8,101 +8,68 @@
 
 <h2>Create Review</h2>
 
-@using (Html.BeginForm("Create", "Reviews", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
+<form asp-action="@ReviewsController.ActionNames.Create" asp-controller="@ReviewsController.Name" method="post" enctype="multipart/form-data" style="padding:10px">
     @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <hr />
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
     <div class="form-group">
-        @Html.LabelFor(model => model.ReviewName, "Review Name:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.ReviewName, new { htmlAttributes = new { @class = "form-control", maxlength = "100" } })
-            @Html.ValidationMessageFor(model => model.ReviewName, "", new { @class = "text-danger" })
-        </div>
+        <label asp-for="ReviewName">Review Name</label>
+        @Html.EditorFor(model => model.ReviewName, new { htmlAttributes = new { @class = "form-control", maxlength = "100" } })
+        @Html.ValidationMessageFor(model => model.ReviewName, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.ReviewDateInitiated, "Review As Of Date:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.ReviewDateInitiated, new { @class = "form-control", type = "date" })
-            @Html.ValidationMessageFor(model => model.ReviewDateInitiated, "", new { @class = "text-danger" })
-        </div>
+        <label asp-for="ReviewDateInitiated">Review As Of Date</label>
+        @Html.EditorFor(model => model.ReviewDateInitiated, new { @class = "form-control", type = "date" })
+        @Html.ValidationMessageFor(model => model.ReviewDateInitiated, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.Comments, "Comments:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "form-control" })
-        </div>
+        <label asp-for="Comments">Comments</label>
+        @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "form-control" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.ReviewTypeId, "Type of Review:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(model => model.ReviewTypeId, Model.ReviewTypes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.ReviewTypeId, "", new { @class = "text-danger" })
-        </div>
+        <label asp-for="ReviewTypeId">Type of Review</label><br />
+        @Html.DropDownListFor(model => model.ReviewTypeId, Model.ReviewTypes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ReviewTypeId, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.ReviewScopeId, "Review Scope:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(model => model.ReviewScopeId, Model.ReviewScopes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.ReviewScopeId, "", new { @class = "text-danger" })
-        </div>
+        <label asp-for="ReviewScopeId">Review Scope</label><br />
+        @Html.DropDownListFor(model => model.ReviewScopeId, Model.ReviewScopes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ReviewScopeId, "", new { @class = "text-danger" })
     </div>
     <div id="reviewRegionContainer" class="form-group">
-        @Html.LabelFor(model => model.RegionId, "Region:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(model => model.RegionId, Model.RegionChoices, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
-        </div>
+        <label asp-for="RegionId">Region</label><br />
+        @Html.DropDownListFor(model => model.RegionId, Model.RegionChoices, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.Comments, "Upload 192 File:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <input type="file" name="@ReviewsController.ReviewFileDesignators.One92Files" class="form-control" />
-        </div>
+        <label for="@ReviewsController.ReviewFileDesignators.One92Files">Upload 192 File</label>
+        <input type="file" name="@ReviewsController.ReviewFileDesignators.One92Files" class="form-control" />
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.Comments, "Upload 442 File:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysFiles" class="form-control" />
-        </div>
+        <label for="@ReviewsController.ReviewFileDesignators.PegasysFiles">Upload 442 File</label>
+        <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysFiles" class="form-control" />
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.Comments, "Upload Easi File:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <input type="file" name="@ReviewsController.ReviewFileDesignators.EasiFiles" class="form-control" />
-        </div>
+        <label for="@ReviewsController.ReviewFileDesignators.EasiFiles">Upload Easi File</label>
+        <input type="file" name="@ReviewsController.ReviewFileDesignators.EasiFiles" class="form-control" />
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.Comments, "Upload Reta File:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <input type="file" name="@ReviewsController.ReviewFileDesignators.RetaFiles" class="form-control" />
-        </div>
+        <label for="@ReviewsController.ReviewFileDesignators.RetaFiles">Upload Reta File</label>
+        <input type="file" name="@ReviewsController.ReviewFileDesignators.RetaFiles" class="form-control" />
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.Comments, "Active Cardholder File:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <input type="file" name="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles" class="form-control" />
-        </div>
+        <label for="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles">Active Cardholder File</label>
+        <input type="file" name="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles" class="form-control" />
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.Comments, "Credit Card Alias File:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <input type="file" name="@ReviewsController.ReviewFileDesignators.CreditCardAliasCrosswalkFiles" class="form-control" />
-        </div>
+        <label for="@ReviewsController.ReviewFileDesignators.CreditCardAliasCrosswalkFiles">Credit Card Alias File</label>
+        <input type="file" name="@ReviewsController.ReviewFileDesignators.CreditCardAliasCrosswalkFiles" class="form-control" />
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.Comments, "Pegasys Open Items Credit Card File:", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysOpenItemsCreditCards" class="form-control" />
-        </div>
+        <label for="@ReviewsController.ReviewFileDesignators.PegasysOpenItemsCreditCards">Pegasys Open Items Credit Card File</label>
+        <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysOpenItemsCreditCards" class="form-control" />
     </div>
     <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Create" class="btn btn-primary" />
-        </div>
+        <input type="submit" value="Create" class="btn btn-primary" />
     </div>
-</div>
-}
-
+</form>

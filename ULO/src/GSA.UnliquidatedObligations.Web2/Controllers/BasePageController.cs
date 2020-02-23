@@ -28,6 +28,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         protected readonly UloDbContext DB;
         protected readonly UserHelpers UserHelpers;
 
+        static BasePageController()
+        {
+            ApplySortDefaultMappings["CreatedAt"] = "CreatedAtUtc";
+        }
+
         protected BasePageController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
         {
             Requires.NonNull(logger, nameof(logger));
@@ -84,28 +89,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 PortalHelpers.MediumCacheTimeout);
             ViewBag.DocumentTypeNameByDocumentTypeId = documentTypeNameByDocumentTypeId;
             return documentTypeNameByDocumentTypeId;
-        }
-
-        protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, Type enumType, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
-        {
-            SetTotalItemCount(q);
-            bool isAscending = AspHelpers.IsSortDirAscending(sortDir);
-            ViewBag.SortCol = sortCol;
-            ViewBag.SortDir = sortDir;
-            q = q.OrderByField(sortCol, enumType, isAscending);
-            q = ApplyPagination(q, page, pageSize);
-            return q;
-        }
-
-        protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, IEnumerable<string> orderedValues, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
-        {
-            SetTotalItemCount(q);
-            bool isAscending = AspHelpers.IsSortDirAscending(sortDir);
-            ViewBag.SortCol = sortCol;
-            ViewBag.SortDir = sortDir;
-            q = q.OrderByField(sortCol, orderedValues, isAscending);
-            q = ApplyPagination(q, page, pageSize);
-            return q;
         }
 
         protected void LogStaleWorkflowError(Workflow wf, string workflowRowVersionString, DateTime? editingBeganAtUtc)
