@@ -2,13 +2,11 @@
 @model GSA.UnliquidatedObligations.Web.Models.ReviewModel
 
 @{
-    ViewBag.Title = "Create";
+    this.SetTitles(PageKeys.ManageReviews, "Create Review");
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create Review</h2>
-
-<form asp-action="@ReviewsController.ActionNames.Create" asp-controller="@ReviewsController.Name" method="post" enctype="multipart/form-data" style="padding:10px">
+<form asp-action="@ReviewsController.ActionNames.CreateSave" asp-controller="@ReviewsController.Name" method="post" enctype="multipart/form-data" style="padding:10px">
     @Html.AntiForgeryToken()
 
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
@@ -42,20 +40,12 @@
         @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.One92Files">Upload 192 File</label>
+        <label for="@ReviewsController.ReviewFileDesignators.One92Files">192 File</label>
         <input type="file" name="@ReviewsController.ReviewFileDesignators.One92Files" class="form-control" />
     </div>
     <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.PegasysFiles">Upload 442 File</label>
+        <label for="@ReviewsController.ReviewFileDesignators.PegasysFiles">442 File</label>
         <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysFiles" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.EasiFiles">Upload Easi File</label>
-        <input type="file" name="@ReviewsController.ReviewFileDesignators.EasiFiles" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.RetaFiles">Upload Reta File</label>
-        <input type="file" name="@ReviewsController.ReviewFileDesignators.RetaFiles" class="form-control" />
     </div>
     <div class="form-group">
         <label for="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles">Active Cardholder File</label>
@@ -66,8 +56,16 @@
         <input type="file" name="@ReviewsController.ReviewFileDesignators.CreditCardAliasCrosswalkFiles" class="form-control" />
     </div>
     <div class="form-group">
+        <label for="@ReviewsController.ReviewFileDesignators.EasiFiles">EASi File</label>
+        <input type="file" name="@ReviewsController.ReviewFileDesignators.EasiFiles" class="form-control" />
+    </div>
+    <div class="form-group">
         <label for="@ReviewsController.ReviewFileDesignators.PegasysOpenItemsCreditCards">Pegasys Open Items Credit Card File</label>
         <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysOpenItemsCreditCards" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="@ReviewsController.ReviewFileDesignators.RetaFiles">Reta File</label>
+        <input type="file" name="@ReviewsController.ReviewFileDesignators.RetaFiles" class="form-control" />
     </div>
     <div class="form-group">
         <input type="submit" value="Create" class="btn btn-primary" />

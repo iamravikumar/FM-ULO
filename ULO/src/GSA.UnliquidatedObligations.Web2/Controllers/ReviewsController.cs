@@ -29,6 +29,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string Index = "Index";
             public const string Details = "Details";
             public const string Create = "Create";
+            public const string CreateSave = "CreateSave";
             public const string Save = "Save";
             public const string Delete = "Delete";
         }
@@ -181,8 +182,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         // POST: Review/Create
         [HttpPost]
+        [ActionName(ActionNames.CreateSave)]
         [Route("reviews/create")]
-        [Obsolete]
         public async Task<ActionResult> Create(
             [Bind(new[]{
                 nameof(ReviewModel.RegionId),
@@ -200,34 +201,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 ModelState.AddModelError("ReviewName", "The name of this review is already in use.");
                 errors = true;
             }
-            var distinctFileTypes = new HashSet<string>();
-            var distinctfilePath = Path.GetTempFileName();
-            foreach (var formFile in Request.Form.Files)
-            {               
-                if (formFile.Length > 0)
-                {
-                    using (var inputStream = new FileStream(distinctfilePath, FileMode.Create))
-                    {
-                        // read file to stream
-                        await formFile.CopyToAsync(inputStream);
-                        // stream to byte array
-                        byte[] array = new byte[inputStream.Length];
-                        inputStream.Seek(0, SeekOrigin.Begin);
-                        inputStream.Read(array, 0, array.Length);
-                        // get file name
-                        string file = formFile.FileName;
-                        distinctFileTypes.Add(file);
-                    }
-                }
-            }
+            var distinctFileTypes = Request.Form.Files.Where(f => f.Length > 0).Select(f => f.Name).ToHashSet();
             if (distinctFileTypes.Count != ReviewFileDesignators.ReviewFileTypeCount)
             {
                 ModelState.AddModelError("Files", "You must upload at least one of each type of file.");
                 errors = true;
             }
-            var reviewScope = (ReviewScopeEnum)reviewModel.ReviewScopeId.GetValueOrDefault(-1);
+            var reviewScope = Enum.Parse<ReviewScopeEnum>(reviewModel.ReviewScopeId);
             string workflowDefinitionName;
-            if (!AspHelpers.WorkflowDefinitionNameByReviewScope.TryGetValue(reviewScope, out workflowDefinitionName))
+            if (!PortalHelpers.TryGetGetWorkflowDefinitionName(reviewScope, out workflowDefinitionName))
             {
                 ModelState.AddModelError("", $"Can't find workflowDefinitionName for scope={reviewScope}");
                 errors = true;
@@ -249,9 +231,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     RegionId = reviewModel.RegionId,
                     ReviewName = reviewModel.ReviewName,
                     Status = Review.StatusNames.Creating,
-                    ReviewTypeId = (ReviewTypeEnum)reviewModel.ReviewTypeId.Value,  
+                    ReviewTypeId = Enum.Parse<ReviewTypeEnum>(reviewModel.ReviewTypeId),  
                     Comments = reviewModel.Comments,
-                    ReviewScopeId = (ReviewScopeEnum)reviewModel.ReviewScopeId.Value,
+                    ReviewScopeId = reviewScope,
                     WorkflowDefinitionId = wd.WorkflowDefinitionId,
                     CreatedAtUtc = DateTime.UtcNow,
                     ReviewDateInitiated = reviewModel.ReviewDateInitiated
@@ -262,58 +244,55 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                 var uploadFiles = new UploadFilesModel(review.ReviewId);
 
-                var path = PortalHelpers.GetStorageFolderPath($"ReviewUploads/{review.ReviewId / 1024}/{review.ReviewId}/{Guid.NewGuid()}.dat");
+                var path = PortalHelpers.GetStorageFolderPath($"ReviewUploads/{review.ReviewId / 1024}/{review.ReviewId}/");
                 foreach (var formFile in Request.Form.Files)
                 {
-                    if (formFile.Length > 0)
+                    if (formFile.Length == 0) continue;
+                    var fullRelativePath = path + formFile.FileName;
+                    using (var inputStream = System.IO.File.Create(fullRelativePath))
                     {
-                        using (var inputStream = System.IO.File.Create(path))
-                        {
-                            // read file to stream
-                            await formFile.CopyToAsync(inputStream);
-                            // stream to byte array
-                            byte[] array = new byte[inputStream.Length];
-                            inputStream.Seek(0, SeekOrigin.Begin);
-                            inputStream.Read(array, 0, array.Length);
-                            // get file name
-                            string fName = formFile.FileName;
-                        }
+                        // read file to stream
+                        await formFile.CopyToAsync(inputStream);
+                    }
                    
-                        switch (formFile.FileName)
-                        {
-                            case ReviewFileDesignators.PegasysFiles:
-                                uploadFiles.PegasysFilePathsList.Add(path);
-                                break;
-                            case ReviewFileDesignators.RetaFiles:
-                                uploadFiles.RetaFileList.Add(path);
-                                break;
-                            case ReviewFileDesignators.EasiFiles:
-                                uploadFiles.EasiFileList.Add(path);
-                                break;
-                            case ReviewFileDesignators.One92Files:
-                                uploadFiles.One92FileList.Add(path);
-                                break;
-                            case ReviewFileDesignators.ActiveCardholderFiles:
-                                uploadFiles.ActiveCardholderFiles.Add(path);
-                                break;
-                            case ReviewFileDesignators.PegasysOpenItemsCreditCards:
-                                uploadFiles.PegasysOpenItemsCreditCards.Add(path);
-                                break;
-                            case ReviewFileDesignators.CreditCardAliasCrosswalkFiles:
-                                uploadFiles.CreditCardAliasCrosswalkFiles.Add(path);
-                                break;
-                            default:
-                                throw new UnexpectedSwitchValueException(formFile.FileName);
-                        }
+                    switch (formFile.Name)
+                    {
+                        case ReviewFileDesignators.PegasysFiles:
+                            uploadFiles.PegasysFilePathsList.Add(path);
+                            break;
+                        case ReviewFileDesignators.RetaFiles:
+                            uploadFiles.RetaFileList.Add(path);
+                            break;
+                        case ReviewFileDesignators.EasiFiles:
+                            uploadFiles.EasiFileList.Add(path);
+                            break;
+                        case ReviewFileDesignators.One92Files:
+                            uploadFiles.One92FileList.Add(path);
+                            break;
+                        case ReviewFileDesignators.ActiveCardholderFiles:
+                            uploadFiles.ActiveCardholderFiles.Add(path);
+                            break;
+                        case ReviewFileDesignators.PegasysOpenItemsCreditCards:
+                            uploadFiles.PegasysOpenItemsCreditCards.Add(path);
+                            break;
+                        case ReviewFileDesignators.CreditCardAliasCrosswalkFiles:
+                            uploadFiles.CreditCardAliasCrosswalkFiles.Add(path);
+                            break;
+                        default:
+                            throw new UnexpectedSwitchValueException(formFile.FileName);
                     }
                 }
 
-                var uploadFilesJobId = BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.UploadFiles(uploadFiles));
+                var uploadToSqlJob = BackgroundJobClient.Enqueue<IBackgroundTasks>(bt => bt.UploadFiles(uploadFiles));
 
-                var jobId2 = BackgroundJob.ContinueWith<IBackgroundTasks>(uploadFilesJobId,
+                var createWorkflowsJobs = BackgroundJob.ContinueJobWith<IBackgroundTasks>(
+                    uploadToSqlJob,
                     bt => bt.CreateULOsAndAssign(review.ReviewId, review.WorkflowDefinitionId, review.ReviewDateInitiated.Value));
 
-                BackgroundJob.ContinueJobWith<IBackgroundTasks>(jobId2, bt => bt.AssignWorkFlows(review.ReviewId, PortalHelpers.SendBatchEmailsDuringAssignWorkflows));
+                BackgroundJob.ContinueJobWith<IBackgroundTasks>(createWorkflowsJobs, bt => bt.AssignWorkFlows(review.ReviewId, PortalHelpers.SendBatchEmailsDuringAssignWorkflows));
+
+                AddPageAlert($"Upload for reviewId={review.ReviewId} was a success. Review will load during background jobs {uploadToSqlJob} and {createWorkflowsJobs}", false, RevolutionaryStuff.AspNetCore.PageAlert.AlertTypes.Success);
+
                 return RedirectToIndex();
             }
     ErrorReturn:

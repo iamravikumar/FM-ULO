@@ -115,6 +115,8 @@ namespace GSA.UnliquidatedObligations.Web
             public string AttachmentFileUploadAcceptMessage { get; set; }
 
             public IList<string> FinancialActivityTypes { get; set; }
+
+            public IDictionary<ReviewScopeEnum, string> ReviewScopeWorkflowMap { get; set; }
         }
 
         public readonly IOptions<SprintConfig> SprintConfigOptions;
@@ -129,6 +131,9 @@ namespace GSA.UnliquidatedObligations.Web
         private readonly IHostEnvironment HostingEnvironment;
 
         public const string DefaultConectionStringName = "DefaultConnection";
+
+        public bool TryGetGetWorkflowDefinitionName(ReviewScopeEnum reviewScope, out string workflowDefinitionName)
+            => ConfigOptions.Value.ReviewScopeWorkflowMap.TryGetValue(reviewScope, out workflowDefinitionName);
 
         public string DefaultUloConnectionString => Configuration.GetConnectionString(DefaultConectionStringName);
 

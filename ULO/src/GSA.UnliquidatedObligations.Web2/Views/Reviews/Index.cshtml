@@ -3,22 +3,21 @@
 @using GSA.UnliquidatedObligations.Web.Controllers
 @model IEnumerable<GSA.UnliquidatedObligations.BusinessLayer.Data.Review>
 
-    @{
-        //this.SetTitles(PageKeys.ManageReviews, "Manage Reviews");
-        Layout = "~/Views/Shared/_Layout.cshtml";
-    }
+@{
+    this.SetTitles(PageKeys.ManageReviews, "Browse Reviews");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-   
 
-    @if (UserHelpers.HasPermission(User,ApplicationPermissionNames.CanCreateReviews))
+@if (UserHelpers.HasPermission(User, ApplicationPermissionNames.CanCreateReviews))
+{
+    <p>
+        <input type="button" value="Create" class="btn btn-primary" onclick="location.href='@Url.Action(ReviewsController.ActionNames.Create)'" />
+    </p>
+}
+<table class="table">
+    @if (Model.Any())
     {
-        <p>
-            <input type="button" value="Create" class="btn btn-primary" onclick="location.href='@Url.Action(ReviewsController.ActionNames.Create)'" />
-        </p>
-    }
-    <table class="table">
-        @if (Model.Any())
-        {
         <tr>
             <th>
                 @Html.SortableHeaderFor(z => z.ReviewId, overrideDisplayName: "Review ID")
@@ -50,58 +49,58 @@
             </th>
             @*<th></th>*@
         </tr>
-        }
+    }
 
-        @foreach (var item in Model)
-        {
-    <tr>
-        <td>
-            @Html.ActionLink("View Review " + item.ReviewId, ReviewsController.ActionNames.Details, new { id = item.ReviewId })
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedAt)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReviewName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @{
-                var reviewType = (ReviewTypeEnum)item.ReviewTypeId;
-                var reviewTypeName = reviewType.GetDisplayName();
-            }
-            @reviewTypeName
-        </td>
-        <td>
-            @{
-                var scope = (ReviewScopeEnum)item.ReviewScopeId;
-                var scopeName = scope.GetDisplayName();
-            }
-            @scopeName
-        </td>
-        <td>
-            @{
-                var reviewAsOfDate = "";
-                if (item.ReviewDateInitiated != null)
-                {
-                    reviewAsOfDate = Convert.ToDateTime(item.ReviewDateInitiated).ToString("MM/dd/yyyy");
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink("View Review " + item.ReviewId, ReviewsController.ActionNames.Details, new { id = item.ReviewId })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReviewName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @{
+                    var reviewType = (ReviewTypeEnum)item.ReviewTypeId;
+                    var reviewTypeName = reviewType.GetDisplayName();
                 }
-            }
-            @reviewAsOfDate
-            @*@Html.DisplayFor(modelItem => item.ReviewDateInitiated)*@
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Region.RegionNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Comments)
-        </td>
-    </tr>
-                        }
+                @reviewTypeName
+            </td>
+            <td>
+                @{
+                    var scope = (ReviewScopeEnum)item.ReviewScopeId;
+                    var scopeName = scope.GetDisplayName();
+                }
+                @scopeName
+            </td>
+            <td>
+                @{
+                    var reviewAsOfDate = "";
+                    if (item.ReviewDateInitiated != null)
+                    {
+                        reviewAsOfDate = Convert.ToDateTime(item.ReviewDateInitiated).ToString("MM/dd/yyyy");
+                    }
+                }
+                @reviewAsOfDate
+                @*@Html.DisplayFor(modelItem => item.ReviewDateInitiated)*@
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Region.RegionNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comments)
+            </td>
+        </tr>
+    }
 
-    </table>
+</table>
 
-    <partial name="_PaginationPartial" />
-    
+<partial name="_PaginationPartial" />
+

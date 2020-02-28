@@ -52,12 +52,12 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public int? RegionId { get; set; }
 
         [Required(ErrorMessage = "Review Type is required")]
-        public int? ReviewTypeId { get; set; }
+        public string ReviewTypeId { get; set; }
 
         public IList<SelectListItem> ReviewTypes { get; set; }
 
         [Required(ErrorMessage = "Review Scope is required")]
-        public int? ReviewScopeId { get; set; }
+        public string ReviewScopeId { get; set; }
 
         public IList<SelectListItem> ReviewScopes { get; set; }
 
@@ -75,8 +75,8 @@ namespace GSA.UnliquidatedObligations.Web.Models
 
         public ReviewModel()
         {
-            ReviewTypes = Enum.GetValues(typeof(ReviewTypeEnum)).Cast<ReviewTypeEnum>().ToList().CreateSelectList();
-            ReviewScopes = Enum.GetValues(typeof(ReviewScopeEnum)).Cast<ReviewScopeEnum>().ToList().CreateSelectList();
+            ReviewTypes = RevolutionaryStuff.AspNetCore.AspHelpers.CreateSelectList<ReviewTypeEnum>(true, true);
+            ReviewScopes = RevolutionaryStuff.AspNetCore.AspHelpers.CreateSelectList<ReviewScopeEnum>(true, true);
         }
 
         public ReviewModel(IList<int> permissableRegionIds, PortalHelpers portalHelpers)
