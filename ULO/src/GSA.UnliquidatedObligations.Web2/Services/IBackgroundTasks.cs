@@ -9,7 +9,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
     public interface IBackgroundTasks
     {
         [AutomaticRetry(Attempts = 1)]
-        void Email(string subject, string recipient, string template, object model);
+        Task Email(string recipient, int emailTemplateId, object model);
 
         [AutomaticRetry(Attempts = 1)]
         Task Email(string recipient, string subjectTemplate, string bodyTemplate, string htmlBodyTemplate, object model);

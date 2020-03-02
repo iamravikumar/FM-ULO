@@ -21,6 +21,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using Microsoft.EntityFrameworkCore;
+using GSA.UnliquidatedObligations.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
@@ -29,6 +32,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IEmailServer EmailServer;
         private readonly UloDbContext DB;
         private readonly IWorkflowManager WorkflowManager;
+        private readonly IServiceProvider Sp;
+        private readonly EmailController Ec;
         private readonly IReportRunner ReportRunner;
         private readonly IOptions<Config> ConfigOptions;
         private readonly IConfiguration Configuration;
@@ -57,8 +62,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        public BackgroundTasks(IReportRunner reportRunner, IOptions<Config> configOptions, IConfiguration configuration, UserHelpers userHelpers, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger log, PortalHelpers portalHelpers)
+        public BackgroundTasks(IServiceProvider sp, EmailController ec, IReportRunner reportRunner, IOptions<Config> configOptions, IConfiguration configuration, UserHelpers userHelpers, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger log, PortalHelpers portalHelpers)
         {
+            Sp = sp;
+            Ec = ec;
             ReportRunner = reportRunner;
             ConfigOptions = configOptions;
             Configuration = configuration;
@@ -133,6 +140,25 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
+        async Task IBackgroundTasks.Email(string recipient, int emailTemplateId, object model)
+        {
+            var res = await Ec.Index(emailTemplateId, "EmailBody");
+            var ac = new ActionContext
+            { 
+                HttpContext = new DefaultHttpContext {  RequestServices = Sp},
+                 RouteData = new Microsoft.AspNetCore.Routing.RouteData(),
+                 ActionDescriptor = new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor()
+            };
+            var st = new MemoryStream();
+            ac.HttpContext.Response.Body = st;
+            await res.ExecuteResultAsync(ac);
+            st.Position = 0;
+            var sr = new StreamReader(st);
+            var s = sr.ReadToEnd();
+            Stuff.Noop(s);
+        }
+
+
         Task IBackgroundTasks.Email(string recipient, string subjectTemplate, string bodyTemplate, string bodyHtmlTemplate, object model)
             => EmailAsync(new[] { recipient }, subjectTemplate, bodyTemplate, bodyHtmlTemplate, model);
 
@@ -144,9 +170,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
             EmailServer.SendEmail(subject, body, bodyHtml, recipients, attachments);
             return Task.CompletedTask;
         }
-
-        void IBackgroundTasks.Email(string subjectTemplate, string recipient, string bodyTemplate, object model)
-            => BT.Email(recipient, subjectTemplate, bodyTemplate, null, model);
 
         //TODO: Email on exception or let user know what happened
         public void UploadFiles(UploadFilesModel files)

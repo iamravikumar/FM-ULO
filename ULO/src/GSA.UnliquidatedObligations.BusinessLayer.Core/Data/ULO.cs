@@ -1704,14 +1704,12 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 
 		[DisplayName("Email Body")]
 		[Display(Name = "Email Body")]
-		[MaxLength(500)]
-		[Column("EmailBody", TypeName="varchar(500)")]
+		[Column("EmailBody", TypeName="nvarchar(max)")]
 		public string EmailBody { get; set; } 	
 
 		[DisplayName("Email Subject")]
 		[Display(Name = "Email Subject")]
-		[MaxLength(200)]
-		[Column("EmailSubject", TypeName="varchar(200)")]
+		[Column("EmailSubject", TypeName="nvarchar(max)")]
 		public string EmailSubject { get; set; } 	
 
 		[DisplayName("Email Html Body")]

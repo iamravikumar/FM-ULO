@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,45 +38,23 @@ namespace GSA.UnliquidatedObligations.Web
 
         public IConfiguration Configuration { get; }
 
-        private IServiceCollection ConfigureOptionsServices;
-
-        public void ConfigureOptions<TOptions>(string sectionName) where TOptions : class
-        {
-            Requires.NonNull(ConfigureOptionsServices, nameof(ConfigureOptionsServices));
-            ConfigureOptionsServices.Configure<TOptions>(Configuration.GetSection(sectionName));
-        }
-
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-            ConfigureOptionsServices = services;
-            try
-            {
-                OnConfigureServices(services);
-            }
-            finally
-            {
-                ConfigureOptionsServices = null;
-            }
-        }
-
-        protected virtual void OnConfigureServices(IServiceCollection services)
         {
             services.Add(new ServiceDescriptor(typeof(IConfiguration), Configuration));
 
             services.AddOptions();
 
-            ConfigureOptions<HttpHeadersFilter.Config>(HttpHeadersFilter.Config.ConfigSectionName);
-            ConfigureOptions<SprintConfig>(SprintConfig.ConfigSectionName);
-            ConfigureOptions<PortalHelpers.Config>(PortalHelpers.Config.ConfigSectionName);
-            ConfigureOptions<UserHelpers.Config>(UserHelpers.Config.ConfigSectionName);
-            ConfigureOptions<BackgroundTasks>(BackgroundTasks.Config.ConfigSectionName);
-            ConfigureOptions<UloController.Config>(UloController.Config.ConfigSectionName);            
-            ConfigureOptions<AccountController.Config>(AccountController.Config.ConfigSectionName);
-            ConfigureOptions<LegacyFormsAuthenticationService.Config>(LegacyFormsAuthenticationService.Config.ConfigSectionName);
-            ConfigureOptions<WorkflowManager.Config>(WorkflowManager.Config.ConfigSectionName);
-            ConfigureOptions<ReportsController.Config>(ReportsController.Config.ConfigSectionName);
+            services.ConfigureOptions<HttpHeadersFilter.Config>(HttpHeadersFilter.Config.ConfigSectionName);
+            services.ConfigureOptions<SprintConfig>(SprintConfig.ConfigSectionName);
+            services.ConfigureOptions<PortalHelpers.Config>(PortalHelpers.Config.ConfigSectionName);
+            services.ConfigureOptions<UserHelpers.Config>(UserHelpers.Config.ConfigSectionName);
+            services.ConfigureOptions<BackgroundTasks>(BackgroundTasks.Config.ConfigSectionName);
+            services.ConfigureOptions<UloController.Config>(UloController.Config.ConfigSectionName);            
+            services.ConfigureOptions<AccountController.Config>(AccountController.Config.ConfigSectionName);
+            services.ConfigureOptions<LegacyFormsAuthenticationService.Config>(LegacyFormsAuthenticationService.Config.ConfigSectionName);
+            services.ConfigureOptions<WorkflowManager.Config>(WorkflowManager.Config.ConfigSectionName);
+            services.ConfigureOptions<ReportsController.Config>(ReportsController.Config.ConfigSectionName);
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -106,7 +86,6 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddScoped<ILegacyFormsAuthenticationService, LegacyFormsAuthenticationService>();
             services.AddScoped<IUserClaimsPrincipalFactory<AspNetUser>, NoUloClaimsUserClaimsPrincipalFactory>();
 
-
             services.AddScoped<IActivityChooser, FieldComparisonActivityChooser>();
             services.AddScoped<FieldComparisonActivityChooser>();
 
@@ -133,6 +112,13 @@ namespace GSA.UnliquidatedObligations.Web
             {
                 services.AddHangfireServer();
             }
+
+            services.AddScoped<EmailController>();
+            services.AddSingleton<DynamicTemplateFileProvider>();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
+            services.AddOptions<MvcRazorRuntimeCompilationOptions>().Configure((MvcRazorRuntimeCompilationOptions r, DynamicTemplateFileProvider e) => {
+                r.FileProviders.Add(e);
+            });
         }
 
         /*

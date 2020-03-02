@@ -573,8 +573,8 @@
       </Properties>
       <Columns>
         <Column name="EmailTemplateId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
-        <Column name="EmailBody" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="500" isComputed="0" />
-        <Column name="EmailSubject" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" isComputed="0" />
+        <Column name="EmailBody" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="-1" isComputed="0" />
+        <Column name="EmailSubject" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="-1" isComputed="0" />
         <Column name="EmailHtmlBody" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
       </Columns>
     </Table>
