@@ -1,29 +1,21 @@
-﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using GSA.UnliquidatedObligations.Utility;
-using GSA.UnliquidatedObligations.Web.Models;
-/*
-using RazorEngine;
-using RazorEngine.Templating;
-*/
-using R = RevolutionaryStuff.Core;
-using U = GSA.UnliquidatedObligations.Utility;
-using RevolutionaryStuff.Core.Caching;
-using Serilog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
+using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using GSA.UnliquidatedObligations.Utility;
+using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
-using Microsoft.EntityFrameworkCore;
-using GSA.UnliquidatedObligations.Web.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+using Serilog;
+using R = RevolutionaryStuff.Core;
+using U = GSA.UnliquidatedObligations.Utility;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
@@ -32,8 +24,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IEmailServer EmailServer;
         private readonly UloDbContext DB;
         private readonly IWorkflowManager WorkflowManager;
-        private readonly IServiceProvider Sp;
-        private readonly EmailController Ec;
+        private readonly RazorTemplateProcessor RazorTemplateProcessor;
         private readonly IReportRunner ReportRunner;
         private readonly IOptions<Config> ConfigOptions;
         private readonly IConfiguration Configuration;
@@ -62,10 +53,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        public BackgroundTasks(IServiceProvider sp, EmailController ec, IReportRunner reportRunner, IOptions<Config> configOptions, IConfiguration configuration, UserHelpers userHelpers, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger log, PortalHelpers portalHelpers)
+        public BackgroundTasks(RazorTemplateProcessor razorTemplateProcessor, IReportRunner reportRunner, IOptions<Config> configOptions, IConfiguration configuration, UserHelpers userHelpers, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger log, PortalHelpers portalHelpers)
         {
-            Sp = sp;
-            Ec = ec;
+            RazorTemplateProcessor = razorTemplateProcessor;
             ReportRunner = reportRunner;
             ConfigOptions = configOptions;
             Configuration = configuration;
@@ -104,60 +94,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
             dt.UploadIntoSqlServer(CreateSqlConnection, new UploadIntoSqlServerSettings { RowsTransferredEventHandler = rowsTransferred });
         }
 
-        private static readonly object EmptyModel = new object();
-        private static readonly IDictionary<string, string> RazorNameByKey = new Dictionary<string, string>();
-        private static string GetRazorName(string template, object model)
-        {
-            model = model ?? EmptyModel;
-            var names = new List<string>();
-            names.Add(template);
-            foreach (var p in model.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                names.Add(p.Name);
-                names.Add(p.PropertyType.Name);
-            }
-            var key = Cache.CreateKey(names);
-            lock (RazorNameByKey)
-            {
-                string rn;
-                if (!RazorNameByKey.TryGetValue(key, out rn))
-                {
-                    RazorNameByKey[key] = rn = $"N{RazorNameByKey.Count}";
-                }
-                return rn;
-            }
-        }
-
         private static readonly object ProcessRazorTemplateLocker = new object();
-        private static string ProcessRazorTemplate(string template, object model)
+        private string ProcessRazorTemplate(string template, object model)
         {
             if (template == null) return null;
-            var name = GetRazorName(template, model);
             lock (ProcessRazorTemplateLocker)
             {
-                throw new NotImplementedException();
-//                return Engine.Razor.RunCompile(template, name, null, model);
+                return RazorTemplateProcessor.ProcessAsync(template, model).ExecuteSynchronously();
             }
         }
-
-        async Task IBackgroundTasks.Email(string recipient, int emailTemplateId, object model)
-        {
-            var res = await Ec.Index(emailTemplateId, "EmailBody");
-            var ac = new ActionContext
-            { 
-                HttpContext = new DefaultHttpContext {  RequestServices = Sp},
-                 RouteData = new Microsoft.AspNetCore.Routing.RouteData(),
-                 ActionDescriptor = new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor()
-            };
-            var st = new MemoryStream();
-            ac.HttpContext.Response.Body = st;
-            await res.ExecuteResultAsync(ac);
-            st.Position = 0;
-            var sr = new StreamReader(st);
-            var s = sr.ReadToEnd();
-            Stuff.Noop(s);
-        }
-
 
         Task IBackgroundTasks.Email(string recipient, string subjectTemplate, string bodyTemplate, string bodyHtmlTemplate, object model)
             => EmailAsync(new[] { recipient }, subjectTemplate, bodyTemplate, bodyHtmlTemplate, model);

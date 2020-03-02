@@ -113,10 +113,9 @@ namespace GSA.UnliquidatedObligations.Web
                 services.AddHangfireServer();
             }
 
-            services.AddScoped<EmailController>();
-            services.AddSingleton<DynamicTemplateFileProvider>();
+            services.AddSingleton<RazorTemplateProcessor>();
             services.AddRazorPages().AddRazorRuntimeCompilation();
-            services.AddOptions<MvcRazorRuntimeCompilationOptions>().Configure((MvcRazorRuntimeCompilationOptions r, DynamicTemplateFileProvider e) => {
+            services.AddOptions<MvcRazorRuntimeCompilationOptions>().Configure((MvcRazorRuntimeCompilationOptions r, RazorTemplateProcessor e) => {
                 r.FileProviders.Add(e);
             });
         }
