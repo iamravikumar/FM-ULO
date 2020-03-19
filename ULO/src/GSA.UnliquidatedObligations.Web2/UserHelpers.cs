@@ -66,11 +66,7 @@ namespace GSA.UnliquidatedObligations.Web
                 if (string.IsNullOrEmpty(name)) return null;
                 return Cacher.FindOrCreateValue(
                     Cache.CreateKey(nameof(CurrentUserId), name),
-                    () =>
-                    {
-                        var z = DB.AspNetUsers.AsNoTracking().FirstOrDefault(u => u.UserName == name);
-                        return z?.Id;
-                    });
+                    () => DB.AspNetUsers.AsNoTracking().FirstOrDefault(u => u.UserName == name)?.Id);
             }
         }
 
@@ -80,11 +76,7 @@ namespace GSA.UnliquidatedObligations.Web
             {
                 return Cacher.FindOrCreateValue(
                     Cache.CreateKey(nameof(username), username),
-                    () =>
-                    {
-                        var z = DB.AspNetUsers.AsNoTracking().FirstOrDefault(u => u.UserName == username);
-                        return z?.Id;
-                    });
+                    () => DB.AspNetUsers.AsNoTracking().FirstOrDefault(u => u.UserName == username)?.Id);
             }
             return null;
         }

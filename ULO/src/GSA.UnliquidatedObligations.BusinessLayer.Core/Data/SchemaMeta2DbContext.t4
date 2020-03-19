@@ -197,7 +197,7 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Sprocs/Sproc[Properties/P
         {
             var rs0 = rsets[0];
             var rs0name = GetClassName(rs0);
-            if (rs0name!=null && GetAttrVal(rs0, "isError")=="0")
+            if (rs0name!=null && GetAttrVal(rs0, "isError")=="0" && GetAttrVal(rs0, "colCount")!="0")
             {
                 sprocType = "Collection:"+rs0name;
             }        

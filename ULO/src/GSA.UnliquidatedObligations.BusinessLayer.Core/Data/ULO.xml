@@ -440,9 +440,11 @@
           </Properties>
         </Column>
         <Column name="DeletedByUserId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" default="(NULL)" isComputed="0" refSchema="dbo" refTable="AspNetUsers" domainSchema="dbo" domainName="AspNetId" >
+          <!--
           <Properties>
             <Property name="SimpleQueryFilter" value="==null" />
           </Properties>
+          -->
         </Column>
       </Columns>
     </Table>
@@ -506,9 +508,11 @@
           </Properties>
         </Column>
         <Column name="DeletedByUserId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" default="(NULL)" isComputed="0" refSchema="dbo" refTable="AspNetUsers" domainSchema="dbo" domainName="AspNetId" >
+          <!--
           <Properties>
             <Property name="SimpleQueryFilter" value="==null" />
-          </Properties>          
+          </Properties>
+          -->
         </Column>
       </Columns>
       <Collections>
@@ -655,9 +659,11 @@
           </Properties>
         </Column>
         <Column name="DeletedByUserId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers">
+          <!--
           <Properties>
             <Property name="SimpleQueryFilter" value="==null" />
           </Properties>
+          -->
         </Column>
       </Columns>
       <Collections>
@@ -936,9 +942,11 @@
           </Properties>
         </Column>
         <Column name="DeletedByUserId" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" refSchema="dbo" refTable="AspNetUsers" domainSchema="dbo" domainName="AspNetId" >
+          <!--
           <Properties>
             <Property name="SimpleQueryFilter" value="==null" />
           </Properties>
+          -->
         </Column>
       </Columns>
       <Collections>
@@ -1875,6 +1883,9 @@
       </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="SoftDelete" routineType="PROCEDURE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+      </Properties>
       <Args>
         <Arg position="1" mode="IN" name="@tableKey" sqlType="nvarchar" maxLen="100" />
         <Arg position="2" mode="IN" name="@entityKey" sqlType="nvarchar" maxLen="100" />

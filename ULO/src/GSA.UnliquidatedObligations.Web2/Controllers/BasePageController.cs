@@ -38,11 +38,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             Requires.NonNull(logger, nameof(logger));
 
             DB = db;
-
             Cacher = cacher;
-
             PortalHelpers = portalHelpers;
             UserHelpers = userHelpers;
+            DB.CurrentUserId = userHelpers.CurrentUserId;
 
             Logger = logger.ForContext(new ILogEventEnricher[]
             {
