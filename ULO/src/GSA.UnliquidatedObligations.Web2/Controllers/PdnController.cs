@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Authorization;
@@ -89,7 +90,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         [ActionName(ActionNames.Save)]
         [Route("pdns/{regionKey}/save")]
-        public ActionResult Save(string regionKey)
+        public async Task<ActionResult> Save(string regionKey)
         {
             int? regionId = Parse.ParseNullableInt32(regionKey);
             var input = Request.Form["pdns"];
@@ -123,7 +124,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 });
             }
 
-            DB.SaveChanges();
+            await DB.SaveChangesAsync();
 
             return RedirectToIndex();
         }

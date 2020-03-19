@@ -139,7 +139,7 @@ var applicationPermissionSelectItems = AspHelpers.CreateSelectList<ApplicationPe
         </div>
     </div>
 
-    if (canMakeChanges)
+    @if (canMakeChanges)
     {
     <p>
         <button type="submit" class="btn btn-primary">@ViewBag.SubmitButtonText</button>

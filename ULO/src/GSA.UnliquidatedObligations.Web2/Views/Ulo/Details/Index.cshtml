@@ -10,31 +10,29 @@
     ViewData[BasePageController.WorkflowStalenessMagicFieldNames.WorkflowRowVersionString] = Model.WorkflowViewModel.Workflow.WorkflowRowVersionString;
     ViewData[BasePageController.WorkflowStalenessMagicFieldNames.EditingBeganAtUtc] = DateTime.UtcNow;
     ViewData[BasePageController.WorkflowStalenessMagicFieldNames.WorkflowId] = Model.WorkflowViewModel.Workflow.WorkflowId;
+    this.SetTitles(PageKeys.MyTasks, $"ULO Details for {Model.WorkflowViewModel.Workflow.TargetUlo.PdnWithInstance}", Model.WorkflowViewModel.Workflow.TargetUlo.PegasysTitleNumber);
 }
 
-<h2>ULO Details</h2>
-<div>
-    <partial name="Details/Workflow/_WorkflowDescription" model=Model.WorkflowViewModel.WorkflowDescriptionViewModel />
-</div>
+<partial name="Details/Workflow/_WorkflowDescription" model=Model.WorkflowViewModel.WorkflowDescriptionViewModel />
 
 @using (Html.BeginForm(UloController.ActionNames.Save, UloController.Name, new { uloId = @currentUloId, workflowId = @currentWorkflowId }, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     <div>
         <partial name="Details/_WorkflowStalenessHiddenFields" model=Model.WorkflowViewModel.WorkflowDescriptionViewModel />
-    </div>   
+    </div>
     <div>
         <partial name="Details/_Ulo" model=Model />
-    </div>   
+    </div>
     <div>
         <partial name="Details/Documents/_Index" model=Model.WorkflowViewModel.DocumentsViewModel />
-    </div>   
+    </div>
     <div>
         <partial name="Details/Workflow/_Index" model=Model />
-    </div>   
+    </div>
     <div>
         <partial name="Details/Workflow/_Others" model=Model.Others />
-    </div>    
+    </div>
 }
 
 <div>
@@ -48,7 +46,7 @@
 </div>
 
 
-@section Scripts {  
+@section Scripts {
 
     <script type="text/javascript">
         var currentUloId = @currentUloId;

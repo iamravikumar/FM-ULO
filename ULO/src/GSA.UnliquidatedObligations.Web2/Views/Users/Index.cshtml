@@ -78,7 +78,10 @@
                 <a href="/Users/@user.UserName">@Html.DisplayFor(modelItem => user.UserName)</a>
             </td>
             <td>
+                @user.Email
+                @*
                 @Html.DisplayFor(modelItem => user.Email)
+                *@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => user.UserType)

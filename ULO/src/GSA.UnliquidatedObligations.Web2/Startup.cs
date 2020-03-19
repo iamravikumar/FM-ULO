@@ -21,6 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RevolutionaryStuff.AspNetCore.Filters;
+using RevolutionaryStuff.AspNetCore.Services;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 

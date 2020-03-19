@@ -267,3 +267,10 @@ div.advanced-search-settings {
 table caption {
     font-style: italic
 }
+
+button[disabled] {
+    background-color: gray !important;
+    border-color: dimgrey !important;
+    color: whitesmoke !important;
+    cursor: not-allowed !important;
+}

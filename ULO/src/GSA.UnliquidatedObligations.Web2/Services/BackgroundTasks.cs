@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using RevolutionaryStuff.AspNetCore.Services;
 using RevolutionaryStuff.Core;
 using Serilog;
 using R = RevolutionaryStuff.Core;
