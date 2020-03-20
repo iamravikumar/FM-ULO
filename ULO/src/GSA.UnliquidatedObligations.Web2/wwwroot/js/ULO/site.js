@@ -175,16 +175,16 @@ function selectorClicked() {
 function selectionCountChanged() {
     var checkedCount = $(".itemSelector:checked").length;
     //alert("checkedCount=" + checkedCount);
-    $(".selectionCount0,.selectionCount1,.selectionCountMultiple").attr("disabled", "disabled");
+    $(".selectionCount0,.selectionCount1,.selectionCountPositive,.selectionCountMultiple").attr("disabled", "disabled");
     var sel;
     if (checkedCount == 0) {
         sel = ".selectionCount0";
     }
     else if (checkedCount == 1) {
-        sel = ".selectionCount1";
+        sel = ".selectionCount1,.selectionCountPositive";
     }
     else {
-        sel = ".selectionCountMultiple";
+        sel = ".selectionCountMultiple,.selectionCountPositive";
     }
     $(sel).removeAttr("disabled");
 }

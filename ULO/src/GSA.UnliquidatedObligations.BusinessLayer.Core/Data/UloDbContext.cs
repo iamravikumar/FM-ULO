@@ -75,9 +75,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         }
 
         private IList<EntityEntry<T>> EntityList<T>(params EntityState[] states) where T : class
-        {
-            return this.ChangeTracker.Entries<T>().ToList().Where(z => states.Length == 0 ? true : states.Contains(z.State)).ToList();
-        }
+            => ChangeTracker.Entries<T>().ToList().Where(z => states.Length == 0 ? true : states.Contains(z.State)).ToList();
 
         private class PreSaveState
         {

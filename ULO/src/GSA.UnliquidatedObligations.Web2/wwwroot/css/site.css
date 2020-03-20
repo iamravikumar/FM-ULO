@@ -274,3 +274,7 @@ button[disabled] {
     color: whitesmoke !important;
     cursor: not-allowed !important;
 }
+
+.noscrollbar ul {
+    overflow-y:hidden !important;
+}

@@ -20,7 +20,7 @@
                 @*@Html.ListBox("reviewId", Model.Reviews, new { multiple="multiple" })*@
                 <select asp-for="Reviews" asp-items="Model.Reviews"></select>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4 noscrollbar">
                 <label for="zone">Zone:</label>
                 @Html.ListBox("zone", Model.Zones, new { multiple = "multiple" })
             </div>
@@ -86,7 +86,7 @@
             </div>
         </div>
         <div class="row vertical-align">
-            <div class="col-sm-4">
+            <div class="col-sm-4 noscrollbar">
                 <label for="valid">Valid:</label>
                 <select asp-for="Validity" asp-items="Model.Validity"></select>
             </div>
