@@ -1,15 +1,14 @@
 ﻿@using GSA.UnliquidatedObligations.Web.Controllers
 @model GSA.UnliquidatedObligations.Web.Models.WorkflowViewModel
 @{
-    var rfr = Model.RequestForReassignment;  
-    
-    if (rfr == null)
-    {     
-        @await Component.InvokeAsync("ReassignInfo", new { workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.TargetUlo.RegionId, wfDefintionOwnerName = Model.WorkflowDescriptionViewModel.CurrentActivity.OwnerUserName});
-    }
+    var rfr = Model.RequestForReassignment;
 
+    if (rfr == null)
+    {
+        @await Component.InvokeAsync(nameof(ReassignInfoViewComponent), new { workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.TargetUlo.RegionId, wfDefintionOwnerName = Model.WorkflowDescriptionViewModel.CurrentActivity.OwnerUserName });
+    }
     else
-    {      
-        @await Component.InvokeAsync("ReassignInfo", new { id = rfr.RequestForReassignmentID, workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.TargetUlo.RegionId});
+    {
+        @await Component.InvokeAsync(nameof(ReassignInfoViewComponent), new { id = rfr.RequestForReassignmentID, workflowId = Model.Workflow.WorkflowId, uloRegionId = Model.Workflow.TargetUlo.RegionId });
     }
 }

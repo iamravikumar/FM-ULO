@@ -57,8 +57,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public string CurrentUserName
             => UserHelpers.CurrentUserName;  
         
-        public bool UseOldGetEligibleReviewersAlgorithm => PortalHelpers.UseOldGetEligibleReviewersAlgorithm;
-
         protected AspNetUser CurrentUser
         {
             get

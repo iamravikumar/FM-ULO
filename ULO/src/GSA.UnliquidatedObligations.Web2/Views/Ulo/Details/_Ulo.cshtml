@@ -8,7 +8,7 @@
 <div class="row documents">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Details</h3>
+            <h3 class="panel-title" title="UloId:@ulo.UloId - WfId:@wf?.WorkflowId">Details</h3>
         </div>
         <div class="panel-body ulo-details">
             <div class="row">
@@ -404,31 +404,6 @@
                         </dd>
                     </dl>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <dl class="dl-horizontal">
-                        <dt>
-                            ULO ID:
-                        </dt>
-                        <dd>
-                            @ulo.UloId
-                        </dd>
-                    </dl>
-                </div>
-                @if (wf != null)
-        {
-            <div class="col-md-4">
-                <dl class="dl-horizontal">
-                    <dt>
-                        Workflow ID:
-                    </dt>
-                    <dd>
-                        @(wf.WorkflowId)
-                    </dd>
-                </dl>
-            </div>
-}
             </div>
             <div class="row">
                 <div style="padding-left: 7px">

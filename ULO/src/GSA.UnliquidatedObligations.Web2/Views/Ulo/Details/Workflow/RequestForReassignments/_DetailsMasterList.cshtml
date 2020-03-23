@@ -9,23 +9,22 @@
     var commentsId = currentworkflowId + "RequestComments";
 }
 
-@using (Html.BeginForm("ReassignFromList", "RequestForReassignments", new { workflowId = currentworkflowId }, FormMethod.Post))
-{
+<form asp-controller="@RequestForReassignmentsController.Name" asp-action="@RequestForReassignmentsController.ActionNames.ReassignFromList" method="post" asp-route-workflowId="@currentworkflowId">
     @Html.AntiForgeryToken()
     <div class="modal fade requestForReassignModal" id="@modalId" tabindex="-1" role="dialog" aria-labelledby="@modalId" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="@modalLabel">ULO Reassignment</h5>
+                    <h5 class="modal-title" id="@modalLabel">ULO Reassignment a</h5>
                 </div>
                 <div id="@modalBody" class="modal-body">
-                    <div class="row">
-                        @Html.LabelFor(model => model.SuggestedReviewerId, "Assign To Reviewer", htmlAttributes: new { @class = "col-md-4", @for = @suggestedReviwerId })
-                        @Html.DropDownListFor(model => model.SuggestedReviewerId, Model.Users, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "col-md-8", id = @suggestedReviwerId })
+                    <div class="form-group">
+                        <label for="@suggestedReviwerId">Assign To Reviewer</label><br />
+                        @Html.DropDownListFor(model => model.SuggestedReviewerId, Model.Users, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control", id = @suggestedReviwerId })
                     </div>
-                    <div class="row">
-                        @Html.LabelFor(model => model.Comments, "Comments:", htmlAttributes: new { @class = "col-md-4", @for = @commentsId })
-                        @Html.TextAreaFor(model => model.Comments, htmlAttributes: new { @class = "col-md-8", id = @commentsId })
+                    <div class="form-group">
+                        <label for="@commentsId">Comments</label>
+                        @Html.TextAreaFor(model => model.Comments, htmlAttributes: new { @class = "form-control", id = @commentsId })
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -35,6 +34,4 @@
             </div>
         </div>
     </div>
-}
-
-
+</form>

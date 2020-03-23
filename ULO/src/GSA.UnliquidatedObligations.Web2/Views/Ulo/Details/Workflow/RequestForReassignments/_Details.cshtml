@@ -2,14 +2,14 @@
 @model GSA.UnliquidatedObligations.Web.Models.RequestForReassignmentViewModel
 
 @{
-    var currentworkflowId = ViewData["workflowId"];/*Model.WorkflowId;*/
+    var currentworkflowId = Model.WorkflowId;
     var modalId = currentworkflowId + "RequestForReassignModal";
     var modalBody = modalId + "Body";
     var modalLabel = modalId + "Label";
     var suggestedReviwerId = currentworkflowId + "SuggestedReviewerId";
     var commentsId = currentworkflowId + "RequestComments";
     var isActiveReassignment = false;
-    if(Model != null)
+    if (Model != null)
     {
         isActiveReassignment = Model.RequestForReassignmentId != null;
     }
@@ -19,29 +19,28 @@
     var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
     if ((UserHelpers.HasPermission(User, ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(Model.RegionId)) || isActiveReassignment)
     {
-    actionName = "Reassign";
-    buttonText = "Reassign to Selected User";
-    reviewerLabelText = "Assign to Reviewer";
+        actionName = "Reassign";
+        buttonText = "Reassign to Selected User";
+        reviewerLabelText = "Assign to Reviewer";
     }
 }
 
-@using (Html.BeginForm(@actionName, "RequestForReassignments", new { workflowId = currentworkflowId }, FormMethod.Post))
-{
+<form asp-controller="@RequestForReassignmentsController.Name" asp-action="@actionName" method="post" asp-route-workflowId="@currentworkflowId">
     @Html.AntiForgeryToken()
     <div class="modal fade requestForReassignModal" id="@modalId" tabindex="-1" role="dialog" aria-labelledby="@modalId" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="@modalLabel">ULO Reassignment</h5>
+                    <h5 class="modal-title" id="@modalLabel">ULO Reassignment b</h5>
                 </div>
                 <div id="@modalBody" class="modal-body">
                     <div class="row">
-                        @Html.LabelFor(model => model.SuggestedReviewerId, @reviewerLabelText, htmlAttributes: new { @class = "col-md-4", @for = @suggestedReviwerId })                        
-                        @Html.DropDownListFor(model => model.SuggestedReviewerId, Model.Users, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "col-md-8", id = @suggestedReviwerId, required = "required" })
+                        <label for="@suggestedReviwerId">@reviewerLabelText</label><br />
+                        @Html.DropDownListFor(model => model.SuggestedReviewerId, Model.Users, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control", id = @suggestedReviwerId })
                     </div>
                     <div class="row">
-                        @Html.LabelFor(model => model.Comments, "Comments:", htmlAttributes: new { @class = "col-md-4", @for = @commentsId })
-                        @Html.TextAreaFor(model => model.Comments, htmlAttributes: new { @class = "col-md-8", id = @commentsId })
+                        <label for="@commentsId">Comments</label>
+                        @Html.TextAreaFor(model => model.Comments, htmlAttributes: new { @class = "form-control", id = @commentsId })
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -51,6 +50,4 @@
             </div>
         </div>
     </div>
-}
-
-
+</form>

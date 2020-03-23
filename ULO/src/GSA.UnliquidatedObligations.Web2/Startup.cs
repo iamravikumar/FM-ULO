@@ -14,8 +14,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,6 +57,20 @@ namespace GSA.UnliquidatedObligations.Web
             services.ConfigureOptions<WorkflowManager.Config>(WorkflowManager.Config.ConfigSectionName);
             services.ConfigureOptions<ReportsController.Config>(ReportsController.Config.ConfigSectionName);
 
+            /*
+             * Really purists?  Makings this default = false?  Like anyone has time to go back through and port all old libraries for this new mode?
+             * No, set allow=true instead
+             * https://stackoverflow.com/questions/47735133/asp-net-core-synchronous-operations-are-disallowed-call-writeasync-or-set-all
+             */
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -89,6 +103,8 @@ namespace GSA.UnliquidatedObligations.Web
 
             services.AddScoped<IActivityChooser, FieldComparisonActivityChooser>();
             services.AddScoped<FieldComparisonActivityChooser>();
+
+            services.AddScoped<ReassignInfoViewComponent>();
 
             services.AddDbContext<UloDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString(PortalHelpers.DefaultConectionStringName), z => z.EnableRetryOnFailure(1))

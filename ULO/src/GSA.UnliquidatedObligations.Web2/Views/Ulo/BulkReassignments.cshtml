@@ -38,9 +38,9 @@
                     Loading...
                 </div>
                 <div id="bulkReassignmentDialogBody" class="modal-body loaded bulkReassignmentsLoaded">
-                    <div class="row">
-                        <label for="bulkReassignSuggestedReviewerId" class="col-md-4">Assign to Reviewer:</label>
-                        <select name="SuggestedReviewerId" class="col-md-8" id="bulkReassignSuggestedReviewerId">
+                    <div class="form-group">
+                        <label for="bulkReassignSuggestedReviewerId">Assign to Reviewer:</label><br />
+                        <select name="SuggestedReviewerId" class="form-control" id="bulkReassignSuggestedReviewerId">
                             <option disabled="disabled" selected="selected">@AspHelpers.PleaseSelectOne</option>
                             <option>1</option>
                             <option>2</option>
@@ -48,9 +48,9 @@
                             <option>4</option>
                         </select>
                     </div>
-                    <div class="row">
-                        <label for="bulkReassignComments" class="col-md-4">Comments:</label>
-                        <textarea class="col-md-8" rows="4" cols="20" id="bulkReassignComments" name="Comments"></textarea>
+                    <div class="form-group">
+                        <label for="bulkReassignComments">Comments:</label>
+                        <textarea class="form-control" rows="4" cols="20" id="bulkReassignComments" name="Comments"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
