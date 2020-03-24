@@ -4,22 +4,18 @@
 @using GSA.UnliquidatedObligations.Web.Controllers
 @model GSA.UnliquidatedObligations.Web.Models.PdnDetailsModel
 
-
 @{
-    ViewBag.Title = $"Exlcuded PDNs";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    this.SetTitles(PageKeys.PdnAttributes, $"Excluded PDNs for Region {Model.Region.RegionNumber}", "PDN Attributes");
 }
 
-<h2>Excluded PDNs for Region @Model.Region.RegionNumber</h2>
 @*@using (Html.BeginForm(PdnController.ActionNames.Save, PdnController.Name, new { regionKey = Model.RegionKey }, FormMethod.Post, new { style = "display:inline" }))*@
-<form asp-action="@PdnController.ActionNames.Save" asp-route-name="@PdnController.Name" method="post" class="inline-form" role="form">
+<form asp-action="@PdnController.ActionNames.Save" asp-controller="@PdnController.Name" asp-route-regionKey="@Model.RegionKey" method="post" class="inline-form" role="form">
 
     @Html.AntiForgeryToken()
     @Html.HiddenFor(Model => Model.RegionKey)
 
     <div>
-        <h4>PDN Attributes</h4>
-        <hr />
         <dl class="dl-horizontal">
             <dt>
                 Excluded PDNs:

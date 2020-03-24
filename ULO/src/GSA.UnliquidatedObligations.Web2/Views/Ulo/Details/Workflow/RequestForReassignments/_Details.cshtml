@@ -31,14 +31,14 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="@modalLabel">ULO Reassignment b</h5>
+                    <h5 class="modal-title" id="@modalLabel">ULO Reassignment</h5>
                 </div>
                 <div id="@modalBody" class="modal-body">
-                    <div class="row">
+                    <div class="form-group">
                         <label for="@suggestedReviwerId">@reviewerLabelText</label><br />
                         @Html.DropDownListFor(model => model.SuggestedReviewerId, Model.Users, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control", id = @suggestedReviwerId })
                     </div>
-                    <div class="row">
+                    <div class="form-group">
                         <label for="@commentsId">Comments</label>
                         @Html.TextAreaFor(model => model.Comments, htmlAttributes: new { @class = "form-control", id = @commentsId })
                     </div>

@@ -1,10 +1,7 @@
 ﻿@model GSA.UnliquidatedObligations.Web.Models.UserModel
 @{
-    ViewBag.Title = "Create";
+    this.SetTitles(PageKeys.ManageUsers, "Create User");
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.SubmitButtonText = "Submit";
 }
-<h2>Create New User</h2>
-<div>
-    <partial name="_Details" model=Model />
-</div>
+<partial name="_Details" model=Model />

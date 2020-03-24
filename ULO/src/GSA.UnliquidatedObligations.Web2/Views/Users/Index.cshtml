@@ -5,12 +5,11 @@
 @using RevolutionaryStuff.Core;
 @model IEnumerable<UserModel>
 @{
-    //AspHelpers.SetTitles(PageKeys.ManageUsers, "Manage Users");
+    this.SetTitles(PageKeys.ManageUsers, "Manage Users");
     Layout = "~/Views/Shared/_Layout.cshtml";
     var canMakeChanges = UserHelpers.HasPermission(User, ApplicationPermissionNames.ManageUsers);
     var userRoles = PortalHelpers.CreateAllGroupNamesSelectListItems();
     var userRegions = PortalHelpers.CreateRegionSelectListItems();
-
 }
 
 <button type="button" class="btn toggler" toggleSelector=".advanced-search-settings">

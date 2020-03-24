@@ -5,19 +5,19 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <form asp-area="Identity" asp-controller="@AccountController.Name" asp-action="@AccountController.ActionNames.Logout" method="post" id="logoutForm" class="navbar-right">
         <ul class="nav navbar-nav navbar-right">
             <li>
-                <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+                <a>Hello @UserManager.GetUserName(User)!</a>
             </li>
             @if (AccountControllerConfigOptions.Value.UseDevAuthentication)
             {
-                <li>
-                    <button type="submit" class="btn btn-link navbar-btn navbar-link">Logout</button>
-                </li>
+        <li>
+            <form asp-area="Identity" asp-controller="@AccountController.Name" asp-action="@AccountController.ActionNames.Logout" method="post" id="logoutForm" class="navbar-right">
+                <button type="submit" class="btn btn-link navbar-btn navbar-link">Logout</button>
+            </form>
+        </li>
             }
         </ul>
-    </form>
 }
 else if (!PortalHelpers.HideLoginLinks(ViewBag))
 {

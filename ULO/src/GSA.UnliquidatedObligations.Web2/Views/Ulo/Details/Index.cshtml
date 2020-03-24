@@ -2,7 +2,6 @@
 @using GSA.UnliquidatedObligations.Web.Models
 @model GSA.UnliquidatedObligations.Web.Models.UloViewModel
 @{
-    ViewBag.Title = Model.CurretUnliquidatedObligation.PegasysDocumentNumber;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var currentUloId = Convert.ToInt32(ViewContext.RouteData.Values["uloId"]);
     var currentWorkflowId = Convert.ToInt32(ViewContext.RouteData.Values["workflowId"]);
@@ -10,7 +9,7 @@
     ViewData[BasePageController.WorkflowStalenessMagicFieldNames.WorkflowRowVersionString] = Model.WorkflowViewModel.Workflow.WorkflowRowVersionString;
     ViewData[BasePageController.WorkflowStalenessMagicFieldNames.EditingBeganAtUtc] = DateTime.UtcNow;
     ViewData[BasePageController.WorkflowStalenessMagicFieldNames.WorkflowId] = Model.WorkflowViewModel.Workflow.WorkflowId;
-    this.SetTitles(PageKeys.MyTasks, $"ULO Details for {Model.WorkflowViewModel.Workflow.TargetUlo.PdnWithInstance}", Model.WorkflowViewModel.Workflow.TargetUlo.PegasysTitleNumber);
+    this.SetTitles(PageKeys.MyTasks, $"ULO Details for {Model.WorkflowViewModel.Workflow.TargetUlo.PdnWithInstance}");//, Model.WorkflowViewModel.Workflow.TargetUlo.PegasysTitleNumber);
 }
 
 <partial name="Details/Workflow/_WorkflowDescription" model=Model.WorkflowViewModel.WorkflowDescriptionViewModel />
