@@ -78,8 +78,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     FirstOrDefault(dt => dt.DocumentId == documentId);
                 if (document == null)
                 {
-                    //return HttpNotFound();
-                    return StatusCode(404);
+                    return NotFound();
                 }
             }
             document.DocumentAttachments = document.DocumentAttachments ?? new List<Attachment>();
@@ -224,13 +223,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (id == null)
             {
-                return StatusCode(404);
+                return NotFound();
                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var document = await DB.Documents.FindAsync(id);
             if (document == null)
             {               
-                return StatusCode(404);
+                return NotFound();
             }
             return View(document);
         }
@@ -246,7 +245,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 var document = await DB.Documents.FindAsync(documentId);
                 if (document == null)
                 {
-                    return StatusCode(404);
+                    return NotFound();
                     // return HttpNotFound();
                 }
                 document.Delete(CurrentUserId);
@@ -272,7 +271,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 await CheckStalenessFromFormAsync();
                 var wf = await DB.FindWorkflowAsync(workflowId);
-                if (wf == null) return StatusCode(404);
+                if (wf == null) return NotFound();
                 var otherDocs = DB.GetUniqueMissingLineageDocuments(wf);
                 int copiedDocumentCount = 0;
                 int copiedAttachmentCount = 0;

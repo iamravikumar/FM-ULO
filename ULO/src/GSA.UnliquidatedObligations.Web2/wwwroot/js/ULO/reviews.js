@@ -7,7 +7,7 @@ $(document).ready(function () {
 });
 
 function showHideRegion() {
-    if ($("#ReviewScopeId").val() == "1")
+    if ($("#ReviewScopeId").val() == "Region")
         $("#reviewRegionContainer").show();
     else
         $("#reviewRegionContainer").hide();

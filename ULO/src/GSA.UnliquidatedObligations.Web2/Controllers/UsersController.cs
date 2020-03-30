@@ -13,7 +13,6 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
 
-
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
     [Authorize]
@@ -31,9 +30,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string Save = "Save";
         }
 
-        private readonly UloUserManager UserManager;
-
-       
+        private readonly UloUserManager UserManager; 
 
         public UsersController(UloDbContext db,UloUserManager userManager, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
@@ -88,7 +85,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Details(string username)
         {
             var users = await DB.AspNetUsers.Where(u => u.UserName == username).ToListAsync();
-            if (users.Count != 1) return StatusCode(404);
+            if (users.Count != 1) return NotFound();
             var user = users[0];
             Log.Information("Viewing user with UserId={UserId} => UserName={UserName}, Email={Email}", user.Id, user.UserName, user.Email);
             var m = await CreateModelAsync(users);
@@ -132,7 +129,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             m.UserId = StringHelpers.TrimOrNull(m.UserId);
             m.UserName = StringHelpers.TrimOrNull(m.UserName);
             m.Email = StringHelpers.TrimOrNull(m.Email);
-            var users = await DB.AspNetUsers.Where(z => z.UserName == m.UserName || z.Email == m.Email || z.Id == m.UserId).ToListAsync();
+            var users = await DB.AspNetUsers
+                .Include(u=>u.UserAspNetUserClaims)
+                .Include(u=>u.ChildUserUserUsers)
+                .Where(z => z.UserName == m.UserName || z.Email == m.Email || z.Id == m.UserId)
+                .ToListAsync();
             bool hasErrors = false;
             bool userNameError = false;
             bool emailError = false;
@@ -167,7 +168,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 else if (u==null)
                 {
-                    return StatusCode(404);
+                    return NotFound();
                 }
                 else
                 {

@@ -126,7 +126,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> View(int attachmentId)
         {
             var attachment = await DB.Attachments.FindAsync(attachmentId);
-            if (attachment == null) return StatusCode(404);
+            if (attachment == null) return NotFound();
             var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath, false);
             Logger.Information("Attachment {AttachmentId} was viewed from {AttachmentPath}", attachmentId, path);
             return File(System.IO.File.OpenRead(path), attachment.ContentType);
@@ -138,7 +138,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         public async Task<ActionResult> Download(int attachmentId)
         {
             var attachment = await DB.Attachments.FindAsync(attachmentId);
-            if (attachment == null) return StatusCode(404);
+            if (attachment == null) return NotFound();
             var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath, false);
             Logger.Information("Attachment {AttachmentId} was downloaded from {AttachmentPath}", attachmentId, path);
             return File(System.IO.File.OpenRead(path), attachment.ContentType, attachment.FileName);

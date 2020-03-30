@@ -139,7 +139,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private async Task<IActionResult> HandleReassignmentRequestAsync(int workflowId, RequestForReassignmentViewModel m)
         {
             var wf = await FindWorkflowAsync(workflowId, false);
-            if (wf == null) return StatusCode(404);
+            if (wf == null) return NotFound();
 
             var canHandleReassignment = true;
             UserHelpers.HasPermission(User,ApplicationPermissionNames.CanReassign);
@@ -259,7 +259,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (ModelState.IsValid)
             {
                 var wf = await FindWorkflowAsync(workflowId);
-                if (wf == null) return StatusCode(404); 
+                if (wf == null) return NotFound(); 
                 var question = new UnliqudatedObjectsWorkflowQuestion
                 {
                     JustificationKey = requestForReassignmentViewModel.JustificationKey,
@@ -285,12 +285,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (id == null)
             {
-                return StatusCode(400);
+                return BadRequest();
             }
             var requestForReassignment = await DB.RequestForReassignment.FindAsync(id);
             if (requestForReassignment == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
             return View(requestForReassignment);
         }

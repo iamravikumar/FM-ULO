@@ -10,64 +10,80 @@
     @Html.AntiForgeryToken()
 
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-    <div class="form-group">
-        <label asp-for="ReviewName">Review Name</label>
-        @Html.EditorFor(model => model.ReviewName, new { htmlAttributes = new { @class = "form-control", maxlength = "100" } })
-        @Html.ValidationMessageFor(model => model.ReviewName, "", new { @class = "text-danger" })
-    </div>
-    <div class="form-group">
-        <label asp-for="ReviewDateInitiated">Review As Of Date</label>
-        @Html.EditorFor(model => model.ReviewDateInitiated, new { @class = "form-control", type = "date" })
-        @Html.ValidationMessageFor(model => model.ReviewDateInitiated, "", new { @class = "text-danger" })
+
+    <div class="row">
+        <div class="col-lg-6">
+            <label asp-for="ReviewName">Review Name</label>
+            @Html.EditorFor(model => model.ReviewName, new { htmlAttributes = new { @class = "form-control", maxlength = "100" } })
+            @Html.ValidationMessageFor(model => model.ReviewName, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-lg-6">
+            <label asp-for="ReviewDateInitiated">Review As Of Date</label>
+            @Html.EditorFor(model => model.ReviewDateInitiated, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+            @Html.ValidationMessageFor(model => model.ReviewDateInitiated, "", new { @class = "text-danger" })
+        </div>
     </div>
     <div class="form-group">
         <label asp-for="Comments">Comments</label>
         @Html.TextAreaFor(model => model.Comments, 10, 30, new { @class = "form-control" })
     </div>
-    <div class="form-group">
-        <label asp-for="ReviewTypeId">Type of Review</label><br />
-        @Html.DropDownListFor(model => model.ReviewTypeId, Model.ReviewTypes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.ReviewTypeId, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-lg-6">
+            <label asp-for="ReviewTypeId">Type of Review</label><br />
+            @Html.DropDownListFor(model => model.ReviewTypeId, Model.ReviewTypes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.ReviewTypeId, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-lg-6">
+            <label asp-for="ReviewScopeId">Review Scope</label><br />
+            @Html.DropDownListFor(model => model.ReviewScopeId, Model.ReviewScopes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.ReviewScopeId, "", new { @class = "text-danger" })
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="ReviewScopeId">Review Scope</label><br />
-        @Html.DropDownListFor(model => model.ReviewScopeId, Model.ReviewScopes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.ReviewScopeId, "", new { @class = "text-danger" })
+    <div class="row" id="reviewRegionContainer">
+        <div class="col-lg-6"></div>
+        <div class="col-lg-6">
+            <label asp-for="RegionId">Region</label><br />
+            @Html.DropDownListFor(model => model.RegionId, Model.RegionChoices, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
+        </div>
     </div>
-    <div id="reviewRegionContainer" class="form-group">
-        <label asp-for="RegionId">Region</label><br />
-        @Html.DropDownListFor(model => model.RegionId, Model.RegionChoices, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-lg-6">
+            <label for="@ReviewsController.ReviewFileDesignators.One92Files">192 File</label>
+            <input type="file" name="@ReviewsController.ReviewFileDesignators.One92Files" class="form-control" />
+        </div>
+        <div class="col-lg-6">
+            <label for="@ReviewsController.ReviewFileDesignators.PegasysFiles">442 File</label>
+            <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysFiles" class="form-control" />
+        </div>
     </div>
-    <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.One92Files">192 File</label>
-        <input type="file" name="@ReviewsController.ReviewFileDesignators.One92Files" class="form-control" />
+    <div class="row">
+        <div class="col-lg-6">
+            <label for="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles">Active Cardholder File</label>
+            <input type="file" name="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles" class="form-control" />
+        </div>
+        <div class="col-lg-6">
+            <label for="@ReviewsController.ReviewFileDesignators.CreditCardAliasCrosswalkFiles">Credit Card Alias File</label>
+            <input type="file" name="@ReviewsController.ReviewFileDesignators.CreditCardAliasCrosswalkFiles" class="form-control" />
+        </div>
     </div>
-    <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.PegasysFiles">442 File</label>
-        <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysFiles" class="form-control" />
+    <div class="row">
+        <div class="col-lg-6">
+            <label for="@ReviewsController.ReviewFileDesignators.EasiFiles">EASi File</label>
+            <input type="file" name="@ReviewsController.ReviewFileDesignators.EasiFiles" class="form-control" />
+        </div>
+        <div class="col-lg-6">
+            <label for="@ReviewsController.ReviewFileDesignators.PegasysOpenItemsCreditCards">Pegasys Open Items Credit Card File</label>
+            <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysOpenItemsCreditCards" class="form-control" />
+        </div>
     </div>
-    <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles">Active Cardholder File</label>
-        <input type="file" name="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles" class="form-control" />
+    <div class="row">
+        <div class="col-lg-6">
+            <label for="@ReviewsController.ReviewFileDesignators.RetaFiles">Reta File</label>
+            <input type="file" name="@ReviewsController.ReviewFileDesignators.RetaFiles" class="form-control" />
+        </div>
     </div>
-    <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.CreditCardAliasCrosswalkFiles">Credit Card Alias File</label>
-        <input type="file" name="@ReviewsController.ReviewFileDesignators.CreditCardAliasCrosswalkFiles" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.EasiFiles">EASi File</label>
-        <input type="file" name="@ReviewsController.ReviewFileDesignators.EasiFiles" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.PegasysOpenItemsCreditCards">Pegasys Open Items Credit Card File</label>
-        <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysOpenItemsCreditCards" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label for="@ReviewsController.ReviewFileDesignators.RetaFiles">Reta File</label>
-        <input type="file" name="@ReviewsController.ReviewFileDesignators.RetaFiles" class="form-control" />
-    </div>
-    <div class="form-group">
+    <div class="form-group" style="padding-top:5px">
         <input type="submit" value="Create" class="btn btn-primary" />
     </div>
 </form>

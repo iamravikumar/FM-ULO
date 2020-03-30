@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
@@ -130,7 +128,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (!errors && ModelState.IsValid)
             {
                 var r = await DB.Reviews.FindAsync(reviewId);
-                if (r == null) return StatusCode(404);
+                if (r == null) return NotFound();
                 r.ReviewName = m.Review.ReviewName;
                 r.Comments = m.Review.Comments;
                 r.SetStatusDependingOnClosedBit(m.Review.IsClosed);
@@ -158,7 +156,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ReviewDetailsModel m)
         {
             var r = await DB.Reviews.FindAsync(m.Review.ReviewId);
-            if (r == null) return StatusCode(404);
+            if (r == null) return NotFound();
             r.Delete();
             await DB.SaveChangesAsync();
             return RedirectToIndex();

@@ -63,7 +63,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 if (CurrentUser_p == null)
                 {
-                    CurrentUser_p = DB.AspNetUsers.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                    CurrentUser_p = DB.AspNetUsers
+                        .Include(u=> u.UserAspNetUserClaims)
+                        .Include(u=>u.ChildUserUserUsers)
+                        .AsNoTracking()
+                        .FirstOrDefault(u => u.UserName == User.Identity.Name);
                 }
                 return CurrentUser_p;
             }
