@@ -61,7 +61,7 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         public ICollection<Document> GetUniqueMissingLineageDocuments(Workflow wf, IEnumerable<int> otherWorkflowIds)
         {
             var others = new List<int>(otherWorkflowIds);
-            var otherDocsByName = Documents.Where(d => others.Contains(d.WorkflowId)).OrderByDescending(d => d.CreatedAtUtc).ToDictionaryOnConflictKeepLast(d => d.DocumentName, d => d);
+            var otherDocsByName = Documents.Include(d=>d.DocumentDocumentDocumentTypes).Where(d => others.Contains(d.WorkflowId)).OrderByDescending(d => d.CreatedAtUtc).ToDictionaryOnConflictKeepLast(d => d.DocumentName, d => d);
             wf.WorkflowDocuments.ForEach(d => otherDocsByName.Remove(d.DocumentName));
             return otherDocsByName.Values;
         }

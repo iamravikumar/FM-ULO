@@ -50,7 +50,7 @@
     <partial name="_Navigation" />
     <partial name="_CookieConsentPartial" />
 
-    <div class="container-fluid body-content" style="margin-top: 30px; margin-bottom: 1.5cm">
+    <div class="container-fluid body-content" style="margin-top: 30px; padding-bottom: 2cm">
         @{
             var pageAlerts = RASP.PageAlertHelpers.GetPageAlerts(TempData, true);
         }
@@ -111,7 +111,6 @@
 
         @RenderBody()
     </div>
-
     <footer id="footer-site">
         <p>
             &copy; @DateTime.Now.Year - ULO

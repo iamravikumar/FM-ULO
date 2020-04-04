@@ -182,7 +182,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 return View(model);
             }
 
-            //var user = DB.AspNetUsers.FirstOrDefault(u => u.UserName == model.Username);
             var user = DB.AspNetUsers.FirstOrDefault(u=>u.UserName == model.Username);
             if (user != null && model.Password == ConfigOptions.Value.DevLoginPassword)
             {

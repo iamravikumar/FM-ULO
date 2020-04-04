@@ -11,6 +11,7 @@ using GSA.UnliquidatedObligations.Web.Models;
 using GSA.UnliquidatedObligations.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -68,7 +69,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             ConfigOptions = configOptions;
             Manager = manager;
-            PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
+        }
+
+        public override void OnActionExecuted(ActionExecutedContext context)
+        {
+            if (!context.Canceled && context.Result is ViewResult)
+            {
+                PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
+            }
+            base.OnActionExecuted(context);
         }
 
         private void PopulateTabsIntoViewBag(IEnumerable<WorkflowListTab> tabs)
@@ -102,6 +111,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             => DB.Workflows
                 .Include(wf => wf.OwnerUser)
                 .Include(wf => wf.WorkflowDocuments).ThenInclude(d => d.DocumentAttachments)
+                .Include(wf => wf.WorkflowDocuments).ThenInclude(d => d.DocumentDocumentDocumentTypes)
                 .Include(wf => wf.TargetUlo).ThenInclude(u => u.Review)
                 .Include(wf => wf.TargetUlo).ThenInclude(u => u.Region).ThenInclude(r => r.Zone)
                 .Include(wf => wf.WorkflowUnliqudatedObjectsWorkflowQuestions).ThenInclude(q => q.User)
@@ -155,10 +165,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
             DB.WorkflowViews.Add(new WorkflowView { ActionAtUtc = DateTime.UtcNow, UserId = CurrentUserId, ViewAction = WorkflowView.CommonActions.Opened, WorkflowId = workflow.WorkflowId });
             await DB.SaveChangesAsync();
-
             return View("Details/Index", new UloViewModel(ulo, workflow, workflowDesc, workflowAssignedToCurrentUser, others, otherDocs, belongs));
         }
-
 
         private bool BelongsToMyUnassignmentGroup(string ownerUserId, int regionId)
         {
