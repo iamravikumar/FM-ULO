@@ -137,6 +137,17 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
             try
             {
+                var allFiles =
+                    files.PegasysFilePathsList
+                    .Union(files.RetaFileList)
+                    .Union(files.EasiFileList)
+                    .Union(files.One92FileList)
+                    .Union(files.CreditCardAliasCrosswalkFiles)
+                    .Union(files.PegasysOpenItemsCreditCards)
+                    .Union(files.ActiveCardholderFiles)
+                    .ToList();
+                Log.Information("Will ultimately process the following files:\n{filePaths}", allFiles.Format("\n", "\t{0}"));
+
                 importer = nameof(Load442s);
                 foreach (var fn in files.PegasysFilePathsList)
                 {

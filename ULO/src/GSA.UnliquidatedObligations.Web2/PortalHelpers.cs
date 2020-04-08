@@ -359,7 +359,6 @@ namespace GSA.UnliquidatedObligations.Web
             {
                 dir = HostingEnvironment.ApplicationName;
             }
-            var forwardSlash = dir.Contains("/");
             dir = dir.Replace("\\", "/");
             if (!dir.EndsWith("/"))
             {
@@ -371,10 +370,7 @@ namespace GSA.UnliquidatedObligations.Web
                 relativePath = relativePath.Substring(1);
             }
             var path = dir + relativePath;
-            if (!forwardSlash)
-            {
-                path = path.Replace("/", "\\");
-            }
+            path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             if (createFolderInNotExists)
             {
                 dir = Path.GetDirectoryName(path);

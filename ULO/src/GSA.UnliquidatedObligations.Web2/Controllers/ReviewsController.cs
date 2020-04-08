@@ -242,11 +242,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
                 var uploadFiles = new UploadFilesModel(review.ReviewId);
 
-                var path = PortalHelpers.GetStorageFolderPath($"ReviewUploads/{review.ReviewId / 1024}/{review.ReviewId}/");
+                var path = PortalHelpers.GetStorageFolderPath($"ReviewUploads/{review.ReviewId / 1000}/{review.ReviewId}/");
                 foreach (var formFile in Request.Form.Files)
                 {
                     if (formFile.Length == 0) continue;
                     var fullRelativePath = path + formFile.FileName;
+                    Logger.Information("Storing review {reviewId} file {name} with {size} to {path}", review.ReviewId, formFile.Name, formFile.Length, fullRelativePath);
                     using (var inputStream = System.IO.File.Create(fullRelativePath))
                     {
                         // read file to stream
