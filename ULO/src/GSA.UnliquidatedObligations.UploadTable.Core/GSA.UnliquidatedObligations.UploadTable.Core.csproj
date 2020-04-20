@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.10.1" />
-    <PackageReference Include="RevolutionaryStuff.Core" Version="3.10.313" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="3.11.313" />
   </ItemGroup>
 
 </Project>

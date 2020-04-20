@@ -179,7 +179,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             var attachment = new Attachment
                             {
                                 FileName = tempAttachment.FileName,
-                                FilePath = $"Attachments/{document.DocumentId / 1024}/{document.DocumentId}/{Guid.NewGuid()}.dat",
+                                FilePath = $"Attachments{Path.DirectorySeparatorChar}{document.DocumentId / 1000}{Path.DirectorySeparatorChar}{document.DocumentId}{Path.DirectorySeparatorChar}{Guid.NewGuid()}.dat",
                                 DocumentId = document.DocumentId,
                                 FileSize = tempAttachment.FileSize,
                                 ContentType = tempAttachment.ContentType,

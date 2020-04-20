@@ -23,7 +23,11 @@ using Microsoft.Extensions.Hosting;
 using RevolutionaryStuff.AspNetCore.Filters;
 using RevolutionaryStuff.AspNetCore.Services;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core.Caching;
+using Traffk.StorageProviders;
+using Traffk.StorageProviders.Providers.AzureDataLakeStorageGen2StorageProvider;
+using Traffk.StorageProviders.Providers.PhysicalStorage;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -91,6 +95,7 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddAuthentication();
             services.UseSitePermissions();
 
+            services.AddSingleton<IConnectionStringProvider, ServiceProviderConnectionStringProvider>();
             services.AddSingleton<IRecurringJobManager, RecurringJobManager>();
             services.AddScoped<IReportRunner, ReportRunner>();
             services.AddScoped<IBackgroundTasks, BackgroundTasks>();
@@ -134,6 +139,22 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddOptions<MvcRazorRuntimeCompilationOptions>().Configure((MvcRazorRuntimeCompilationOptions r, RazorTemplateProcessor e) => {
                 r.FileProviders.Add(e);
+            });
+
+
+            services.ConfigureOptions<AzureDataLakeGen2BlobStorageProvider.Config>(AzureDataLakeGen2BlobStorageProvider.Config.ConfigSectionName);
+            services.ConfigureOptions<PhysicalStorageProvider.Config>(PhysicalStorageProvider.Config.ConfigSectionName);
+            services.AddScoped<AzureDataLakeGen2BlobStorageProvider>();
+            services.AddScoped<PhysicalStorageProvider>();
+            services.AddScoped<IStorageProvider>(sp => {
+                switch (Configuration["StorageProviderTypeName"])
+                {
+                    case "AzureDataLakeGen2BlobStorageProvider":
+                        return sp.GetRequiredService<AzureDataLakeGen2BlobStorageProvider>();
+                    case "PhysicalStorageProvider":
+                    default:
+                        return sp.GetRequiredService<PhysicalStorageProvider>();
+                }
             });
         }
 

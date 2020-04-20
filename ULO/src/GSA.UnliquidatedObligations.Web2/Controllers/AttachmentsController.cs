@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using Traffk.StorageProviders;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -22,6 +23,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     public class AttachmentsController : BasePageController
     {
         public const string Name = "Attachments";
+        private readonly IStorageProvider StorageProvider;
 
         public static class ActionNames
         {
@@ -30,9 +32,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string FileUpload = "FileUpload";
         }
 
-        public AttachmentsController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
+        public AttachmentsController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger, IStorageProvider storageProvider)
             : base(db, cacher, portalHelpers, userHelpers, logger)
-        { }
+        {
+            StorageProvider = storageProvider;
+        }
 
         public JsonResult Throw(string message)
         {
@@ -76,11 +80,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var results = new List<FileUploadAttachmentResult>();
             var attachmentsTempData = TempData.FileUploadAttachmentResults();
+            var folder = await StorageProvider.GetRootFolderAsync();
+            folder = await folder.CreateFolderAsync("temp");
             foreach (var file in Request.Form.Files)
             {
                 if(file.Length > 0)                
                 {
-                    var path = PortalHelpers.GetStorageFolderPath($"Temp/{Guid.NewGuid()}.dat");
+                    var fn = $"{Guid.NewGuid()}.dat";
+                    var path = $"Temp{Path.DirectorySeparatorChar}{fn}";
                     var attachment = new FileUploadAttachmentResult
                     {
                         AttachmentsId = Stuff.Random.Next(int.MaxValue),
@@ -96,10 +103,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     {
                         try
                         {
-                            using (var fileStream = System.IO.File.Create(path))
+                            var fileEntry = await folder.CreateFileAsync(fn);
+                            using (var fileStream = await fileEntry.OpenWriteAsync())
                             {
                                 await file.CopyToAsync(fileStream);
                             }
+                            attachment.FilePath = fileEntry.FullRelativePath;
                             attachment.Added = true;
                             attachmentsTempData.Add(attachment);
                         }
