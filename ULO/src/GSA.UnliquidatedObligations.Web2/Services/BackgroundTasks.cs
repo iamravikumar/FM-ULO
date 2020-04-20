@@ -14,7 +14,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.AspNetCore.Services;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.ApplicationParts;
 using Serilog;
+using Traffk.StorageProviders;
 using R = RevolutionaryStuff.Core;
 using U = GSA.UnliquidatedObligations.Utility;
 
@@ -25,10 +27,11 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IEmailServer EmailServer;
         private readonly UloDbContext DB;
         private readonly IWorkflowManager WorkflowManager;
+        private readonly IConnectionStringProvider ConnectionStringProvider;
+        private readonly SpecialFolderProvider SpecialFolderProvider;
         private readonly RazorTemplateProcessor RazorTemplateProcessor;
         private readonly IReportRunner ReportRunner;
         private readonly IOptions<Config> ConfigOptions;
-        private readonly IConfiguration Configuration;
         private readonly UserHelpers UserHelpers;
         private readonly PortalHelpers PortalHelpers;
         protected readonly ILogger Log;
@@ -54,12 +57,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        public BackgroundTasks(RazorTemplateProcessor razorTemplateProcessor, IReportRunner reportRunner, IOptions<Config> configOptions, IConfiguration configuration, UserHelpers userHelpers, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger log, PortalHelpers portalHelpers)
+        public BackgroundTasks(IConnectionStringProvider connectionStringProvider, SpecialFolderProvider specialFolderProvider, RazorTemplateProcessor razorTemplateProcessor, IReportRunner reportRunner, IOptions<Config> configOptions, UserHelpers userHelpers, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger log, PortalHelpers portalHelpers)
         {
+            ConnectionStringProvider = connectionStringProvider;
+            SpecialFolderProvider = specialFolderProvider;
             RazorTemplateProcessor = razorTemplateProcessor;
             ReportRunner = reportRunner;
             ConfigOptions = configOptions;
-            Configuration = configuration;
             UserHelpers = userHelpers;
             EmailServer = emailServer;
             DB = db;
@@ -75,7 +79,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         }
 
         private Microsoft.Data.SqlClient.SqlConnection CreateSqlConnection()
-            => new Microsoft.Data.SqlClient.SqlConnection(Configuration.GetConnectionString(ConfigOptions.Value.ConnectionStringName));
+            => new Microsoft.Data.SqlClient.SqlConnection(ConnectionStringProvider.GetConnectionString(ConfigOptions.Value.ConnectionStringName));
 
         private static DataTable MergeIntoSingleTable(DataSet ds, Func<DataTable> creator = null)
         {
@@ -118,9 +122,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
         }
 
         //TODO: Email on exception or let user know what happened
-        public void UploadFiles(UploadFilesModel files)
+        public async Task UploadFiles(UploadFilesModel model)
         {
-            var reviewId = files.ReviewId;
+            var reviewId = model.ReviewId;
+            var folder = await SpecialFolderProvider.GetReviewFolderAsync(model.ReviewId);
             string importer = null;
             int rowErrorCount = 0;
 
@@ -138,56 +143,77 @@ namespace GSA.UnliquidatedObligations.Web.Services
             try
             {
                 var allFiles =
-                    files.PegasysFilePathsList
-                    .Union(files.RetaFileList)
-                    .Union(files.EasiFileList)
-                    .Union(files.One92FileList)
-                    .Union(files.CreditCardAliasCrosswalkFiles)
-                    .Union(files.PegasysOpenItemsCreditCards)
-                    .Union(files.ActiveCardholderFiles)
+                    model.PegasysFilePathsList
+                    .Union(model.RetaFileList)
+                    .Union(model.EasiFileList)
+                    .Union(model.One92FileList)
+                    .Union(model.CreditCardAliasCrosswalkFiles)
+                    .Union(model.PegasysOpenItemsCreditCards)
+                    .Union(model.ActiveCardholderFiles)
                     .ToList();
                 Log.Information("Will ultimately process the following files:\n{filePaths}", allFiles.Format("\n", "\t{0}"));
 
                 importer = nameof(Load442s);
-                foreach (var fn in files.PegasysFilePathsList)
+                foreach (var fn in model.PegasysFilePathsList)
                 {
-                    Load442s(reviewId, fn, onRowAddError, rowsTransferred);
+                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    {
+                        Load442s(reviewId, st, onRowAddError, rowsTransferred);
+                    }
                 }
 
                 importer = nameof(LoadReta);
-                foreach (var fn in files.RetaFileList)
+                foreach (var fn in model.RetaFileList)
                 {
-                    LoadReta(reviewId, fn, onRowAddError, rowsTransferred);
+                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    {
+                        LoadReta(reviewId, st, onRowAddError, rowsTransferred);
+                    }
                 }
 
                 importer = nameof(LoadEasi);
-                foreach (var fn in files.EasiFileList)
+                foreach (var fn in model.EasiFileList)
                 {
-                    LoadEasi(reviewId, fn, onRowAddError, rowsTransferred);
+                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    {
+                        LoadEasi(reviewId, st, onRowAddError, rowsTransferred);
+                    }
                 }
 
                 importer = nameof(Load192s);
-                foreach (var fn in files.One92FileList)
+                foreach (var fn in model.One92FileList)
                 {
-                    Load192s(reviewId, fn, onRowAddError, rowsTransferred);
+                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    {
+                        Load192s(reviewId, st, onRowAddError, rowsTransferred);
+                    }
                 }
 
                 importer = nameof(LoadCreditCardAliases);
-                foreach (var fn in files.CreditCardAliasCrosswalkFiles)
+                foreach (var fn in model.CreditCardAliasCrosswalkFiles)
                 {
-                    LoadCreditCardAliases(reviewId, fn, onRowAddError, rowsTransferred);
+                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    {
+                        LoadCreditCardAliases(reviewId, st, onRowAddError, rowsTransferred);
+                    }
                 }
 
                 importer = nameof(LoadPegasysOpenItemsCreditCards);
-                foreach (var fn in files.PegasysOpenItemsCreditCards)
+                foreach (var fn in model.PegasysOpenItemsCreditCards)
                 {
-                    LoadPegasysOpenItemsCreditCards(reviewId, fn, onRowAddError, rowsTransferred);
+                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    {
+                        LoadPegasysOpenItemsCreditCards(reviewId, st, onRowAddError, rowsTransferred);
+                    }
                 }
 
                 importer = nameof(LoadActiveCardholders);
-                foreach (var fn in files.ActiveCardholderFiles)
+                foreach (var fn in model.ActiveCardholderFiles)
                 {
-                    LoadActiveCardholders(reviewId, fn, onRowAddError, rowsTransferred);
+                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    {
+                        LoadActiveCardholders(reviewId, st, onRowAddError, rowsTransferred);
+                    }
                 }
             }
             catch (Exception ex)
@@ -338,90 +364,82 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         #region Loaders
 
-        private void LoadExcelDataTable(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred, Config.ImportConfig importConfig, Func<DataTable> dataTableCreator)
+        private void LoadExcelDataTable(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred, Config.ImportConfig importConfig, Func<DataTable> dataTableCreator)
         {
             string sheetNamesCsv = importConfig.SheetsCsv;
             int skipRawRows = importConfig.SkipRawRows;
 
             DataTable dt;
-            using (var st = File.OpenRead(uploadPath))
+            var ds = new DataSet();
+            var settings = new LoadTablesFromSpreadsheetSettings()
             {
-                var ds = new DataSet();
-                var settings = new LoadTablesFromSpreadsheetSettings()
+                SheetSettings = new List<LoadRowsFromSpreadsheetSettings>(),
+                CreateDataTable = dataTableCreator,
+            };
+            var sheetNames = R.CSV.ParseLine(sheetNamesCsv);
+            foreach (var sheetName in sheetNames)
+            {
+                settings.SheetSettings.Add(
+                new LoadRowsFromSpreadsheetSettings
                 {
-                    SheetSettings = new List<LoadRowsFromSpreadsheetSettings>(),
-                    CreateDataTable = dataTableCreator,
-                };
-                var sheetNames = R.CSV.ParseLine(sheetNamesCsv);
-                foreach (var sheetName in sheetNames)
-                {
-                    settings.SheetSettings.Add(
-                    new LoadRowsFromSpreadsheetSettings
-                    {
-                        SheetName = sheetName,
-                        TypeConverter = U.SpreadsheetHelpers.ExcelTypeConverter,
-                        UseSheetNameForTableName = true,
-                        RowAddErrorHandler = onRowAddError,
-                        SkipRawRows = skipRawRows,
-                    });
-                }
-                ds.LoadSheetsFromExcel(st, settings);
-                dt = MergeIntoSingleTable(ds, dataTableCreator);
+                    SheetName = sheetName,
+                    TypeConverter = U.SpreadsheetHelpers.ExcelTypeConverter,
+                    UseSheetNameForTableName = true,
+                    RowAddErrorHandler = onRowAddError,
+                    SkipRawRows = skipRawRows,
+                });
             }
+            ds.LoadSheetsFromExcel(st, settings);
+            dt = MergeIntoSingleTable(ds, dataTableCreator);
+
             FinalizeAndUpload(dt, reviewId, rowsTransferred);
         }
 
-        private void Load442s(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+        private void Load442s(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
         {
             var dt = CreatePegasysOpenObligationsDataTable();
-            using (var st = File.OpenRead(uploadPath))
+            dt.LoadRowsFromDelineatedText(st, new LoadRowsFromDelineatedTextSettings
             {
-                dt.LoadRowsFromDelineatedText(st, new LoadRowsFromDelineatedTextSettings
-                {
-                    SkipRawRows = 2,
-                    RowAddErrorHandler = onRowAddError
-                });
-                dt.SetColumnWithValue(ReviewIdColumnName, reviewId);
-                dt.UploadIntoSqlServer(CreateSqlConnection, new UploadIntoSqlServerSettings { RowsTransferredEventHandler = rowsTransferred });
-            }
+                SkipRawRows = 2,
+                RowAddErrorHandler = onRowAddError
+            });
+            dt.SetColumnWithValue(ReviewIdColumnName, reviewId);
+            dt.UploadIntoSqlServer(CreateSqlConnection, new UploadIntoSqlServerSettings { RowsTransferredEventHandler = rowsTransferred });
         }
 
-        private void LoadReta(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
-             => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, ConfigOptions.Value.RetaImportConfig, CreateRetaDataTable);
+        private void LoadReta(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+             => LoadExcelDataTable(reviewId, st, onRowAddError, rowsTransferred, ConfigOptions.Value.RetaImportConfig, CreateRetaDataTable);
 
-        private void LoadEasi(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+        private void LoadEasi(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
         {
             DataTable dt;
-            using (var st = File.OpenRead(uploadPath))
+            var ds = new DataSet();
+            var settings = new LoadTablesFromSpreadsheetSettings()
             {
-                var ds = new DataSet();
-                var settings = new LoadTablesFromSpreadsheetSettings()
+                CreateDataTable = CreateEasiDataTable,
+                LoadAllSheetsDefaultSettings = new LoadRowsFromSpreadsheetSettings
                 {
-                    CreateDataTable = CreateEasiDataTable,
-                    LoadAllSheetsDefaultSettings = new LoadRowsFromSpreadsheetSettings
-                    {
-                        TypeConverter = U.SpreadsheetHelpers.ExcelTypeConverter,
-                        RowAddErrorHandler = onRowAddError
-                    }
-                };
-                ds.LoadSheetsFromExcel(st, settings);
-                dt = MergeIntoSingleTable(ds, CreateEasiDataTable);
-            }
+                    TypeConverter = U.SpreadsheetHelpers.ExcelTypeConverter,
+                    RowAddErrorHandler = onRowAddError
+                }
+            };
+            ds.LoadSheetsFromExcel(st, settings);
+            dt = MergeIntoSingleTable(ds, CreateEasiDataTable);
             FinalizeAndUpload(dt, reviewId, rowsTransferred);
         }
 
 
-        private void Load192s(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
-            => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, ConfigOptions.Value.Upload192ImportConfig, Create192DataTable);
+        private void Load192s(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+            => LoadExcelDataTable(reviewId, st, onRowAddError, rowsTransferred, ConfigOptions.Value.Upload192ImportConfig, Create192DataTable);
 
-        private void LoadCreditCardAliases(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
-            => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, ConfigOptions.Value.CreditCardAliasConfig, CreateCreditCardAliasDataTable);
+        private void LoadCreditCardAliases(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+            => LoadExcelDataTable(reviewId, st, onRowAddError, rowsTransferred, ConfigOptions.Value.CreditCardAliasConfig, CreateCreditCardAliasDataTable);
 
-        private void LoadPegasysOpenItemsCreditCards(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
-            => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, ConfigOptions.Value.PegasysOpenItemsCreditCardsSheetsConfig, CreatePegasysOpenItemsCreditCardsDataTable);
+        private void LoadPegasysOpenItemsCreditCards(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+            => LoadExcelDataTable(reviewId, st, onRowAddError, rowsTransferred, ConfigOptions.Value.PegasysOpenItemsCreditCardsSheetsConfig, CreatePegasysOpenItemsCreditCardsDataTable);
 
-        private void LoadActiveCardholders(int reviewId, string uploadPath, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
-            => LoadExcelDataTable(reviewId, uploadPath, onRowAddError, rowsTransferred, ConfigOptions.Value.ActiveCardholderImportConfig, CreateActiveCardholdersDataTable);
+        private void LoadActiveCardholders(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+            => LoadExcelDataTable(reviewId, st, onRowAddError, rowsTransferred, ConfigOptions.Value.ActiveCardholderImportConfig, CreateActiveCardholdersDataTable);
 
         #endregion
 

@@ -9,6 +9,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Models;
+using GSA.UnliquidatedObligations.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     {
         public const string Name = "Attachments";
         private readonly IStorageProvider StorageProvider;
+        private readonly SpecialFolderProvider SpecialFolderProvider;
 
         public static class ActionNames
         {
@@ -32,10 +34,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string FileUpload = "FileUpload";
         }
 
-        public AttachmentsController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger, IStorageProvider storageProvider)
+        public AttachmentsController(IStorageProvider storageProvider, SpecialFolderProvider specialFolderProvider, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             StorageProvider = storageProvider;
+            SpecialFolderProvider = specialFolderProvider;
         }
 
         public JsonResult Throw(string message)
@@ -50,37 +53,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
         }
 
-        public JsonResult FileShareInfo(string relativePath, bool create = false)
-        {
-            try
-            {
-                if (!PortalHelpers.AllowFileShareInfo)
-                {
-                    Throw("This functionality has been disabled via configuration");
-                    //throw new HttpException((int)HttpStatusCode.Forbidden, "This functionality has been disabled via configuration");                    
-                }
-                var ret = new
-                {
-                    docPath = PortalHelpers.DocPath,
-                    relativePath = relativePath,
-                    fullPath = PortalHelpers.GetStorageFolderPath(relativePath, create),
-                    create = create
-                };
-                return Json(ret);
-            }
-            catch (Exception ex)
-            {
-                return Json(new ExceptionError(ex));
-            }
-        }
-
         [ActionName(ActionNames.FileUpload)]
         [HttpPost]
         public async Task<IActionResult> FileUpload(int documentId)
         {
             var results = new List<FileUploadAttachmentResult>();
             var attachmentsTempData = TempData.FileUploadAttachmentResults();
-            var folder = await StorageProvider.GetRootFolderAsync();
+            var folder = await SpecialFolderProvider.GetDocumentFolderAsync(documentId);
             folder = await folder.CreateFolderAsync("temp");
             foreach (var file in Request.Form.Files)
             {
@@ -136,9 +115,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var attachment = await DB.Attachments.FindAsync(attachmentId);
             if (attachment == null) return NotFound();
-            var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath, false);
-            Logger.Information("Attachment {AttachmentId} was viewed from {AttachmentPath}", attachmentId, path);
-            return File(System.IO.File.OpenRead(path), attachment.ContentType);
+            Logger.Information("Attachment {AttachmentId} was viewed from {AttachmentPath}", attachmentId, attachment.FilePath);
+            var file = await StorageProvider.GetFileAsync(attachment.FilePath);
+            var st = await file.OpenReadAsync();
+            return File(st, attachment.ContentType);
         }
 
         [HttpGet]
@@ -148,9 +128,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var attachment = await DB.Attachments.FindAsync(attachmentId);
             if (attachment == null) return NotFound();
-            var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath, false);
-            Logger.Information("Attachment {AttachmentId} was downloaded from {AttachmentPath}", attachmentId, path);
-            return File(System.IO.File.OpenRead(path), attachment.ContentType, attachment.FileName);
+            Logger.Information("Attachment {AttachmentId} was downloaded from {AttachmentPath}", attachmentId, attachment.FilePath);
+            var file = await StorageProvider.GetFileAsync(attachment.FilePath);
+            var st = await file.OpenReadAsync();
+            return File(st, attachment.ContentType, attachment.FileName);
         }
 
 

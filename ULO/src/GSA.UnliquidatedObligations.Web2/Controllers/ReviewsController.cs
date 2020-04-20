@@ -45,11 +45,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const int ReviewFileTypeCount = 7;
         }
 
+        private readonly SpecialFolderProvider SpecialFolderProvider;
         private readonly IBackgroundJobClient BackgroundJobClient;
        
-        public ReviewsController(IBackgroundJobClient backgroundJobClient, UloDbContext db, PortalHelpers portalHelpers, UserHelpers userHelpers, ICacher cacher, Serilog.ILogger logger)
+        public ReviewsController(SpecialFolderProvider specialFolderProvider, IBackgroundJobClient backgroundJobClient, UloDbContext db, PortalHelpers portalHelpers, UserHelpers userHelpers, ICacher cacher, Serilog.ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
+            SpecialFolderProvider = specialFolderProvider;
             BackgroundJobClient = backgroundJobClient;
 
         }
@@ -241,41 +243,40 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 await DB.SaveChangesAsync();
 
                 var uploadFiles = new UploadFilesModel(review.ReviewId);
-
-                var path = PortalHelpers.GetStorageFolderPath($"ReviewUploads/{review.ReviewId / 1000}/{review.ReviewId}/");
+                var folder = await SpecialFolderProvider.GetReviewFolderAsync(review.ReviewId);
                 foreach (var formFile in Request.Form.Files)
                 {
                     if (formFile.Length == 0) continue;
-                    var fullRelativePath = path + formFile.FileName;
-                    Logger.Information("Storing review {reviewId} file {name} with {size} to {path}", review.ReviewId, formFile.Name, formFile.Length, fullRelativePath);
-                    using (var inputStream = System.IO.File.Create(fullRelativePath))
+                    var name = formFile.FileName;
+                    Logger.Information("Storing review {reviewId} of type {typeName} with {size} for {fileName}", review.ReviewId, formFile.Name, formFile.Length, name);
+                    var file = await folder.CreateFileAsync(name);
+                    using (var dst = await file.OpenWriteAsync())
                     {
                         // read file to stream
-                        await formFile.CopyToAsync(inputStream);
-                    }
-                   
+                        await formFile.CopyToAsync(dst);
+                    }                   
                     switch (formFile.Name)
                     {
                         case ReviewFileDesignators.PegasysFiles:
-                            uploadFiles.PegasysFilePathsList.Add(path);
+                            uploadFiles.PegasysFilePathsList.Add(name);
                             break;
                         case ReviewFileDesignators.RetaFiles:
-                            uploadFiles.RetaFileList.Add(path);
+                            uploadFiles.RetaFileList.Add(name);
                             break;
                         case ReviewFileDesignators.EasiFiles:
-                            uploadFiles.EasiFileList.Add(path);
+                            uploadFiles.EasiFileList.Add(name);
                             break;
                         case ReviewFileDesignators.One92Files:
-                            uploadFiles.One92FileList.Add(path);
+                            uploadFiles.One92FileList.Add(name);
                             break;
                         case ReviewFileDesignators.ActiveCardholderFiles:
-                            uploadFiles.ActiveCardholderFiles.Add(path);
+                            uploadFiles.ActiveCardholderFiles.Add(name);
                             break;
                         case ReviewFileDesignators.PegasysOpenItemsCreditCards:
-                            uploadFiles.PegasysOpenItemsCreditCards.Add(path);
+                            uploadFiles.PegasysOpenItemsCreditCards.Add(name);
                             break;
                         case ReviewFileDesignators.CreditCardAliasCrosswalkFiles:
-                            uploadFiles.CreditCardAliasCrosswalkFiles.Add(path);
+                            uploadFiles.CreditCardAliasCrosswalkFiles.Add(name);
                             break;
                         default:
                             throw new UnexpectedSwitchValueException(formFile.FileName);

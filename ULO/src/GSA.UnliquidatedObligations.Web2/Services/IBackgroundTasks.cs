@@ -15,7 +15,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         Task EmailReport(string[] recipients, string subjectTemplate, string bodyTemplate, string htmlBodyTemplate, object model, string reportName, IDictionary<string, string> paramValueByParamName);
 
         [AutomaticRetry(Attempts = 0)]
-        void UploadFiles(UploadFilesModel files);
+        Task UploadFiles(UploadFilesModel files);
 
         [AutomaticRetry(Attempts = 0)]
         Task SendAssignWorkFlowsBatchNotifications(int reviewId);

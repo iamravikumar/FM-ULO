@@ -347,41 +347,6 @@ namespace GSA.UnliquidatedObligations.Web
             return predicate;
         }
 
-        public string GetStorageFolderPath(string relativePath, bool createFolderInNotExists = true)
-        {
-            relativePath = relativePath ?? "";
-            var dir = ConfigOptions.Value.DocPath;
-            if (0 == string.Compare(dir, "%temp%", true))
-            {
-                dir = Path.GetTempPath();
-            }
-            else if (dir.StartsWith("~"))
-            {
-                dir = HostingEnvironment.ApplicationName;
-            }
-            dir = dir.Replace("\\", "/");
-            if (!dir.EndsWith("/"))
-            {
-                dir += "/";
-            }
-            relativePath = relativePath.Replace("\\", "/");
-            if (relativePath.StartsWith("/"))
-            {
-                relativePath = relativePath.Substring(1);
-            }
-            var path = dir + relativePath;
-            path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            if (createFolderInNotExists)
-            {
-                dir = Path.GetDirectoryName(path);
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-            }
-            return path;
-        }
-
         public Expression<Func<Workflow, bool>> GenerateWorkflowPredicate(IPrincipal currentUser, int? uloId, string pegasysDocumentNumber, string organization,
          IList<int> regions, IList<int> zones, string fund, IList<string> baCode, string pegasysTitleNumber, string pegasysVendorName, IList<string> docType, string contractingOfficersName, string currentlyAssignedTo, string hasBeenAssignedTo, string awardNumber, IList<string> reasonIncludedInReview, IList<bool> valid, IList<string> status, IList<int> reviewId, bool? reassignableByMe)
         {

@@ -179,17 +179,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             var attachment = new Attachment
                             {
                                 FileName = tempAttachment.FileName,
-                                FilePath = $"Attachments{Path.DirectorySeparatorChar}{document.DocumentId / 1000}{Path.DirectorySeparatorChar}{document.DocumentId}{Path.DirectorySeparatorChar}{Guid.NewGuid()}.dat",
+                                FilePath = tempAttachment.FilePath,
                                 DocumentId = document.DocumentId,
                                 FileSize = tempAttachment.FileSize,
                                 ContentType = tempAttachment.ContentType,
                                 CreatedByUserId = tempAttachment.CreatedByUserId
                             };
-                            var path = PortalHelpers.GetStorageFolderPath(attachment.FilePath);
-                            System.IO.File.Move(tempAttachment.FilePath, path);
                             DB.Attachments.Add(attachment);
                         }
-                        Stuff.FileTryDelete(tempAttachment.FileName);
                     }
                     await DB.SaveChangesAsync();
                     Clear();

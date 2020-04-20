@@ -26,7 +26,7 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core.Caching;
 using Traffk.StorageProviders;
-using Traffk.StorageProviders.Providers.AzureDataLakeStorageGen2StorageProvider;
+using Traffk.StorageProviders.Providers.AzureBlobStorageProvider;
 using Traffk.StorageProviders.Providers.PhysicalStorage;
 
 namespace GSA.UnliquidatedObligations.Web
@@ -54,7 +54,7 @@ namespace GSA.UnliquidatedObligations.Web
             services.ConfigureOptions<SprintConfig>(SprintConfig.ConfigSectionName);
             services.ConfigureOptions<PortalHelpers.Config>(PortalHelpers.Config.ConfigSectionName);
             services.ConfigureOptions<UserHelpers.Config>(UserHelpers.Config.ConfigSectionName);
-            services.ConfigureOptions<BackgroundTasks>(BackgroundTasks.Config.ConfigSectionName);
+            services.ConfigureOptions<BackgroundTasks.Config>(BackgroundTasks.Config.ConfigSectionName);
             services.ConfigureOptions<UloController.Config>(UloController.Config.ConfigSectionName);            
             services.ConfigureOptions<AccountController.Config>(AccountController.Config.ConfigSectionName);
             services.ConfigureOptions<LegacyFormsAuthenticationService.Config>(LegacyFormsAuthenticationService.Config.ConfigSectionName);
@@ -142,20 +142,12 @@ namespace GSA.UnliquidatedObligations.Web
             });
 
 
-            services.ConfigureOptions<AzureDataLakeGen2BlobStorageProvider.Config>(AzureDataLakeGen2BlobStorageProvider.Config.ConfigSectionName);
+            services.ConfigureOptions<AzureBlobStorageProvider.Config>(AzureBlobStorageProvider.Config.ConfigSectionName);
             services.ConfigureOptions<PhysicalStorageProvider.Config>(PhysicalStorageProvider.Config.ConfigSectionName);
-            services.AddScoped<AzureDataLakeGen2BlobStorageProvider>();
+            services.AddScoped<AzureBlobStorageProvider>();
             services.AddScoped<PhysicalStorageProvider>();
-            services.AddScoped<IStorageProvider>(sp => {
-                switch (Configuration["StorageProviderTypeName"])
-                {
-                    case "AzureDataLakeGen2BlobStorageProvider":
-                        return sp.GetRequiredService<AzureDataLakeGen2BlobStorageProvider>();
-                    case "PhysicalStorageProvider":
-                    default:
-                        return sp.GetRequiredService<PhysicalStorageProvider>();
-                }
-            });
+            services.UseStorageProviderConfigTypeNameSelector();
+            services.AddScoped<SpecialFolderProvider>();
         }
 
         /*
