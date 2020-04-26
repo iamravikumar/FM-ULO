@@ -130,6 +130,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [ActionName(ActionNames.Details)]
         public async Task<IActionResult> Details(int uloId = 0, int workflowId = 0)
         {
+            TempData.Clear();
             //TODO: check if current user is able to view
             var ulo = await DB.UnliquidatedObligations.
                 Include(u => u.UloNotes).

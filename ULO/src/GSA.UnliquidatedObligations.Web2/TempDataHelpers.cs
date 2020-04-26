@@ -18,5 +18,8 @@ namespace GSA.UnliquidatedObligations.Web
             tdd.SetAsJsonValue(TempDataKeys.Attachments, results);
             return results;
         }
+
+        public static void ClearFileUploadAttachmentResults(this ITempDataDictionary tdd)
+            => tdd.FileUploadAttachmentResults(new List<FileUploadAttachmentResult>());
     }
 }

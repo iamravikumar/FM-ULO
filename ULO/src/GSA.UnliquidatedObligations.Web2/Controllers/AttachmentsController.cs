@@ -59,19 +59,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var results = new List<FileUploadAttachmentResult>();
             var attachmentsTempData = TempData.FileUploadAttachmentResults();
-            var folder = await SpecialFolderProvider.GetDocumentFolderAsync(documentId);
-            folder = await folder.CreateFolderAsync("temp");
             foreach (var file in Request.Form.Files)
             {
                 if(file.Length > 0)                
                 {
                     var fn = $"{Guid.NewGuid()}.dat";
-                    var path = $"Temp{Path.DirectorySeparatorChar}{fn}";
                     var attachment = new FileUploadAttachmentResult
                     {
                         AttachmentsId = Stuff.Random.Next(int.MaxValue),
                         FileName = file.FileName,
-                        FilePath = path,
                         CreatedByUserId = CurrentUserId,
                         DocumentId = documentId,
                         FileSize = file.Length,
@@ -80,14 +76,13 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     attachment.Whitelisted = PortalHelpers.VerifyFileAccept(attachment.FileName, attachment.ContentType);
                     if (attachment.Whitelisted)
                     {
+                        attachment.FilePath = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
                         try
                         {
-                            var fileEntry = await folder.CreateFileAsync(fn);
-                            using (var fileStream = await fileEntry.OpenWriteAsync())
+                            using (var fileStream = System.IO.File.Create(attachment.FilePath))
                             {
                                 await file.CopyToAsync(fileStream);
                             }
-                            attachment.FilePath = fileEntry.FullRelativePath;
                             attachment.Added = true;
                             attachmentsTempData.Add(attachment);
                         }

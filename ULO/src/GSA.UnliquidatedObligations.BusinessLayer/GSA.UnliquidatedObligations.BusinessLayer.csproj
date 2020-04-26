@@ -466,6 +466,7 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ULO1.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <None Include="App.Config" />
     <None Include="Data\ULO.edmx.diagram">
       <DependentUpon>ULO.edmx</DependentUpon>
     </None>

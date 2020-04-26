@@ -10,6 +10,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Identity;
 using GSA.UnliquidatedObligations.Web.Models;
+using GSA.UnliquidatedObligations.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,13 +33,15 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string View = "View";
         }
 
+        private readonly SpecialFolderProvider SpecialFolderProvider;
         private readonly UloUserManager UserManager;
         
         private readonly IHostEnvironment HostingEnvironment;
        
-        public DocumentsController(UloUserManager userManager, IHostEnvironment hostingEnvironment, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
+        public DocumentsController(SpecialFolderProvider specialFolderProvider, UloUserManager userManager, IHostEnvironment hostingEnvironment, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
+            SpecialFolderProvider = specialFolderProvider;
             UserManager = userManager;
             HostingEnvironment = hostingEnvironment;
             PopulateDocumentTypeNameByDocumentTypeIdInViewBag();
@@ -176,10 +179,20 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     {
                         if (!rids.Contains(tempAttachment.AttachmentsId))
                         {
+                            var folder = await SpecialFolderProvider.GetDocumentFolderAsync(document.DocumentId);
+                            var file = await folder.CreateFileAsync(Path.GetFileName(tempAttachment.FilePath));
+                            using (var st = await file.OpenWriteAsync())
+                            {
+                                using (var tmp = System.IO.File.OpenRead(tempAttachment.FilePath))
+                                {
+                                    await tmp.CopyToAsync(st);
+                                }
+                            }
+                            Stuff.FileTryDelete(tempAttachment.FilePath);
                             var attachment = new Attachment
                             {
                                 FileName = tempAttachment.FileName,
-                                FilePath = tempAttachment.FilePath,
+                                FilePath = file.FullRelativePath,
                                 DocumentId = document.DocumentId,
                                 FileSize = tempAttachment.FileSize,
                                 ContentType = tempAttachment.ContentType,
@@ -189,7 +202,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                         }
                     }
                     await DB.SaveChangesAsync();
-                    Clear();
+                    TempData.ClearFileUploadAttachmentResults();
                 }
                 return Json(new
                 {
@@ -205,14 +218,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             {
                 return base.CreateJsonError(ex);
             }
-        }
-
-        private void Clear()
-        {
-            var attachmentsTempData = TempData.FileUploadAttachmentResults();
-            if (attachmentsTempData.Count == 0) return;
-            attachmentsTempData.Clear();
-            TempData.FileUploadAttachmentResults(attachmentsTempData);
         }
 
         // GET: Documents/Delete/5

@@ -102,7 +102,7 @@ function uploadAttachment(documentId, files) {
 
             $.ajax({
                 type: "POST",
-                url: "/Attachments/FileUpload?documentId=" + $("[name='DocumentIdForUpload']").val(),
+                url: "/Attachments/FileUpload/" + $("[name='DocumentIdForUpload']").val(),
                 contentType: false,
                 processData: false,
                 data: data,
