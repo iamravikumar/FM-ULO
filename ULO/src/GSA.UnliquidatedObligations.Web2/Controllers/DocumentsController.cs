@@ -192,7 +192,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             var attachment = new Attachment
                             {
                                 FileName = tempAttachment.FileName,
-                                FilePath = file.FullRelativePath,
+                                FilePath = file.Path,
                                 DocumentId = document.DocumentId,
                                 FileSize = tempAttachment.FileSize,
                                 ContentType = tempAttachment.ContentType,

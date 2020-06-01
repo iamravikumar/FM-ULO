@@ -5,23 +5,23 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a>Hello @UserManager.GetUserName(User)!</a>
-            </li>
-            @if (AccountControllerConfigOptions.Value.UseDevAuthentication)
-            {
+    <ul class="nav navbar-nav navbar-right">
         <li>
-            <form asp-area="Identity" asp-controller="@AccountController.Name" asp-action="@AccountController.ActionNames.Logout" method="post" id="logoutForm" class="navbar-right">
-                <button type="submit" class="btn btn-link navbar-btn navbar-link">Logout</button>
-            </form>
+            <a>Hello @UserManager.GetUserName(User)!</a>
         </li>
-            }
-        </ul>
+        @if (AccountControllerConfigOptions.Value.UseDevAuthentication)
+        {
+            <li>
+                <form asp-area="Identity" asp-controller="@AccountController.Name" asp-action="@AccountController.ActionNames.Logout" method="post" id="logoutForm" class="navbar-right">
+                    <button type="submit" class="btn btn-link navbar-btn navbar-link">Logout</button>
+                </form>
+            </li>
+        }
+    </ul>
 }
 else if (!PortalHelpers.HideLoginLinks(ViewBag))
 {
     <ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("Log in", AccountController.ActionNames.Login, AccountController.Name)</li>
+        <li><a asp-action="@AccountController.ActionNames.Login" asp-controller="@AccountController.Name">Log in</a></li>
     </ul>
 }

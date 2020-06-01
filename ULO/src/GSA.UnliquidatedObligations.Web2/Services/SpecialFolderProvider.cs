@@ -8,7 +8,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
     {
         public static async Task<IFolderEntry> FindOrCreateFolderAsync(this IFolderEntry folder, string name)
         {
-            var f = await folder.GetFolderAsync(name);
+            var f = await folder.OpenFolderAsync(name);
             if (f == null)
             {
                 f = await folder.CreateFolderAsync(name);
@@ -28,7 +28,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         public async Task<IFolderEntry> GetReviewFolderAsync(int reviewId)
         {
-            var f = await StorageProvider.GetRootFolderAsync();
+            var f = await StorageProvider.OpenRootFolderAsync();
             f = await f.FindOrCreateFolderAsync("Reviews");
             f = await f.FindOrCreateFolderAsync((reviewId / 1000).ToString());
             f = await f.FindOrCreateFolderAsync(reviewId.ToString());
@@ -37,7 +37,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         public async Task<IFolderEntry> GetDocumentFolderAsync(int documentId)
         {
-            var f = await StorageProvider.GetRootFolderAsync();
+            var f = await StorageProvider.OpenRootFolderAsync();
             f = await f.FindOrCreateFolderAsync("Attachments");
             f = await f.FindOrCreateFolderAsync((documentId / 1024).ToString());
             f = await f.FindOrCreateFolderAsync(documentId.ToString());

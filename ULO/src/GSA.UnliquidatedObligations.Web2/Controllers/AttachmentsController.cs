@@ -111,7 +111,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var attachment = await DB.Attachments.FindAsync(attachmentId);
             if (attachment == null) return NotFound();
             Logger.Information("Attachment {AttachmentId} was viewed from {AttachmentPath}", attachmentId, attachment.FilePath);
-            var file = await StorageProvider.GetFileAsync(attachment.FilePath);
+            var file = await StorageProvider.OpenFileAsync(attachment.FilePath);
             var st = await file.OpenReadAsync();
             return File(st, attachment.ContentType);
         }
@@ -124,7 +124,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var attachment = await DB.Attachments.FindAsync(attachmentId);
             if (attachment == null) return NotFound();
             Logger.Information("Attachment {AttachmentId} was downloaded from {AttachmentPath}", attachmentId, attachment.FilePath);
-            var file = await StorageProvider.GetFileAsync(attachment.FilePath);
+            var file = await StorageProvider.OpenFileAsync(attachment.FilePath);
             var st = await file.OpenReadAsync();
             return File(st, attachment.ContentType, attachment.FileName);
         }

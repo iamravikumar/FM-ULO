@@ -32,7 +32,7 @@
         </div>
         <div class="form-group" style="display:none">
             <label asp-for="@(Model.JustificationKey)">Justification</label><br />
-            @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications", mrjk = Model.JustificationKey, @onchange = "clearJustificationValidationErrors()", @class="form-control" })
+            @Html.DropDownListFor(model => model.JustificationKey, new SelectList(new object[] { }), AspHelpers.PleaseSelectOne, htmlAttributes: new { id = "justifications", mrjk = Model.JustificationKey, @onchange = "clearJustificationValidationErrors()", @class="form-control standard" })
             @Html.ValidationMessageFor(model => model.JustificationKey, "Must select a Justification", new { id = "validateJustificationMessage", @class = "text-danger" })
         </div>
         <div class="form-group" id="expectedDateForCompletionContainer" style="display:none">

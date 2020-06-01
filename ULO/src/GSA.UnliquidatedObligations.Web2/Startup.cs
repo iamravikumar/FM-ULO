@@ -60,6 +60,7 @@ namespace GSA.UnliquidatedObligations.Web
             services.ConfigureOptions<LegacyFormsAuthenticationService.Config>(LegacyFormsAuthenticationService.Config.ConfigSectionName);
             services.ConfigureOptions<WorkflowManager.Config>(WorkflowManager.Config.ConfigSectionName);
             services.ConfigureOptions<ReportsController.Config>(ReportsController.Config.ConfigSectionName);
+            services.ConfigureOptions<ReportRunner.Config>(ReportRunner.Config.ConfigSectionName);
 
             /*
              * Really purists?  Makings this default = false?  Like anyone has time to go back through and port all old libraries for this new mode?

@@ -29,7 +29,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IWorkflowManager WorkflowManager;
         private readonly IConnectionStringProvider ConnectionStringProvider;
         private readonly SpecialFolderProvider SpecialFolderProvider;
-        private readonly RazorTemplateProcessor RazorTemplateProcessor;
+        private readonly ITemplateProcessor RazorTemplateProcessor;
         private readonly IReportRunner ReportRunner;
         private readonly IOptions<Config> ConfigOptions;
         private readonly UserHelpers UserHelpers;
@@ -156,7 +156,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 importer = nameof(Load442s);
                 foreach (var fn in model.PegasysFilePathsList)
                 {
-                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    using (var st = await folder.OpenFileReadStreamAsync(fn))
                     {
                         Load442s(reviewId, st, onRowAddError, rowsTransferred);
                     }
@@ -165,7 +165,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 importer = nameof(LoadReta);
                 foreach (var fn in model.RetaFileList)
                 {
-                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    using (var st = await folder.OpenFileReadStreamAsync(fn))
                     {
                         LoadReta(reviewId, st, onRowAddError, rowsTransferred);
                     }
@@ -174,7 +174,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 importer = nameof(LoadEasi);
                 foreach (var fn in model.EasiFileList)
                 {
-                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    using (var st = await folder.OpenFileReadStreamAsync(fn))
                     {
                         LoadEasi(reviewId, st, onRowAddError, rowsTransferred);
                     }
@@ -183,7 +183,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 importer = nameof(Load192s);
                 foreach (var fn in model.One92FileList)
                 {
-                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    using (var st = await folder.OpenFileReadStreamAsync(fn))
                     {
                         Load192s(reviewId, st, onRowAddError, rowsTransferred);
                     }
@@ -192,7 +192,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 importer = nameof(LoadCreditCardAliases);
                 foreach (var fn in model.CreditCardAliasCrosswalkFiles)
                 {
-                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    using (var st = await folder.OpenFileReadStreamAsync(fn))
                     {
                         LoadCreditCardAliases(reviewId, st, onRowAddError, rowsTransferred);
                     }
@@ -201,7 +201,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 importer = nameof(LoadPegasysOpenItemsCreditCards);
                 foreach (var fn in model.PegasysOpenItemsCreditCards)
                 {
-                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    using (var st = await folder.OpenFileReadStreamAsync(fn))
                     {
                         LoadPegasysOpenItemsCreditCards(reviewId, st, onRowAddError, rowsTransferred);
                     }
@@ -210,7 +210,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 importer = nameof(LoadActiveCardholders);
                 foreach (var fn in model.ActiveCardholderFiles)
                 {
-                    using (var st = (await folder.GetFileAsync(fn)).OpenRead())
+                    using (var st = await folder.OpenFileReadStreamAsync(fn))
                     {
                         LoadActiveCardholders(reviewId, st, onRowAddError, rowsTransferred);
                     }
