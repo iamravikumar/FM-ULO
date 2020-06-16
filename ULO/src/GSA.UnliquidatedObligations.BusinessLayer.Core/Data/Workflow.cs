@@ -1,10 +1,17 @@
 ﻿using RevolutionaryStuff.Core.EncoderDecoders;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 {
     public partial class Workflow
     {
+        [Obsolete("Here for backwards compatability with email templates", false)]
+        [NotMapped]
+        public UnliquidatedObligation UnliquidatedObligation
+            => TargetUlo;
+
         private string GetMostRecentAnswer(bool? isReal, bool? isReassignment)
         {
             foreach (var a in this.WorkflowUnliqudatedObjectsWorkflowQuestions.OrderByDescending(z => z.UnliqudatedWorkflowQuestionsId))

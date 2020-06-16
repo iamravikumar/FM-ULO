@@ -50,6 +50,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
             public ImportConfig PegasysOpenItemsCreditCardsSheetsConfig { get; set; }
             public ImportConfig ActiveCardholderImportConfig { get; set; }
 
+            public int AssignWorkFlowsBatchSize { get; set; } = 500;
+
             public class ImportConfig
             { 
                 public string SheetsCsv { get; set; }
@@ -322,11 +324,12 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
                 var workflows =
                     DB.Workflows.Include(wf => wf.TargetUlo).Include(wf => wf.OwnerUser).
-                    Where(wf => wf.OwnerUserId == UserHelpers.PreAssignmentUserUserId).
-                    OrderBy(wf => wf.TargetUlo.ReviewId == reviewId ? 0 : 1).
+                    Where(wf => wf.OwnerUserId == UserHelpers.PreAssignmentUserUserId && wf.TargetUlo.ReviewId==reviewId).
+                    Take(config.AssignWorkFlowsBatchSize).
+                    //OrderBy(wf => wf.TargetUlo.ReviewId == reviewId ? 0 : 1).
                     ToList();
 
-                Log.Information("AssignWorkFlows {reviewId} assigning up to {totalRecords}", reviewId, workflows.Count);
+                Log.Information("AssignWorkFlows {reviewId} assigning up to {totalRecords} with {batchSize}", reviewId, workflows.Count, config.AssignWorkFlowsBatchSize);
 
                 int z = 0;
                 foreach (var workflow in workflows)
@@ -348,9 +351,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 await DB.SaveChangesAsync();
                 Log.Information("AssignWorkFlows {reviewId} completed after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
 
-                if (config.SendBatchEmailsDuringAssignWorkflows)
+                if (z > 0)
                 {
-                    BackgroundJob.Enqueue<IBackgroundTasks>(bt => bt.SendAssignWorkFlowsBatchNotifications(reviewId));
+                    BackgroundJob.Enqueue<IBackgroundTasks>(bt => bt.AssignWorkFlows(reviewId, sendBatchNotifications));
+                    if (config.SendBatchEmailsDuringAssignWorkflows)
+                    {
+                        BackgroundJob.Enqueue<IBackgroundTasks>(bt => bt.SendAssignWorkFlowsBatchNotifications(reviewId));
+                    }
                 }
             }
             catch (Exception ex)
