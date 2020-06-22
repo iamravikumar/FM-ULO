@@ -24,7 +24,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class RequestForReassignmentsController : BasePageController
     {
-        public const string Name = "RequestForReassignments";
+        public static readonly string Name = AspHelpers.GetControllerName<RequestForReassignmentsController>();
 
         public static class ActionNames
         {

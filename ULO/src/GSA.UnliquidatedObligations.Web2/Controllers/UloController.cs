@@ -28,7 +28,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class UloController : BasePageController
     {
-        public const string Name = "Ulo";
+        public static readonly string Name = AspHelpers.GetControllerName<UloController>();
 
         public static class ActionNames
         {

@@ -12,6 +12,7 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
@@ -22,6 +23,9 @@ namespace GSA.UnliquidatedObligations.Web
 {
     public static class AspHelpers
     {
+        public static string GetControllerName<C>() where C : ControllerBase
+            => RASP.AspHelpers.GetControllerName<C>();
+
         public static object CssClass(string className)
             => new { @class = className};
 

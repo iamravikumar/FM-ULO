@@ -17,7 +17,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [Authorize]
     public class AccountController : BasePageController
     {
-        public const string Name = "Account";
+        public static readonly string Name = AspHelpers.GetControllerName<AccountController>();
+
         private const string AuthenticationTypeExternalCookie = "ExternalCookie";
 
         public static class ActionNames

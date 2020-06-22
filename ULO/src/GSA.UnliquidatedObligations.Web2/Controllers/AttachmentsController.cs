@@ -23,7 +23,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]
     public class AttachmentsController : BasePageController
     {
-        public const string Name = "Attachments";
+        public static readonly string Name = AspHelpers.GetControllerName<AttachmentsController>();
+
         private readonly IStorageProvider StorageProvider;
         private readonly SpecialFolderProvider SpecialFolderProvider;
 

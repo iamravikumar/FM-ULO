@@ -20,7 +20,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewReviews)]
     public class ReviewsController : BasePageController
     {
-        public const string Name = "Reviews";
+        public static readonly string Name = AspHelpers.GetControllerName<ReviewsController>();
 
         public static class ActionNames
         {

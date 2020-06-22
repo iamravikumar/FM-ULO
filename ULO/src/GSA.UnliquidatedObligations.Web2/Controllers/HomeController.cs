@@ -9,7 +9,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [Authorize]
     public class HomeController : BasePageController
     {
-        public const string Name = "Home";
+        public static readonly string Name = AspHelpers.GetControllerName<HomeController>();
 
         public static class ActionNames
         {

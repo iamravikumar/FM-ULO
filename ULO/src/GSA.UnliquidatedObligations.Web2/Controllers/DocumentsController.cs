@@ -24,7 +24,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ApplicationUser)]   
     public class DocumentsController : BasePageController
     {
-        public const string Name = "Documents";
+        public static readonly string Name = AspHelpers.GetControllerName<DocumentsController>();
 
         public static class ActionNames
         {

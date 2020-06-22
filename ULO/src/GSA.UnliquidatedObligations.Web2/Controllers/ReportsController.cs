@@ -23,7 +23,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanExecuteReports)]
     public class ReportsController : BasePageController
     {
-        public const string Name = "Reports";
+        public static readonly string Name = AspHelpers.GetControllerName<ReportsController>();
+
         private readonly IReportRunner ReportRunner;
         private readonly IOptions<Config> ConfigOptions;
         private readonly IRecurringJobManager RJM;

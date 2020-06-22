@@ -21,8 +21,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.CanViewReviews)]
     public class PdnController : BasePageController
     {
+        public static readonly string Name = AspHelpers.GetControllerName<PdnController>();
+
         public const string AllRegionsKey = "*";
-        public const string Name = "Pdn";
 
         public static class ActionNames
         {

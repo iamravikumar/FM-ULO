@@ -20,7 +20,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     [ApplicationPermissionAuthorize(ApplicationPermissionNames.ViewUsers)]
     public class UsersController : BasePageController
     {
-        public const string Name = "Users";
+        public static readonly string Name = AspHelpers.GetControllerName<UsersController>();
 
         public static class ActionNames
         {
