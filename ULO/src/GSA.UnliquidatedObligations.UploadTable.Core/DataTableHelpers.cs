@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace GSA.UnliquidatedObligations.Utility
 {
@@ -130,7 +131,7 @@ namespace GSA.UnliquidatedObligations.Utility
             Trace.WriteLine(string.Format("Problem adding row {0}.  Will Skip.\n{1}", rowNum, ex));
         }
 
-        public static void LoadRowsFromDelineatedText(this DataTable dt, Stream st, LoadRowsFromDelineatedTextSettings settings)
+        public static async Task LoadRowsFromDelineatedTextAsync(this DataTable dt, Stream st, LoadRowsFromDelineatedTextSettings settings)
         {
             RequiresZeroRows(dt, nameof(dt));
             Requires.ReadableStreamArg(st, nameof(st));
@@ -169,12 +170,12 @@ namespace GSA.UnliquidatedObligations.Utility
             }
             else if (settings.Format == LoadRowsFromDelineatedTextFormats.CommaSeparatedValues)
             {
-                var data = new StreamReader(st).ReadToEnd();
+                var data = await st.ReadToEndAsync();
                 rows = CSV.ParseText(data);
             }
             else if (settings.Format == LoadRowsFromDelineatedTextFormats.Custom)
             {
-                var data = new StreamReader(st).ReadToEnd();
+                var data = await st.ReadToEndAsync();
                 rows = CSV.ParseText(data, settings.CustomFieldDelim, settings.CustomQuoteChar);
             }
             else

@@ -7,6 +7,7 @@ using GSA.UnliquidatedObligations.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 
@@ -17,7 +18,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
     {
         private readonly IWorkflowManager Manager;
 
-        public ReassignInfoViewComponent(IWorkflowManager manager, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
+        public ReassignInfoViewComponent(IWorkflowManager manager, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger<ReassignInfoViewComponent> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             Manager = manager;

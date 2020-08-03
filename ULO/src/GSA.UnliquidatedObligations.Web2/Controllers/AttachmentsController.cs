@@ -13,6 +13,7 @@ using GSA.UnliquidatedObligations.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Traffk.StorageProviders;
@@ -35,7 +36,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string FileUpload = "FileUpload";
         }
 
-        public AttachmentsController(IStorageProvider storageProvider, SpecialFolderProvider specialFolderProvider, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
+        public AttachmentsController(IStorageProvider storageProvider, SpecialFolderProvider specialFolderProvider, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger<AttachmentsController> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             StorageProvider = storageProvider;
@@ -111,7 +112,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var attachment = await DB.Attachments.FindAsync(attachmentId);
             if (attachment == null) return NotFound();
-            Logger.Information("Attachment {AttachmentId} was viewed from {AttachmentPath}", attachmentId, attachment.FilePath);
+            LogInformation("Attachment {AttachmentId} was viewed from {AttachmentPath}", attachmentId, attachment.FilePath);
             var file = await StorageProvider.OpenFileAsync(attachment.FilePath);
             var st = await file.OpenReadAsync();
             return File(st, attachment.ContentType);
@@ -124,7 +125,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var attachment = await DB.Attachments.FindAsync(attachmentId);
             if (attachment == null) return NotFound();
-            Logger.Information("Attachment {AttachmentId} was downloaded from {AttachmentPath}", attachmentId, attachment.FilePath);
+            LogInformation("Attachment {AttachmentId} was downloaded from {AttachmentPath}", attachmentId, attachment.FilePath);
             var file = await StorageProvider.OpenFileAsync(attachment.FilePath);
             var st = await file.OpenReadAsync();
             return File(st, attachment.ContentType, attachment.FileName);
@@ -151,11 +152,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 try
                 {
                     var document = attachment.Document;
-                    Logger.Information("Attachment {AttachmentId} was soft deleted from {DocumentId}", attachmentId, document.DocumentId);
+                    LogInformation("Attachment {AttachmentId} was soft deleted from {DocumentId}", attachmentId, document.DocumentId);
                     attachment.Delete(CurrentUserId);
                     if (document.DocumentAttachments.Where(a => a.AttachmentsId != attachmentId).Count() == 0)
                     {
-                        Logger.Information("Document {DocumentId} was soft deleted because it had no more attachments", document.DocumentId);
+                        LogInformation("Document {DocumentId} was soft deleted because it had no more attachments", document.DocumentId);
                         document.Delete(CurrentUserId);
                     }
                     await DB.SaveChangesAsync();

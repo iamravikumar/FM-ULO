@@ -10,19 +10,18 @@ using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.AspNetCore.Services;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
-using Serilog;
 using Traffk.StorageProviders;
 using R = RevolutionaryStuff.Core;
 using U = GSA.UnliquidatedObligations.Utility;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
-    public class BackgroundTasks : IBackgroundTasks
+    public class BackgroundTasks : BaseLoggingDisposable, IBackgroundTasks
     {
         private readonly IEmailServer EmailServer;
         private readonly UloDbContext DB;
@@ -34,7 +33,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IOptions<Config> ConfigOptions;
         private readonly UserHelpers UserHelpers;
         private readonly PortalHelpers PortalHelpers;
-        protected readonly ILogger Log;
         IBackgroundTasks BT => (IBackgroundTasks)this;
 
         public class Config
@@ -59,7 +57,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
         }
 
-        public BackgroundTasks(IConnectionStringProvider connectionStringProvider, SpecialFolderProvider specialFolderProvider, RazorTemplateProcessor razorTemplateProcessor, IReportRunner reportRunner, IOptions<Config> configOptions, UserHelpers userHelpers, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger log, PortalHelpers portalHelpers)
+        public BackgroundTasks(IConnectionStringProvider connectionStringProvider, SpecialFolderProvider specialFolderProvider, RazorTemplateProcessor razorTemplateProcessor, IReportRunner reportRunner, IOptions<Config> configOptions, UserHelpers userHelpers, IEmailServer emailServer, UloDbContext db, IWorkflowManager workflowManager, ILogger<BackgroundTasks> logger, PortalHelpers portalHelpers)
+            : base(logger)
         {
             ConnectionStringProvider = connectionStringProvider;
             SpecialFolderProvider = specialFolderProvider;
@@ -71,7 +70,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
             DB = db;
             WorkflowManager = workflowManager;
             PortalHelpers = portalHelpers;
-            Log = log.ForContext(GetType());
         }
 
         async Task IBackgroundTasks.EmailReport(string[] recipients, string subjectTemplate, string bodyTemplate, string htmlBodyTemplate, object model, string reportName, IDictionary<string, string> paramValueByParamName)
@@ -133,13 +131,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
             Action<Exception, int> onRowAddError = (ex, rowNum) =>
             {
-                Log.Error(ex, "UploadFiles: OnRowAddError with {rowNum} in {importer} with {reviewId}", rowNum, importer, reviewId);
+                LogError(ex, "UploadFiles: OnRowAddError with {rowNum} in {importer} with {reviewId}", rowNum, importer, reviewId);
                 ++rowErrorCount;
             };
 
             RowsTransferredEventHandler rowsTransferred = (sender, e) =>
             {
-                Log.Information("UploadFiles: Loading progress. {rowCount} in {importer} with {reviewId}", e.RowsTransferred, importer, reviewId);
+                LogInformation("UploadFiles: Loading progress. {rowCount} in {importer} with {reviewId}", e.RowsTransferred, importer, reviewId);
             };
 
             try
@@ -153,14 +151,14 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     .Union(model.PegasysOpenItemsCreditCards)
                     .Union(model.ActiveCardholderFiles)
                     .ToList();
-                Log.Information("Will ultimately process the following files:\n{filePaths}", allFiles.Format("\n", "\t{0}"));
+                LogInformation("Will ultimately process the following files:\n{filePaths}", allFiles.Format("\n", "\t{0}"));
 
-                importer = nameof(Load442s);
+                importer = nameof(Load442sAsync);
                 foreach (var fn in model.PegasysFilePathsList)
                 {
                     using (var st = await folder.OpenFileReadStreamAsync(fn))
                     {
-                        Load442s(reviewId, st, onRowAddError, rowsTransferred);
+                        await Load442sAsync(reviewId, st, onRowAddError, rowsTransferred);
                     }
                 }
 
@@ -220,13 +218,13 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Problem with UploadFiles in {reviewId}", reviewId);
+                LogError(ex, "Problem with UploadFiles in {reviewId}", reviewId);
                 throw;
             }
             finally
             {
-                var level = rowErrorCount == 0 ? Serilog.Events.LogEventLevel.Information : Serilog.Events.LogEventLevel.Warning;
-                Log.Write(level, "Importing of {reviewId} yielded {rowErrorCount}.  Note, this does not indicate either overall success or failure.", reviewId, rowErrorCount);
+                var level = rowErrorCount == 0 ? LogLevel.Information : LogLevel.Warning;
+                Logger.Log(level, "Importing of {reviewId} yielded {rowErrorCount}.  Note, this does not indicate either overall success or failure.", reviewId, rowErrorCount);
             }
         }
 
@@ -260,7 +258,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             catch (Exception ex)
             {
-                Log.Error(ex,
+                LogError(ex,
                     "Problem in {methodName}",
                     nameof(IBackgroundTasks.SendAssignWorkFlowsBatchNotifications));
                 throw;
@@ -276,7 +274,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             catch (Exception ex)
             {
-                Log.Error(ex,
+                LogError(ex,
                     "Problem in {methodName}",
                     nameof(IBackgroundTasks.SendAssignWorkFlowsBatchNotifications));
                 throw;
@@ -298,7 +296,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             catch (Exception ex)
             {
-                Log.Error(ex,
+                LogError(ex,
                     "Problem in {methodName} after having queued {assigneesProcessed} user batch notifications",
                     nameof(IBackgroundTasks.SendAssignWorkFlowsBatchNotifications),
                     assigneesProcessed);
@@ -316,7 +314,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 var review = await DB.Reviews.FindAsync(reviewId);
                 if (review == null)
                 {
-                    Log.Information("AssignWorkFlows could not find {reviewId}", reviewId);
+                    LogInformation("AssignWorkFlows could not find {reviewId}", reviewId);
                     return;
                 }
                 review.Status = Review.StatusNames.Assigning;
@@ -329,7 +327,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     //OrderBy(wf => wf.TargetUlo.ReviewId == reviewId ? 0 : 1).
                     ToList();
 
-                Log.Information("AssignWorkFlows {reviewId} assigning up to {totalRecords} with {batchSize}", reviewId, workflows.Count, config.AssignWorkFlowsBatchSize);
+                LogInformation("AssignWorkFlows {reviewId} assigning up to {totalRecords} with {batchSize}", reviewId, workflows.Count, config.AssignWorkFlowsBatchSize);
 
                 int z = 0;
                 foreach (var workflow in workflows)
@@ -338,18 +336,18 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     if (++z % 10 == 0)
                     {
                         await DB.SaveChangesAsync();
-                        Log.Debug("AssignWorkFlows {reviewId} save after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
+                        LogDebug("AssignWorkFlows {reviewId} save after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
                         var r = await DB.Reviews.FindAsync(reviewId);
                         if (r == null)
                         {
-                            Log.Information("AssignWorkFlows cancelled as {reviewId} has been deleted", reviewId);
+                            LogInformation("AssignWorkFlows cancelled as {reviewId} has been deleted", reviewId);
                             break;
                         }
                     }
                 }
                 review.SetStatusDependingOnClosedBit();
                 await DB.SaveChangesAsync();
-                Log.Information("AssignWorkFlows {reviewId} completed after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
+                LogInformation("AssignWorkFlows {reviewId} completed after {recordsProcessed}/{totalRecords}", reviewId, z, workflows.Count);
 
                 if (z > 0)
                 {
@@ -362,7 +360,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             catch (Exception ex)
             {
-                Log.Error(ex,
+                LogError(ex,
                     "Problem in {methodName}",
                     nameof(IBackgroundTasks.AssignWorkFlows));
                 throw;
@@ -402,10 +400,10 @@ namespace GSA.UnliquidatedObligations.Web.Services
             FinalizeAndUpload(dt, reviewId, rowsTransferred);
         }
 
-        private void Load442s(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+        private async Task Load442sAsync(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
         {
             var dt = CreatePegasysOpenObligationsDataTable();
-            dt.LoadRowsFromDelineatedText(st, new LoadRowsFromDelineatedTextSettings
+            await dt.LoadRowsFromDelineatedTextAsync(st, new LoadRowsFromDelineatedTextSettings
             {
                 SkipRawRows = 2,
                 RowAddErrorHandler = onRowAddError

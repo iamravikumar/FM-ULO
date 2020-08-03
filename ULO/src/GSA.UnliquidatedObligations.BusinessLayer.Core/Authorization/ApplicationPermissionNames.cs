@@ -42,5 +42,8 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Authorization
 
         [Display(Name = "Create Financial Activity", Description = "BOT: Can create a financial activity.")]
         CreateFinancialActivity,
+
+        [Display(Name = "Edit any Case", Description = "Edit any case.")]
+        EditAnyCase,
     }
 }

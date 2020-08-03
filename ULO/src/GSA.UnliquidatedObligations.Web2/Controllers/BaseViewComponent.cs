@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using Serilog;
-using Serilog.Core;
-using Serilog.Core.Enrichers;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -27,13 +24,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             PortalHelpers = portalHelpers;
             UserHelpers = userHelpers;
             DB.CurrentUserId = userHelpers.CurrentUserId;
-
-            Logger = logger.ForContext(new ILogEventEnricher[]
-            {
-                new PropertyEnricher(typeof(Type).Name, this.GetType().Name),
-            });
-
-            Logger.Debug("Page request to {Controller}", this.GetType().Name);
+            logger.LogDebug("Page request to {Controller}", this.GetType().Name);
         }
 
         public string CurrentUserId

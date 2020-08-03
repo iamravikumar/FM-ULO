@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -32,11 +32,11 @@ namespace GSA.UnliquidatedObligations.Web
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex, "Problem loading timezone with id = [{timezoneId}]", ConfigOptions.Value.TimezoneId);
+                        Logger.LogError(ex, "Problem loading timezone with id = [{timezoneId}]", ConfigOptions.Value.TimezoneId);
                         DisplayTimeZone_p = TimeZoneInfo.Local;
                         try
                         {
-                            Logger.Information(
+                            Logger.LogInformation(
                                 "Valid timeZoneIds include {validIds}",
                                 TimeZoneInfo.GetSystemTimeZones().ConvertAll(t => t.Id).Format(", ", "[{0}]")
                                 );
@@ -137,7 +137,7 @@ namespace GSA.UnliquidatedObligations.Web
 
         public string DefaultUloConnectionString => Configuration.GetConnectionString(DefaultConectionStringName);
 
-        public PortalHelpers(IConfiguration configuration, IHostEnvironment hostingEnvironment, IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger logger)
+        public PortalHelpers(IConfiguration configuration, IHostEnvironment hostingEnvironment, IOptions<SprintConfig> sprintConfigOptions, IOptions<Config> configOptions, IOptions<Controllers.AccountController.Config> accountConfigOptions, UloDbContext db, ICacher cacher, ILogger<PortalHelpers> logger)
         {
             Requires.NonNull(sprintConfigOptions, nameof(sprintConfigOptions));
             Requires.NonNull(configOptions, nameof(configOptions));

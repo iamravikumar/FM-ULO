@@ -1,8 +1,8 @@
 ﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core.Caching;
-using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -16,7 +16,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string About = "About";
         }
 
-        public HomeController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+        public HomeController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger<HomeController> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         { }
 

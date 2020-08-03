@@ -10,11 +10,11 @@ using GSA.UnliquidatedObligations.Web.Services;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.AspNetCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -53,7 +53,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public string ReportRecipientEmailDomains { get; set; }
         }
 
-        public ReportsController(IReportRunner reportRunner, IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger, IRecurringJobManager rjm, IBackgroundJobClient backgroundJobClient)
+        public ReportsController(IReportRunner reportRunner, IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger<ReportsController> logger, IRecurringJobManager rjm, IBackgroundJobClient backgroundJobClient)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             ReportRunner = reportRunner;

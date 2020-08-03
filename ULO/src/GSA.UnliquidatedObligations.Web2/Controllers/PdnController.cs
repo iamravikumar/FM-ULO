@@ -10,9 +10,9 @@ using GSA.UnliquidatedObligations.Web.Authorization;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -32,7 +32,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string Save = "Save";
         }
 
-        public PdnController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+        public PdnController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger<PdnController> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         { }
 

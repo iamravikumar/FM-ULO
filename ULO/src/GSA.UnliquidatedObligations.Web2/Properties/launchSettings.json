@@ -14,7 +14,9 @@
       "environmentVariables": {
         "APPSETTINGS_DIRECTORY": "",
         "ASPNETCORE_ENVIRONMENT": "Production",
-        "LOGFILE_DIRECTORY": "%temp%\\ulog\\"
+        "ATTACHMENT_DIRECTORY": "%temp%ulo\\attachments\\",
+        "TEMPFILE_DIRECTORY": "%temp%gsaulotemp\\",
+        "LOGFILE_DIRECTORY": "%temp%ulo\\logs\\"
       }
     },
     "GSA.UnliquidatedObligations.Web2": {

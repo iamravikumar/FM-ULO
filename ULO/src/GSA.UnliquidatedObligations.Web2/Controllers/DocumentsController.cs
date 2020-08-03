@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 
@@ -38,7 +39,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         
         private readonly IHostEnvironment HostingEnvironment;
        
-        public DocumentsController(SpecialFolderProvider specialFolderProvider, UloUserManager userManager, IHostEnvironment hostingEnvironment, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, Serilog.ILogger logger)
+        public DocumentsController(SpecialFolderProvider specialFolderProvider, UloUserManager userManager, IHostEnvironment hostingEnvironment, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger<DocumentsController> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             SpecialFolderProvider = specialFolderProvider;
@@ -252,7 +253,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 document.Delete(CurrentUserId);
                 await DB.SaveChangesAsync();
-                Logger.Information("Document {DocumentId} was soft deleted", document.DocumentId);
+                LogInformation("Document {DocumentId} was soft deleted", document.DocumentId);
                 return Json(new
                 {
                     Id = documentId
@@ -315,7 +316,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 await DB.SaveChangesAsync();
                 //DB.Refresh(copiedDocs);
-                Logger.Information(
+                LogInformation(
                     "CopyUniqueMissingLineageDocuments({workflowId}) => {copiedDocumentCount}, {copiedAttachmentCount}",
                     workflowId,
                     copiedDocumentCount,
@@ -338,6 +339,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             catch (Exception ex)
             {
+                LogError(ex, nameof(CopyUniqueMissingLineageDocuments));
                 return base.CreateJsonError(ex);
             }
         }

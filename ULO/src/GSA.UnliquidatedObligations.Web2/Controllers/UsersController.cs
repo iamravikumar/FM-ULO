@@ -9,9 +9,9 @@ using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -32,7 +32,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private readonly UloUserManager UserManager; 
 
-        public UsersController(UloDbContext db,UloUserManager userManager, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+        public UsersController(UloDbContext db,UloUserManager userManager, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger<UsersController> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             UserManager = userManager;
@@ -87,7 +87,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var users = await DB.AspNetUsers.Where(u => u.UserName == username).ToListAsync();
             if (users.Count != 1) return NotFound();
             var user = users[0];
-            Log.Information("Viewing user with UserId={UserId} => UserName={UserName}, Email={Email}", user.Id, user.UserName, user.Email);
+            LogInformation("Viewing user with UserId={UserId} => UserName={UserName}, Email={Email}", user.Id, user.UserName, user.Email);
             var m = await CreateModelAsync(users);
             await PopulateDetailsViewBag();
             return View(m.Single());
@@ -164,7 +164,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     var res = await UserManager.CreateAsync(new AspNetUser { UserName = m.UserName, Email = StringHelpers.TrimOrNull(m.Email) });
                     u = await DB.AspNetUsers.FirstOrDefaultAsync(z => z.UserName == m.UserName);
                     if(u != null)
-                    Log.Information("Created new user UserId={UserId} => UserName={UserName}, Email={Email}", u.Id, u.UserName, u.Email);
+                    LogInformation("Created new user UserId={UserId} => UserName={UserName}, Email={Email}", u.Id, u.UserName, u.Email);
                 }
                 else if (u==null)
                 {
@@ -172,7 +172,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 }
                 else
                 {
-                    Log.Information("Modified existing with UserId={UserId} => OldUserName={OldUserName}, OldEmail={OldEmail}, NewUserName={NewUserName}, NewEmail={NewEmail}", u.Id, u.UserName, u.Email, m.UserName, m.Email);
+                    LogInformation("Modified existing with UserId={UserId} => OldUserName={OldUserName}, OldEmail={OldEmail}, NewUserName={NewUserName}, NewEmail={NewEmail}", u.Id, u.UserName, u.Email, m.UserName, m.Email);
                     u.Email = m.Email;
                     u.UserName = m.UserName;
                 }

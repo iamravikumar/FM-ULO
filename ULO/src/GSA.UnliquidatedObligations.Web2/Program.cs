@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -11,12 +12,6 @@ namespace GSA.UnliquidatedObligations.Web
     public class Program
     {
         public static readonly IDictionary<string, object> EnvironmentInfo = new Dictionary<string, object>();
-
-        internal static class GsaEnvironmentVariableNames
-        {
-            public const string AppsettingsDirectory = "APPSETTINGS_DIRECTORY";
-            public const string LogfileDirectory = "LOGFILE_DIRECTORY";
-        }
 
         internal static class GsaAppSettingsVariablePaths
         {
@@ -35,18 +30,20 @@ namespace GSA.UnliquidatedObligations.Web
             builder.AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
             var c = builder.Build();
-            var appSettingsDirectory = c[GsaEnvironmentVariableNames.AppsettingsDirectory];
             var appName = c[GsaAppSettingsVariablePaths.AppName];
-            EnvironmentInfo[GsaEnvironmentVariableNames.AppsettingsDirectory] = appSettingsDirectory;
-            EnvironmentInfo[GsaEnvironmentVariableNames.LogfileDirectory] = c[GsaEnvironmentVariableNames.LogfileDirectory];
             EnvironmentInfo[GsaAppSettingsVariablePaths.AppName] = appName;
-            if (!string.IsNullOrEmpty(appSettingsDirectory))
+            var gas = c.GetGsaAdministrativeSettings();
+            EnvironmentInfo[nameof(gas.LogFileDirectory)] = gas.LogFileDirectory;
+            EnvironmentInfo[nameof(gas.TempFileDirectory)] = gas.TempFileDirectory;
+            EnvironmentInfo[nameof(gas.AppSettingsDirectory)] = gas.AppSettingsDirectory;
+            EnvironmentInfo[nameof(gas.AttachmentDirectory)] = gas.AttachmentDirectory;
+            if (!string.IsNullOrEmpty(gas.AppSettingsDirectory))
             {
                 EnvironmentInfo[nameof(appName)] = appName;
                 if (!string.IsNullOrEmpty(appName))
                 {
                     var gsaAppSettingsOptional = Parse.ParseBool(c[GsaAppSettingsVariablePaths.AppSetttingsOptional]);
-                    builder.SetBasePath(appSettingsDirectory);
+                    builder.SetBasePath(gas.AppSettingsDirectory);
                     var itAppSettingsFile = $"{appName}_appsettings.json";
                     builder.AddJsonFile(itAppSettingsFile, optional: gsaAppSettingsOptional, reloadOnChange: true);
                     EnvironmentInfo[nameof(itAppSettingsFile)] = itAppSettingsFile;
@@ -87,14 +84,20 @@ namespace GSA.UnliquidatedObligations.Web
                     loggerConfiguration.WriteTo.MSSqlServer(connectionString, c["SerilogSqlServerSink:TableName"], schemaName: c["SerilogSqlServerSink:SchemaName"]);
                 }
                 var appName = c[GsaAppSettingsVariablePaths.AppName];
-                var logDirectory = c[GsaEnvironmentVariableNames.LogfileDirectory];
-                if (!string.IsNullOrEmpty(logDirectory))
+                var gas = c.GetGsaAdministrativeSettings();
+                if (!string.IsNullOrEmpty(gas.LogFileDirectory))
                 {
                     try
                     {
-                        logDirectory = Environment.ExpandEnvironmentVariables(logDirectory);
-                        System.IO.Directory.CreateDirectory(logDirectory);
-                        var logRotatingFileName = $"{logDirectory}{appName}.log";
+                        if (File.Exists(gas.LogFileDirectory))
+                        {
+                            Stuff.FileTryDelete(gas.LogFileDirectory);
+                        }
+                        if (!Directory.Exists(gas.LogFileDirectory))
+                        { 
+                            Directory.CreateDirectory(gas.LogFileDirectory);
+                        }
+                        var logRotatingFileName = Path.Combine(gas.LogFileDirectory, $"{appName}.log");
                         EnvironmentInfo[nameof(logRotatingFileName)] = logRotatingFileName;
                         loggerConfiguration.WriteTo.RollingFile(logRotatingFileName, logLevel, flushToDiskInterval: TimeSpan.FromSeconds(5));
                     }
@@ -106,10 +109,14 @@ namespace GSA.UnliquidatedObligations.Web
                 Log.Logger = loggerConfiguration.CreateLogger();
                 logging.AddSerilog();
                 Log.Information(
-                    "Logging Initialized for APP_NAME=[{appName}] to {LOGFILE_DIRECTORY}=[{logDirectory}] from {APPSETTINGS_DIRECTORY}=[{appSettingsDirectory}]",
+                    @"Logging Initialized for:
+{appName}
+{LogFileDirectory}
+{TempFileDirectory}
+{AppSettingsDirectory}
+{AttachmentDirectory}",
                     appName,
-                    GsaEnvironmentVariableNames.LogfileDirectory, logDirectory,
-                    GsaEnvironmentVariableNames.AppsettingsDirectory, c[GsaEnvironmentVariableNames.AppsettingsDirectory]
+                    gas.LogFileDirectory, gas.TempFileDirectory, gas.AppSettingsDirectory, gas.AttachmentDirectory
                     );
             })
            .UseStartup<Startup>();

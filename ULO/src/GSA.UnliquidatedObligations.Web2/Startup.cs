@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Configuration;
+using System.Diagnostics;
 using System.Net.Mail;
 using GSA.Authentication.LegacyFormsAuthentication;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
@@ -143,10 +144,15 @@ namespace GSA.UnliquidatedObligations.Web
             });
 
 
-            services.ConfigureOptions<AzureBlobStorageProvider.Config>(AzureBlobStorageProvider.Config.ConfigSectionName);
-            services.ConfigureOptions<PhysicalStorageProvider.Config>(PhysicalStorageProvider.Config.ConfigSectionName);
-            services.AddScoped<AzureBlobStorageProvider>();
+            //            services.ConfigureOptions<PhysicalStorageProvider.Config>(PhysicalStorageProvider.Config.ConfigSectionName);
+            services.AddOptions<PhysicalStorageProvider.Config>().Configure<IConfiguration>((pspc, c) => {
+                c.GetSection(PhysicalStorageProvider.Config.ConfigSectionName).Bind(pspc);
+                var gas = c.GetGsaAdministrativeSettings();
+                pspc.RootFolder = gas.AttachmentDirectory ?? pspc.RootFolder;
+            });
             services.AddScoped<PhysicalStorageProvider>();
+            services.ConfigureOptions<AzureBlobStorageProvider.Config>(AzureBlobStorageProvider.Config.ConfigSectionName);
+            services.AddScoped<AzureBlobStorageProvider>();
             services.UseStorageProviderConfigTypeNameSelector();
             services.AddScoped<SpecialFolderProvider>();
         }

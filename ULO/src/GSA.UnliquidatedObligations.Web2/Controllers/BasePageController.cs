@@ -4,11 +4,9 @@ using System.Linq;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using Serilog;
-using Serilog.Core;
-using Serilog.Core.Enrichers;
 using RASP = RevolutionaryStuff.AspNetCore;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
@@ -23,7 +21,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         protected readonly PortalHelpers PortalHelpers;
-        protected readonly ILogger Logger;
         protected readonly ICacher Cacher;
         protected readonly UloDbContext DB;
         protected readonly UserHelpers UserHelpers;
@@ -34,21 +31,14 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         protected BasePageController(UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+            : base(logger)
         {
-            Requires.NonNull(logger, nameof(logger));
-
             DB = db;
             Cacher = cacher;
             PortalHelpers = portalHelpers;
             UserHelpers = userHelpers;
             DB.CurrentUserId = userHelpers.CurrentUserId;
-
-            Logger = logger.ForContext(new ILogEventEnricher[]
-            {
-                new PropertyEnricher(typeof(Type).Name, this.GetType().Name),
-            });
-
-            Logger.Debug("Page request to {Controller}", this.GetType().Name);
+            LogDebug("Page request to {Controller}", this.GetType().Name);
         }
 
         public string CurrentUserId
@@ -93,12 +83,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         }
 
         protected void LogStaleWorkflowError(Workflow wf, string workflowRowVersionString, DateTime? editingBeganAtUtc)
-        {
-            Log.Error(
+            => LogError(
                 "Workflow {workflowId} is stale. Trying to edit {staleWorkflowRowVersion} when {currentWorkflowRowVersion} is the most recent.  Record was in the wind for {inprogressTimespan}.",
                 wf.WorkflowId, workflowRowVersionString, wf.WorkflowRowVersionString, DateTime.UtcNow.Subtract(editingBeganAtUtc.GetValueOrDefault(DateTime.MinValue))
                 );
-        }
 
         protected string GetStaleWorkflowErrorMessage(Workflow wf, string workflowRowVersionString, DateTime? editingBeganAtUtc)
            => string.Format(PortalHelpers.StaleWorkflowErrorMessageTemplate, workflowRowVersionString, editingBeganAtUtc);

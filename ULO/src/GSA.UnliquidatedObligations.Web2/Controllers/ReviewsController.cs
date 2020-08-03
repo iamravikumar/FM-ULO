@@ -10,6 +10,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 
@@ -48,7 +49,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly SpecialFolderProvider SpecialFolderProvider;
         private readonly IBackgroundJobClient BackgroundJobClient;
        
-        public ReviewsController(SpecialFolderProvider specialFolderProvider, IBackgroundJobClient backgroundJobClient, UloDbContext db, PortalHelpers portalHelpers, UserHelpers userHelpers, ICacher cacher, Serilog.ILogger logger)
+        public ReviewsController(SpecialFolderProvider specialFolderProvider, IBackgroundJobClient backgroundJobClient, UloDbContext db, PortalHelpers portalHelpers, UserHelpers userHelpers, ICacher cacher, ILogger<ReviewsController> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             SpecialFolderProvider = specialFolderProvider;
@@ -248,7 +249,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 {
                     if (formFile.Length == 0) continue;
                     var name = formFile.FileName;
-                    Logger.Information("Storing review {reviewId} of type {typeName} with {size} for {fileName}", review.ReviewId, formFile.Name, formFile.Length, name);
+                    LogInformation("Storing review {reviewId} of type {typeName} with {size} for {fileName}", review.ReviewId, formFile.Name, formFile.Length, name);
                     var file = await folder.CreateFileAsync(name);
                     using (var dst = await file.OpenWriteAsync())
                     {

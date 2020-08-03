@@ -12,6 +12,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RevolutionaryStuff.AspNetCore;
 using RevolutionaryStuff.Core;
@@ -39,7 +40,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly IBackgroundJobClient BackgroundJobClient;
 
 
-        public RequestForReassignmentsController(IBackgroundJobClient backgroundJobClient, IWorkflowManager manager, UloUserManager userManager, UloDbContext db, PortalHelpers portalHelpers, UserHelpers userHelpers, ICacher cacher, Serilog.ILogger logger)
+        public RequestForReassignmentsController(IBackgroundJobClient backgroundJobClient, IWorkflowManager manager, UloUserManager userManager, UloDbContext db, PortalHelpers portalHelpers, UserHelpers userHelpers, ICacher cacher, ILogger<RequestForReassignmentsController> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             BackgroundJobClient = backgroundJobClient;

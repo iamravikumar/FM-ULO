@@ -13,14 +13,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RevolutionaryStuff.AspNetCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
-using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -64,7 +65,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         private readonly IOptions<Config> ConfigOptions;
         protected readonly IWorkflowManager Manager;
 
-        public UloController(IWorkflowManager manager, IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+        public UloController(IWorkflowManager manager, IOptions<Config> configOptions, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger<UloController> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             ConfigOptions = configOptions;
@@ -149,10 +150,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 return RedirectToAction(ActionNames.Details, new { uloId, workflowId });
             }
 
-            Log.Information("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
+            LogInformation("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
 
             var workflow = await FindWorkflowAsync(workflowId);
-            var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
+            var workflowAssignedToCurrentUser =
+                CurrentUserId == workflow.OwnerUserId ||
+                UserHelpers.HasPermission(this.HttpContext.User, ApplicationPermissionNames.EditAnyCase);
 
             var belongs =
                 workflow.OwnerUser.UserType == AspNetUser.UserTypes.Group &&
@@ -189,7 +192,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         [Route("ulos/myTasks")]
         public IActionResult MyTasks(string t, string sortCol, string sortDir, int? page, int? pageSize)
         {
-            Logger.Information("{method}({t}, {sortCol}, {sortDir}, {page}, {pageSize})", nameof(MyTasks), t, sortCol, sortDir, page, pageSize);
+            LogInformation("{method}({t}, {sortCol}, {sortDir}, {page}, {pageSize})", nameof(MyTasks), t, sortCol, sortDir, page, pageSize);
 
             SetNoDataMessage(ConfigOptions.Value.NoTasks);
 
@@ -224,10 +227,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 if (t == null && tab.ItemCount > 0)
                 {
                     t = tab.TabKey;
-                    Logger.Information("Tabkey was null.  Setting it to the first tab that has data = {tabTabKey}", t);
+                    LogInformation("Tabkey was null.  Setting it to the first tab that has data = {tabTabKey}", t);
                 }
                 tab.IsCurrent = tab.TabKey == t;
-                Logger.Information(
+                LogInformation(
                     "TABITERATION: {controller} {name} {tabIsCurrent} {tabTabKey} {t}",
                     this.GetType().Name, name, tab.IsCurrent, tab.TabKey, t);
                 tabs.Add(tab);
@@ -493,7 +496,7 @@ Browse:
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Issue in {nameof(CreateFromJsonBody)}");
+                LogError(ex, $"Issue in {nameof(CreateFromJsonBody)}");
                 return base.CreateJsonError(ex);
             }
         }
@@ -636,7 +639,7 @@ Browse:
             if (wf == null) return NotFound();
             if (ModelState.IsValid)
             {
-                Log.Information("Altering ULO {UloId} with Workflow {WorkflowId} via command {AlterCommand}", uloId, workflowId, Request.Query["WhatNext"]);
+                LogInformation("Altering ULO {UloId} with Workflow {WorkflowId} via command {AlterCommand}", uloId, workflowId, Request.Query["WhatNext"]);
 
                 if (wf.WorkflowRowVersionString != advanceModel.WorkflowRowVersionString)
                 {

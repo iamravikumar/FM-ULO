@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data;
+using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
-using Serilog;
-using Traffk.StorageProviders;
 
 namespace GSA.UnliquidatedObligations.Web
 {
@@ -31,7 +28,8 @@ namespace GSA.UnliquidatedObligations.Web
 
         public static DataSet ExecuteReadDataSet(this SqlCommand command, ILogger logger=null, string tableNamePattern = null)
         {
-            logger = logger ?? Serilog.Log.Logger;
+            Requires.NonNull(logger, nameof(logger));
+
             var conn = command.Connection;
             var ds = new DataSet();
             var tableNameExpr = new Regex(tableNamePattern ?? @"\Wtable:(\w+)\s*$", RegexOptions.IgnoreCase);
@@ -61,7 +59,7 @@ ReadTable:
                             }
                             dt = new DataTable(tableName);
                             ds.Tables.Add(dt);
-                            logger.Information("Exporting from table [{tableName}]...", dt.TableName);
+                            logger.LogInformation("Exporting from table [{tableName}]...", dt.TableName);
 
                             var colsSeen = new HashSet<string>(Comparers.CaseInsensitiveStringComparer);
                             for (int z = 0; z < reader.FieldCount; ++z)
@@ -81,7 +79,7 @@ ReadTable:
                         dt.Rows.Add(vals);
                         if (dt.Rows.Count % 1000 == 0)
                         {
-                            logger.Debug("Exported {rowsExported} rows from table [{tableName}]...",
+                            logger.LogDebug("Exported {rowsExported} rows from table [{tableName}]...",
                                                     dt.Rows.Count,
                                                     dt.TableName
                                                     );
@@ -89,7 +87,7 @@ ReadTable:
                     }
                     if (dt != null)
                     {
-                        logger.Information("Exported {rowsExported} rows from table [{tableName}]", dt.Rows.Count, dt.TableName);
+                        logger.LogInformation("Exported {rowsExported} rows from table [{tableName}]", dt.Rows.Count, dt.TableName);
                         if (reader.NextResult())
                         {
                             goto ReadTable;

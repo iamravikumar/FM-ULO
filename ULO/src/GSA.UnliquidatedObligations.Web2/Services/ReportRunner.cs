@@ -6,15 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
-using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
-    public class ReportRunner : IReportRunner
+    public class ReportRunner : BaseLoggingDisposable, IReportRunner
     {
-        private readonly ILogger Logger;
         private readonly PortalHelpers PortalHelpers;
         private readonly IOptions<Config> ConfigOptions;
 
@@ -25,9 +24,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
             public int TimeoutInSeconds { get; set; } = 60*60;
         }
 
-        public ReportRunner(ILogger logger, PortalHelpers portalHelpers, IOptions<Config> configOptions)
+        public ReportRunner(ILogger<ReportRunner> logger, PortalHelpers portalHelpers, IOptions<Config> configOptions)
+            : base(logger)
         {
-            Logger = logger;
             PortalHelpers = portalHelpers;
             ConfigOptions = configOptions;
         }
@@ -40,7 +39,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 report = (await PortalHelpers.GetReportsAsync(reportName)).FirstOrDefault();
                 using (var conn = new SqlConnection(PortalHelpers.DefaultUloConnectionString))
                 {
-                    Log.Information("Executing report {ReportName} with {SprocSchema}.{SprocName}", reportName, report.SprocSchema, report.SprocName);
+                    LogInformation("Executing report {ReportName} with {SprocSchema}.{SprocName}", reportName, report.SprocSchema, report.SprocName);
                     await conn.OpenAsync();
                     using (var cmd = new SqlCommand($"[{report.SprocSchema}].[{report.SprocName}]", conn)
                     {
@@ -73,7 +72,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "error running report {name}", report.Name);
+                LogError(ex, "error running report {name}", report.Name);
                 throw;
             }
         }

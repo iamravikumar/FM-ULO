@@ -7,10 +7,10 @@ using GSA.UnliquidatedObligations.Web.Identity;
 using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using Serilog;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
@@ -44,7 +44,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public LegacyFormsAuthenticationService.Config LegacyFormsAuthenticationConfig { get; set; }
         }
 
-        public AccountController(ILegacyFormsAuthenticationService legacyFormsAuthenticationService, IOptions<Config> configOptions, UloSignInManager signInManager, UloUserManager userManager, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger logger)
+        public AccountController(ILegacyFormsAuthenticationService legacyFormsAuthenticationService, IOptions<Config> configOptions, UloSignInManager signInManager, UloUserManager userManager, UloDbContext db, ICacher cacher, PortalHelpers portalHelpers, UserHelpers userHelpers, ILogger<AccountController> logger)
             : base(db, cacher, portalHelpers, userHelpers, logger)
         {
             Requires.NonNull(legacyFormsAuthenticationService, nameof(legacyFormsAuthenticationService));
@@ -67,66 +67,6 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             return RedirectToAction(UloController.ActionNames.Index, UloController.Name);
         }
 
-
-
-        [AllowAnonymous]
-        [ActionName("a")]
-        public ActionResult a()
-        {
-            Logger.Information("Method = {method}", nameof(a));
-            return View();
-        }
-
-        [AllowAnonymous]
-        [ActionName("B")]
-        public ActionResult B()
-        {
-            Logger.Information("Method = {method}", nameof(B));
-            return View();
-        }
-
-        [AllowAnonymous]
-        [ActionName("C")]
-        public ActionResult C()
-        {
-            Logger.Information("Method = {method}", nameof(C));
-            return View();
-        }
-
-        [AllowAnonymous]
-        [ActionName("d")]
-        public ActionResult d(string echo)
-        {
-            Logger.Information("Method = {method}; Echo = {echo}", nameof(d), echo);
-            ViewData["echo"] = echo;
-            return View("dd");
-        }
-
-        [AllowAnonymous]
-        [ActionName("e")]
-        public ActionResult e(string echo)
-        {
-            Logger.Information("Method = {method}; Echo = {echo}", nameof(e), echo);
-            ViewData["echo"] = echo;
-            return View();
-        }
-
-        [AllowAnonymous]
-        [ActionName("f")]
-        public ActionResult f(DevLoginViewModel model=null)
-        {
-            Logger.Information("Method = {method}; Model={isNull}", nameof(f), model==null);
-            return View("devlogin");
-        }
-
-        [Route("/account/g")]
-        [AllowAnonymous]
-        [ActionName("GGG")]
-        public ActionResult GREAT(DevLoginViewModel model = null)
-        {
-            return View("g");
-        }
-
         ////
         // GET: /Account/Login
         [Route("/account/login")]
@@ -136,7 +76,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             PortalHelpers.HideLoginLinks(ViewBag, true);
 
-            Logger.Information(
+            LogInformation(
                 "Login being called.returnUrl={returnUrl} UseDevAuthentication={UseDevAuthentication} SecureAuthCookieName={SecureAuthCookieName} cookie={cookie}", 
                 returnUrl, 
                 ConfigOptions.Value.UseDevAuthentication,
@@ -174,7 +114,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 //        [ValidateAntiForgeryToken]
         public async Task<ActionResult> DevLogin(DevLoginViewModel model, string returnUrl)
         {
-            Logger.Information("DevLogin being called!");
+            LogInformation("DevLogin being called!");
 
             OnlySupportedInDevelopmentEnvironment();
 
@@ -187,7 +127,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (user != null && model.Password == ConfigOptions.Value.DevLoginPassword)
             {
                 await SignInManager.SignInAsync(user, model.RememberMe);
-                Log.Information("Dev Login success for user {NewUserName}", model.Username);
+                LogInformation("Dev Login success for user {NewUserName}", model.Username);
                 return RedirectToLocal(returnUrl);
             }
             ModelState.AddModelError("", "Invalid login attempt.");
@@ -201,12 +141,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             if (ConfigOptions.Value.UseDevAuthentication)
             {
-                Log.Information("Dev LogOff");
+                LogInformation("Dev LogOff");
                 await SignInManager.SignOutAsync();
             }
             else
             {
-                Log.Information("GSA LogOff");
+                LogInformation("GSA LogOff");
             }
 /*
             Session.Abandon();
@@ -281,10 +221,10 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Must redirect as we could not decrypt {EncryptedTicket}", cookie);
+                LogError(ex, "Must redirect as we could not decrypt {EncryptedTicket}", cookie);
                 return RedirectToAction(ActionNames.Login);
             }
-            Log.Information("Decrypted cookie from secureAuth yields {UserName}.", ticket.UserName);
+            LogInformation("Decrypted cookie from secureAuth yields {UserName}.", ticket.UserName);
 
             try
             {
@@ -294,12 +234,12 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     throw new Exception($"could not find user {ticket.UserName} in our database");
                 }
                 await SignInManager.SignInAsync(user, false);
-                Log.Information("External Login success for user {NewUserName} with {EncryptedTicket}", ticket.UserName, cookie);
+                LogInformation("External Login success for user {NewUserName} with {EncryptedTicket}", ticket.UserName, cookie);
                 return RedirectToLocal(returnUrl);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "We have a secureAuth return for {UserName} but could not sign them in with {EncryptedTicket}", ticket.UserName, cookie);
+                LogError(ex, "We have a secureAuth return for {UserName} but could not sign them in with {EncryptedTicket}", ticket.UserName, cookie);
                 return View(ActionNames.Login, new LoginViewModel(true));
             }
         }

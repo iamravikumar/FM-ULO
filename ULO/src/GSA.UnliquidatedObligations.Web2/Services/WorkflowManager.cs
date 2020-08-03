@@ -10,13 +10,14 @@ using GSA.UnliquidatedObligations.Web.Models;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 
 namespace GSA.UnliquidatedObligations.Web.Services
 {
-    public class WorkflowManager : IWorkflowManager
+    public class WorkflowManager : BaseLoggingDisposable, IWorkflowManager
     {
         public const string WorkflowIdRouteValueName = "workflowId";
         private readonly IOptions<Config> ConfigOptions;
@@ -27,8 +28,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
         private readonly IBackgroundJobClient BackgroundJobClient;
         private readonly UloDbContext DB;
         private readonly ICacher Cacher;
-        private readonly Serilog.ILogger Log;
-
 
         public class Config
         {
@@ -49,7 +48,8 @@ namespace GSA.UnliquidatedObligations.Web.Services
             ActivityChooserTypes = types.AsReadOnly();
         }
 
-        public WorkflowManager(IOptions<Config> configOptions, PortalHelpers portalHelpers, UserHelpers userHelpers, IServiceProvider serviceProvider, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, UloDbContext db, Serilog.ILogger log, ICacher cacher)
+        public WorkflowManager(IOptions<Config> configOptions, PortalHelpers portalHelpers, UserHelpers userHelpers, IServiceProvider serviceProvider, IWorkflowDescriptionFinder finder, IBackgroundJobClient backgroundJobClient, UloDbContext db, ILogger<WorkflowManager> logger, ICacher cacher)
+            : base(logger)
         {
             ConfigOptions = configOptions;
             PortalHelpers = portalHelpers;
@@ -58,7 +58,6 @@ namespace GSA.UnliquidatedObligations.Web.Services
             Finder = finder;
             BackgroundJobClient = backgroundJobClient;
             DB = db;
-            Log = log.ForContext<WorkflowManager>();
             Cacher = cacher;
         }
 
@@ -85,7 +84,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             var res = await DB.GetNextLevelOwnerIdAsync(proposedOwnerUserId, wf.WorkflowId, nextActivityKey);
             var nextOwnerId = res.GetOutputParameterVal<string>("nextOwnerId");
 
-            Log.Information($"DB.GetNextLevelOwnerId('{proposedOwnerUserId}', {wf.WorkflowId}, '{nextActivityKey}')=>{nextOwnerId}");
+            LogInformation($"DB.GetNextLevelOwnerId('{proposedOwnerUserId}', {wf.WorkflowId}, '{nextActivityKey}')=>{nextOwnerId}");
 
             return nextOwnerId;
         }
@@ -98,7 +97,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 PortalHelpers.MediumCacheTimeout);
             if (u == null)
             {
-                Log.Error($"Cannot find {userId}", userId);
+                LogError("Cannot find {userId}", userId);
             }
             else if (u.UserType == AspNetUser.UserTypes.Person && RegexHelpers.Common.EmailAddress.IsMatch(u.Email))
             {
@@ -108,7 +107,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     PortalHelpers.MediumCacheTimeout);
                 if (emailTemplate == null)
                 {
-                    Log.Error($"Cannot find emailTemplateId={emailTemplateId}");
+                    LogError("Cannot find {emailTemplateId}", emailTemplateId);
                 }
                 else
                 {
@@ -123,7 +122,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             else
             {
-                Log.Information($"Will not send email to {u}");
+                LogInformation($"Will not send email to {u}");
             }
             return Task.CompletedTask;
         }
@@ -147,7 +146,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     var t = ActivityChooserTypes.FirstOrDefault(z => z.Name == currentActivity.NextActivityChooserTypeName);
                     if (t == null)
                     {
-                        Log.Error("Cannot find type for NextActivityChooser of name {NextActivityChooserTypeName}", currentActivity.NextActivityChooserTypeName);
+                        LogError("Cannot find type for NextActivityChooser of name {NextActivityChooserTypeName}", currentActivity.NextActivityChooserTypeName);
                     }
                     var chooser = (IActivityChooser) ServiceProvider.GetService(t);
                     nextActivityKey = chooser.GetNextActivityKey(wf, question, currentActivity.NextActivityChooserConfig, submitterGroupNames) ?? wf.CurrentWorkflowActivityKey;
@@ -212,7 +211,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             }
             finally
             {
-                Log.Information("Workflow {WorkflowId} with {WorkflowKey} changing from activity {OldWorkflowActivityKey} to activity {NewWorkflowActivityKey} owned By {NewOwnerId}", wf.WorkflowId, wf.WorkflowKey, currentActivity, wf.CurrentWorkflowActivityKey, nextOwnerId);
+                LogInformation("Workflow {WorkflowId} with {WorkflowKey} changing from activity {OldWorkflowActivityKey} to activity {NewWorkflowActivityKey} owned By {NewOwnerId}", wf.WorkflowId, wf.WorkflowKey, currentActivity, wf.CurrentWorkflowActivityKey, nextOwnerId);
             }
         }
 
