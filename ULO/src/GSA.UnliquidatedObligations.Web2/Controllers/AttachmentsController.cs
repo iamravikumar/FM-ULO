@@ -43,7 +43,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             SpecialFolderProvider = specialFolderProvider;
         }
 
-        public JsonResult Throw(string message)
+        public IActionResult Throw(string message)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new ExceptionError(ex));
+                return new NewtonsoftJsonResult(new ExceptionError(ex));
             }
         }
 
