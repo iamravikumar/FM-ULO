@@ -189,7 +189,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                                     await tmp.CopyToAsync(st);
                                 }
                             }
-                            Stuff.FileTryDelete(tempAttachment.FilePath);
+                            FileSystemHelpers.FileTryDelete(tempAttachment.FilePath);
                             var attachment = new Attachment
                             {
                                 FileName = tempAttachment.FileName,

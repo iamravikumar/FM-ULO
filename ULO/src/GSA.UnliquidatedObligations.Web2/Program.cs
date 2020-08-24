@@ -91,7 +91,7 @@ namespace GSA.UnliquidatedObligations.Web
                     {
                         if (File.Exists(gas.LogFileDirectory))
                         {
-                            Stuff.FileTryDelete(gas.LogFileDirectory);
+                            FileSystemHelpers.FileTryDelete(gas.LogFileDirectory);
                         }
                         if (!Directory.Exists(gas.LogFileDirectory))
                         { 

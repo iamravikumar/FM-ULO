@@ -1,0 +1,36 @@
+﻿@model SettingsModel
+<h1>GsaAdministrativeSettings</h1>
+<dl>
+    @foreach (var kvp in Model.GAS.OrderBy(z => z.Key))
+    {
+        <dt>@kvp.Key</dt>
+        <dd>@kvp.Value</dd>
+    }
+</dl>
+
+<h1>EnvironmentVariables</h1>
+<dl>
+    @foreach (var kvp in Model.EnvironmentVariables.OrderBy(z => z.Key))
+    {
+        <dt>@kvp.Key</dt>
+        <dd>@kvp.Value</dd>
+    }
+</dl>
+
+<h1>EnvironmentInfo</h1>
+<dl>
+    @foreach (var kvp in Model.EnvironmentInfo.OrderBy(z => z.Key))
+    {
+        <dt>@kvp.Key</dt>
+        <dd>@kvp.Value</dd>
+    }
+</dl>
+
+<h1>Configs</h1>
+<dl>
+    @foreach (var kvp in Model.Configs.OrderBy(z=>z.Key))
+    {
+        <dt>@kvp.Key</dt>
+        <dd>@kvp.Value</dd>
+    }
+</dl>
