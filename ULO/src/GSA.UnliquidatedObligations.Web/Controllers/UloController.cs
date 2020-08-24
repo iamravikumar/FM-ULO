@@ -469,7 +469,9 @@ Browse:
             Log.Information("Viewing ULO {UloId} with Workflow {WorkflowId}", uloId, workflowId);
 
             var workflow = await DB.FindWorkflowAsync(workflowId);
-            var workflowAssignedToCurrentUser = CurrentUserId == workflow.OwnerUserId;
+            var workflowAssignedToCurrentUser =
+                CurrentUserId == workflow.OwnerUserId ||
+                PortalHelpers.HasPermission(this.HttpContext.User, ApplicationPermissionNames.EditAnyCase);
 
             var belongs =
                 workflow.AspNetUser.UserType == AspNetUser.UserTypes.Group &&
