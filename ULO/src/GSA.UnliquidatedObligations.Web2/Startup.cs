@@ -63,6 +63,7 @@ namespace GSA.UnliquidatedObligations.Web
             services.ConfigureOptions<WorkflowManager.Config>(WorkflowManager.Config.ConfigSectionName);
             services.ConfigureOptions<ReportsController.Config>(ReportsController.Config.ConfigSectionName);
             services.ConfigureOptions<ReportRunner.Config>(ReportRunner.Config.ConfigSectionName);
+            services.ConfigureOptions<ErrorController.Config>(ErrorController.Config.ConfigSectionName);
 
             /*
              * Really purists?  Makings this default = false?  Like anyone has time to go back through and port all old libraries for this new mode?
@@ -175,16 +176,9 @@ namespace GSA.UnliquidatedObligations.Web
                 app.UsePathBase(appPathBase);
             }
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

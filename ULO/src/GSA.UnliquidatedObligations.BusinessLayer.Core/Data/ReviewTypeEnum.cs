@@ -8,6 +8,9 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
         SemiAnnual = 1,
 
         [Display(Name = "High-Risk", Order = 0)]
-        HighRisk = 2
+        HighRisk = 2,
+
+        [Display(Name = "Working Capital Fund", Order = 2)]
+        WorkingCapitalFund = 3
     }
 }

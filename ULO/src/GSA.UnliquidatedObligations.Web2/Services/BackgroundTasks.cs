@@ -46,6 +46,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
             public ImportConfig RetaImportConfig { get; set; }
             public ImportConfig CreditCardAliasConfig { get; set; }
             public ImportConfig PegasysOpenItemsCreditCardsSheetsConfig { get; set; }
+            public ImportConfig WorkingCapitalFundReportConfig { get; set; }
             public ImportConfig ActiveCardholderImportConfig { get; set; }
 
             public int AssignWorkFlowsBatchSize { get; set; } = 500;
@@ -149,6 +150,7 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     .Union(model.One92FileList)
                     .Union(model.CreditCardAliasCrosswalkFiles)
                     .Union(model.PegasysOpenItemsCreditCards)
+                    .Union(model.WorkingCapitalFundReportFiles)
                     .Union(model.ActiveCardholderFiles)
                     .ToList();
                 LogInformation("Will ultimately process the following files:\n{filePaths}", allFiles.Format("\n", "\t{0}"));
@@ -204,6 +206,15 @@ namespace GSA.UnliquidatedObligations.Web.Services
                     using (var st = await folder.OpenFileReadStreamAsync(fn))
                     {
                         LoadPegasysOpenItemsCreditCards(reviewId, st, onRowAddError, rowsTransferred);
+                    }
+                }
+
+                importer = nameof(LoadCreateWorkingCapitalFundItems);
+                foreach (var fn in model.WorkingCapitalFundReportFiles)
+                {
+                    using (var st = await folder.OpenFileReadStreamAsync(fn))
+                    {
+                        LoadCreateWorkingCapitalFundItems(reviewId, st, onRowAddError, rowsTransferred);
                     }
                 }
 
@@ -442,6 +453,9 @@ namespace GSA.UnliquidatedObligations.Web.Services
 
         private void LoadPegasysOpenItemsCreditCards(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
             => LoadExcelDataTable(reviewId, st, onRowAddError, rowsTransferred, ConfigOptions.Value.PegasysOpenItemsCreditCardsSheetsConfig, CreatePegasysOpenItemsCreditCardsDataTable);
+
+        private void LoadCreateWorkingCapitalFundItems(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
+            => LoadExcelDataTable(reviewId, st, onRowAddError, rowsTransferred, ConfigOptions.Value.WorkingCapitalFundReportConfig, CreateWorkingCapitalFundItemsDataTable);
 
         private void LoadActiveCardholders(int reviewId, Stream st, Action<Exception, int> onRowAddError, RowsTransferredEventHandler rowsTransferred)
             => LoadExcelDataTable(reviewId, st, onRowAddError, rowsTransferred, ConfigOptions.Value.ActiveCardholderImportConfig, CreateActiveCardholdersDataTable);
@@ -691,6 +705,55 @@ namespace GSA.UnliquidatedObligations.Web.Services
                 new DataColumn("Last Activity Date", typeof(DateTime)),
                 new DataColumn("Days Since Last Activity", typeof(int)),
                 new DataColumn("Contract", typeof(string))
+                );
+
+        private static DataTable CreateWorkingCapitalFundItemsDataTable()
+            => CreateDataTable(
+                "WorkingCapitalFundItems",
+                new DataColumn(ReviewIdColumnName, typeof(int)),
+                new DataColumn("Region", typeof(string)), // tinyint NOT NULL,
+                new DataColumn("Fund", typeof(string)), // varchar(4) NOT NULL,
+                new DataColumn("Organization", typeof(string)), // varchar(18) NOT NULL,
+                new DataColumn("Prog", typeof(string)), // varchar(4) NULL,
+                new DataColumn("Doc Type", typeof(string)), // varchar(3) NULL,
+                new DataColumn("Doc Num", typeof(string)), // varchar(16) NOT NULL,
+                new DataColumn("Itmz Ln Num", typeof(int)), // bit NULL,
+                new DataColumn("Actg Ln Num", typeof(int)), // tinyint NULL,
+                new DataColumn("Title", typeof(string)), // varchar(50) NULL,
+                new DataColumn("BBFY", typeof(int)), // smallint NOT NULL,
+                new DataColumn("EBFY", typeof(int)), // bit NULL,
+                new DataColumn("Acty", typeof(string)), // varchar(5) NULL,
+                new DataColumn("O/C", typeof(int)), // tinyint NULL,
+                new DataColumn("SOC", typeof(string)), // varchar(3) NULL,
+                new DataColumn("Project", typeof(string)), // varchar(8) NULL,
+                new DataColumn("Agreement", typeof(string)), // varchar(18) NULL,
+                new DataColumn("Contract Num", typeof(string)), // varchar(28) NULL,
+                new DataColumn("Bldg", typeof(string)), // varchar(8) NULL,
+                new DataColumn("Sys/Loc", typeof(string)), // bit NULL,
+                new DataColumn("Veh Tag", typeof(string)), // bit NULL,
+                new DataColumn("WI", typeof(int)), // bit NULL,
+                new DataColumn("Lease Number", typeof(string)), // int NULL,
+                new DataColumn("Vendor Name", typeof(string)), // varchar(62) NULL,
+                new DataColumn("Actg Pd", typeof(string)), // varchar(7) NULL,
+                new DataColumn("Total Line", typeof(double)), // float NOT NULL,
+                new DataColumn("Commitments", typeof(double)), // float NOT NULL,
+                new DataColumn("Prepayments", typeof(double)), // float NOT NULL,
+                new DataColumn("Undel Orders", typeof(double)), // float NOT NULL,
+                new DataColumn("Rcpt", typeof(double)), // float NOT NULL,
+                new DataColumn("Accrual", typeof(double)), // float NOT NULL,
+                new DataColumn("Pend Payments", typeof(double)), // float NOT NULL,
+                new DataColumn("Pymts(In Transit)", typeof(double)), // float NOT NULL,
+                new DataColumn("Pymts(Confirmed)", typeof(double)), // float NOT NULL,
+                new DataColumn("Holdbacks", typeof(double)), // bit NOT NULL,
+                new DataColumn("TAFS", typeof(string)), // varchar(11) NOT NULL,
+                new DataColumn("DUNS #", typeof(string)), // varchar(14) NULL,
+                new DataColumn("Date of Last Activity", typeof(DateTime)), // varchar(10) NULL,
+                new DataColumn("Days Since First Activity", typeof(int)), // smallint NOT NULL,
+                new DataColumn("Days Since Last Activity", typeof(int)), // int NOT NULL,
+                new DataColumn("Date of First Activity", typeof(DateTime)), // int NULL,
+                new DataColumn("Trading Partner Type", typeof(string)), // varchar(1) NULL,
+                new DataColumn("Vendor Agency Code", typeof(string)), // varchar(3) NULL,
+                new DataColumn("Vendor Bureau Code", typeof(string)) // tinyint NULL
                 );
 
         private static DataTable CreateActiveCardholdersDataTable()

@@ -6,10 +6,39 @@ using GSA.UnliquidatedObligations.BusinessLayer.Data;
 using GSA.UnliquidatedObligations.BusinessLayer.Data.Reporting;
 using GSA.UnliquidatedObligations.BusinessLayer.Workflow;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.Web.Models
 {
+    public class CreateFinancialActivityData
+    {
+        [JsonProperty("activityDate")]
+        public DateTime ActivityDate { get; set; }
+
+        [JsonProperty("activityType")]
+        public string ActivityType { get; set; }
+
+        [JsonProperty("referenceNumber")]
+        public string ReferenceNumber { get; set; }
+
+        [JsonProperty("amount")]
+        public decimal Amount { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        public enum Modes
+        {
+            NotSpecified,
+            Overwrite,
+            Append
+        }
+
+        [JsonProperty("mode")]
+        public Modes Mode { get; set; } = Modes.NotSpecified;
+    }
+
     public class WorkflowListTab
     {
         public static readonly WorkflowListTab[] None = new WorkflowListTab[0];
@@ -59,7 +88,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public UloWfQuestionViewModel(IDictionary<string, Justification> justificationByKey, UnliqudatedObjectsWorkflowQuestion question)
         {
             Username = question.User.UserName;
-           // Username = question.UserId;
+            // Username = question.UserId;
             Answer = question.Answer;
             JustificationKey = question.JustificationKey;
             Justification = justificationByKey.FindOrDefault(question.JustificationKey ?? "")?.Description;
@@ -301,10 +330,10 @@ namespace GSA.UnliquidatedObligations.Web.Models
             Zones = zones;
             Regions = regions;
             BaCodes = baCodes.CreateSelectList();
-            ActivityNames=activityNames.CreateSelectList();
+            ActivityNames = activityNames.CreateSelectList();
             Statuses = statuses.CreateSelectList();
             Reasons = reasons.CreateSelectList();
-            Reviews = reviews; 
+            Reviews = reviews;
             HasFilters = hasFilters;
             Validity = validity;
         }
@@ -411,7 +440,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         {
 
         }
-    }  
+    }
 
 
 #endif

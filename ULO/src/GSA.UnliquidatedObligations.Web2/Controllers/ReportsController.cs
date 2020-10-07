@@ -114,6 +114,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     }
                 case ReportFrequencies.EmailMeOnce:
                     {
+                        if (template == null) throw new UloException(UloExceptionCodes.NoEmailTemplate, $"templateId={config.ReportEmailTemplateId} for report={report.Name}");
                         var recipients = new[] { CurrentUser.Email };
                         var o = new ReportEmailViewModel(User.Identity.Name)
                         {
@@ -125,6 +126,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     }
                 case ReportFrequencies.Recurring:
                     {
+                        if (template == null) throw new UloException(UloExceptionCodes.NoEmailTemplate, $"templateId={config.ReportEmailTemplateId} for report={report.Name}");
                         var domains = CSV.ParseLine(config.ReportRecipientEmailDomains).ToCaseInsensitiveSet();
                         var recipients = Request.Form["recipients"].FirstOrDefault().Split(';', ',', '\t', ' ', '\r', '\n').Select(z => z.TrimOrNull()).WhereNotNull().Where(z => domains.Contains(z.RightOf("@"))).ToArray();
                         var now = DateTime.UtcNow;

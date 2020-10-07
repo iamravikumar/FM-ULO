@@ -500,24 +500,6 @@ Browse:
             }
         }
 
-        private class CreateFinancialActivityData
-        {
-            [JsonProperty("activityDate")]
-            public DateTime ActivityDate { get; set; }
-
-            [JsonProperty("activityType")]
-            public string ActivityType { get; set; }
-
-            [JsonProperty("referenceNumber")]
-            public string ReferenceNumber { get; set; }
-
-            [JsonProperty("amount")]
-            public decimal Amount { get; set; }
-
-            [JsonProperty("description")]
-            public string Description { get; set; }
-        }
-
         /// <remarks>THIS IS FOR THE BOT!  DO NOT CHANGE THE SIGNATURE</remarks>
         [HttpPost]
         [ApplicationPermissionAuthorize(ApplicationPermissionNames.CreateFinancialActivity)]
@@ -528,7 +510,10 @@ Browse:
                 d.ActivityDate = TimeZoneInfo.ConvertTimeToUtc(d.ActivityDate, TimeZoneInfo.Utc);
                 d.ActivityType = StringHelpers.Coalesce(d.ActivityType, PortalHelpers.FinancialActivityTypeSelectListItems().First().Value);
                 FinancialActivity fa = null;
-                if (ConfigOptions.Value.OverwriteFinancialActivityWithSameUloAndReferenceNumber)
+                if (
+                        (d.Mode== CreateFinancialActivityData.Modes.NotSpecified && ConfigOptions.Value.OverwriteFinancialActivityWithSameUloAndReferenceNumber) ||
+                        (d.Mode== CreateFinancialActivityData.Modes.Overwrite)
+                    )
                 {
                     fa = await DB.FinancialActivities.FirstOrDefaultAsync(z => z.UloId == uloId && z.ReferenceNumber == d.ReferenceNumber);
                 }

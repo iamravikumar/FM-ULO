@@ -30,7 +30,7 @@
     <div class="row">
         <div class="col-lg-6">
             <label asp-for="ReviewTypeId">Type of Review</label><br />
-            @Html.DropDownListFor(model => model.ReviewTypeId, Model.ReviewTypes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control" })
+            @Html.DropDownListFor(model => model.ReviewTypeId, Model.ReviewTypes, AspHelpers.PleaseSelectOne, htmlAttributes: new { @class = "form-control", onchange="reviewTypeChanged()" })
             @Html.ValidationMessageFor(model => model.ReviewTypeId, "", new { @class = "text-danger" })
         </div>
         <div class="col-lg-6">
@@ -47,7 +47,7 @@
             @Html.ValidationMessageFor(model => model.RegionId, "", new { @class = "text-danger" })
         </div>
     </div>
-    <div class="row">
+    <div class="row rtSemiAnnual rtHighRisk rtFilter">
         <div class="col-lg-6">
             <label for="@ReviewsController.ReviewFileDesignators.One92Files">192 File</label>
             <input type="file" name="@ReviewsController.ReviewFileDesignators.One92Files" class="form-control" />
@@ -57,7 +57,7 @@
             <input type="file" name="@ReviewsController.ReviewFileDesignators.PegasysFiles" class="form-control" />
         </div>
     </div>
-    <div class="row">
+    <div class="row rtSemiAnnual rtHighRisk rtWorkingCapitalFund rtFilter">
         <div class="col-lg-6">
             <label for="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles">Active Cardholder File</label>
             <input type="file" name="@ReviewsController.ReviewFileDesignators.ActiveCardholderFiles" class="form-control" />
@@ -82,8 +82,21 @@
             <label for="@ReviewsController.ReviewFileDesignators.RetaFiles">Reta File</label>
             <input type="file" name="@ReviewsController.ReviewFileDesignators.RetaFiles" class="form-control" />
         </div>
+        <div class="col-lg-6 rtWorkingCapitalFund rtFilter">
+            <label for="@ReviewsController.ReviewFileDesignators.WorkingCapitalFundFiles">Working Capital Fund File</label>
+            <input type="file" name="@ReviewsController.ReviewFileDesignators.WorkingCapitalFundFiles" class="form-control" />
+        </div>
     </div>
     <div class="form-group" style="padding-top:5px">
         <input type="submit" value="Create" class="btn btn-primary" />
     </div>
 </form>
+
+<script type="text/javascript">
+    function reviewTypeChanged() {
+        $(".rtFilter").css("display", "none");
+        var type = $("#ReviewTypeId").val();
+        $(".rt"+type).css("display", "");
+    }
+    $(document).ready(reviewTypeChanged);
+</script>

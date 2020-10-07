@@ -41,8 +41,8 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string One92Files = "One92Files";
             public const string ActiveCardholderFiles = "ActiveCardholderFiles";
             public const string PegasysOpenItemsCreditCards = "PegasysOpenItemsCreditCardsFiles";
+            public const string WorkingCapitalFundFiles = "WorkingCapitalFundFiles";
             public const string CreditCardAliasCrosswalkFiles = "CreditCardAliasCrosswalkFiles";
-
             public const int ReviewFileTypeCount = 7;
         }
 
@@ -275,6 +275,9 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                             break;
                         case ReviewFileDesignators.PegasysOpenItemsCreditCards:
                             uploadFiles.PegasysOpenItemsCreditCards.Add(name);
+                            break;
+                        case ReviewFileDesignators.WorkingCapitalFundFiles:
+                            uploadFiles.WorkingCapitalFundReportFiles.Add(name);
                             break;
                         case ReviewFileDesignators.CreditCardAliasCrosswalkFiles:
                             uploadFiles.CreditCardAliasCrosswalkFiles.Add(name);

@@ -1,0 +1,30 @@
+﻿@model ErrorModel
+@{
+    this.SetTitles(PageKeys.UndefinedPageKey, "Houston, we have a problem (Error)", "An error occurred while processing your request.");
+}
+
+<dl>
+    <dt>Sprint</dt>
+    <dd>@Model.SprintName</dd>
+    <dt>Path</dt>
+    <dd>@Model.Path</dd>
+    <dt>RequestId</dt>
+    <dd>@Model.RequestId</dd>
+    <dt>Error Type</dt>
+    <dd>@Model.ExceptionType?.Name</dd>
+    @if (Model.ExceptionCode!=null)
+    {
+        <dt>Error Code</dt>
+        <dd>@Model.ExceptionCode</dd>
+    }
+    @if (Model.ExceptionMessage != null)
+    {
+        <dt>Error Message</dt>
+        <dd>@Model.ExceptionMessage</dd>
+    }
+    @if (Model.ExceptionStack != null)
+    {
+        <dt>Error Stack</dt>
+        <dd>@Model.ExceptionStack</dd>
+    }
+</dl>
