@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GSA.UnliquidatedObligations.BusinessLayer.Authorization;
@@ -43,7 +44,35 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             public const string PegasysOpenItemsCreditCards = "PegasysOpenItemsCreditCardsFiles";
             public const string WorkingCapitalFundFiles = "WorkingCapitalFundFiles";
             public const string CreditCardAliasCrosswalkFiles = "CreditCardAliasCrosswalkFiles";
-            public const int ReviewFileTypeCount = 7;
+
+            public static readonly IDictionary<ReviewTypeEnum, HashSet<string>> RequiredFileDesignatorsByReviewType;
+
+            static ReviewFileDesignators()
+            {
+                RequiredFileDesignatorsByReviewType = new Dictionary<ReviewTypeEnum, HashSet<string>>();
+
+                RequiredFileDesignatorsByReviewType[ReviewTypeEnum.HighRisk] =
+                    RequiredFileDesignatorsByReviewType[ReviewTypeEnum.SemiAnnual] = new HashSet<string>(
+                        new[] {
+                            ReviewFileDesignators.PegasysFiles,
+                            ReviewFileDesignators.RetaFiles,
+                            ReviewFileDesignators.EasiFiles,
+                            ReviewFileDesignators.One92Files,
+                            ReviewFileDesignators.ActiveCardholderFiles,
+                            ReviewFileDesignators.PegasysOpenItemsCreditCards,
+                            ReviewFileDesignators.CreditCardAliasCrosswalkFiles                        
+                        }, 
+                        Comparers.CaseInsensitiveStringComparer);
+                RequiredFileDesignatorsByReviewType[ReviewTypeEnum.WorkingCapitalFund] = new HashSet<string>(
+                    new[] {
+                            ReviewFileDesignators.RetaFiles,
+                            ReviewFileDesignators.EasiFiles,
+                            ReviewFileDesignators.ActiveCardholderFiles,
+                            ReviewFileDesignators.PegasysOpenItemsCreditCards,
+                            ReviewFileDesignators.CreditCardAliasCrosswalkFiles,
+                            ReviewFileDesignators.WorkingCapitalFundFiles                    
+                    }, Comparers.CaseInsensitiveStringComparer);
+            }
         }
 
         private readonly SpecialFolderProvider SpecialFolderProvider;
@@ -197,15 +226,19 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             ReviewModel reviewModel)
         {
             bool errors = false;
+            var reviewTypeId = Enum.Parse<ReviewTypeEnum>(reviewModel.ReviewTypeId);
             if (DB.Reviews.Any(r => r.ReviewName == reviewModel.ReviewName))
             {
                 ModelState.AddModelError("ReviewName", "The name of this review is already in use.");
                 errors = true;
             }
-            var distinctFileTypes = Request.Form.Files.Where(f => f.Length > 0).Select(f => f.Name).ToHashSet();
-            if (distinctFileTypes.Count != ReviewFileDesignators.ReviewFileTypeCount)
+
+            var requiredFileDesignators = ReviewFileDesignators.RequiredFileDesignatorsByReviewType.GetValue(reviewTypeId);
+            if (requiredFileDesignators==null) throw new UnexpectedSwitchValueException(reviewTypeId);
+            var distinctFileTypes = Request.Form.Files.Where(f => f.Length > 0 && requiredFileDesignators.Contains(f.Name)).Select(f => f.Name).ToHashSet();
+            if (distinctFileTypes.Count != requiredFileDesignators.Count)
             {
-                ModelState.AddModelError("Files", "You must upload at least one of each type of file.");
+                ModelState.AddModelError("Files", $"You must upload at least one of each type of file: {requiredFileDesignators.Format(", ")}");
                 errors = true;
             }
             var reviewScope = Enum.Parse<ReviewScopeEnum>(reviewModel.ReviewScopeId);
@@ -232,7 +265,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                     RegionId = reviewModel.RegionId,
                     ReviewName = reviewModel.ReviewName,
                     Status = Review.StatusNames.Creating,
-                    ReviewTypeId = Enum.Parse<ReviewTypeEnum>(reviewModel.ReviewTypeId),  
+                    ReviewTypeId = reviewTypeId,  
                     Comments = reviewModel.Comments,
                     ReviewScopeId = reviewScope,
                     WorkflowDefinitionId = wd.WorkflowDefinitionId,
@@ -304,7 +337,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             reviewModel.RegionChoices = m.RegionChoices;
             reviewModel.ReviewTypes = m.ReviewTypes;
             reviewModel.ReviewScopes = m.ReviewScopes;
-            return View(reviewModel);
+            return View("Create", reviewModel);
         }
     }
 }

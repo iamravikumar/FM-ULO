@@ -1,4 +1,5 @@
 ﻿using GSA.UnliquidatedObligations.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -6,6 +7,7 @@ using RevolutionaryStuff.Core;
 
 namespace GSA.UnliquidatedObligations.Web.Controllers
 {
+    [AllowAnonymous]
     public class ErrorController : Controller
     {
         public class Config
