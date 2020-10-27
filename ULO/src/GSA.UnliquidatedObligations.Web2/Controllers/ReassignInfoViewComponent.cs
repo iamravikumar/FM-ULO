@@ -108,7 +108,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 ? requestForReassignment.UnliqudatedWorkflowQuestions.Comments : "";
 
             var detailsView = isAdmin ? "_DetailsMasterList.cshtml" : "_Details.cshtml";
-            return View("~/Views/Ulo/Details/Workflow/RequestForReassignments/" + detailsView, new RequestForReassignmentViewModel(suggestedReviewerId, justificationKey, requestForReassignmentId, comments, workflowId, uloRegionId, userSelectItems, wfDesc.GetResassignmentJustifications()));
+                return View("~/Views/Ulo/Details/Workflow/RequestForReassignments/" + detailsView, new RequestForReassignmentViewModel(suggestedReviewerId, justificationKey, requestForReassignmentId, comments, workflowId, uloRegionId, userSelectItems, wfDesc.GetResassignmentJustifications()));
         }
     }
 }

@@ -325,5 +325,11 @@ namespace GSA.UnliquidatedObligations.Web
             => items.OrderBy(z => z.Text).ConvertAll(z => new SelectListItem { Text = z.Text, Value = z.Value });
 
         #endregion
+
+        public static string ToFriendlySubjectCategoryClaimString(string documentType, string baCode, string orgCode, int? region)
+            => $"SC (DT: {documentType}, BAC: {baCode}, OC: {orgCode}), R:{(region.HasValue ? region.ToString() : "*")}";
+
+        public static string ToFriendlyString(this AspnetUserSubjectCategoryClaim claim)
+            => ToFriendlySubjectCategoryClaimString(claim.DocumentType, claim.BACode, claim.OrgCode, claim.Region);
     }
 }

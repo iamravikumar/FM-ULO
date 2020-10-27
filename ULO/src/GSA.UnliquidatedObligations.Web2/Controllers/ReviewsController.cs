@@ -196,7 +196,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
 
         private Task<ReviewModel> CreateReviewModelAsync()
         {
-            var claimRegionIds = CurrentUser.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanCreateReviews).ToList();
+            var claimRegionIds = this.HttpContext.User.GetApplicationPerimissionRegions(ApplicationPermissionNames.CanCreateReviews).ToList();
             return Task.FromResult(new ReviewModel(claimRegionIds,PortalHelpers));
         }
 
@@ -243,7 +243,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             }
             var reviewScope = Enum.Parse<ReviewScopeEnum>(reviewModel.ReviewScopeId);
             string workflowDefinitionName;
-            if (!PortalHelpers.TryGetGetWorkflowDefinitionName(reviewScope, out workflowDefinitionName))
+            if (!PortalHelpers.TryGetGetWorkflowDefinitionName(reviewTypeId, reviewScope, out workflowDefinitionName))
             {
                 ModelState.AddModelError("", $"Can't find workflowDefinitionName for scope={reviewScope}");
                 errors = true;

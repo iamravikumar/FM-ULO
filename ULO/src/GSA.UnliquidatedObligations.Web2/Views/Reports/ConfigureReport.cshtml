@@ -59,7 +59,7 @@
         <label for="frequency" style="display:block">Frequency</label>
         <label style="display:block"><input type="radio" name="frequency" value="@ReportsController.ReportFrequencies.EmailMeOnce" checked="checked" onchange="$('.recurring').hide()" /> Once, and email me the results</label>
         <label style="display:block"><input type="radio" name="frequency" value="@ReportsController.ReportFrequencies.Synchronous" onchange="$('.recurring').hide()" /> Once, and wait for the results so I can download them from this page</label>
-        @if (UserHelpers.HasPermission(User, GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanScheduleReports))
+        @if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CanScheduleReports))
         {
             <label style="display:block"><input type="radio" name="frequency" value="@ReportsController.ReportFrequencies.Recurring" onchange="$('.recurring').show()" /> Recurring, and email the results</label>
         }

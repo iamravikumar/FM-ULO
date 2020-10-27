@@ -154,7 +154,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             var workflow = await FindWorkflowAsync(workflowId);
             var workflowAssignedToCurrentUser =
                 CurrentUserId == workflow.OwnerUserId ||
-                UserHelpers.HasPermission(this.HttpContext.User, ApplicationPermissionNames.EditAnyCase);
+                HttpContext.User.HasPermission(ApplicationPermissionNames.EditAnyCase);
 
             var belongs =
                 workflow.OwnerUser.UserType == AspNetUser.UserTypes.Group &&

@@ -2815,9 +2815,14 @@ namespace GSA.UnliquidatedObligations.BusinessLayer.Data
 		[DisplayName("Pegasys Open Items Credit Cards Cnt")]
 		[Display(Name = "Pegasys Open Items Credit Cards Cnt")]
 		[Column("PegasysOpenItemsCreditCardsCnt")]
-		public int? PegasysOpenItemsCreditCardsCnt { get; set; } 	
+		public int? PegasysOpenItemsCreditCardsCnt { get; set; }
 
-		[DisplayName("Ulo Cnt")]
+        [DisplayName("Working Capital Fund Items Cnt")]
+        [Display(Name = "Working Capital Fund Items Cnt")]
+        [Column("WorkingCapitalFundItemsCnt")]
+        public int? WorkingCapitalFundItemsCnt { get; set; }
+
+        [DisplayName("Ulo Cnt")]
 		[Display(Name = "Ulo Cnt")]
 		[Column("UloCnt")]
 		public int? UloCnt { get; set; } 	

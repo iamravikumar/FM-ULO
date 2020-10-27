@@ -216,7 +216,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
                 ticket = LegacyFormsAuthenticationService.Unprotect(cookie);
                 if (ticket == null)
                 {
-                    throw new Exception("Could not unprotect the ticket");
+                    throw new UloException(UloExceptionCodes.ExternalLoginCouldNotUnprotectTheTicket);
                 } 
             }
             catch (Exception ex)

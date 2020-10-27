@@ -143,7 +143,7 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
             if (wf == null) return NotFound();
 
             var canHandleReassignment = true;
-            UserHelpers.HasPermission(User,ApplicationPermissionNames.CanReassign);
+            User.HasPermission(ApplicationPermissionNames.CanReassign);
             if (!canHandleReassignment && m.SuggestedReviewerId == CurrentUserId)
             {
                 canHandleReassignment = UserHelpers.GetUserGroupRegions(User, wf.OwnerUserId).Contains(wf.TargetUlo.RegionId);

@@ -8,6 +8,7 @@ namespace GSA.UnliquidatedObligations.Web
         Unknown,
         CantAccessExceptionHandlerPathFeature,
         NoEmailTemplate,
+        ExternalLoginCouldNotUnprotectTheTicket,
     }
 
     public class UloException : CodedException<UloExceptionCodes>

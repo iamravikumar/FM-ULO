@@ -86,7 +86,7 @@ namespace GSA.UnliquidatedObligations.Web.ViewComponents
                     () =>
                     {
                         var userReassignRegions = UserHelpers.GetReassignmentGroupRegions(User);
-                        return UserHelpers.HasPermission(User, ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId); 
+                        return User.HasPermission(ApplicationPermissionNames.CanReassign) && userReassignRegions.Contains(uloRegionId); 
 
                     },
                     PortalHelpers.MediumCacheTimeout

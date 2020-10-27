@@ -99,6 +99,7 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddAuthentication();
             services.UseSitePermissions();
 
+
             services.AddSingleton<IConnectionStringProvider, ServiceProviderConnectionStringProvider>();
             services.AddSingleton<IRecurringJobManager, RecurringJobManager>();
             services.AddScoped<IReportRunner, ReportRunner>();
@@ -108,7 +109,13 @@ namespace GSA.UnliquidatedObligations.Web
             services.AddScoped<IWorkflowDescriptionFinder, DatabaseWorkflowDescriptionFinder>();
             services.AddScoped<IWorkflowManager, WorkflowManager>();
             services.AddScoped<ILegacyFormsAuthenticationService, LegacyFormsAuthenticationService>();
+
+            /*
+             * based on the number of claims and the size of the cookies, we deal with claims in a different manner
+             */
             services.AddScoped<IUserClaimsPrincipalFactory<AspNetUser>, NoUloClaimsUserClaimsPrincipalFactory>();
+            services.ConfigureOptions<UloClaimsTransformation.Config>(UloClaimsTransformation.Config.ConfigSectionName);
+            services.AddScoped<Microsoft.AspNetCore.Authentication.IClaimsTransformation, UloClaimsTransformation>();
 
             services.AddScoped<IActivityChooser, FieldComparisonActivityChooser>();
             services.AddScoped<FieldComparisonActivityChooser>();

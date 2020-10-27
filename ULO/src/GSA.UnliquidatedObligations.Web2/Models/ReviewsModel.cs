@@ -119,6 +119,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
         public int CreditCardAliasesStats { get; set; }
         public int ActiveCardholdersStats { get; set; }
         public int PegasysOpenItemsCreditCardsStats { get; set; }
+        public int WorkingCapitalFundStats { get; set; }
 
         public ReviewUploadStatsModel()
         { }
@@ -138,6 +139,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             AssignedToSystemStats = reviewStat.SystemCnt.GetValueOrDefault();
             AssignedToSystemTheCloserStats = reviewStat.TheCloserCnt.GetValueOrDefault();
             AssignedToSystePreAssignmentStats = reviewStat.PreAssignmentCnt.GetValueOrDefault();
+            WorkingCapitalFundStats = reviewStat.WorkingCapitalFundItemsCnt.GetValueOrDefault();
         }
     }
 

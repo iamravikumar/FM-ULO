@@ -47,7 +47,7 @@ namespace GSA.UnliquidatedObligations.Web.Models
             GroupMembershipRegionIds = groups.Where(z=>z.RegionId!=null).ConvertAll(z => z.RegionId.Value).Distinct().ToList();
             var d = subjectCategoryClaims.ToDictionaryOnConflictKeepLast(c => Cache.CreateKey(c.DocumentType, c.BACode, c.OrgCode, c.Region), c => c);
             SubjectCategoryClaims = d.Values.OrderBy(c=>c.DocumentType).ThenBy(c=>c.BACode).ThenBy(c=>c.OrgCode).ThenBy(c=>c.Region).ToList();
-            Claims = SubjectCategoryClaims.ConvertAll(z=>z.ToString()).Distinct().OrderBy().ToList();
+            Claims = SubjectCategoryClaims.ConvertAll(z=>z.ToFriendlyString()).Distinct().OrderBy().ToList();
             Permissions = applicationPermissionClaim.ConvertAll(z => z.PermissionName).Distinct().OrderBy().ToList();
         }
     }

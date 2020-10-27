@@ -116,7 +116,14 @@ namespace GSA.UnliquidatedObligations.Web
 
             public IList<string> FinancialActivityTypes { get; set; }
 
-            public IDictionary<ReviewScopeEnum, string> ReviewScopeWorkflowMap { get; set; }
+            public IList<ReviewTypeScopeWorkflowMapping> ReviewTypeScopeWorkflowMappings { get;set;}
+
+            public class ReviewTypeScopeWorkflowMapping
+            {
+                public IList<ReviewTypeEnum> ReviewTypes { get; set; }
+                public IList<ReviewScopeEnum> ReviewScopes { get; set; }
+                public string WorkflowDefinitionName { get; set; }
+            }
         }
 
         public readonly IOptions<SprintConfig> SprintConfigOptions;
@@ -132,8 +139,22 @@ namespace GSA.UnliquidatedObligations.Web
 
         public const string DefaultConectionStringName = "DefaultConnection";
 
-        public bool TryGetGetWorkflowDefinitionName(ReviewScopeEnum reviewScope, out string workflowDefinitionName)
-            => ConfigOptions.Value.ReviewScopeWorkflowMap.TryGetValue(reviewScope, out workflowDefinitionName);
+        public bool TryGetGetWorkflowDefinitionName(ReviewTypeEnum reviewType, ReviewScopeEnum reviewScope, out string workflowDefinitionName)
+        {
+            workflowDefinitionName = null;
+            foreach (var m in ConfigOptions.Value.ReviewTypeScopeWorkflowMappings.NullSafeEnumerable())
+            {
+                if (m.ReviewTypes == null || m.ReviewTypes.Count == 0 || m.ReviewTypes.Contains(reviewType))
+                {
+                    if (m.ReviewScopes == null || m.ReviewScopes.Count == 0 || m.ReviewScopes.Contains(reviewScope))
+                    {
+                        workflowDefinitionName = m.WorkflowDefinitionName;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         public string DefaultUloConnectionString => Configuration.GetConnectionString(DefaultConectionStringName);
 

@@ -44,7 +44,7 @@
                 <tr style="display:none" id="newFinancialActivityCreatedRow"><th colspan="5">New financial activities have been created. Refresh to see them.</th></tr>
             </table>
         }
-        @if (UserHelpers.HasPermission(User, GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CreateFinancialActivity))
+        @if (User.HasPermission(GSA.UnliquidatedObligations.BusinessLayer.Authorization.ApplicationPermissionNames.CreateFinancialActivity))
         {
             <button type="button" class="btn btn-primary finac-add-btn" data-toggle="modal" data-target="#newFinancialActivityDialog" title="Add a new document." onclick="resetCreateFinancialActivityFields()">Add...</button>
         }

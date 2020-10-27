@@ -1,4 +1,6 @@
-﻿using GSA.UnliquidatedObligations.Web.Models;
+﻿using System;
+using System.Linq;
+using GSA.UnliquidatedObligations.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +32,11 @@ namespace GSA.UnliquidatedObligations.Web.Controllers
         {
             var ehp = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             var ex = ehp?.Error ?? new UloException(UloExceptionCodes.CantAccessExceptionHandlerPathFeature);
+            var aex = ex as AggregateException;
+            if (aex != null && aex.InnerExceptions.Count == 1)
+            {
+                ex = aex.InnerExceptions.First();
+            }
             var m = new ErrorModel
             {
                 SprintName = SprintConfigOptions.Value.SprintName,

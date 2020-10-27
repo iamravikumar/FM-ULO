@@ -1,5 +1,4 @@
-﻿using GSA.UnliquidatedObligations.BusinessLayer.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -76,31 +75,18 @@ Cleanup:
             return regionIds;
         }
 
-        private static HashSet<int> GetSubjectCategoryRegions(this IEnumerable<Claim> claims, string docType, string baCode, string orgCode)
+        public static bool HasPermission(this System.Security.Principal.IPrincipal user, ApplicationPermissionNames permissionName)
         {
-            var regionIds = new HashSet<int>();
-            foreach (var c in claims)
-            {
-                regionIds.UnionWith(GetSubjectCategoryRegions(c.Type, c.Value, docType, orgCode, baCode));
-            }
-            return regionIds;
+            if (!user.Identity.IsAuthenticated) return false;
+            var cp = user as System.Security.Claims.ClaimsPrincipal;
+            return cp != null && cp.Claims.GetApplicationPerimissionRegions(permissionName).Count > 0;
         }
 
-        public static ICollection<Claim> GetClaims(this AspNetUser user)
+        public static HashSet<int> GetApplicationPerimissionRegions(this System.Security.Principal.IPrincipal user, ApplicationPermissionNames? permission)
         {
-            var claims = new List<Claim>();
-            foreach (var c in user.UserAspNetUserClaims)
-            {
-                claims.Add(new Claim(c.ClaimType, c.ClaimValue, c.ClaimType));
-            }
-            return claims;
-
+            var cp = user as ClaimsPrincipal;
+            if (cp == null) return new HashSet<int>();
+            return cp.Claims.GetApplicationPerimissionRegions(permission);
         }
-
-        public static HashSet<int> GetApplicationPerimissionRegions(this AspNetUser user, ApplicationPermissionNames? permission)
-            => user.GetClaims().GetApplicationPerimissionRegions(permission);
-
-        public static HashSet<int> GetSubjectCategoryRegions(this AspNetUser user, string docType, string baCode, string orgCode)
-            => user.GetClaims().GetSubjectCategoryRegions(docType, baCode, orgCode);
     }
 }

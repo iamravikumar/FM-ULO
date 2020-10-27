@@ -3,7 +3,7 @@
 @model GSA.UnliquidatedObligations.Web.Models.UserModel
 @{
     var createMode = Model.UserId == null;
-    var canMakeChanges = UserHelpers.HasPermission(User, ApplicationPermissionNames.ManageUsers);
+    var canMakeChanges = User.HasPermission(ApplicationPermissionNames.ManageUsers);
     var hiddenHtmlAttributes = AspHelpers.CssClass("hidden");
     var readonlyHtmlAttributes = new
     {@@readonly = "readonly"

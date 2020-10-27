@@ -3,7 +3,7 @@
 @using GSA.UnliquidatedObligations.Web.Controllers
 @model GSA.UnliquidatedObligations.Web.Models.ReviewDetailsModel
 @{
-    var canMakeChanges = UserHelpers.HasPermission(User, ApplicationPermissionNames.CanCreateReviews);
+    var canMakeChanges = User.HasPermission(ApplicationPermissionNames.CanCreateReviews);
     var readonlyHtmlAttributes = new
     {@@readonly = "readonly"
 };
@@ -21,152 +21,158 @@ Layout = "~/Views/Shared/_Layout.cshtml";
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(Model => Model.Review.ReviewId)
-    <dl class="dl-horizontal review-details">
-        <dt>
-            Review ID:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Review.ReviewId)
-        </dd>
-        <dt>
-            Created At:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Review.CreatedAt)
-        </dd>
-        <dt>
-            Review Name:
-        </dt>
-        <dd>
-            @Html.TextBoxFor(model => model.Review.ReviewName, textboxHtmlAttributes)
-        </dd>
-        <dt>
-            Is Closed:
-        </dt>
-        <dd>
-            @Html.CheckBoxFor(model => model.Review.IsClosed, checkboxHtmlAttributes)
-        </dd>
-        <dt>
-            Status:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Review.Status)
-        </dd>
-        <dt>
-            Type of Review:
-        </dt>
-        <dd>
-            @{
-                var reviewType = (ReviewTypeEnum)Model.Review.ReviewTypeId;
-                var reviewTypeName = reviewType.GetDisplayName();
+<dl class="dl-horizontal review-details">
+    <dt>
+        Review ID:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Review.ReviewId)
+    </dd>
+    <dt>
+        Created At:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Review.CreatedAt)
+    </dd>
+    <dt>
+        Review Name:
+    </dt>
+    <dd>
+        @Html.TextBoxFor(model => model.Review.ReviewName, textboxHtmlAttributes)
+    </dd>
+    <dt>
+        Is Closed:
+    </dt>
+    <dd>
+        @Html.CheckBoxFor(model => model.Review.IsClosed, checkboxHtmlAttributes)
+    </dd>
+    <dt>
+        Status:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Review.Status)
+    </dd>
+    <dt>
+        Type of Review:
+    </dt>
+    <dd>
+        @{
+            var reviewType = (ReviewTypeEnum)Model.Review.ReviewTypeId;
+            var reviewTypeName = reviewType.GetDisplayName();
+        }
+        @reviewTypeName
+    </dd>
+    <dt>
+        Review Scope:
+    </dt>
+    <dd>
+        @{
+            var scope = (ReviewScopeEnum)Model.Review.ReviewScopeId;
+            var scopeName = scope.GetDisplayName();
+        }
+        @scopeName
+    </dd>
+    <dt>
+        Review As of Date:
+    </dt>
+    <dd>
+        @{
+            var reviewAsOfDate = "";
+            if (Model.Review.ReviewDateInitiated != null)
+            {
+                reviewAsOfDate = Convert.ToDateTime(Model.Review.ReviewDateInitiated).ToString("MM/dd/yyyy");
             }
-            @reviewTypeName
-        </dd>
-        <dt>
-            Review Scope:
-        </dt>
-        <dd>
-            @{
-                var scope = (ReviewScopeEnum)Model.Review.ReviewScopeId;
-                var scopeName = scope.GetDisplayName();
-            }
-            @scopeName
-        </dd>
-        <dt>
-            Review As of Date:
-        </dt>
-        <dd>
-            @{
-                var reviewAsOfDate = "";
-                if (Model.Review.ReviewDateInitiated != null)
-                {
-                    reviewAsOfDate = Convert.ToDateTime(Model.Review.ReviewDateInitiated).ToString("MM/dd/yyyy");
-                }
-            }
-            @reviewAsOfDate
-        </dd>
-        <dt>
-            Comments:
-        </dt>
-        <dd>
-            @Html.TextAreaFor(model => model.Review.Comments, 10, 30, textareaHtmlAttributes)
-        </dd>
-        <dt>
-            Region:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Review.Region.RegionNumber)
-        </dd>
-        <dt>
-            192 Uploads:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.PO192Stats)
-        </dd>
-        <dt>
-            442 Uploads:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.PO442UploadStats)
-        </dd>
-        <dt>
-            Easi Uploads:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.EasiUploadStats)
-        </dd>
-        <dt>
-            Reta Uploads:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.RetaUploadStats)
-        </dd>
-        <dt>
-            Active Cardholder Uploads:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.ActiveCardholdersStats)
-        </dd>
-        <dt>
-            Credit Card Alias Uploads:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.CreditCardAliasesStats)
-        </dd>
-        <dt>
-            Pegasys CC Uploads:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.PegasysOpenItemsCreditCardsStats)
-        </dd>
-        <dt>
-            Ulos Created:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.UlosCreatedStats)
-        </dd>
-        <dt>
-            Assigned to Person Users:
-        </dt>
-        <dd>
-            @{
-                var personUserStats = Model.ReviewUploadStats.AssignedToPersonStats + Model.ReviewUploadStats.AssignedToSystemTheCloserStats;
-            }
-            @personUserStats
-        </dd>
-        <dt>
-            Assigned to Group Users:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToGroupStats)
-        </dd>
-        <dt>
-            Pre-Assignment:
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToSystePreAssignmentStats)
-        </dd>
-    </dl>
+        }
+        @reviewAsOfDate
+    </dd>
+    <dt>
+        Comments:
+    </dt>
+    <dd>
+        @Html.TextAreaFor(model => model.Review.Comments, 10, 30, textareaHtmlAttributes)
+    </dd>
+    <dt>
+        Region:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Review.Region.RegionNumber)
+    </dd>
+    <dt>
+        192 Uploads:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.PO192Stats)
+    </dd>
+    <dt>
+        442 Uploads:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.PO442UploadStats)
+    </dd>
+    <dt>
+        Easi Uploads:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.EasiUploadStats)
+    </dd>
+    <dt>
+        Reta Uploads:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.RetaUploadStats)
+    </dd>
+    <dt>
+        Active Cardholder Uploads:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.ActiveCardholdersStats)
+    </dd>
+    <dt>
+        Credit Card Alias Uploads:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.CreditCardAliasesStats)
+    </dd>
+    <dt>
+        Pegasys CC Uploads:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.PegasysOpenItemsCreditCardsStats)
+    </dd>
+    <dt>
+        Working Capital Funds Item Uploads:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.WorkingCapitalFundStats)
+    </dd>
+    <dt>
+        Ulos Created:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.UlosCreatedStats)
+    </dd>
+    <dt>
+        Assigned to Person Users:
+    </dt>
+    <dd>
+        @{
+            var personUserStats = Model.ReviewUploadStats.AssignedToPersonStats + Model.ReviewUploadStats.AssignedToSystemTheCloserStats;
+        }
+        @personUserStats
+    </dd>
+    <dt>
+        Assigned to Group Users:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToGroupStats)
+    </dd>
+    <dt>
+        Pre-Assignment:
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ReviewUploadStats.AssignedToSystePreAssignmentStats)
+    </dd>
+</dl>
 
     @if (canMakeChanges)
     {
